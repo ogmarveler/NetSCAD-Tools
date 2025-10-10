@@ -1,32 +1,37 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NetScad.UI.ViewModels;
 using NetScad.UI.Views;
+using System;
 
 namespace NetScad.UI
 {
     public partial class App : Application
     {
-        public override void Initialize()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        // Static Host property to access DI container
+        public static IHost? Host { get; set; }
+        public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
+                if (Host == null)
+                    throw new InvalidOperationException("Host is not initialized. Ensure Host is set in Program.cs.");
+
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainWindowViewModel()
+                    DataContext = Host.Services.GetRequiredService<MainWindowViewModel>()
                 };
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {
                 singleViewPlatform.MainView = new MainWindow
                 {
-                    DataContext = new MainWindowViewModel()
+                    DataContext = Host.Services.GetRequiredService<MainWindowViewModel>()
                 };
             }
 

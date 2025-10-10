@@ -22,7 +22,7 @@ namespace NetScad.Core.Measurements
         public static double MillimeterToFeet(double mm) => InchesToFeet(MillimeterToInches(mm));
         public static double MeterToFeet(double m) => MillimeterToFeet(MeterToMillimeter(m));
         public static double RoundEdgeHeight(double radius) => radius / 50; // Convert a radius in mm to a ratio for rounding edges in OpenSCAD
-        public static double RoundFromWidth(double radius) => radius * .05f; // Calculate rounding radius from width of main object
+        public static double RoundFromWidth(double width) => width * .05f; // Calculate rounding radius from width of main object
         public static double MinkowskiOffsets(double radius) => radius * 2; // Convert a radius in mm to a Minkowski offset in OpenSCAD
     }
 }

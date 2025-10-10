@@ -1,28 +1,66 @@
 ﻿using NetScad.Core.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class RoundedCylinder(double r, double h, double round_r, double round_h = 0.001, double? r1 = null, double? r2 = null, double resolution = 200) : IScadObject
+    public partial class RoundedCylinder : IScadObject, IDbSerializable
     {
-        public double Radius => r;
-        public double Height => h;
-        public double RoundRadius => round_r;
-        public double RoundHeight => round_h;
-        public double? Radius1 => r1;
-        public double? Radius2 => r2;
-        public double Resolution => resolution;
+        private readonly Dictionary<string, object> _parameters;
 
-        private Cylinder AdjustedCylinder => new Cylinder(
-            Math.Max(0, r - round_r),
-            h,
-            r1 != null ? Math.Max(0, r1.Value - round_r) : null,
-            r2 != null ? Math.Max(0, r2.Value - round_r) : null,
-            resolution
-        );
+        public RoundedCylinder(Dictionary<string, object> parameters)
+        {
+            _parameters = parameters;
+        }
 
-        private Cylinder RoundingCylinder => new Cylinder(round_r, round_h, resolution: resolution);
+        public double Radius => (double)_parameters["r"];
+        public double Height => (double)_parameters["h"];
+        public double RoundRadius => (double)_parameters["round_r"];
+        public double RoundHeight => _parameters.ContainsKey("round_h") ? (double)_parameters["round_h"] : 0.001;
+        public double? Radius1 => _parameters.ContainsKey("r1") ? (double)_parameters["r1"] : null;
+        public double? Radius2 => _parameters.ContainsKey("r2") ? (double)_parameters["r2"] : null;
+        public double Resolution => _parameters.ContainsKey("resolution") ? (double)_parameters["resolution"] : 200;
+
+        private Cylinder AdjustedCylinder => new Cylinder(new Dictionary<string, object>
+        {
+            { "r", Math.Max(0, Radius - RoundRadius) },
+            { "h", Height },
+            { "r1", Radius1 != null ? Math.Max(0, Radius1.Value - RoundRadius) : null },
+            { "r2", Radius2 != null ? Math.Max(0, Radius2.Value - RoundRadius) : null },
+            { "resolution", Resolution }
+        });
+
+        private Cylinder RoundingCylinder => new Cylinder(new Dictionary<string, object>
+        {
+            { "r", RoundRadius },
+            { "h", RoundHeight },
+            { "resolution", Resolution }
+        });
 
         public string OSCADMethod => new Minkowski(AdjustedCylinder, RoundingCylinder).OSCADMethod;
+
+        public Dictionary<string, object> ToDbDictionary() => new()
+        {
+            { "type", "RoundedCylinder" },
+            { "r", Radius },
+            { "h", Height },
+            { "round_r", RoundRadius },
+            { "round_h", RoundHeight },
+            { "r1", Radius1 },
+            { "r2", Radius2 },
+            { "resolution", Resolution }
+        };
+
+        // Client-side example:
+        /*
+        var roundedCylParams = new Dictionary<string, object>
+        {
+            { "r", 5.0 }, { "h", 10.0 }, { "round_r", 1.0 }, { "resolution", 150.0 }
+        };
+        var roundedCylinder = OScad3D.RoundedCylinder.ToScadObject(roundedCylParams);
+        Console.WriteLine(roundedCylinder.OSCADMethod); // minkowski() { cylinder(h=10, r=4, $fn=150); cylinder(r=1, h=0.001, $fn=150); };
+        var dbData = roundedCylinder.ToDbDictionary(); // { "type": "RoundedCylinder", "r": 5, "h": 10, "round_r": 1, "round_h": 0.001, "r1": null, "r2": null, "resolution": 150 }
+        // SQLite: INSERT INTO Models (Type, Radius, Height, RoundRadius, RoundHeight, Radius1, Radius2, Resolution) VALUES ('RoundedCylinder', 5, 10, 1, 0.001, NULL, NULL, 150);
+        */
     }
 }

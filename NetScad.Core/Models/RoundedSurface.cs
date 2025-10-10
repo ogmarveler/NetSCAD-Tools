@@ -1,19 +1,62 @@
 ﻿using NetScad.Core.Interfaces;
+using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class RoundedSurface(string file, double round_r, bool center = false, double round_h = 0.001, double resolution = 200) : IScadObject
+    public partial class RoundedSurface : IScadObject, IDbSerializable
     {
-        public string File => file;
-        public double RoundRadius => round_r;
-        public bool Center => center;
-        public double RoundHeight => round_h;
-        public double Resolution => resolution;
+        private readonly string _file;
+        private readonly double _roundRadius;
+        private readonly bool _center;
+        private readonly double _roundHeight;
+        private readonly double _resolution;
 
-        private Surface AdjustedSurface => new Surface(file, center, 1);
+        public RoundedSurface(string file, double round_r, bool center = false, double round_h = 0.001, double resolution = 200)
+        {
+            _file = file;
+            _roundRadius = round_r;
+            _center = center;
+            _roundHeight = round_h;
+            _resolution = resolution;
+        }
 
-        private Cylinder RoundingCylinder => new Cylinder(round_r, round_h, resolution: resolution);
+        public string File => _file;
+        public double RoundRadius => _roundRadius;
+        public bool Center => _center;
+        public double RoundHeight => _roundHeight;
+        public double Resolution => _resolution;
+
+        private Surface AdjustedSurface => new Surface(File, Center, 1);
+
+        private Cylinder RoundingCylinder => new Cylinder(new Dictionary<string, object>
+        {
+            { "r", RoundRadius },
+            { "h", RoundHeight },
+            { "resolution", Resolution }
+        });
 
         public string OSCADMethod => new Minkowski(AdjustedSurface, RoundingCylinder).OSCADMethod;
+
+        public Dictionary<string, object> ToDbDictionary() => new()
+        {
+            { "type", "RoundedSurface" },
+            { "file", File },
+            { "round_r", RoundRadius },
+            { "center", Center },
+            { "round_h", RoundHeight },
+            { "resolution", Resolution }
+        };
+
+        // Client-side example:
+        /*
+        var roundedSurfParams = new Dictionary<string, object>
+        {
+            { "file", "heightmap.dat" }, { "round_r", 1.0 }, { "center", true }, { "round_h", 0.002 }, { "resolution", 200.0 }
+        };
+        var roundedSurface = OScad3D.RoundedSurface.ToScadObject(roundedSurfParams);
+        Console.WriteLine(roundedSurface.OSCADMethod); // minkowski() { surface(file="heightmap.dat", center=true, convexity=1); cylinder(r=1, h=0.002, $fn=200); };
+        var dbData = roundedSurface.ToDbDictionary(); // { "type": "RoundedSurface", "file": "heightmap.dat", "round_r": 1, "center": true, "round_h": 0.002, "resolution": 200 }
+        // SQLite: INSERT INTO Models (Type, File, RoundRadius, Center, RoundHeight, Resolution) VALUES ('RoundedSurface', 'heightmap.dat', 1, 1, 0.002, 200);
+        */
     }
 }

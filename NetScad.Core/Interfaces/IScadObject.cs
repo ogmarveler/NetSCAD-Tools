@@ -1,6 +1,6 @@
 ﻿namespace NetScad.Core.Interfaces
 {
-    public interface IScadObject
+    public interface IScadObject : IDbSerializable
     {
         string OSCADMethod { get; }
     }

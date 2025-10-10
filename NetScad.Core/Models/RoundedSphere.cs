@@ -1,22 +1,54 @@
 ﻿using NetScad.Core.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class RoundedSphere(double r, double round_r, double round_h = 0.001, double resolution = 200) : IScadObject
+    public partial class RoundedSphere : IScadObject, IDbSerializable
     {
-        public double Radius => r;
-        public double RoundRadius => round_r;
-        public double RoundHeight => round_h;
-        public double Resolution => resolution;
+        private readonly Dictionary<string, object> _parameters;
 
-        private Sphere AdjustedSphere => new Sphere(
-            Math.Max(0, r - round_r),
-            resolution
-        );
+        public RoundedSphere(Dictionary<string, object> parameters)
+        {
+            _parameters = parameters;
+        }
 
-        private Cylinder RoundingCylinder => new Cylinder(round_r, round_h, resolution: resolution);
+        public double Radius => (double)_parameters["r"];
+        public double RoundRadius => (double)_parameters["round_r"];
+        public double RoundHeight => _parameters.ContainsKey("round_h") ? (double)_parameters["round_h"] : 0.001;
+        public double Resolution => _parameters.ContainsKey("resolution") ? (double)_parameters["resolution"] : 200;
+
+        private Sphere AdjustedSphere => new Sphere(new Dictionary<string, object>
+        {
+            { "r", Math.Max(0, Radius - RoundRadius) },
+            { "resolution", Resolution }
+        });
+
+        private Cylinder RoundingCylinder => new Cylinder(new Dictionary<string, object>
+        {
+            { "r", RoundRadius },
+            { "h", RoundHeight },
+            { "resolution", Resolution }
+        });
 
         public string OSCADMethod => new Minkowski(AdjustedSphere, RoundingCylinder).OSCADMethod;
+
+        public Dictionary<string, object> ToDbDictionary() => new()
+        {
+            { "type", "RoundedSphere" },
+            { "r", Radius },
+            { "round_r", RoundRadius },
+            { "round_h", RoundHeight },
+            { "resolution", Resolution }
+        };
+
+        // Client-side example:
+        /*
+        var roundedSphereParams = new Dictionary<string, object> { { "r", 5.0 }, { "round_r", 1.0 }, { "resolution", 200.0 } };
+        var roundedSphere = OScad3D.RoundedSphere.ToScadObject(roundedSphereParams);
+        Console.WriteLine(roundedSphere.OSCADMethod); // minkowski() { sphere(r=4, $fn=200); cylinder(r=1, h=0.001, $fn=200); };
+        var dbData = roundedSphere.ToDbDictionary(); // { "type": "RoundedSphere", "r": 5, "round_r": 1, "round_h": 0.001, "resolution": 200 }
+        // SQLite: INSERT INTO Models (Type, Radius, RoundRadius, RoundHeight, Resolution) VALUES ('RoundedSphere', 5, 1, 0.001, 200);
+        */
     }
 }
