@@ -459,3 +459,4 @@ $RECYCLE.BIN/
 #Temporary
 /NetScad.UI/NetScad.UI.Linux/Properties/launchSettings.json
 /NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.1.1-win-x64.zip
+/NetScad.UI/NetScad.UI/NetScad.UI.csproj

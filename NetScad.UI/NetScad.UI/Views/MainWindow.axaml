@@ -34,16 +34,18 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_Axes">
-                <MenuItem Command="{Binding NewCommand}" Header="_Create New Axes">
+                <MenuItem Command="{Binding NewAxesCommand}" Header="_Create New Axes">
                     <MenuItem.Icon>
                         <PathIcon Data="{StaticResource arrow_expand_regular}" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <!--<MenuItem Command="{Binding OpenCommand}" Header="_Output Folder">
+            </MenuItem>
+            <MenuItem Header="_Designer">
+                <MenuItem Command="{Binding NewObjectCommand}" Header="_Create New Object">
                     <MenuItem.Icon>
-                        <PathIcon Data="{StaticResource folder_open_regular}" />
+                        <PathIcon Data="{StaticResource design_ideas_regular}" />
                     </MenuItem.Icon>
-                </MenuItem>-->
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="_Appearance">
                 <MenuItem Command="{Binding ToggleCommand}" Header="_Switch Theme">

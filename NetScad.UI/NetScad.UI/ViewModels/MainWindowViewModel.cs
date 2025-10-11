@@ -1,8 +1,6 @@
 using Avalonia;
 using Avalonia.Styling;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using NetScad.UI.Views;
 using ReactiveUI;
 using System.Threading.Tasks;
@@ -19,7 +17,8 @@ namespace NetScad.UI.ViewModels
         {
             MainViewContent = _mainViewContent; // Start with this view
             // Initialize menu commands
-            NewCommand = ReactiveCommand.Create(LoadCreateAxesView);
+            NewAxesCommand = ReactiveCommand.Create(LoadCreateAxesView);
+            NewObjectCommand = ReactiveCommand.Create(LoadDesignerView);
             OpenCommand = ReactiveCommand.Create(() => { using Task _ = new MainWindow().OpenFolderAsync(); });
             ToggleCommand = ReactiveCommand.Create(ToggleTheme);
             AxisViewCommand = ReactiveCommand.Create(LoadAxisView);
@@ -34,12 +33,14 @@ namespace NetScad.UI.ViewModels
         // SPA - Swap out views
         public async void LoadCreateAxesView() => MainViewContent = App.Host.Services.GetRequiredService<CreateAxesView>();
         public async void LoadAxisView() => MainViewContent = App.Host.Services.GetRequiredService<AxisView>();
-          public async void ToggleTheme() => Application.Current?.RequestedThemeVariant =
+        public async void LoadDesignerView() => MainViewContent = App.Host.Services.GetRequiredService<ScadObjectView>();
+        public async void ToggleTheme() => Application.Current?.RequestedThemeVariant =
                 Application.Current.ActualThemeVariant == ThemeVariant.Light
                     ? ThemeVariant.Dark
                     : ThemeVariant.Light;
 
-        public ICommand NewCommand { get; }
+        public ICommand NewAxesCommand { get; }
+        public ICommand NewObjectCommand { get; }
         public ICommand OpenCommand { get; }
         public ICommand AxisViewCommand { get; }
         public ICommand ToggleCommand { get; }
