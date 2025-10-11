@@ -7,7 +7,7 @@ namespace NetScad.UI.Views;
 
 public partial class CreateAxesView : UserControl, INotifyPropertyChanged
 {
-   public CreateAxesView()
+    public CreateAxesView()
     {
         InitializeComponent();
         DataContext = new CreateAxesViewModel();

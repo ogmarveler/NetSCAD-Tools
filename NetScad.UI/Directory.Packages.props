@@ -21,6 +21,7 @@
     <PackageVersion Include="Avalonia.ReactiveUI" Version="11.3.7" />
     <PackageVersion Include="AvaloniaEdit.TextMate" Version="11.3.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="Dapper" Version="2.1.66" />
     <PackageVersion Include="HotAvalonia" Version="3.0.0" />
     <PackageVersion Include="HotAvalonia.Extensions" Version="3.0.0" />
     <PackageVersion Include="Markdown.Avalonia" Version="11.0.2" />

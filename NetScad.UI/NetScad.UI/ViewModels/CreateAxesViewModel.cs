@@ -1,12 +1,13 @@
+using Microsoft.Data.Sqlite;
 using NetScad.Axis.Scad.Models;
 using NetScad.Axis.Scad.Utility;
 using NetScad.Axis.SCAD.Modules;
 using NetScad.Core.Measurements;
-using NetScad.Core.Utility;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -47,6 +48,7 @@ namespace NetScad.UI.ViewModels
         private string _inputMaxZ;
         private ObservableCollection<GeneratedModule> _axesList;
         private bool _createButtonEnabled;
+        private SqliteConnection _connection;
 
         public CreateAxesViewModel()
         {
@@ -82,14 +84,14 @@ namespace NetScad.UI.ViewModels
             _inputMaxY = "Max Y > Min Y";
             _inputMinZ = "Min Z <= 0"; // Watermarks for Z coordinates
             _inputMaxZ = "Max Z > Min Z";
-            GetAxesList();  // Get existing list of axes generated
+            _ = GetAxesList();  // Get existing list of axes generated
         }
         public double MinXValue
         {
             get => _minX; set
             {
                 this.RaiseAndSetIfChanged(ref _minX, value);
-                ValidateMinMax();
+                _ = ValidateMinMax();
             }
         }
         public double MaxXValue
@@ -97,7 +99,7 @@ namespace NetScad.UI.ViewModels
             get => _maxX; set
             {
                 this.RaiseAndSetIfChanged(ref _maxX, value);
-                ValidateMinMax();
+                _ = ValidateMinMax();
             }
         }
         public double MinYValue
@@ -105,7 +107,7 @@ namespace NetScad.UI.ViewModels
             get => _minY; set
             {
                 this.RaiseAndSetIfChanged(ref _minY, value);
-                ValidateMinMax();
+                _ = ValidateMinMax();
             }
         }
         public double MaxYValue
@@ -113,7 +115,7 @@ namespace NetScad.UI.ViewModels
             get => _maxY; set
             {
                 this.RaiseAndSetIfChanged(ref _maxY, value);
-                ValidateMinMax();
+                _ = ValidateMinMax();
             }
         }
         public double MinZValue
@@ -121,15 +123,15 @@ namespace NetScad.UI.ViewModels
             get => _minZ; set
             {
                 this.RaiseAndSetIfChanged(ref _minZ, value);
-                ValidateMinMax();
+                _ = ValidateMinMax();
             }
         }
         public double MaxZValue
         {
-            get => _maxZ; set
+            get => _maxZ; set 
             {
                 this.RaiseAndSetIfChanged(ref _maxZ, value);
-                ValidateMinMax();
+                _ = ValidateMinMax();
             }
         }
         public string MinXWatermark { get => _inputMinX; set => this.RaiseAndSetIfChanged(ref _inputMinX, value); }
@@ -146,7 +148,7 @@ namespace NetScad.UI.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _selectedUnit, value);
                 UnitHasChanged = true; // For use in conversions when _selectedUnit has changed
-                ConvertInputs(_decimalPlaces);
+                _ = ConvertInputs(_decimalPlaces);
             }
         }
         public List<BackgroundType> BackgroundTypeValues { get; set; }
@@ -163,14 +165,14 @@ namespace NetScad.UI.ViewModels
         public int CallingMethodLength { get => _callingMethodLength; set => this.RaiseAndSetIfChanged(ref _callingMethodLength, value); }
         public ObservableCollection<GeneratedModule> AxesList { get => _axesList; set => this.RaiseAndSetIfChanged(ref _axesList, value); }
         public bool CreateButtonEnabled { get => _createButtonEnabled; set => this.RaiseAndSetIfChanged(ref _createButtonEnabled, value); }
+        public static SqliteConnection Connection { get; set; } = new SqliteConnection();
 
-        public Task ConvertInputs(int decimalPlaces) // Convert from unit system to another
+        public async Task ConvertInputs(int decimalPlaces) // Convert from unit system to another
         {
-            if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged) { ConvertInputsImperial(decimalPlaces); }
-            else if (_selectedUnit == UnitSystem.Metric && UnitHasChanged) { ConvertInputsMetric(decimalPlaces); }
+            if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged) { await ConvertInputsImperial(decimalPlaces); }
+            else if (_selectedUnit == UnitSystem.Metric && UnitHasChanged) { await ConvertInputsMetric(decimalPlaces); }
             IsImperial = SelectedUnitValue == UnitSystem.Metric ? false : true;
             IsMetric = SelectedUnitValue == UnitSystem.Metric ? true : false;
-            return Task.CompletedTask;
         }
 
         public async Task CreateCustomAxisAsync()
@@ -242,7 +244,7 @@ namespace NetScad.UI.ViewModels
             }
         }
 
-        public Task ClearInputs()
+        public async Task ClearInputs()
         {
             ClearErrors(nameof(MaxXValue));
             ClearErrors(nameof(MaxYValue));
@@ -264,21 +266,18 @@ namespace NetScad.UI.ViewModels
             MinXValue = 0;  // Set to 0 for coordinates
             MinYValue = 0;
             MinZValue = 0;
-
-            return Task.CompletedTask;
         }
 
         /**** Axes List DataGrid ****/
-        private Task GetAxesList()
+        private async Task GetAxesList()
         {
             var parser = new ScadParser();
             var filePath = Path.Combine("Scad", "Axes", "axes.scad");
             AxesList = parser.AxesModulesList(filePath);
-            return Task.CompletedTask;
         }
 
         // ViewModel helper functions for conversions - stateful
-        private Task ConvertInputsImperial(int decimalPlaces)
+        private async Task ConvertInputsImperial(int decimalPlaces)
         {
             // Convert from metric unit system to imperial
             MinXValue = Math.Round(MillimeterToInches(_minX), decimalPlaces);  // mm to inches
@@ -290,10 +289,9 @@ namespace NetScad.UI.ViewModels
             TotalCubicVolume = Math.Round(VolumeConverter.ConvertCm3ToIn3(_totalCubicVolume), decimalPlaces);  // cm3 to in3
             TotalCubicVolumeScale = Math.Round(VolumeConverter.ConvertM3ToFt3(_totalCubicVolumeScale), decimalPlaces);  // m to feet 
             UnitHasChanged = false;
-            return Task.CompletedTask;
         }
 
-        private Task ConvertInputsMetric(int decimalPlaces)
+        private async Task ConvertInputsMetric(int decimalPlaces)
         {
             // Convert from imperial unit system to metric
             MinXValue = Math.Round(InchesToMillimeter(_minX), decimalPlaces);  // inches to mm
@@ -305,10 +303,9 @@ namespace NetScad.UI.ViewModels
             TotalCubicVolume = Math.Round(VolumeConverter.ConvertIn3ToCm3(_totalCubicVolume), decimalPlaces);  // inches to cm
             TotalCubicVolumeScale = Math.Round(VolumeConverter.ConvertFt3ToM3(_totalCubicVolumeScale), decimalPlaces);  // feet to m
             UnitHasChanged = false;
-            return Task.CompletedTask;
         }
 
-        private void ValidateMinMax()
+        private async Task ValidateMinMax()
         {
             ClearErrors(nameof(MaxXValue));
             ClearErrors(nameof(MaxYValue));

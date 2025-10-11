@@ -25,7 +25,7 @@ namespace NetScad.UI
 
         public bool Match(object? data)
         {
-            return data is ViewModelBase;
+            return data is ValidatableBase;
         }
     }
 }

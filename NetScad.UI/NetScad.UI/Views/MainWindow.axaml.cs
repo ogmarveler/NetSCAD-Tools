@@ -1,19 +1,20 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NetScad.UI.ViewModels;
+using System;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace NetScad.UI.Views
 {
     public partial class MainWindow : Window
     {
-        // Set MainView as the initial content
-        private object _mainViewModel = new MainWindowViewModel();
-
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = _mainViewModel;
         }
 
         private async void OpenFolderPickerAsync(object? sender, RoutedEventArgs e)

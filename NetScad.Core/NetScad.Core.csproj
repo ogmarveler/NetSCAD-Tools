@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<PublishTrimmed>true</PublishTrimmed>
@@ -32,9 +33,15 @@
 
 	<ItemGroup>
 
+		<PackageReference Include="Dapper" Version="2.1.66" />
+
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9" />
 
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
+
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.9" />
 
 		<PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.9" />
 

@@ -1,5 +1,8 @@
 using Avalonia;
 using Avalonia.Styling;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NetScad.UI.Views;
 using ReactiveUI;
 using System.Threading.Tasks;
@@ -10,9 +13,8 @@ namespace NetScad.UI.ViewModels
     public class MainWindowViewModel : ReactiveObject
     {
         // Set MainView as the initial content
-        private object _mainViewContent = new AxisView();
+        private object _mainViewContent = App.Host.Services.GetRequiredService<AxisView>();
 
-        //public MainWindowViewModel() => _mainViewContent = new MainView();
         public MainWindowViewModel()
         {
             MainViewContent = _mainViewContent; // Start with this view
@@ -30,10 +32,9 @@ namespace NetScad.UI.ViewModels
         }
 
         // SPA - Swap out views
-        public void LoadCreateAxesView() => MainViewContent = new CreateAxesView();
-        public void LoadAxisView() => MainViewContent = new AxisView();
-
-        public void ToggleTheme() => Application.Current?.RequestedThemeVariant =
+        public async void LoadCreateAxesView() => MainViewContent = App.Host.Services.GetRequiredService<CreateAxesView>();
+        public async void LoadAxisView() => MainViewContent = App.Host.Services.GetRequiredService<AxisView>();
+          public async void ToggleTheme() => Application.Current?.RequestedThemeVariant =
                 Application.Current.ActualThemeVariant == ThemeVariant.Light
                     ? ThemeVariant.Dark
                     : ThemeVariant.Light;

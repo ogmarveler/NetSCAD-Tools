@@ -1,6 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Platform;
 using Markdown.Avalonia;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NetScad.UI.ViewModels;
 using ReactiveUI;
 using System;

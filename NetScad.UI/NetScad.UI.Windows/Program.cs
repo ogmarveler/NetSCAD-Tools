@@ -5,14 +5,14 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NetScad.UI;
 using NetScad.UI.ViewModels;
+using NetScad.UI.Views;
 using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using NetScad.UI;
-using NetScad.Core.Services;
-using System.IO;
 
 namespace NetScad
 {
@@ -34,22 +34,30 @@ namespace NetScad
                     return dbPath;
                 });
 
-                // Singleton SqliteConnection (not opened here)
+                // Singleton SqliteConnection (opened here)
                 services.AddSingleton(provider =>
                 {
                     var dbPath = provider.GetRequiredService<string>();
+                    // Clear any open pools
+                    SqliteConnection.ClearAllPools();
+                    GC.Collect();
                     var connection = new SqliteConnection($"Data Source={dbPath};Mode=ReadWrite;Cache=Shared");
+                    connection.Open(); // Open connection here
                     return connection;
                 });
 
-                services.AddHostedService<DbInitializationService>(); // Background service for DB initialization (off UI thread)
                 services.AddSingleton<MainWindowViewModel>(); // Root VM for MainWindow.axaml embedding
+                services.AddSingleton<CreateAxesViewModel>();
+                services.AddSingleton<CreateAxesView>();
+                services.AddSingleton<AxisView>();
                 services.AddSingleton<App>(); // Avalonia app
             });
 
+            // Build and start the host
             var host = builder.Build();
-            App.Host = host; // Set static Host property
-            host.Start();
+            App.Host = host; // Set static Host property for DI access
+            CreateAxesViewModel.Connection = host.Services.GetRequiredService<SqliteConnection>(); // Static assignment for AOT
+            host.StartAsync();
 
             try
             {
@@ -59,8 +67,9 @@ namespace NetScad
             finally
             {
                 // Graceful shutdown: Dispose connection
-                host.StopAsync(TimeSpan.FromSeconds(5)).Wait();
+                host.StopAsync(TimeSpan.FromSeconds(5));
                 host.Dispose();
+                GC.Collect();
             }
         }
 
@@ -74,7 +83,6 @@ namespace NetScad
             .With(new MacOSPlatformOptions { ShowInDock = true, }) // Options on macOS
             .With(new X11PlatformOptions { RenderingMode = [X11RenderingMode.Glx, X11RenderingMode.Software], OverlayPopups = true, UseDBusMenu = true, WmClass = AppDomain.CurrentDomain.FriendlyName, }) // Enable GPU on Linux
             .WithInterFont() // Use Inter font by default
-            .LogToTrace() // Enable logging to Visual Studio output window
             .UseReactiveUI(); // MVVM framework
 
         private static void SilenceConsole()
