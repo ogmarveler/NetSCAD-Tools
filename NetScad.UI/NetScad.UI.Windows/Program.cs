@@ -50,6 +50,8 @@ namespace NetScad
                 services.AddSingleton<CreateAxesViewModel>();
                 services.AddSingleton<CreateAxesView>();
                 services.AddSingleton<AxisView>();
+                services.AddSingleton<ScadObjectView>();
+                services.AddSingleton<ScadObjectViewModel>();
                 services.AddSingleton<App>(); // Avalonia app
             });
 

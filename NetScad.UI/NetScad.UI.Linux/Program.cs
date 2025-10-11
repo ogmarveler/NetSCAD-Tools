@@ -34,7 +34,7 @@ namespace NetScad
                     return dbPath;
                 });
 
-                // Singleton SqliteConnection (not opened here)
+                // Singleton SqliteConnection (opened here)
                 services.AddSingleton(provider =>
                 {
                     var dbPath = provider.GetRequiredService<string>();
@@ -50,12 +50,15 @@ namespace NetScad
                 services.AddSingleton<CreateAxesViewModel>();
                 services.AddSingleton<CreateAxesView>();
                 services.AddSingleton<AxisView>();
+                services.AddSingleton<ScadObjectView>();
+                services.AddSingleton<ScadObjectViewModel>();
                 services.AddSingleton<App>(); // Avalonia app
             });
 
+            // Build and start the host
             var host = builder.Build();
-            App.Host = host;
-            CreateAxesViewModel.Connection = host.Services.GetRequiredService<SqliteConnection>();
+            App.Host = host; // Set static Host property for DI access
+            CreateAxesViewModel.Connection = host.Services.GetRequiredService<SqliteConnection>(); // Static assignment for AOT
             host.StartAsync();
 
             try
