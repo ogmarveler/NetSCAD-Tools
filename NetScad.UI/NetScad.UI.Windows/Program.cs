@@ -50,6 +50,7 @@ namespace NetScad
                 services.AddSingleton<CreateAxesViewModel>();
                 services.AddSingleton<CreateAxesView>();
                 services.AddSingleton<AxisView>();
+                services.AddSingleton<AxisViewModel>();
                 services.AddSingleton<ScadObjectView>();
                 services.AddSingleton<ScadObjectViewModel>();
                 services.AddSingleton<App>(); // Avalonia app
@@ -57,8 +58,7 @@ namespace NetScad
 
             // Build and start the host
             var host = builder.Build();
-            App.Host = host; // Set static Host property for DI access
-            CreateAxesViewModel.Connection = host.Services.GetRequiredService<SqliteConnection>(); // Static assignment for AOT
+            App.Host = host; // Set static Host property for DI access througout app
             host.StartAsync();
 
             try

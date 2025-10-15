@@ -1,6 +1,4 @@
 ﻿using NetScad.Core.Interfaces;
-using System;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {

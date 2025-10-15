@@ -48,7 +48,6 @@ namespace NetScad.UI.ViewModels
         private string _inputMaxZ;
         private ObservableCollection<GeneratedModule> _axesList;
         private bool _createButtonEnabled;
-        private SqliteConnection _connection;
 
         public CreateAxesViewModel()
         {
@@ -149,6 +148,7 @@ namespace NetScad.UI.ViewModels
                 this.RaiseAndSetIfChanged(ref _selectedUnit, value);
                 UnitHasChanged = true; // For use in conversions when _selectedUnit has changed
                 _ = ConvertInputs(_decimalPlaces);
+                _ = GetAxesList(); // Update AxesList based on unit system
             }
         }
         public List<BackgroundType> BackgroundTypeValues { get; set; }
@@ -273,7 +273,19 @@ namespace NetScad.UI.ViewModels
         {
             var parser = new ScadParser();
             var filePath = Path.Combine("Scad", "Axes", "axes.scad");
-            AxesList = parser.AxesModulesList(filePath);
+            _axesList = parser.AxesModulesList(filePath);
+            // Filter and select based on unit system
+            AxesList = SelectedUnitValue switch
+            {
+                UnitSystem.Metric => [.. _axesList
+                    .Where(x => x.CallingMethod.Contains("_MM_"))],
+
+                UnitSystem.Imperial => [.. _axesList
+                    .Where(x => x.CallingMethod.Contains("_Inch_"))],
+
+                _ => _axesList
+            };
+
         }
 
         // ViewModel helper functions for conversions - stateful

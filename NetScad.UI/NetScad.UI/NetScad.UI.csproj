@@ -32,6 +32,10 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   
+  <ItemGroup>
+    <AvaloniaXaml Remove="Views\ScadObjectView_backup.axaml" />
+  </ItemGroup>
+  
   <ItemGroup>  
     <PackageReference Include="Avalonia" />  
     <PackageReference Include="Avalonia.AvaloniaEdit" />
@@ -55,6 +59,7 @@
 	<ItemGroup>
     <ProjectReference Include="..\..\NetScad.Axis\NetScad.Axis.csproj" />
     <ProjectReference Include="..\..\NetScad.Core\NetScad.Core.csproj" />
+    <ProjectReference Include="..\..\NetScad.Designer\NetScad.Designer.csproj" />
   </ItemGroup>
 
 <ItemGroup>

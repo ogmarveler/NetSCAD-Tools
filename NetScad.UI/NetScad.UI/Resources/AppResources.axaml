@@ -18,11 +18,13 @@
             <SolidColorBrush x:Key="CardBackground" Color="White" />
             <SolidColorBrush x:Key="CardForeground" Color="Black" />
             <SolidColorBrush x:Key="WindowBackground" Color="#F5F5F5" />
+            <SolidColorBrush x:Key="LabelBackground" Color="#DADDE2" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="CardBackground" Color="#212121" />
             <SolidColorBrush x:Key="CardForeground" Color="White" />
             <SolidColorBrush x:Key="WindowBackground" Color="#121212" />
+            <SolidColorBrush x:Key="LabelBackground" Color="#545F66" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -35,6 +37,35 @@
             Classes="card"
             ItemsSource="{Binding UnitSystemValues}"
             SelectedValue="{Binding SelectedUnitValue}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+    </StackPanel>
+
+    <!--  Unit Selection Combo Box  -->
+    <StackPanel x:Key="UnitComboBox2" x:DataType="vm:ScadObjectViewModel">
+        <ComboBox
+            Classes="card"
+            ItemsSource="{Binding UnitSystemValues}"
+            SelectedValue="{Binding SelectedUnitValue}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+    </StackPanel>
+
+    <!--  Axes Combo Box  -->
+    <StackPanel x:Key="AxesComboBox" x:DataType="vm:ScadObjectViewModel">
+        <ComboBox
+            Classes="card"
+            IsEnabled="{Binding AxesSelectEnabled}"
+            ItemsSource="{Binding AxesList}"
+            SelectedValue="{Binding SelectedAxisValue}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />

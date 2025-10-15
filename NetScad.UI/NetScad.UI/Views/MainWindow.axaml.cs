@@ -1,11 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using NetScad.UI.ViewModels;
-using System;
-using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace NetScad.UI.Views
@@ -15,6 +11,7 @@ namespace NetScad.UI.Views
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = App.Host.Services.GetRequiredService<MainWindowViewModel>();
         }
 
         private async void OpenFolderPickerAsync(object? sender, RoutedEventArgs e)

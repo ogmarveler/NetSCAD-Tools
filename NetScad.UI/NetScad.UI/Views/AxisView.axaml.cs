@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Platform;
 using Markdown.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using NetScad.UI.ViewModels;
 using ReactiveUI;
 using System;
@@ -15,7 +14,7 @@ public partial class AxisView : UserControl
     public AxisView()
     {
         InitializeComponent();
-        DataContext = new AxisViewModel();
+        DataContext = App.Host.Services.GetRequiredService<AxisViewModel>();
         LoadMarkdownAsync("avares://NetScad.UI/Assets/Guides/Axis.markdown");  // Relative or absolute path
     }
 

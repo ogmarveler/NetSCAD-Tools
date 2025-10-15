@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NetScad.Core\NetScad.Core.csproj" />
+  </ItemGroup>
+
 </Project>

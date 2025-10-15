@@ -1,25 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace NetScad.Core.Material
+﻿namespace NetScad.Core.Material
 {
     // Enum for 3D printing filament types
     public enum FilamentType
     {
-        PLA,
-        ABS,
-        PETG,
-        TPU,
-        Nylon,
-        ASA,
-        PC,
-        HIPS,
-        PVA,
-        CarbonFiber,
-        ABS_GF,
-        PLA_FR
+        ABS, // Acrylonitrile Butadiene Styrene
+        ABS_GF, // Glass Fiber Reinforced
+        ASA, // Acrylonitrile Styrene Acrylate
+        CF, // Carbon Fiber Reinforced
+        HIPS, // High Impact Polystyrene (soluble support)
+        Nylon, // Polyamide
+        PC, // Polycarbonate
+        PETG, // Polyethylene Terephthalate Glycol
+        PLA, // Polylactic Acid
+        PLA_FR, // Flame Retardant
+        PVA, // Polyvinyl Alcohol (soluble support)
+        TPU, // Thermoplastic Polyurethane (flexible)
     }
 
     // Record to store filament printing settings, electrical standards, and durability
@@ -159,9 +154,9 @@ namespace NetScad.Core.Material
                 MaxWeightSupportKg = 20,
                 Notes = "Water-soluble support material. Store in dry conditions. Not rated for UL94; unsuitable for electrical components. Supports ~20 kg; not for structural use. RoHS compliant."
             },
-            FilamentType.CarbonFiber => new FilamentInfo
+            FilamentType.CF => new FilamentInfo
             {
-                Type = FilamentType.CarbonFiber,
+                Type = FilamentType.CF,
                 MinExtruderTemp = 240,
                 MaxExtruderTemp = 260,
                 MinBedTemp = 60,

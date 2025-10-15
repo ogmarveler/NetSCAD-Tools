@@ -33,13 +33,18 @@ namespace NetScad.UI.ViewModels
         // SPA - Swap out views
         public async void LoadCreateAxesView() => MainViewContent = App.Host.Services.GetRequiredService<CreateAxesView>();
         public async void LoadAxisView() => MainViewContent = App.Host.Services.GetRequiredService<AxisView>();
-        public async void LoadDesignerView() => MainViewContent = App.Host.Services.GetRequiredService<ScadObjectView>();
+        public async void LoadDesignerView()
+        {
+            await App.Host.Services.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
+            MainViewContent = App.Host.Services.GetRequiredService<ScadObjectView>();
+        }
+
         public async void ToggleTheme() => Application.Current?.RequestedThemeVariant =
                 Application.Current.ActualThemeVariant == ThemeVariant.Light
                     ? ThemeVariant.Dark
                     : ThemeVariant.Light;
 
-        public ICommand NewAxesCommand { get; }
+        public ICommand NewAxesCommand { get; } 
         public ICommand NewObjectCommand { get; }
         public ICommand OpenCommand { get; }
         public ICommand AxisViewCommand { get; }

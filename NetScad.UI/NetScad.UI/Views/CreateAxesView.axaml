@@ -107,7 +107,6 @@
                 </StackPanel>
             </ToolTip.Tip>
         </TextBlock>
-        <!--  Text="💬">  -->
 
         <!--  Change Unit Measure of X, Y, Z  -->
         <Button
@@ -158,7 +157,7 @@
                 </StackPanel>
             </ToolTip.Tip>
         </TextBlock>
-        <!--  Text="💬">  -->
+
         <!--  Min and Max Input Boxes  -->
         <!--  X  -->
         <TextBlock
@@ -418,7 +417,7 @@
                 <StackPanel Orientation="Vertical">
                     <TextBlock HorizontalAlignment="Stretch">
                         This action will create a custom axis, to be<LineBreak />
-                        used inchOpenSCAD, from the X,Y,Z inputs.</TextBlock>
+                        used in OpenSCAD, from the X,Y,Z inputs.</TextBlock>
                 </StackPanel>
             </ToolTip.Tip>
         </Button>
@@ -443,7 +442,7 @@
                 </StackPanel>
             </ToolTip.Tip>
         </TextBlock>
-        <!--  Text="💬">  -->
+
         <Separator
             Grid.Row="12"
             Grid.ColumnSpan="3"
@@ -538,7 +537,6 @@
             IsVisible="True">
             <PathIcon Data="{StaticResource cube_regular}" />
         </TextBlock>
-        <!--  Text="🧊" />  -->
 
         <!--  Display Axes Calling Method - Needs to be Selectable  -->
 
