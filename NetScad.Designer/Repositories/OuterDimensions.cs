@@ -13,6 +13,7 @@ namespace NetScad.Designer.Repositories
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? Material { get; set; }
+        public string OperationType { get; set; } = Core.Primitives.OperationType.Add.ToString(); // Add or Subtract
         public const int OpenSCAD_DecimalPlaces = 6; // High precision for 3D printing
         public double Length_MM { get; set; } // Millimeters (default)
         public double Width_MM { get; set; }
@@ -38,7 +39,7 @@ namespace NetScad.Designer.Repositories
         public string? AxisOSCADMethod 
         { 
             get => _axisOSCADMethod ?? (AxisDimensionsId.HasValue ? $"Axis: {AxisDimensionsId.Value}" : "No Axis Assigned");
-            set => _axisOSCADMethod = value.Replace("use <Axes/axes.scad>; ", "").Replace("Get_", "").Replace("_", " ");
+            set => _axisOSCADMethod = value?.Replace("use <Axes/axes.scad>; ", "").Replace("Get_", "").Replace("_", " ");
         }
 
         public Dictionary<string, object> ToDbDictionary() => new()
@@ -48,6 +49,7 @@ namespace NetScad.Designer.Repositories
             { "Name", Name },
             { "Description", Description ?? (object)DBNull.Value },
             { "Material", Material ?? (object)DBNull.Value },
+            { "OperationType", OperationType },
             { "Length_MM", Length_MM },
             { "Width_MM", Width_MM },
             { "Height_MM", Height_MM },
@@ -75,6 +77,7 @@ namespace NetScad.Designer.Repositories
             (nameof(OuterDimensions.Name), typeof(string), true),
             (nameof(OuterDimensions.Description), typeof(string), true),
             (nameof(OuterDimensions.Material), typeof(string), true),
+            (nameof(OuterDimensions.OperationType), typeof(string), false),
             (nameof(OuterDimensions.Length_MM), typeof(double), false),
             (nameof(OuterDimensions.Width_MM), typeof(double), false),
             (nameof(OuterDimensions.Height_MM), typeof(double), false),
@@ -281,5 +284,39 @@ namespace NetScad.Designer.Repositories
             
             return result;
         }
+
+        // Get by OperationType
+        public static async Task<IEnumerable<OuterDimensions>> GetByOperationTypeAsync(this OuterDimensions _, SqliteConnection connection, string operationType) => 
+            await connection.QueryAsync<OuterDimensions>(
+                "SELECT * FROM OuterDimensions WHERE OperationType = @OperationType ORDER BY CreatedAt DESC",
+                new { OperationType = operationType });
+
+        // Get by Name and OperationType with joined AxisDimensions OSCADMethod
+        public static async Task<IEnumerable<OuterDimensions>> GetByNameAndOperationTypeWithAxisAsync(this OuterDimensions _, SqliteConnection connection, string name, string operationType)
+        {
+            const string sql = @"
+                SELECT 
+                    od.*,
+                    ad.OSCADMethod as AxisOSCADMethod
+                FROM OuterDimensions od
+                LEFT JOIN AxisDimensions ad ON od.AxisDimensionsId = ad.Id
+                WHERE od.Name = @Name AND od.OperationType = @OperationType
+                ORDER BY od.CreatedAt DESC";
+            
+            var result = await connection.QueryAsync<OuterDimensions, string, OuterDimensions>(
+                sql,
+                (outerDim, axisMethod) =>
+                {
+                    outerDim.AxisOSCADMethod = axisMethod;
+                    return outerDim;
+                },
+                new { Name = name, OperationType = operationType },
+                splitOn: "AxisOSCADMethod"
+            );
+            
+            return result;
+        }
+
+        // ... (keep all existing query methods)
     }
 }

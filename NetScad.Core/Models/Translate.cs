@@ -19,7 +19,7 @@ namespace NetScad.Core.Models
         public double Z => (double)_parameters["z"];
         public IScadObject[] Children => _parameters.ContainsKey("children") ? (IScadObject[])_parameters["children"] : Array.Empty<IScadObject>();
 
-        public string OSCADMethod => $"translate([{X}, {Y}, {Z}]) {{ {string.Join("\n", Children.Select(c => c.OSCADMethod))} }};";
+        public string OSCADMethod => $"translate([{X}, {Y}, {Z}]) {{ {string.Join(" ", Children.Select(c => c.OSCADMethod))} }};";
 
         public Dictionary<string, object> ToDbDictionary() => new()
         {

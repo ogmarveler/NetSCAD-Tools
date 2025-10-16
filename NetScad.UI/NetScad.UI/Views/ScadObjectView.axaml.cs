@@ -52,10 +52,35 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void DataGrid_AutoGeneratingColumnAxis(object? sender, DataGridAutoGeneratingColumnEventArgs e)
+    private void DataGrid_AutoGeneratingColumnModule(object? sender, DataGridAutoGeneratingColumnEventArgs e)
+    {
+        // List of columns to exclude from display for ModuleDimensions
+        var excludedColumns = new[] { "Id", "CreatedAt", "OSCADMethod" };
+
+        if (excludedColumns.Contains(e.PropertyName))
+        {   
+            e.Cancel = true;
+            return;
+        }
+
+        // Dictionary for custom headers
+        var columnHeaders = new Dictionary<string, string>
+        {
+            { "ModuleType", "Type" },
+            { "OuterDimensionsName", "Object Name" },
+            { "Name", "OpenSCAD Call Method" }
+        };
+
+        if (columnHeaders.TryGetValue(e.PropertyName, out var header))
+        {
+            e.Column.Header = header;
+        }
+    }
+
+    private void DataGrid_AutoGeneratingColumnCylinder(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         // List of columns to exclude from display
-        var excludedColumns = new[] { "CreatedAt" };
+        var excludedColumns = new[] { "Id", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod" };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -66,14 +91,15 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Dictionary for custom headers to make them more user-friendly
         var columnHeaders = new Dictionary<string, string>
         {
-            { "Theme", "Theme" },
-            { "Unit", "Unit" },
-            { "MinX", $"Min X" },
-            { "MaxX", $"Max X" },
-            { "MinY", $"Min Y" },
-            { "MaxY", $"Max Y" },
-            { "MinZ", $"Min Z" },
-            { "MaxZ", $"Max Z" },
+            { "Radius_MM", "Radius (mm)" },
+            { "Radius1_MM", "Radius 1 (mm)" },
+            { "Radius2_MM", "Radius 2 (mm)" },
+            { "Height_MM", "Height (mm)" },
+            { "Radius_IN", "Radius (in)" },
+            { "Radius1_IN", "Radius 1 (in)" },
+            { "Radius2_IN", "Radius 2 (in)" },
+            { "Height_IN", "Height (in)" },
+            { "AxisOSCADMethod", "Axis" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -95,5 +121,20 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private async void ClearObjectButton_Click(object? sender, RoutedEventArgs e)
     {
         await ViewModel.ClearObjectAsync();
+    }
+
+    private async void CreateUnionButton_Click(object? sender, RoutedEventArgs e)
+    {
+        await ViewModel.CreateUnionModuleAsync();
+    }
+
+    private async void CreateDifferenceButton_Click(object? sender, RoutedEventArgs e)
+    {
+        await ViewModel.CreateDifferenceModuleAsync();
+    }
+
+    private async void ObjectToScadFileButton_Click(object? sender, RoutedEventArgs e)
+    {
+        await ViewModel.ObjectToScadFileAsync();
     }
 }

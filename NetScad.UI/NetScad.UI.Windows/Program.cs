@@ -5,6 +5,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NetScad.Core.Interfaces;
 using NetScad.UI;
 using NetScad.UI.ViewModels;
 using NetScad.UI.Views;
@@ -34,6 +35,15 @@ namespace NetScad
                     return dbPath;
                 });
 
+                // Register in Program.cs
+                services.AddSingleton<IScadPathProvider>(provider =>
+                {
+                    var logger = provider.GetRequiredService<ILogger<Program>>();
+                    var scadPath = GetScadPath(); // Your method to get the path
+                    logger.LogInformation("Using SCAD path: {ScadPath}, RID: {Rid}", scadPath, rid);
+                    return new ScadPathProvider(scadPath);
+                });
+
                 // Singleton SqliteConnection (opened here)
                 services.AddSingleton(provider =>
                 {
@@ -58,7 +68,7 @@ namespace NetScad
 
             // Build and start the host
             var host = builder.Build();
-            App.Host = host; // Set static Host property for DI access througout app
+            App.Host = host; // Set static Host property for DI access throughout app
             host.StartAsync();
 
             try
@@ -107,6 +117,12 @@ namespace NetScad
                 return "linux-x64";
             }
             throw new PlatformNotSupportedException("Unsupported platform");
+        }
+
+        private static string GetScadPath()
+        {
+            // Use bin directory for object.scad
+            return Path.Combine(AppContext.BaseDirectory, "Scad", "object.scad");
         }
 
         private static string GetDbPath()
