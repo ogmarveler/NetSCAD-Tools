@@ -1,6 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
+using NetScad.Core.Interfaces;
+using NetScad.Designer.Utility;
 using NetScad.UI.ViewModels;
 using System.Threading.Tasks;
 
@@ -14,16 +16,11 @@ namespace NetScad.UI.Views
             DataContext = App.Host.Services.GetRequiredService<MainWindowViewModel>();
         }
 
-        private async void OpenFolderPickerAsync(object? sender, RoutedEventArgs e)
-        {
-            var folderPickerDataContext = new FolderPickerViewModel(this);
-            await folderPickerDataContext.OpenFolderPickerAsync();
-        }
-
         public async Task OpenFolderAsync()
         {
-            var folderPickerDataContext = new FolderPickerViewModel(this);
-            await folderPickerDataContext.OpenFolderAsync();
+            var scadPath = App.Host?.Services.GetRequiredService<IScadPathProvider>().ScadPath;
+
+            await ScadFileOperations.OpenFolderAsync(scadPath);
         }
     }
 }

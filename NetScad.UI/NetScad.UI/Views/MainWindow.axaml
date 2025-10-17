@@ -33,20 +33,28 @@
 
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_Axes">
-                <MenuItem Command="{Binding NewAxesCommand}" Header="_Create New Axes">
+            <!--  File and Folder Explorer  -->
+            <MenuItem Header="_Open">
+                <MenuItem Command="{Binding OpenFolderCommand}" Header="_SCAD Folder">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource folder_open_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <!--  Create Axes or Object  -->
+            <MenuItem Header="_Create">
+                <MenuItem Command="{Binding NewAxesCommand}" Header="_New Axes">
                     <MenuItem.Icon>
                         <PathIcon Data="{StaticResource arrow_expand_regular}" />
                     </MenuItem.Icon>
                 </MenuItem>
-            </MenuItem>
-            <MenuItem Header="_Designer">
-                <MenuItem Command="{Binding NewObjectCommand}" Header="_Create New Object">
+                <MenuItem Command="{Binding NewObjectCommand}" Header="_New Object">
                     <MenuItem.Icon>
-                        <PathIcon Data="{StaticResource design_ideas_regular}" />
+                        <PathIcon Data="{StaticResource select_object_regular}" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+            <!--  Change Theme  -->
             <MenuItem Header="_Appearance">
                 <MenuItem Command="{Binding ToggleCommand}" Header="_Switch Theme">
                     <MenuItem.Icon>
@@ -55,12 +63,18 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Guides">
-                <MenuItem Command="{Binding AxisViewCommand}" Header="_Axis">
+                <MenuItem Command="{Binding AxisViewCommand}" Header="_Custom Axis">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource book_question_mark_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding DesignerViewCommand}" Header="_Object Designer">
                     <MenuItem.Icon>
                         <PathIcon Data="{StaticResource book_question_mark_regular}" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+
         </Menu>
 
 

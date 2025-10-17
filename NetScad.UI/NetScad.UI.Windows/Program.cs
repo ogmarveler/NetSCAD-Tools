@@ -62,6 +62,8 @@ namespace NetScad
                 services.AddSingleton<CreateAxesView>();
                 services.AddSingleton<AxisView>();
                 services.AddSingleton<AxisViewModel>();
+                services.AddSingleton<DesignerView>();
+                services.AddSingleton<DesignerViewModel>();
                 services.AddSingleton<ScadObjectView>();
                 services.AddSingleton<ScadObjectViewModel>();
                 services.AddSingleton<IScrewSizeService, ScrewSizeService>();

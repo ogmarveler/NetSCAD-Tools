@@ -8,6 +8,7 @@ using NetScad.Core.Models;
 using NetScad.Core.Primitives;
 using NetScad.Core.Utility;
 using NetScad.Designer.Repositories;
+using NetScad.Designer.Utility;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,7 @@ namespace NetScad.UI.ViewModels
         private bool _isCylinderSelected = false;
         private UnitSystem _baseSelectedUnit;
         private bool _axisStored = false;
+        private bool _fileSaved = false;
 
         public ScadObjectViewModel()
         {
@@ -328,6 +330,7 @@ namespace NetScad.UI.ViewModels
             _axisId = AxesSelectEnabled ? null : _axisId;  // If the ability to select an axis is disabled, then use existing Id
             _selectedAxis = AxesSelectEnabled ? null : _selectedAxis;
             _baseSelectedUnit = UnitSystem.Metric;
+            _fileSaved = false; // The process flow is that each object saves to a new solids file, while the main object file is appended.
             ScrewSizes = _screwSizes;
             await GetAxesList(); // Refresh axes list when unit changes
             await GetDimensionsPart();
@@ -623,11 +626,16 @@ namespace NetScad.UI.ViewModels
                 }
 
                 sb.AppendLine();
-               //sb.AppendLine($"    }}"); // Union close
+                //sb.AppendLine($"    }}"); // Union close
                 //sb.AppendLine($"}}");  // Difference close
 
                 // Write the call methods to the main object.scad file
-                await Output.AppendToSCAD(content: sb.ToString(), filePath: Path.Combine(_objectFilePath, "Solids", "object.scad"), cancellationToken: new CancellationToken());
+                var filePath = Path.Combine(_objectFilePath, "Solids", "object.scad");
+                await Output.AppendToSCAD(content: sb.ToString(), filePath: filePath, cancellationToken: new CancellationToken());
+                _fileSaved = true; // Set to false when Clear Object function is called, default is false when opening app
+
+                // Open the file in whatever the user has designated as the SCAD IDE associated with opening .scad files
+                await ScadFileOperations.OpenScadFileAsync(filePath);
             }
         }
 

@@ -1,0 +1,31 @@
+<UserControl
+    x:Class="NetScad.UI.Views.DesignerView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:NetScad.UI.ViewModels;assembly=NetScad.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="using:Markdown.Avalonia"
+    xmlns:views="using:NetScad.UI.Views"
+    xmlns:vm="using:NetScad.UI.ViewModels"
+    d:DesignHeight="720"
+    d:DesignWidth="1280"
+    x:CompileBindings="True"
+    x:DataType="vm:DesignerViewModel"
+    Background="{DynamicResource WindowBackground}"
+    mc:Ignorable="d">
+
+    <StackPanel
+        Margin="0"
+        HorizontalAlignment="Stretch"
+        Background="{DynamicResource CardBackground}">
+        <md:MarkdownScrollViewer
+            x:Name="MarkdownView"
+            Margin="20"
+            HorizontalAlignment="Stretch"
+            TextBlock.Foreground="{DynamicResource CardForeground}"
+            TextBlock.TextAlignment="Justify"
+            TextBlock.TextWrapping="Wrap" />
+    </StackPanel>
+
+</UserControl>

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NetScad.Core.Measurements
+﻿namespace NetScad.Core.Measurements
 {
     public class ServerRack
     {

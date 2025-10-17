@@ -1,5 +1,4 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
@@ -31,7 +30,7 @@ namespace NetScad.Core.Models
         };
 
         // Client-side example:
-        /*
+        /*  
         var cylParams = new Dictionary<string, object> { { "r", 5.0 }, { "h", 10.0 }, { "resolution", 50.0 } };
         var cylinder = OScad3D.Cylinder.ToScadObject(cylParams);
         Console.WriteLine(cylinder.OSCADMethod); // cylinder(h=10, r=5, $fn=50);

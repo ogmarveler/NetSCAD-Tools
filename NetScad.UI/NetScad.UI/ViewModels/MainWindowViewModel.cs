@@ -18,10 +18,11 @@ namespace NetScad.UI.ViewModels
             MainViewContent = _mainViewContent; // Start with this view
             // Initialize menu commands
             NewAxesCommand = ReactiveCommand.Create(LoadCreateAxesView);
-            NewObjectCommand = ReactiveCommand.Create(LoadDesignerView);
-            OpenCommand = ReactiveCommand.Create(() => { using Task _ = new MainWindow().OpenFolderAsync(); });
+            NewObjectCommand = ReactiveCommand.Create(LoadScadObjectView);
+            OpenFolderCommand = ReactiveCommand.Create(() => { using Task _ = new MainWindow().OpenFolderAsync(); });
             ToggleCommand = ReactiveCommand.Create(ToggleTheme);
             AxisViewCommand = ReactiveCommand.Create(LoadAxisView);
+            DesignerViewCommand = ReactiveCommand.Create(LoadDesignerView);
         }
 
         public object MainViewContent
@@ -33,7 +34,8 @@ namespace NetScad.UI.ViewModels
         // SPA - Swap out views
         public async void LoadCreateAxesView() => MainViewContent = App.Host.Services.GetRequiredService<CreateAxesView>();
         public async void LoadAxisView() => MainViewContent = App.Host.Services.GetRequiredService<AxisView>();
-        public async void LoadDesignerView()
+        public async void LoadDesignerView() => MainViewContent = App.Host.Services.GetRequiredService<DesignerView>();
+        public async void LoadScadObjectView()
         {
             await App.Host.Services.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
             MainViewContent = App.Host.Services.GetRequiredService<ScadObjectView>();
@@ -46,8 +48,9 @@ namespace NetScad.UI.ViewModels
 
         public ICommand NewAxesCommand { get; } 
         public ICommand NewObjectCommand { get; }
-        public ICommand OpenCommand { get; }
+        public ICommand OpenFolderCommand { get; }
         public ICommand AxisViewCommand { get; }
+        public ICommand DesignerViewCommand { get; }
         public ICommand ToggleCommand { get; }
     }
 }
