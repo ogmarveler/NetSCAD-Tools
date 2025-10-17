@@ -124,7 +124,7 @@ namespace NetScad
         private static string GetScadPath()
         {
             // Use bin directory for object.scad
-            return Path.Combine(AppContext.BaseDirectory, "Scad", "object.scad");
+            return Path.Combine(AppContext.BaseDirectory, "Scad");
         }
 
         private static string GetDbPath()

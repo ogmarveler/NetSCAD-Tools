@@ -16,7 +16,7 @@ namespace NetScad.Core.Models
         public double SizeZ => (double)_parameters["size_z"];
         public double RoundRadius => (double)_parameters["round_r"];
         public double RoundHeight => _parameters.ContainsKey("round_h") ? (double)_parameters["round_h"] : 0.001;
-        public double Resolution => _parameters.ContainsKey("resolution") ? (double)_parameters["resolution"] : 200;
+        public int Resolution => _parameters.ContainsKey("resolution") ? (int)_parameters["resolution"] : 180;
 
         private Cube AdjustedCube => new Cube(new Dictionary<string, object>
         {

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NetScad.Core.Interfaces;
+using NetScad.Core.Models;
 using NetScad.UI;
 using NetScad.UI.ViewModels;
 using NetScad.UI.Views;
@@ -63,6 +64,7 @@ namespace NetScad
                 services.AddSingleton<AxisViewModel>();
                 services.AddSingleton<ScadObjectView>();
                 services.AddSingleton<ScadObjectViewModel>();
+                services.AddSingleton<IScrewSizeService, ScrewSizeService>();
                 services.AddSingleton<App>(); // Avalonia app
             });
 
@@ -122,7 +124,7 @@ namespace NetScad
         private static string GetScadPath()
         {
             // Use bin directory for object.scad
-            return Path.Combine(AppContext.BaseDirectory, "Scad", "object.scad");
+            return Path.Combine(AppContext.BaseDirectory, "Scad");
         }
 
         private static string GetDbPath()

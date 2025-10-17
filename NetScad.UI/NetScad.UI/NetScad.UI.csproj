@@ -78,7 +78,7 @@
 	  <None Update="Scad\Axes\light_40x80x120_mm_orig_0x0xn60.scad">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="Scad\object.scad">
+	  <None Update="Scad\Solids\object.scad">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Scad\sample.scad">

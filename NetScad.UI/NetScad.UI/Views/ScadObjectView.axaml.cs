@@ -66,7 +66,8 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Dictionary for custom headers
         var columnHeaders = new Dictionary<string, string>
         {
-            { "ModuleType", "Type" },
+            { "ModuleType", "Module Type" },
+            { "SolidType", "Solid Type" },
             { "OuterDimensionsName", "Object Name" },
             { "Name", "OpenSCAD Call Method" }
         };
@@ -133,8 +134,13 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         await ViewModel.CreateDifferenceModuleAsync();
     }
 
-    private async void ObjectToScadFileButton_Click(object? sender, RoutedEventArgs e)
+    private async void ObjectToScadFilesButton_Click(object? sender, RoutedEventArgs e)
     {
-        await ViewModel.ObjectToScadFileAsync();
+        await ViewModel.ObjectToScadFilesAsync();
+    }
+
+    private async void ApplyAxisButton_Click(object? sender, RoutedEventArgs e)
+    {
+        await ViewModel.CreateAxisAsync();
     }
 }

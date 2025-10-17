@@ -28,6 +28,7 @@
         <conv:BooleanToTextConverter x:Key="BooleanToTextConverter" />
         <conv:BooleanOrConverter x:Key="BooleanOrConverter" />
         <conv:CollectionCountToBooleanConverter x:Key="CollectionCountToBooleanConverter" />
+        <conv:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter" />
     </UserControl.Resources>
 
     <Grid
@@ -36,6 +37,12 @@
         VerticalAlignment="Stretch"
         Background="{DynamicResource CardBackground}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -49,6 +56,7 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!--  Header  -->
@@ -71,10 +79,11 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="110" />
                 <ColumnDefinition Width="110" />
                 <ColumnDefinition Width="110" />
@@ -88,13 +97,77 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+
+            <!--  Axes Selection Combo Box  -->
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="0,5,0,-4"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                IsVisible="{Binding AxesSelectEnabled}"
+                Text="Axes" />
+            <ContentControl
+                Grid.Row="1"
+                Grid.Column="0"
+                Content="{DynamicResource AxesComboBox}"
+                IsVisible="{Binding AxesSelectEnabled}" />
+
+            <!--  Axes Display  -->
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="0,5,0,-5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                IsVisible="{Binding !AxesSelectEnabled}"
+                Text="Using Axis" />
+            <Border
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="5"
+                Padding="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Background="{DynamicResource LabelBackground}"
+                BorderBrush="{DynamicResource CardForeground}"
+                BorderThickness="1"
+                BoxShadow="1 1 2 0 Gray"
+                CornerRadius="3"
+                IsVisible="{Binding !AxesSelectEnabled}">
+                <TextBlock HorizontalAlignment="Center" Text="{Binding ObjectAxisDisplay}" />
+            </Border>
+
+            <!--  Unit Selection Combo Box  -->
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="1"
+                Margin="0,5,0,-3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                Text="Unit Type" />
+            <ContentControl
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Content="{DynamicResource UnitComboBox2}"
+                IsEnabled="True" />
 
             <!--  Name  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="0"
+                Grid.Column="2"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -102,15 +175,20 @@
                 Text="Name" />
             <TextBox
                 Grid.Row="1"
-                Grid.Column="0"
+                Grid.Column="2"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
-                IsEnabled="{Binding AxesSelectEnabled}"
                 SelectionBrush="Yellow"
                 Text="{Binding Name, Mode=TwoWay}"
                 Watermark="Name">
+                <TextBox.IsEnabled>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="!UnionButton" />
+                        <Binding Path="AxisStored" />
+                    </MultiBinding>
+                </TextBox.IsEnabled>
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch" Text="Object Name" />
@@ -121,7 +199,7 @@
             <!--  Description  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="1"
+                Grid.Column="3"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -129,11 +207,12 @@
                 Text="Description" />
             <TextBox
                 Grid.Row="1"
-                Grid.Column="1"
+                Grid.Column="3"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
+                IsEnabled="{Binding AxisStored}"
                 SelectionBrush="Yellow"
                 Text="{Binding Description, Mode=TwoWay}"
                 Watermark="Description">
@@ -144,27 +223,13 @@
                 </ToolTip.Tip>
             </TextBox>
 
-            <!--  Unit Selection Combo Box  -->
-            <TextBlock
-                Grid.Row="0"
-                Grid.Column="2"
-                Margin="0,5,0,-3"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Classes="textbox"
-                Text="Unit Type" />
-            <ContentControl
-                Grid.Row="1"
-                Grid.Column="2"
-                VerticalAlignment="Center"
-                Content="{DynamicResource UnitComboBox2}"
-                IsEnabled="{Binding AxesSelectEnabled}" />
+
 
             <!--  CUBE INPUTS - Length, Width, Height, Thickness  -->
             <!--  Length  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="3"
+                Grid.Column="4"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -173,11 +238,12 @@
                 Text="Length" />
             <TextBox
                 Grid.Row="1"
-                Grid.Column="3"
+                Grid.Column="4"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
+                IsEnabled="{Binding AxisStored}"
                 IsVisible="{Binding IsCubeSelected}"
                 SelectionBrush="Yellow"
                 Text="{Binding LengthMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
@@ -192,7 +258,7 @@
             <!--  Width  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="4"
+                Grid.Column="5"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -201,11 +267,12 @@
                 Text="Width" />
             <TextBox
                 Grid.Row="1"
-                Grid.Column="4"
+                Grid.Column="5"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
+                IsEnabled="{Binding AxisStored}"
                 IsVisible="{Binding IsCubeSelected}"
                 SelectionBrush="Yellow"
                 Text="{Binding WidthMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
@@ -220,7 +287,7 @@
             <!--  Height (Cube)  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="5"
+                Grid.Column="6"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -229,11 +296,12 @@
                 Text="Height" />
             <TextBox
                 Grid.Row="1"
-                Grid.Column="5"
+                Grid.Column="6"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
+                IsEnabled="{Binding AxisStored}"
                 IsVisible="{Binding IsCubeSelected}"
                 SelectionBrush="Yellow"
                 Text="{Binding HeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
@@ -248,7 +316,7 @@
             <!--  Thickness  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="6"
+                Grid.Column="7"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -257,11 +325,12 @@
                 Text="Thickness" />
             <TextBox
                 Grid.Row="1"
-                Grid.Column="6"
+                Grid.Column="7"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
+                IsEnabled="{Binding AxisStored}"
                 IsVisible="{Binding IsCubeSelected}"
                 SelectionBrush="Yellow"
                 Text="{Binding ThicknessMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
@@ -277,7 +346,7 @@
             <!--  Radius  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="3"
+                Grid.Column="4"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -292,7 +361,7 @@
             </TextBlock>
             <TextBox
                 Grid.Row="1"
-                Grid.Column="3"
+                Grid.Column="4"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
@@ -316,7 +385,7 @@
             <!--  Radius1 (Optional)  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="4"
+                Grid.Column="5"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -331,11 +400,12 @@
             </TextBlock>
             <TextBox
                 Grid.Row="1"
-                Grid.Column="4"
+                Grid.Column="5"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
+                IsEnabled="{Binding AxisStored}"
                 SelectionBrush="Yellow"
                 Text="{Binding Radius1MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                 Watermark="Optional">
@@ -355,7 +425,7 @@
             <!--  Radius2 (Optional)  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="5"
+                Grid.Column="6"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -371,11 +441,12 @@
 
             <TextBox
                 Grid.Row="1"
-                Grid.Column="5"
+                Grid.Column="6"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
+                IsEnabled="{Binding AxisStored}"
                 SelectionBrush="Yellow"
                 Text="{Binding Radius2MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                 Watermark="Optional">
@@ -395,7 +466,7 @@
             <!--  Height (Cylinder)  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="6"
+                Grid.Column="7"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -411,11 +482,12 @@
 
             <TextBox
                 Grid.Row="1"
-                Grid.Column="6"
+                Grid.Column="7"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
+                IsEnabled="{Binding AxisStored}"
                 SelectionBrush="Yellow"
                 Text="{Binding CylinderHeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                 Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
@@ -435,7 +507,7 @@
             <!--  Material/Filament  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="7"
+                Grid.Column="8"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -443,10 +515,11 @@
                 Text="Material" />
             <ComboBox
                 Grid.Row="1"
-                Grid.Column="7"
+                Grid.Column="8"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
+                IsEnabled="{Binding AxisStored}"
                 ItemsSource="{Binding FilamentTypes}"
                 SelectedItem="{Binding SelectedFilament, Mode=TwoWay}">
                 <ToolTip.Tip>
@@ -459,7 +532,7 @@
             <!--  Operation Type ComboBox  -->
             <TextBlock
                 Grid.Row="0"
-                Grid.Column="8"
+                Grid.Column="9"
                 Margin="0,5,0,-3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -467,10 +540,11 @@
                 Text="Operation" />
             <ComboBox
                 Grid.Row="1"
-                Grid.Column="8"
+                Grid.Column="9"
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
+                IsEnabled="{Binding AxisStored}"
                 ItemsSource="{Binding OperationTypes}"
                 SelectedItem="{Binding SelectedOperationType, Mode=TwoWay}">
                 <ToolTip.Tip>
@@ -480,47 +554,6 @@
                 </ToolTip.Tip>
             </ComboBox>
 
-            <!--  Axes Selection Combo Box  -->
-            <TextBlock
-                Grid.Row="0"
-                Grid.Column="9"
-                Margin="0,5,0,-4"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Classes="textbox"
-                IsVisible="{Binding AxesSelectEnabled}"
-                Text="Axes" />
-            <ContentControl
-                Grid.Row="1"
-                Grid.Column="9"
-                Content="{DynamicResource AxesComboBox}"
-                IsVisible="{Binding AxesSelectEnabled}" />
-
-            <!--  Axes Display  -->
-            <TextBlock
-                Grid.Row="0"
-                Grid.Column="9"
-                Margin="0,5,0,-5"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Classes="textbox"
-                IsVisible="{Binding !AxesSelectEnabled}"
-                Text="Using Axis" />
-            <Border
-                Grid.Row="1"
-                Grid.Column="9"
-                Margin="5"
-                Padding="5"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
-                Background="{DynamicResource LabelBackground}"
-                BorderBrush="{DynamicResource CardForeground}"
-                BorderThickness="1"
-                BoxShadow="1 1 2 0 Gray"
-                CornerRadius="3"
-                IsVisible="{Binding !AxesSelectEnabled}">
-                <TextBlock HorizontalAlignment="Center" Text="{Binding ObjectAxisDisplay}" />
-            </Border>
         </Grid>
 
         <!--  Radio Button Group for Shape Selection  -->
@@ -528,6 +561,7 @@
             Grid.Row="2"
             Margin="20,0,20,10"
             HorizontalAlignment="Left"
+            IsEnabled="{Binding !UnionButton}"
             Orientation="Horizontal">
             <TextBlock
                 Margin="0,0,10,0"
@@ -540,7 +574,8 @@
                 VerticalAlignment="Center"
                 Content="Cube"
                 GroupName="ShapeType"
-                IsChecked="{Binding IsCubeSelected, Mode=TwoWay}">
+                IsChecked="{Binding IsCubeSelected, Mode=TwoWay}"
+                IsEnabled="{Binding AxisStored}">
                 <ToolTip.Tip>
                     <TextBlock Text="Create a rectangular cube object" />
                 </ToolTip.Tip>
@@ -550,7 +585,8 @@
                 VerticalAlignment="Center"
                 Content="Cylinder"
                 GroupName="ShapeType"
-                IsChecked="{Binding IsCylinderSelected, Mode=TwoWay}">
+                IsChecked="{Binding IsCylinderSelected, Mode=TwoWay}"
+                IsEnabled="{Binding AxisStored}">
                 <ToolTip.Tip>
                     <TextBlock Text="Create a cylindrical object" />
                 </ToolTip.Tip>
@@ -560,7 +596,8 @@
                 VerticalAlignment="Center"
                 Content="Screw"
                 GroupName="ShapeType"
-                IsChecked="{Binding IsScrewSelected, Mode=TwoWay}">
+                IsChecked="{Binding IsScrewSelected, Mode=TwoWay}"
+                IsEnabled="{Binding AxisStored}">
                 <ToolTip.Tip>
                     <TextBlock Text="Create a screw hole with standard dimensions" />
                 </ToolTip.Tip>
@@ -607,11 +644,34 @@
         </StackPanel>
 
         <!--  Buttons  -->
+
         <StackPanel
             Grid.Row="3"
             Margin="20,10,20,10"
             HorizontalAlignment="Left"
             Orientation="Horizontal">
+
+            <Button
+                MinWidth="100"
+                Margin="10,0,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                BorderBrush="{DynamicResource CardForeground}"
+                BorderThickness="1"
+                Click="ApplyAxisButton_Click"
+                Content="Apply Axis"
+                IsEnabled="True"
+                IsVisible="{Binding !AxisStored}">
+                <ToolTip.Tip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Stretch">
+                            This action will apply the selected axis to the object.scad file for use in OpenSCAD.
+                        </TextBlock>
+                    </StackPanel>
+                </ToolTip.Tip>
+            </Button>
 
             <Button
                 MaxWidth="90"
@@ -624,7 +684,8 @@
                 BorderThickness="1"
                 Click="ClearButton_Click"
                 Content="Clear"
-                IsEnabled="True">
+                IsEnabled="True"
+                IsVisible="{Binding AxisStored}">
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock>
@@ -645,7 +706,8 @@
                 BorderThickness="1"
                 Click="CreateButton_Click"
                 Content="{Binding AxesSelectEnabled, Converter={StaticResource BooleanToTextConverter}, ConverterParameter='Create Object|Append Object'}"
-                IsEnabled="True">
+                IsEnabled="{Binding Name, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+                IsVisible="{Binding AxisStored}">
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch">
@@ -666,7 +728,8 @@
                 BorderThickness="1"
                 Click="ClearObjectButton_Click"
                 Content="Clear Object"
-                IsEnabled="True">
+                IsEnabled="True"
+                IsVisible="{Binding AxisStored}">
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch">
@@ -688,7 +751,7 @@
                 Click="CreateUnionButton_Click"
                 Content="Create Union"
                 IsEnabled="True"
-                IsVisible="{Binding OuterDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=2}">
+                IsVisible="{Binding UnionButton}">
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch">
@@ -710,7 +773,7 @@
                 Click="CreateDifferenceButton_Click"
                 Content="Create Difference"
                 IsEnabled="True"
-                IsVisible="{Binding OuterDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=2}">
+                IsVisible="{Binding DifferenceButton}">
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch">
@@ -729,10 +792,10 @@
                 VerticalContentAlignment="Center"
                 BorderBrush="{DynamicResource CardForeground}"
                 BorderThickness="1"
-                Click="ObjectToScadFileButton_Click"
+                Click="ObjectToScadFilesButton_Click"
                 Content="Save Object to OpenSCAD"
                 IsEnabled="True"
-                IsVisible="{Binding OuterDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}">
+                IsVisible="{Binding SaveFileButton}">
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch">
@@ -811,28 +874,52 @@
             HorizontalAlignment="Stretch"
             Background="Transparent"
             Opacity="0.5" />
-
-        <!--  DataGrid - ModuleDimensions  -->
-        <DataGrid
+        <StackPanel
             Grid.Row="9"
-            Margin="20,0,20,20"
-            Padding="5"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            AutoGenerateColumns="True"
-            AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
-            BorderBrush="Gray"
-            BorderThickness="1"
-            CanUserReorderColumns="True"
-            CanUserResizeColumns="True"
-            ClipboardCopyMode="ExcludeHeader"
-            ColumnWidth="Auto"
-            CornerRadius="8"
-            GridLinesVisibility="All"
-            IsReadOnly="True"
-            IsVisible="{Binding ModuleDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
-            ItemsSource="{Binding ModuleDimensions}"
-            SelectionMode="Single" />
+            Grid.Column="0"
+            Orientation="Horizontal">
+            <!--  DataGrid - ModuleDimensions - Unions  -->
+            <DataGrid
+                Margin="20,0,20,20"
+                Padding="5"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Stretch"
+                AutoGenerateColumns="True"
+                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                CanUserReorderColumns="True"
+                CanUserResizeColumns="True"
+                ClipboardCopyMode="ExcludeHeader"
+                ColumnWidth="Auto"
+                CornerRadius="8"
+                GridLinesVisibility="All"
+                IsReadOnly="True"
+                IsVisible="{Binding ModuleDimensionsUnions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+                ItemsSource="{Binding ModuleDimensionsUnions}"
+                SelectionMode="Single" />
+
+            <!--  DataGrid - ModuleDimensions - Differences  -->
+            <DataGrid
+                Margin="20,0,20,20"
+                Padding="5"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                AutoGenerateColumns="True"
+                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                CanUserReorderColumns="True"
+                CanUserResizeColumns="True"
+                ClipboardCopyMode="ExcludeHeader"
+                ColumnWidth="Auto"
+                CornerRadius="8"
+                GridLinesVisibility="All"
+                IsReadOnly="True"
+                IsVisible="{Binding ModuleDimensionsDifferences, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+                ItemsSource="{Binding ModuleDimensionsDifferences}"
+                SelectionMode="Single" />
+        </StackPanel>
     </Grid>
 
 </UserControl>

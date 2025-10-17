@@ -1,4 +1,6 @@
-﻿namespace NetScad.Core.Utility
+﻿using System.Text;
+
+namespace NetScad.Core.Utility
 {
     /// <summary>
     /// Utility for wrapping OpenSCAD code into modules
@@ -95,8 +97,9 @@
         /// </summary>
         /// <param name="osCADMethods">List of OpenSCAD method strings to union</param>
         /// <param name="name">Module name (whitespace will be replaced with underscores)</param>
+        /// <param name="solidType">Module solid type (whitespace will be replaced with underscores)</param>
         /// <returns>A module definition with a union operation</returns>
-        public static string ToUnionModule(List<string> osCADMethods, string name)
+        public static string ToUnionModule(List<string> osCADMethods, string name, string solidType)
         {
             // Sanitize name
             var sanitizedName = name
@@ -105,6 +108,14 @@
                 .Replace("\t", "_")
                 .Replace("\n", "_")
                 .Replace("\r", "_") ?? "unnamed_union";
+
+            // Sanitize solidType
+            var sanitizedSolidType = solidType
+                ?.Trim()
+                .Replace(" ", "_")
+                .Replace("\t", "_")
+                .Replace("\n", "_")
+                .Replace("\r", "_") ?? "nonsolid_difference";
 
             // Sanitize and combine all OSCAD methods
             var sanitizedMethods = osCADMethods
@@ -121,7 +132,7 @@
             var combinedMethods = string.Join(" ", sanitizedMethods);
 
             // Return the union module
-            return $"module union_{sanitizedName}() {{ union() {{ {combinedMethods} }} }}";
+            return $"module union_{sanitizedName}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}";
         }
 
         /// <summary>
@@ -130,8 +141,9 @@
         /// <param name="baseObject">The base OpenSCAD object (to subtract from)</param>
         /// <param name="subtractObject">The object to subtract from the base</param>
         /// <param name="name">Module name (whitespace will be replaced with underscores)</param>
+        /// <param name="solidType">Module solid type (whitespace will be replaced with underscores)</param>
         /// <returns>A module definition with a difference operation</returns>
-        public static string ToDifferenceModule(string baseObject, string subtractObject, string name)
+        public static string ToDifferenceModule(string baseObject, List<string> subtractObjects, string name, string solidType)
         {
             // Sanitize name
             var sanitizedName = name
@@ -141,6 +153,14 @@
                 .Replace("\n", "_")
                 .Replace("\r", "_") ?? "unnamed_difference";
 
+            // Sanitize solidType
+            var sanitizedSolidType = solidType
+                ?.Trim()
+                .Replace(" ", "_")
+                .Replace("\t", "_")
+                .Replace("\n", "_")
+                .Replace("\r", "_") ?? "nonsolid_difference";
+
             // Sanitize base object
             var sanitizedBase = baseObject
                 ?.Trim()
@@ -149,16 +169,22 @@
                 .Replace("\\\"", "\"")
                 .Trim() ?? string.Empty;
 
-            // Sanitize subtract object
-            var sanitizedSubtract = subtractObject
+            var sb = new StringBuilder();
+            foreach (var obj in subtractObjects)
+            {
+                // Sanitize subtract object
+                var sanitizedSubtract = obj
                 ?.Trim()
                 .TrimStart('"')
                 .TrimEnd('"')
                 .Replace("\\\"", "\"")
                 .Trim() ?? string.Empty;
 
+                sb.Append($" {sanitizedSubtract}");
+            }
+
             // Return the difference module
-            return $"module difference_{sanitizedName}() {{ difference() {{ {sanitizedBase} {sanitizedSubtract} }} }}";
+            return $"module difference_{sanitizedName}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb.ToString()} }} }}";
         }
 
         /// <summary>

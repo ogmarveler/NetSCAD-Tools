@@ -21,7 +21,7 @@ namespace NetScad.Designer.Repositories
         public double Thickness_MM { get; set; }
         public double Round_r_MM => Math.Round(RoundFromWidth(Width_MM), OpenSCAD_DecimalPlaces);
         public double Round_h_MM => Math.Round(RoundEdgeHeight(Round_r_MM), OpenSCAD_DecimalPlaces);
-        public double Resolution => 180; // Default resolution for curves
+        public int Resolution => 180; // Default resolution for curves
 
         // Imperial conversions (computed)
         public double Length_IN => Math.Round(MillimeterToInches(Length_MM), OpenSCAD_DecimalPlaces);
@@ -88,7 +88,7 @@ namespace NetScad.Designer.Repositories
             (nameof(OuterDimensions.Height_IN), typeof(double), false),
             (nameof(OuterDimensions.Thickness_IN), typeof(double), false),
             (nameof(OuterDimensions.Round_r_IN), typeof(double), false),
-            (nameof(OuterDimensions.Resolution), typeof(double), false),
+            (nameof(OuterDimensions.Resolution), typeof(int), false),
             (nameof(OuterDimensions.OSCADMethod), typeof(string), true),
             (nameof(OuterDimensions.CreatedAt), typeof(DateTime), false)
         ];
@@ -269,8 +269,8 @@ namespace NetScad.Designer.Repositories
                 FROM OuterDimensions od
                 LEFT JOIN AxisDimensions ad ON od.AxisDimensionsId = ad.Id
                 WHERE od.Name = @Name
-                ORDER BY od.CreatedAt DESC";
-            
+                ORDER BY od.OperationType ASC, od.CreatedAt ASC";
+
             var result = await connection.QueryAsync<OuterDimensions, string, OuterDimensions>(
                 sql,
                 (outerDim, axisMethod) =>
@@ -301,8 +301,8 @@ namespace NetScad.Designer.Repositories
                 FROM OuterDimensions od
                 LEFT JOIN AxisDimensions ad ON od.AxisDimensionsId = ad.Id
                 WHERE od.Name = @Name AND od.OperationType = @OperationType
-                ORDER BY od.CreatedAt DESC";
-            
+                ORDER BY od.OperationType ASC, od.CreatedAt ASC";
+
             var result = await connection.QueryAsync<OuterDimensions, string, OuterDimensions>(
                 sql,
                 (outerDim, axisMethod) =>

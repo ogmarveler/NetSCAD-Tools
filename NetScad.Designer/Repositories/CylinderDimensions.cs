@@ -19,7 +19,7 @@ namespace NetScad.Designer.Repositories
         public double? Radius1_MM { get; set; } // Optional radius1 for cone
         public double? Radius2_MM { get; set; } // Optional radius2 for cone
         public double Height_MM { get; set; }
-        public double Resolution => 180; // Default resolution for curves
+        public int Resolution => 180; // Default resolution for curves
 
         // Imperial conversions (computed)
         public double Radius_IN => Math.Round(MillimeterToInches(Radius_MM), OpenSCAD_DecimalPlaces);
@@ -81,7 +81,7 @@ namespace NetScad.Designer.Repositories
             (nameof(CylinderDimensions.Radius1_IN), typeof(double), true),
             (nameof(CylinderDimensions.Radius2_IN), typeof(double), true),
             (nameof(CylinderDimensions.Height_IN), typeof(double), false),
-            (nameof(CylinderDimensions.Resolution), typeof(double), false),
+            (nameof(CylinderDimensions.Resolution), typeof(int), false),
             (nameof(CylinderDimensions.OSCADMethod), typeof(string), true),
             (nameof(CylinderDimensions.CreatedAt), typeof(DateTime), false)
         ];
@@ -262,8 +262,8 @@ namespace NetScad.Designer.Repositories
                 FROM CylinderDimensions cd
                 LEFT JOIN AxisDimensions ad ON cd.AxisDimensionsId = ad.Id
                 WHERE cd.Name = @Name
-                ORDER BY cd.CreatedAt DESC";
-            
+                ORDER BY cd.OperationType ASC, cd.CreatedAt ASC";
+
             var result = await connection.QueryAsync<CylinderDimensions, string, CylinderDimensions>(
                 sql,
                 (cylinderDim, axisMethod) =>

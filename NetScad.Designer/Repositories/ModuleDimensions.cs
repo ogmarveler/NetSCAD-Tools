@@ -10,6 +10,7 @@ namespace NetScad.Designer.Repositories
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string ModuleType { get; set; } = string.Empty; // "Union" or "Difference"
+        public string SolidType { get; set; } = string.Empty; // "Cube" or "Cylinder"
         public string OuterDimensionsName { get; set; } = string.Empty; // Reference to OuterDimensions.Name
         public string OSCADMethod { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -19,6 +20,7 @@ namespace NetScad.Designer.Repositories
             { "Id", Id },
             { "Name", Name },
             { "ModuleType", ModuleType },
+            { "SolidType", SolidType },
             { "OuterDimensionsName", OuterDimensionsName },
             { "OSCADMethod", OSCADMethod },
             { "CreatedAt", CreatedAt }
@@ -34,6 +36,7 @@ namespace NetScad.Designer.Repositories
             (nameof(ModuleDimensions.Id), typeof(int), false),
             (nameof(ModuleDimensions.Name), typeof(string), false),
             (nameof(ModuleDimensions.ModuleType), typeof(string), false),
+            (nameof(ModuleDimensions.SolidType), typeof(string), false),
             (nameof(ModuleDimensions.OuterDimensionsName), typeof(string), false),
             (nameof(ModuleDimensions.OSCADMethod), typeof(string), false),
             (nameof(ModuleDimensions.CreatedAt), typeof(DateTime), false)
@@ -60,12 +63,12 @@ namespace NetScad.Designer.Repositories
             return id;
         }
 
-        // Upsert (INSERT OR REPLACE) and return the Id - Only inserts new row if Name is different
+        // Upsert (INSERT OR REPLACE) and return the Id - Only updates if Name, SolidType, and ModuleType match
         public static async Task<int> UpsertAsync(this ModuleDimensions entity, SqliteConnection connection)
         {
-            // First, try to find an existing record with matching Name
-            const string selectSql = "SELECT Id FROM ModuleDimensions WHERE Name = @Name LIMIT 1";
-            var existingId = await connection.QuerySingleOrDefaultAsync<int?>(selectSql, new { entity.Name });
+            // First, try to find an existing record with matching Name, SolidType, and ModuleType
+            const string selectSql = "SELECT Id FROM ModuleDimensions WHERE Name = @Name AND SolidType = @SolidType AND ModuleType = @ModuleType LIMIT 1";
+            var existingId = await connection.QuerySingleOrDefaultAsync<int?>(selectSql, new { entity.Name, entity.SolidType, entity.ModuleType });
             
             if (existingId.HasValue)
             {
@@ -118,16 +121,22 @@ namespace NetScad.Designer.Repositories
                 "SELECT * FROM ModuleDimensions WHERE ModuleType = @ModuleType ORDER BY CreatedAt DESC",
                 new { ModuleType = moduleType });
 
+        // Get by SolidType
+        public static async Task<IEnumerable<ModuleDimensions>> GetBySolidTypeAsync(this ModuleDimensions _, SqliteConnection connection, string solidType) => 
+            await connection.QueryAsync<ModuleDimensions>(
+                "SELECT * FROM ModuleDimensions WHERE SolidType = @SolidType ORDER BY CreatedAt DESC",
+                new { SolidType = solidType });
+
         // Get by OuterDimensionsName
         public static async Task<IEnumerable<ModuleDimensions>> GetByOuterDimensionsNameAsync(this ModuleDimensions _, SqliteConnection connection, string outerDimensionsName) => 
             await connection.QueryAsync<ModuleDimensions>(
-                "SELECT * FROM ModuleDimensions WHERE OuterDimensionsName = @OuterDimensionsName ORDER BY CreatedAt DESC",
+                "SELECT * FROM ModuleDimensions WHERE OuterDimensionsName = @OuterDimensionsName ORDER BY ModuleType ASC, SolidType ASC",
                 new { OuterDimensionsName = outerDimensionsName });
 
         // Get by Name and ModuleType
         public static async Task<IEnumerable<ModuleDimensions>> GetByNameAndModuleTypeAsync(this ModuleDimensions _, SqliteConnection connection, string name, string moduleType) => 
             await connection.QueryAsync<ModuleDimensions>(
-                "SELECT * FROM ModuleDimensions WHERE Name = @Name AND ModuleType = @ModuleType ORDER BY CreatedAt DESC",
+                "SELECT * FROM ModuleDimensions WHERE Name = @Name AND ModuleType = @ModuleType ORDER BY ModuleType ASC, SolidType ASC",
                 new { Name = name, ModuleType = moduleType });
     }
 }

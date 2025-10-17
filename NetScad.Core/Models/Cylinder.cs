@@ -16,7 +16,7 @@ namespace NetScad.Core.Models
         public double Height => (double)_parameters["h"];
         public double? Radius1 => _parameters.ContainsKey("r1") ? (double)_parameters["r1"] : null;
         public double? Radius2 => _parameters.ContainsKey("r2") ? (double)_parameters["r2"] : null;
-        public double Resolution => _parameters.ContainsKey("resolution") ? (double)_parameters["resolution"] : 100;
+        public int Resolution => _parameters.ContainsKey("resolution") ? (int)_parameters["resolution"] : 100;
 
         public string OSCADMethod => $"cylinder(h = {Height}, {(Radius1 == null && Radius2 == null ? $"r = {Radius}" : $"r1 = {Radius1 ?? Radius}, r2 = {Radius2 ?? Radius}")}, $fn = {Resolution});";
 
