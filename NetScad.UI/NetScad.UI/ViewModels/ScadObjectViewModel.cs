@@ -77,6 +77,7 @@ namespace NetScad.UI.ViewModels
         private double? _radius2IN;
         private double _cylinderHeightIN;
         private bool _isCubeSelected = true;
+        private bool _isRoundCubeSelected = false;
         private bool _isCylinderSelected = false;
         private bool _axisStored = false;
         private List<ServerRack>? _serverRackSizes;
@@ -108,7 +109,7 @@ namespace NetScad.UI.ViewModels
 
         public ObservableCollection<OuterDimensions> OuterDimensions { get => _outerDimensions; set => this.RaiseAndSetIfChanged(ref _outerDimensions, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensions
-        { 
+        {
             get => _moduleDimensions;
             set
             {
@@ -251,10 +252,11 @@ namespace NetScad.UI.ViewModels
             CylinderDimensions = new ObservableCollection<CylinderDimensions>(cylinderRecords);
 
             // Clear Inputs
-            await ClearInputsAsync();
+            //await ClearInputsAsync();
 
             // Update state of buttons showing
             IsCubeSelected = _isCubeSelected;
+            IsRoundCubeSelected = _isRoundCubeSelected;
             IsCylinderSelected = _isCylinderSelected;
             IsScrewSelected = _isScrewSelected;
         }
@@ -263,7 +265,7 @@ namespace NetScad.UI.ViewModels
         public async Task ClearInputsAsync()
         {
             Name = string.IsNullOrEmpty(Name) ? string.Empty : Name; // Needs to remain since object process can have multiple components
-            Description = string.Empty;
+            Description = string.IsNullOrEmpty(Description) ? string.Empty : Description;  // Redundant but for convenience
             LengthMM = 0;
             WidthMM = 0;
             HeightMM = 0;
@@ -330,6 +332,7 @@ namespace NetScad.UI.ViewModels
             IsUnionOperation = false;
             IsDifferenceOperation = false;
             IsCubeSelected = true;
+            IsRoundCubeSelected = false;
             IsCylinderSelected = false;
             IsScrewSelected = false;
             _axisId = AxesSelectEnabled ? null : _axisId;  // If the ability to select an axis is disabled, then use existing Id
@@ -346,7 +349,7 @@ namespace NetScad.UI.ViewModels
             if (_axisId is null) // New axis being applied
                 await CreateAxisAsync(); // Create or get AxisDimensions and return its Id
 
-            if (IsCubeSelected)
+            if (IsCubeSelected || IsRoundCubeSelected)
             {
                 var newObject = new OuterDimensions  // Create new OuterDimensions instance
                 {
@@ -494,7 +497,7 @@ namespace NetScad.UI.ViewModels
 
         public async Task<string> GenerateOSCADAsync(OuterDimensions? oDim = null, CylinderDimensions? cDim = null)
         {
-            if (IsCubeSelected)
+            if (IsCubeSelected || IsRoundCubeSelected)
             {
                 if (_selectedUnit == UnitSystem.Imperial)
                 {
@@ -505,23 +508,39 @@ namespace NetScad.UI.ViewModels
                     oDim.Thickness_MM = Math.Round(InchesToMillimeter(oDim.Thickness_MM), _decimalPlaces);
                 }
 
-                // Generate a rounded cube with x,y offset for rounding - OpenSCAD code
-                var roundedCubeParams = new Dictionary<string, object>
+                if (IsRoundCubeSelected)
                 {
-                    { "size_x", oDim.Length_MM }, { "size_y", oDim.Width_MM }, { "size_z", oDim.Height_MM }, { "round_r", oDim.Round_r_MM }, { "round_h", oDim.Round_h_MM }, { "resolution", oDim.Resolution }
-                };
-                var roundedCube = OScad3D.RoundedCube.ToScadObject(roundedCubeParams);
-                var transParams = new Dictionary<string, object>();
+                    // Generate a rounded cube with x,y offset for rounding - OpenSCAD code
+                    var roundedCubeParams = new Dictionary<string, object>
+                    {
+                        { "size_x", oDim.Length_MM }, { "size_y", oDim.Width_MM }, { "size_z", oDim.Height_MM }, { "round_r", oDim.Round_r_MM }, { "round_h", oDim.Round_h_MM }, { "resolution", oDim.Resolution }
+                    };
+                    var roundedCube = OScad3D.RoundedCube.ToScadObject(roundedCubeParams);
+                    var translateParams = new Dictionary<string, object>();
 
-                // x,y offset for rounding, if subtraction then factor in thickness
-                if (oDim.OperationType == "Add")
-                    transParams = new Dictionary<string, object> { { "x", oDim.Round_r_MM }, { "y", oDim.Round_r_MM }, { "z", 0.0 }, { "children", new IScadObject[] { roundedCube } } };
-                else if (oDim.OperationType == "Subtract")
-                    transParams = new Dictionary<string, object> { { "x", oDim.Round_r_MM + oDim.Thickness_MM }, { "y", oDim.Round_r_MM + oDim.Thickness_MM }, { "z", oDim.Thickness_MM }, { "children", new IScadObject[] { roundedCube } } };
+                    // x,y offset for rounding, if subtraction then factor in thickness
+                    if (oDim.OperationType == "Add")
+                        translateParams = new Dictionary<string, object> { { "x", oDim.Round_r_MM }, { "y", oDim.Round_r_MM }, { "z", 0.0 }, { "children", new IScadObject[] { roundedCube } } };
+                    else if (oDim.OperationType == "Subtract")
+                        translateParams = new Dictionary<string, object> { { "x", oDim.Round_r_MM + oDim.Thickness_MM }, { "y", oDim.Round_r_MM + oDim.Thickness_MM }, { "z", oDim.Thickness_MM }, { "children", new IScadObject[] { roundedCube } } };
 
-                var translate = OScadTransform.Translate.ToScadObject(transParams);
-                return ToModule(translate.OSCADMethod, oDim.Name, oDim.Description);
-            } 
+                    var translate = OScadTransform.Translate.ToScadObject(translateParams);
+                    return ToModule(translate.OSCADMethod, oDim.Name, oDim.Description);
+                }
+                else if (IsCubeSelected)
+                {
+                    // Generate a cube - OpenSCAD code
+                    var cubeParams = new Dictionary<string, object>
+                    {
+                        { "size_x", oDim.Length_MM }, { "size_y", oDim.Width_MM }, { "size_z", oDim.Height_MM },
+                    };
+                    var cube = OScad3D.Cube.ToScadObject(cubeParams);
+                    var translateParams = new Dictionary<string, object>();
+                    translateParams = new Dictionary<string, object> { { "x", 0.0 }, { "y", 0.0 }, { "z", 0.0 }, { "children", new IScadObject[] { cube } } };
+                    var translate = OScadTransform.Translate.ToScadObject(translateParams);
+                    return ToModule(translate.OSCADMethod, oDim.Name, oDim.Description);
+                }
+            }
             else if (IsCylinderSelected || IsScrewSelected)
             {
                 var cylParams = new Dictionary<string, object> { { "r", cDim.Radius_MM }, { "h", cDim.Height_MM }, { "resolution", 180 } };
@@ -537,7 +556,7 @@ namespace NetScad.UI.ViewModels
             var sbpart = new StringBuilder();
             var fileName = string.Empty;
 
-            if (IsCubeSelected)
+            if (IsCubeSelected || IsRoundCubeSelected)
             {
                 fileName = $"{Name.Replace(" ", "_").Trim().ToLower()}_cube.scad";
                 sbpart.AppendLine($"//Use in main file: include <{fileName}>;");
@@ -550,7 +569,7 @@ namespace NetScad.UI.ViewModels
                     sbpart.AppendLine();
                 }
 
-                foreach (ModuleDimensions module in ModuleDimensions.Where(m=>m.SolidType == "Cube")) // Get difference or union rows for cubes
+                foreach (ModuleDimensions module in ModuleDimensions.Where(m => m.SolidType == "Cube")) // Get difference or union rows for cubes
                 {
                     sbpart.AppendLine($"// {module.OuterDimensionsName} - Type: {module.ModuleType}");
                     sbpart.AppendLine(module.OSCADMethod);
@@ -595,8 +614,8 @@ namespace NetScad.UI.ViewModels
                     sbpart.AppendLine($"// {module.Name}");
                 }
             }
-                // Write to part file with name of object
-                await Output.WriteToSCAD(content: sbpart.ToString(), filePath: Path.Combine(_objectFilePath, "Solids", fileName), overWrite: true, cancellationToken: new CancellationToken());
+            // Write to part file with name of object
+            await Output.WriteToSCAD(content: sbpart.ToString(), filePath: Path.Combine(_objectFilePath, "Solids", fileName), overWrite: true, cancellationToken: new CancellationToken());
 
             if (AxisStored)
             {
@@ -701,7 +720,7 @@ namespace NetScad.UI.ViewModels
             var parser = new ScadParser();
             var filePath = Path.Combine("Scad", "Axes", "axes.scad");
             _axesModulesList = parser.AxesModulesList(filePath);
-            
+
             // Filter and select based on unit system
             AxesList = SelectedUnitValue switch
             {
@@ -714,7 +733,7 @@ namespace NetScad.UI.ViewModels
                     .Select(x => x.CallingMethod)],
                 _ => _axesModulesList.Select(x => x.CallingMethod).ToList()
             };
-            
+
             // Update selected axis if current selection is no longer valid
             if (!AxesList.Contains(SelectedAxisValue))
             {
@@ -736,7 +755,7 @@ namespace NetScad.UI.ViewModels
             var cylinders = CylinderDimensions.Where(o => o.OperationType == "Add").ToList();
             var objects = OuterDimensions.Where(o => o.OperationType == "Add").ToList();
             // If user has selected cube, create union of cubes
-            if (IsCubeSelected && objects.Any())
+            if ((IsCubeSelected || IsRoundCubeSelected) && objects.Any())
             {
                 // Transform module definitions to call methods
                 var methods = objects.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
@@ -781,13 +800,13 @@ namespace NetScad.UI.ViewModels
         Union should be called first, then Difference. OpenSCAD logic is difference() { union() { A,B,C }, D, E, F } */
         public async Task CreateDifferenceModuleAsync()
         {
-            
+
             // Get all objects marked as "Subtract"
             var cylinders = CylinderDimensions.Where(o => o.OperationType == "Subtract").ToList();
             var objects = OuterDimensions.Where(o => o.OperationType == "Subtract").ToList();
             ModuleDimensions? baseObj;
 
-            if (IsCubeSelected && objects.Any())
+            if ((IsCubeSelected || IsRoundCubeSelected) && objects.Any())
             {
                 baseObj = ModuleDimensions.FirstOrDefault(o => o.ModuleType == "Union" && o.OuterDimensionsName == Name && o.SolidType == "Cube");
 
@@ -806,7 +825,7 @@ namespace NetScad.UI.ViewModels
                         CreatedAt = DateTime.UtcNow
                     };
                     // get calling method for differenceModule
-                    differenceModule.Name = ExtractModuleCallMethod(differenceModule.OSCADMethod).ToLower(); 
+                    differenceModule.Name = ExtractModuleCallMethod(differenceModule.OSCADMethod).ToLower();
                     await differenceModule.UpsertAsync(DbConnection);
                     // Refresh ModuleDimensions DataGrid
                     var moduleRecords = await new ModuleDimensions().GetByOuterDimensionsNameAsync(DbConnection, Name);
@@ -909,12 +928,64 @@ namespace NetScad.UI.ViewModels
                 this.RaiseAndSetIfChanged(ref _isCubeSelected, value);
                 if (value)
                 {
+                    _isRoundCubeSelected = false;
                     _isCylinderSelected = false;
                     _isScrewSelected = false;
+                    this.RaisePropertyChanged(nameof(IsRoundCubeSelected));
                     this.RaisePropertyChanged(nameof(IsCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsScrewSelected));
-            
+
                     if (_isCubeSelected)
+                    {
+                        // If there are any parts to save in the file, or modules to save in the object file that are cube objects
+                        if (ModuleDimensions.Where(o => o.SolidType == "Cube").Any())
+                        {
+                            SaveFileButton = true;
+                        }
+                        else
+                        {
+                            SaveFileButton = false;
+                        }
+                        // If there is at least one union row for a cube solid to create a difference for, along with at least one subtract item.
+                        if (ModuleDimensionsUnions.Where(o => o.SolidType == "Cube").Any() && OuterDimensions.Where(o => o.OperationType == "Subtract").Any())
+                        {
+                            DifferenceButton = true;
+                        }
+                        else
+                        {
+                            DifferenceButton = false;
+                        }
+                        // If there is at least one add item in the OuterDimensions table
+                        if (OuterDimensions.Where(o => o.OperationType == "Add").Any())
+                        {
+                            UnionButton = true;
+                        }
+                        else
+                        {
+                            UnionButton = false;
+                        }
+                        _ = UpdateServerRackDimensionsFromSelection();
+                    }
+                }
+            }
+        }
+
+        public bool IsRoundCubeSelected
+        {
+            get => _isRoundCubeSelected;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isRoundCubeSelected, value);
+                if (value)
+                {
+                    _isCubeSelected = false;
+                    _isCylinderSelected = false;
+                    _isScrewSelected = false;
+                    this.RaisePropertyChanged(nameof(IsCubeSelected));
+                    this.RaisePropertyChanged(nameof(IsCylinderSelected));
+                    this.RaisePropertyChanged(nameof(IsScrewSelected));
+
+                    if (_isRoundCubeSelected)
                     {
                         // If there are any parts to save in the file, or modules to save in the object file that are cube objects
                         if (ModuleDimensions.Where(o => o.SolidType == "Cube").Any())
@@ -957,8 +1028,10 @@ namespace NetScad.UI.ViewModels
                 this.RaiseAndSetIfChanged(ref _isCylinderSelected, value);
                 if (value)
                 {
+                    _isRoundCubeSelected = false;
                     _isCubeSelected = false;
                     _isScrewSelected = false;
+                    this.RaisePropertyChanged(nameof(IsRoundCubeSelected));
                     this.RaisePropertyChanged(nameof(IsCubeSelected));
                     this.RaisePropertyChanged(nameof(IsScrewSelected));
                     if (_isCylinderSelected)
@@ -1005,8 +1078,10 @@ namespace NetScad.UI.ViewModels
                 this.RaiseAndSetIfChanged(ref _isScrewSelected, value);
                 if (value)
                 {
+                    _isRoundCubeSelected = false;
                     _isCubeSelected = false;
-                    _isCylinderSelected = false; 
+                    _isCylinderSelected = false;
+                    this.RaisePropertyChanged(nameof(IsRoundCubeSelected));
                     this.RaisePropertyChanged(nameof(IsCubeSelected));
                     this.RaisePropertyChanged(nameof(IsCylinderSelected));
                     if (_isScrewSelected)
@@ -1085,7 +1160,7 @@ namespace NetScad.UI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedServerRack, value);
-                if (IsCubeSelected)
+                if (IsCubeSelected || IsRoundCubeSelected)
                 {
                     _ = UpdateServerRackDimensionsFromSelection();
                 }
@@ -1098,7 +1173,7 @@ namespace NetScad.UI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedServerRackWidthType, value);
-                if (IsCubeSelected)
+                if (IsCubeSelected || IsRoundCubeSelected)
                 {
                     _ = UpdateServerRackDimensionsFromSelection();
                 }
@@ -1120,37 +1195,41 @@ namespace NetScad.UI.ViewModels
         // Add this method to update dimensions when server rack is selected
         private async Task UpdateServerRackDimensionsFromSelection()
         {
-            if (!IsCubeSelected) return;
+            if (!IsCubeSelected && !IsRoundCubeSelected) return;
 
             // Update width if a width type is selected
             if (!string.IsNullOrEmpty(SelectedServerRackWidthType))
             {
                 var rackData = ServerRackDimensions.GetAll().FirstOrDefault(); // Independent of Rack Height
-                double widthValue = SelectedServerRackWidthType switch
-                {
-                    "Inner Width" => rackData.InnerWidthMm,
-                    "Outer Width" => rackData.OuterWidthMm,
-                    _ => 0
-                };
+                double widthValue = 0;
 
-                // Update Width based on unit system
-                if (SelectedUnitValue == UnitSystem.Metric)
+                switch (SelectedServerRackWidthType)
                 {
-                    WidthMM = widthValue;
+                    case "Inner Width":
+                        if (SelectedUnitValue == UnitSystem.Metric)
+                            widthValue = rackData.InnerWidthMm;
+                        else
+                            widthValue = rackData.InnerWidthInches;
+                            break;
+
+                    case "Outer Width":
+                        if (SelectedUnitValue == UnitSystem.Metric)
+                            widthValue = rackData.OuterWidthMm;
+                        else
+                            widthValue = rackData.OuterWidthInches;
+                        break;
+
+                    default: widthValue = 0; break;
                 }
-                else // Imperial
-                {
-                    WidthMM = SelectedServerRackWidthType == "Inner" 
-                        ? Math.Round(rackData.InnerWidthInches, _decimalPlaces)
-                        : Math.Round(rackData.OuterWidthInches, _decimalPlaces);
-                }
+
+                WidthMM = Math.Round(widthValue, _decimalPlaces);
             }
 
             // Update height if server rack is selected
             if (SelectedServerRack != null)
             {
                 var rackData = SelectedServerRack;
-                
+
                 // Update Height based on unit system
                 if (SelectedUnitValue == UnitSystem.Metric)
                 {

@@ -24,7 +24,12 @@
 
     <UserControl.Styles>
         <!--  DataGrid Column Header Style  -->
-        <Style Selector="DataGrid#AxesListDataGrid DataGridColumnHeader">
+        <Style Selector="DataGrid#AxesListImperialDataGrid DataGridColumnHeader">
+            <Setter Property="Foreground" Value="{DynamicResource RedBackground}" />
+            <Setter Property="Background" Value="{DynamicResource RedForeground}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="DataGrid#AxesListMetricDataGrid DataGridColumnHeader">
             <Setter Property="Foreground" Value="{DynamicResource CardBackground}" />
             <Setter Property="Background" Value="{DynamicResource CardForeground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
@@ -93,12 +98,14 @@
             Grid.Row="2"
             Grid.Column="0"
             Classes="textbox"
+            FontWeight="SemiBold"
             Text="Unit Type" />
 
         <ContentControl
             Grid.Row="2"
             Grid.Column="1"
-            Content="{DynamicResource UnitComboBox}" />
+            Content="{DynamicResource UnitComboBox}"
+            FontWeight="SemiBold" />
 
         <TextBlock
             Grid.Row="2"
@@ -398,7 +405,7 @@
             BorderThickness="1"
             Click="_ClearInputsAsync"
             Content="Clear"
-            CornerRadius="8"
+            CornerRadius="3"
             IsEnabled="True">
             <ToolTip.Tip>
                 <StackPanel Orientation="Vertical">
@@ -419,10 +426,10 @@
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             BorderBrush="{DynamicResource CardForeground}"
-            BorderThickness="2"
+            BorderThickness="1"
             Click="_CreateCustomAxisAsync"
             Content="Create Axis"
-            CornerRadius="8"
+            CornerRadius="3"
             FontWeight="SemiBold"
             IsEnabled="{Binding CreateButtonEnabled}">
             <ToolTip.Tip>
@@ -605,26 +612,58 @@
             Opacity="0.75"
             Text="Generated Axes" />
 
-        <DataGrid
-            x:Name="AxesListDataGrid"
+        <!--  Grid for 50/50 split  -->
+        <Grid
             Grid.Row="2"
             Grid.RowSpan="14"
-            Grid.Column="3"
-            Margin="7,7,20,25"
-            Padding="5"
-            HorizontalAlignment="Stretch"
-            AutoGenerateColumns="True"
-            AutoGeneratingColumn="DataGrid_AutoGeneratingColumn"
-            BorderBrush="{DynamicResource CardForeground}"
-            BorderThickness="2"
-            CanUserReorderColumns="True"
-            CanUserResizeColumns="True"
-            ClipboardCopyMode="ExcludeHeader"
-            ColumnWidth="Auto"
-            CornerRadius="8"
-            GridLinesVisibility="All"
-            IsReadOnly="True"
-            ItemsSource="{Binding AxesList}"
-            SelectionMode="Single" />
+            Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <DataGrid
+                x:Name="AxesListImperialDataGrid"
+                Grid.Row="0"
+                Margin="7,7,20,12"
+                Padding="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                AutoGenerateColumns="True"
+                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
+                BorderBrush="{DynamicResource RedForeground}"
+                BorderThickness="2"
+                CanUserReorderColumns="True"
+                CanUserResizeColumns="True"
+                ClipboardCopyMode="ExcludeHeader"
+                ColumnWidth="Auto"
+                CornerRadius="6"
+                GridLinesVisibility="All"
+                IsReadOnly="True"
+                ItemsSource="{Binding AxesListImperial}"
+                SelectionMode="Single" />
+
+            <DataGrid
+                x:Name="AxesListMetricDataGrid"
+                Grid.Row="1"
+                Margin="7,12,20,25"
+                Padding="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                AutoGenerateColumns="True"
+                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnMetric"
+                BorderBrush="{DynamicResource CardForeground}"
+                BorderThickness="2"
+                CanUserReorderColumns="True"
+                CanUserResizeColumns="True"
+                ClipboardCopyMode="ExcludeHeader"
+                ColumnWidth="Auto"
+                CornerRadius="6"
+                GridLinesVisibility="All"
+                IsReadOnly="True"
+                ItemsSource="{Binding AxesListMetric}"
+                SelectionMode="Single" />
+        </Grid>
+
     </Grid>
 </UserControl>

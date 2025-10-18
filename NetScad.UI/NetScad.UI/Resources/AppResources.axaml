@@ -25,6 +25,8 @@
             <SolidColorBrush x:Key="TealForeground" Color="#48817c" />
             <SolidColorBrush x:Key="BlueBackground" Color="#dfe5f6" />
             <SolidColorBrush x:Key="BlueForeground" Color="#617aaa" />
+            <SolidColorBrush x:Key="RedBackground" Color="#fff4f4" />
+            <SolidColorBrush x:Key="RedForeground" Color="#b4676b" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="CardBackground" Color="#212121" />
@@ -37,6 +39,8 @@
             <SolidColorBrush x:Key="TealBackground" Color="#48817c" />
             <SolidColorBrush x:Key="BlueForeground" Color="#dfe5f6" />
             <SolidColorBrush x:Key="BlueBackground" Color="#617aaa" />
+            <SolidColorBrush x:Key="RedForeground" Color="#fff4f4" />
+            <SolidColorBrush x:Key="RedBackground" Color="#b4676b" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

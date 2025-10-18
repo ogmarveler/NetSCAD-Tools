@@ -46,7 +46,9 @@ namespace NetScad.UI.ViewModels
         private string _inputMaxY;
         private string _inputMinZ;
         private string _inputMaxZ;
-        private ObservableCollection<GeneratedModule> _axesList;
+        private ObservableCollection<GeneratedModule>? _axesList;
+        private ObservableCollection<GeneratedModule> _axesListImperial;
+        private ObservableCollection<GeneratedModule> _axesListMetric;
         private bool _createButtonEnabled;
 
         public CreateAxesViewModel()
@@ -164,6 +166,8 @@ namespace NetScad.UI.ViewModels
         public double TotalCubicVolumeScale { get => _totalCubicVolumeScale; set => this.RaiseAndSetIfChanged(ref _totalCubicVolumeScale, value); }
         public int CallingMethodLength { get => _callingMethodLength; set => this.RaiseAndSetIfChanged(ref _callingMethodLength, value); }
         public ObservableCollection<GeneratedModule> AxesList { get => _axesList; set => this.RaiseAndSetIfChanged(ref _axesList, value); }
+        public ObservableCollection<GeneratedModule> AxesListImperial { get => _axesListImperial; set => this.RaiseAndSetIfChanged(ref _axesListImperial, value); }
+        public ObservableCollection<GeneratedModule> AxesListMetric { get => _axesListMetric; set => this.RaiseAndSetIfChanged(ref _axesListMetric, value); }
         public bool CreateButtonEnabled { get => _createButtonEnabled; set => this.RaiseAndSetIfChanged(ref _createButtonEnabled, value); }
         public static SqliteConnection Connection { get; set; } = new SqliteConnection();
 
@@ -275,17 +279,20 @@ namespace NetScad.UI.ViewModels
             var filePath = Path.Combine("Scad", "Axes", "axes.scad");
             _axesList = parser.AxesModulesList(filePath);
             // Filter and select based on unit system
-            AxesList = SelectedUnitValue switch
-            {
-                UnitSystem.Metric => [.. _axesList
-                    .Where(x => x.CallingMethod.Contains("_MM_"))],
+            //AxesList = SelectedUnitValue switch
+            //{
+            //    UnitSystem.Metric => [.. _axesList
+            //        .Where(x => x.CallingMethod.Contains("_MM_"))],
 
-                UnitSystem.Imperial => [.. _axesList
-                    .Where(x => x.CallingMethod.Contains("_Inch_"))],
+            //    UnitSystem.Imperial => [.. _axesList
+            //        .Where(x => x.CallingMethod.Contains("_Inch_"))],
 
-                _ => _axesList
-            };
+            //    _ => _axesList
+            //};
 
+            AxesListMetric = [.. _axesList.Where(x => x.CallingMethod.Contains("_MM_"))];
+
+            AxesListImperial = [.. _axesList.Where(x => x.CallingMethod.Contains("_Inch_"))];
         }
 
         // ViewModel helper functions for conversions - stateful
