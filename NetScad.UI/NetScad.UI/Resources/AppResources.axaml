@@ -19,12 +19,24 @@
             <SolidColorBrush x:Key="CardForeground" Color="Black" />
             <SolidColorBrush x:Key="WindowBackground" Color="#F5F5F5" />
             <SolidColorBrush x:Key="LabelBackground" Color="#DADDE2" />
+            <SolidColorBrush x:Key="PurpleBackground" Color="#ffedff" />
+            <SolidColorBrush x:Key="PurpleForeground" Color="#423443" />
+            <SolidColorBrush x:Key="TealBackground" Color="#c0fcf7" />
+            <SolidColorBrush x:Key="TealForeground" Color="#48817c" />
+            <SolidColorBrush x:Key="BlueBackground" Color="#dfe5f6" />
+            <SolidColorBrush x:Key="BlueForeground" Color="#617aaa" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="CardBackground" Color="#212121" />
             <SolidColorBrush x:Key="CardForeground" Color="White" />
             <SolidColorBrush x:Key="WindowBackground" Color="#121212" />
             <SolidColorBrush x:Key="LabelBackground" Color="#545F66" />
+            <SolidColorBrush x:Key="PurpleBackground" Color="#423443" />
+            <SolidColorBrush x:Key="PurpleForeground" Color="#ffedff" />
+            <SolidColorBrush x:Key="TealForeground" Color="#c0fcf7" />
+            <SolidColorBrush x:Key="TealBackground" Color="#48817c" />
+            <SolidColorBrush x:Key="BlueForeground" Color="#dfe5f6" />
+            <SolidColorBrush x:Key="BlueBackground" Color="#617aaa" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

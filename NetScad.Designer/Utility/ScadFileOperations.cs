@@ -8,14 +8,19 @@ namespace NetScad.Designer.Utility
     /// </summary>
     public static class ScadFileOperations
     {
+        // Track opened files to prevent duplicates
+        private static readonly HashSet<string> _openedFiles = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly object _lock = new();
+
         /// <summary>
         /// Opens a .scad file using the default application associated with .scad files.
         /// This respects the user's preference for OpenSCAD or any other SCAD IDE.
         /// </summary>
         /// <param name="scadFilePath">Full path to the .scad file</param>
+        /// <param name="allowDuplicates">If false, prevents opening the same file multiple times</param>
         /// <returns>True if successful, false otherwise</returns>
         /// <exception cref="FileNotFoundException">Thrown when the SCAD file does not exist</exception>
-        public static async Task<bool> OpenScadFileAsync(string scadFilePath)
+        public static async Task<bool> OpenScadFileAsync(string scadFilePath, bool allowDuplicates = false)
         {
             if (string.IsNullOrWhiteSpace(scadFilePath))
             {
@@ -25,6 +30,30 @@ namespace NetScad.Designer.Utility
             if (!File.Exists(scadFilePath))
             {
                 throw new FileNotFoundException($"SCAD file not found: {scadFilePath}");
+            }
+
+            // Normalize the path for comparison
+            var normalizedPath = Path.GetFullPath(scadFilePath);
+
+            bool alreadyOpen = false;
+            // Check if file is already tracked as open
+            if (!allowDuplicates)
+            {
+                lock (_lock)
+                {
+                    if (_openedFiles.Contains(normalizedPath))
+                    {
+                        alreadyOpen = true;
+                    }
+                }
+                if (alreadyOpen)
+                {
+                    Console.WriteLine($"File already open: {normalizedPath}");
+
+                    // Try to bring the existing window to front
+                    await BringToFrontAsync(normalizedPath);
+                    return true;
+                }
             }
 
             try
@@ -37,6 +66,16 @@ namespace NetScad.Designer.Utility
                 };
 
                 Process.Start(startInfo);
+
+                // Track the opened file
+                if (!allowDuplicates)
+                {
+                    lock (_lock)
+                    {
+                        _openedFiles.Add(normalizedPath);
+                    }
+                }
+
                 return await Task.FromResult(true);
             }
             catch (Exception ex)
@@ -47,7 +86,138 @@ namespace NetScad.Designer.Utility
         }
 
         /// <summary>
-        /// Opens the containing folder and selects/highlights the .scad file
+        /// Checks if a file is currently tracked as open
+        /// </summary>
+        /// <param name="scadFilePath">Full path to the .scad file</param>
+        /// <returns>True if the file is tracked as open</returns>
+        public static bool IsFileTrackedAsOpen(string scadFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(scadFilePath))
+            {
+                return false;
+            }
+
+            var normalizedPath = Path.GetFullPath(scadFilePath);
+            
+            lock (_lock)
+            {
+                return _openedFiles.Contains(normalizedPath);
+            }
+        }
+
+        /// <summary>
+        /// Checks if a file is actually open by checking running processes (Windows only)
+        /// </summary>
+        /// <param name="scadFilePath">Full path to the .scad file</param>
+        /// <returns>True if the file appears to be open in a process</returns>
+        public static bool IsFileOpenInProcess(string scadFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(scadFilePath) || !File.Exists(scadFilePath))
+            {
+                return false;
+            }
+
+            try
+            {
+                // Try to open the file exclusively - if it's locked, it's likely open
+                using var stream = File.Open(scadFilePath, FileMode.Open, FileAccess.Read, FileShare.None);
+                stream.Close();
+                return false; // File is not locked
+            }
+            catch (IOException)
+            {
+                // File is locked, likely open in another application
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to bring an already-open file window to the front (platform-specific)
+        /// </summary>
+        /// <param name="scadFilePath">Full path to the .scad file</param>
+        private static async Task BringToFrontAsync(string scadFilePath)
+        {
+            try
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    // On Windows, try to activate the window containing the file
+                    // This is a best-effort approach - may not always work
+                    var fileName = Path.GetFileName(scadFilePath);
+                    
+                    // PowerShell script to find and activate window
+                    var psScript = $@"
+                        $windows = Get-Process | Where-Object {{$_.MainWindowTitle -like '*{fileName}*'}}
+                        if ($windows) {{
+                            Add-Type @""
+                                using System;
+                                using System.Runtime.InteropServices;
+                                public class Win32 {{
+                                    [DllImport(""user32.dll"")] 
+                                    public static extern bool SetForegroundWindow(IntPtr hWnd);
+                                }}
+""@
+                            [Win32]::SetForegroundWindow($windows[0].MainWindowHandle)
+                        }}
+                    ";
+
+                    var startInfo = new ProcessStartInfo
+                    {
+                        FileName = "powershell.exe",
+                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{psScript}\"",
+                        CreateNoWindow = true,
+                        UseShellExecute = false
+                    };
+
+                    Process.Start(startInfo);
+                }
+                // Linux and macOS don't have reliable cross-application window focusing
+            }
+            catch
+            {
+                // Best-effort, ignore failures
+            }
+
+            await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Removes a file from the tracking list (call this when you know a file has been closed)
+        /// </summary>
+        /// <param name="scadFilePath">Full path to the .scad file</param>
+        public static void UntrackFile(string scadFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(scadFilePath))
+            {
+                return;
+            }
+
+            var normalizedPath = Path.GetFullPath(scadFilePath);
+            
+            lock (_lock)
+            {
+                _openedFiles.Remove(normalizedPath);
+            }
+        }
+
+        /// <summary>
+        /// Clears all tracked files
+        /// </summary>
+        public static void ClearTrackedFiles()
+        {
+            lock (_lock)
+            {
+                _openedFiles.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Opens a .scad file using the default application associated with .scad files.
+        /// This respects the user's preference for OpenSCAD or any other SCAD IDE.
         /// </summary>
         /// <param name="scadFilePath">Full path to the .scad file</param>
         /// <returns>True if successful, false otherwise</returns>

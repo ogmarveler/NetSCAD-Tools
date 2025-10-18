@@ -18,7 +18,7 @@ namespace NetScad.Designer.Repositories
         public double MinZ { get; set; }
         public double MaxZ { get; set; }
         public string OSCADMethod { get; set; }
-        public string IncludeMethod => "use <../Axes/axes.scad>;";
+        public string IncludeMethod => "use <Axes/axes.scad>;";
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Dictionary<string, object> ToDbDictionary() => new()

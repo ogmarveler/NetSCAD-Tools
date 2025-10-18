@@ -109,38 +109,19 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private async void ClearButton_Click(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.ClearInputsAsync();
-    }
+    private async void ClearButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ClearInputsAsync();
 
-    private async void CreateButton_Click(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.CreateObjectAsync();
-    }
+    private async void CreateButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateObjectAsync();
 
-    private async void ClearObjectButton_Click(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.ClearObjectAsync();
-    }
+    private async void ClearObjectButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ClearObjectAsync();
 
-    private async void CreateUnionButton_Click(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.CreateUnionModuleAsync();
-    }
+    private async void CreateUnionButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateUnionModuleAsync();
 
-    private async void CreateDifferenceButton_Click(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.CreateDifferenceModuleAsync();
-    }
+    private async void CreateDifferenceButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateDifferenceModuleAsync();
 
-    private async void ObjectToScadFilesButton_Click(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.ObjectToScadFilesAsync();
-    }
+    private async void ObjectToScadFilesButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ObjectToScadFilesAsync();
 
-    private async void ApplyAxisButton_Click(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.CreateAxisAsync();
-    }
+    private async void ApplyAxisButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateAxisAsync();
+
+    private async void GetObjectButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.GetDimensionsPartAsync();
 }

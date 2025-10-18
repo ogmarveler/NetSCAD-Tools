@@ -3,6 +3,7 @@
     // Enum for 3D printing filament types
     public enum FilamentType
     {
+        Other, // If not applicable
         ABS, // Acrylonitrile Butadiene Styrene
         ABS_GF, // Glass Fiber Reinforced
         ASA, // Acrylonitrile Styrene Acrylate

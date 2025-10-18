@@ -4,6 +4,7 @@ using NetScad.Axis.Scad.Models;
 using NetScad.Axis.Scad.Utility;
 using NetScad.Core.Interfaces;
 using NetScad.Core.Material;
+using NetScad.Core.Measurements;
 using NetScad.Core.Models;
 using NetScad.Core.Primitives;
 using NetScad.Core.Utility;
@@ -45,7 +46,7 @@ namespace NetScad.UI.ViewModels
         private double _widthIN;
         private double _heightIN;
         private double _thicknessIN;
-        private FilamentType _selectedFilament = FilamentType.PLA;
+        private FilamentType _selectedFilament = FilamentType.Other;
         private UnitSystem _selectedUnit = UnitSystem.Metric;
         private GeneratedModule? _selectedAxis;
         private string? _selectedAxisValue;
@@ -77,39 +78,32 @@ namespace NetScad.UI.ViewModels
         private double _cylinderHeightIN;
         private bool _isCubeSelected = true;
         private bool _isCylinderSelected = false;
-        private UnitSystem _baseSelectedUnit;
         private bool _axisStored = false;
-        private bool _fileSaved = false;
+        private List<ServerRack>? _serverRackSizes;
+        private ServerRack? _selectedServerRack;
+        private string _selectedServerRackWidthType = "InnerWidth";
 
         public ScadObjectViewModel()
         {
-            // Get the DbConnection from the DI container
-            DbConnection = App.Host.Services.GetRequiredService<SqliteConnection>();
-            _ = GetDimensionsPart();
+            DbConnection = App.Host.Services.GetRequiredService<SqliteConnection>();             // Get the DbConnection from the DI container
+            _ = GetDimensionsPartAsync();
             _decimalPlaces = Designer.Repositories.OuterDimensions.OpenSCAD_DecimalPlaces;
-            SelectedScrewSize = _selectedScrewSize;
-            SelectedScrewProperty = "ScrewRadius";
-            // Initialize ModuleDimensions
-            ModuleDimensions = new ObservableCollection<ModuleDimensions>();
-
-            // Populate filament types for ComboBox
             FilamentTypes = Enum.GetValues<FilamentType>().ToList();
-
-            // Populate unit system values
             UnitSystemValues = Enum.GetValues(typeof(UnitSystem)).Cast<UnitSystem>().ToList();
             SelectedUnitValue = UnitSystem.Metric;
             _ = GetAxesList();  // Get existing list of axes generated
-            SelectedAxisValue = AxesList.FirstOrDefault();
-            _baseSelectedUnit = SelectedUnitValue;
+            SelectedServerRack = null;
+            SelectedServerRackWidthType = string.Empty;
+            SelectedScrewProperty = string.Empty;
+            SelectedScrewSize = null;
             AxesSelectEnabled = true;
             ObjectAxisDisplay = _objectAxisDisplay;
             AppendObject = _appendObject;
             ScrewSizes = new ScrewSizeService().ScrewSizes;
-            // Populate operation types for ComboBox
             OperationTypes = Enum.GetValues<OperationType>().ToList();
             SelectedOperationType = OperationType.Add;
             _objectFilePath = App.Host.Services.GetRequiredService<IScadPathProvider>().ScadPath;
-            _selectedScrewSize = _screwSizes?.FirstOrDefault(x => x.Name == "M2");
+            ServerRackSizes = Enumerable.Range(1, 12).Select(ServerRackDimensions.GetByRackUnits).Where(r => r != null).ToList();
         }
 
         public ObservableCollection<OuterDimensions> OuterDimensions { get => _outerDimensions; set => this.RaiseAndSetIfChanged(ref _outerDimensions, value); }
@@ -240,13 +234,13 @@ namespace NetScad.UI.ViewModels
         }
 
         /**** Outer Dimensions DataGrid ****/
-        private async Task GetDimensionsPart()
+        public async Task GetDimensionsPartAsync()
         {
             // This is safe and efficient since CreateTable uses IF NOT EXISTS
             await AxisDimensionsExtensions.CreateTable(DbConnection); // Ensure AxisDimensions table exists first
             await OuterDimensionsExtensions.CreateTable(DbConnection); // Ensure OuterDimensions table exists
-            await ModuleDimensionsExtensions.CreateTable(DbConnection); // Add this line
-            await CylinderDimensionsExtensions.CreateTable(DbConnection); // Add this line
+            await ModuleDimensionsExtensions.CreateTable(DbConnection);
+            await CylinderDimensionsExtensions.CreateTable(DbConnection);
 
             var records = await new OuterDimensions().GetByNameWithAxisAsync(DbConnection, Name); // Gets OuterDimensions with related AxisDimensions
             var moduleRecords = await new ModuleDimensions().GetByOuterDimensionsNameAsync(DbConnection, Name);
@@ -255,6 +249,9 @@ namespace NetScad.UI.ViewModels
             ModuleDimensions = new ObservableCollection<ModuleDimensions>(moduleRecords);
             OuterDimensions = new ObservableCollection<OuterDimensions>(records);
             CylinderDimensions = new ObservableCollection<CylinderDimensions>(cylinderRecords);
+
+            // Clear Inputs
+            await ClearInputsAsync();
 
             // Update state of buttons showing
             IsCubeSelected = _isCubeSelected;
@@ -265,7 +262,7 @@ namespace NetScad.UI.ViewModels
         // Clear all input fields
         public async Task ClearInputsAsync()
         {
-            Name = !UnionButton ? string.Empty : Name;
+            Name = string.IsNullOrEmpty(Name) ? string.Empty : Name; // Needs to remain since object process can have multiple components
             Description = string.Empty;
             LengthMM = 0;
             WidthMM = 0;
@@ -283,8 +280,12 @@ namespace NetScad.UI.ViewModels
             Radius1IN = 0;
             Radius2IN = 0;
             CylinderHeightIN = 0;
-            SelectedFilament = FilamentType.PLA;
-            SelectedOperationType = OperationType.Add; // Reset to Add
+            SelectedServerRack = null;
+            SelectedServerRackWidthType = string.Empty;
+            SelectedScrewProperty = string.Empty;
+            SelectedScrewSize = null;
+            SelectedFilament = FilamentType.Other;
+            SelectedOperationType = OperationType.Add;
             await GetAxesList();
         }
 
@@ -309,7 +310,7 @@ namespace NetScad.UI.ViewModels
             Radius1IN = 0;
             Radius2IN = 0;
             CylinderHeightIN = 0;
-            SelectedFilament = FilamentType.PLA;
+            SelectedFilament = FilamentType.Other;
             OuterDimensions = new ObservableCollection<OuterDimensions>();
             ModuleDimensions = new ObservableCollection<ModuleDimensions>();
             CylinderDimensions = new ObservableCollection<CylinderDimensions>();
@@ -320,6 +321,10 @@ namespace NetScad.UI.ViewModels
             SelectedUnitValue = UnitSystem.Metric;
             AppendObject = false;
             SelectedAxisValue = null;
+            SelectedServerRack = null;
+            SelectedServerRackWidthType = string.Empty;
+            SelectedScrewProperty = string.Empty;
+            SelectedScrewSize = null;
             // Reset boolean operation to None
             IsNoneOperation = true;
             IsUnionOperation = false;
@@ -329,11 +334,10 @@ namespace NetScad.UI.ViewModels
             IsScrewSelected = false;
             _axisId = AxesSelectEnabled ? null : _axisId;  // If the ability to select an axis is disabled, then use existing Id
             _selectedAxis = AxesSelectEnabled ? null : _selectedAxis;
-            _baseSelectedUnit = UnitSystem.Metric;
-            _fileSaved = false; // The process flow is that each object saves to a new solids file, while the main object file is appended.
             ScrewSizes = _screwSizes;
+            ServerRackSizes = _serverRackSizes;
             await GetAxesList(); // Refresh axes list when unit changes
-            await GetDimensionsPart();
+            await GetDimensionsPartAsync();
         }
 
         // Create object and save to database
@@ -349,7 +353,7 @@ namespace NetScad.UI.ViewModels
                     Name = Name,
                     Description = Description,
                     Material = SelectedFilament.ToString(),
-                    OperationType = SelectedOperationType.ToString(), // Add this line
+                    OperationType = SelectedOperationType.ToString(),
                     Length_MM = LengthMM,
                     Width_MM = WidthMM,
                     Height_MM = HeightMM,
@@ -371,14 +375,14 @@ namespace NetScad.UI.ViewModels
                 }
 
                 AppendObject = true; // Set to true since after inserting new row, appending to existing set, or updating, object may be appended.
-                await GetDimensionsPart(); // Refresh the DataGrid
+                await GetDimensionsPartAsync(); // Refresh the DataGrid
 
                 if (AxesSelectEnabled && OuterDimensions.Count > 0)
                 {
                     var axisUsed = OuterDimensions.SingleOrDefault()?.AxisOSCADMethod;
                     AxesSelectEnabled = false; // Disable axis selection after first object is created, since axis should be reused
                     ObjectAxisDisplay = $"Dimensions: {axisUsed?
-                        .Replace("use <../Axes/axes.scad>; ", "")
+                        .Replace("use <Axes/axes.scad>; ", "")
                         .Replace("Get_", "")
                         .Replace("_", " ")
                         .Replace("();", "")
@@ -400,7 +404,7 @@ namespace NetScad.UI.ViewModels
                     Name = Name,
                     Description = Description,
                     Material = SelectedFilament.ToString(),
-                    OperationType = SelectedOperationType.ToString(), // Add this line
+                    OperationType = SelectedOperationType.ToString(),
                     Radius_MM = RadiusMM,
                     Height_MM = CylinderHeightMM,
                     CreatedAt = DateTime.UtcNow,
@@ -420,14 +424,14 @@ namespace NetScad.UI.ViewModels
                 }
 
                 AppendObject = true; // Set to true since after inserting new row, appending to existing set, or updating, object may be appended.
-                await GetDimensionsPart(); // Refresh the DataGrid
+                await GetDimensionsPartAsync(); // Refresh the DataGrid
 
                 if (AxesSelectEnabled && CylinderDimensions.Count > 0)
                 {
                     var axisUsed = CylinderDimensions.SingleOrDefault()?.AxisOSCADMethod;
                     AxesSelectEnabled = false; // Disable axis selection after first object is created, since axis should be reused
                     ObjectAxisDisplay = $"Dimensions: {axisUsed?
-                        .Replace("use <../Axes/axes.scad>; ", "")
+                        .Replace("use <Axes/axes.scad>; ", "")
                         .Replace("Get_", "")
                         .Replace("_", " ")
                         .Replace("();", "")
@@ -469,12 +473,12 @@ namespace NetScad.UI.ViewModels
                 sb.AppendLine("// Custom axis");
                 sb.AppendLine(_axisDimensions.OSCADMethod); // Use axis
                 sb.AppendLine();
-                await Output.WriteToSCAD(content: sb.ToString(), filePath: Path.Combine(_objectFilePath, "Solids", "object.scad"), overWrite: true, cancellationToken: new CancellationToken());
+                await Output.WriteToSCAD(content: sb.ToString(), filePath: Path.Combine(_objectFilePath, "object.scad"), overWrite: true, cancellationToken: new CancellationToken());
                 AxisStored = true;
                 AxesSelectEnabled = false;
-                await GetDimensionsPart();
+                await GetDimensionsPartAsync();
                 ObjectAxisDisplay = $"Dimensions: {_axisDimensions.OSCADMethod?
-                        .Replace("use <../Axes/axes.scad>; ", "")
+                        .Replace("use <Axes/axes.scad>; ", "")
                         .Replace("Get_", "")
                         .Replace("_", " ")
                         .Replace("();", "")
@@ -599,7 +603,7 @@ namespace NetScad.UI.ViewModels
                 // Put Scad object file together
                 var sb = new StringBuilder();
                 sb.AppendLine("// Solid components used in main object");
-                sb.AppendLine($"include <{fileName}>;");  // Include parts
+                sb.AppendLine($"include <Solids/{fileName}>;");  // Include parts
                 sb.AppendLine();
 
                 // Call functions at the top level in object.scad, put differences at top level, and then put generic difference() { union() { <difference calling methods> } }
@@ -630,12 +634,25 @@ namespace NetScad.UI.ViewModels
                 //sb.AppendLine($"}}");  // Difference close
 
                 // Write the call methods to the main object.scad file
-                var filePath = Path.Combine(_objectFilePath, "Solids", "object.scad");
+                var filePath = Path.Combine(_objectFilePath, "object.scad");
                 await Output.AppendToSCAD(content: sb.ToString(), filePath: filePath, cancellationToken: new CancellationToken());
-                _fileSaved = true; // Set to false when Clear Object function is called, default is false when opening app
 
                 // Open the file in whatever the user has designated as the SCAD IDE associated with opening .scad files
                 await ScadFileOperations.OpenScadFileAsync(filePath);
+
+                /* OR check first if you want custom behavior
+                if (ScadFileOperations.IsFileTrackedAsOpen(filePath))
+                {
+                    Console.WriteLine("File is already open!");
+                    // Optionally show a message to user
+                }
+                else
+                {
+                    await ScadFileOperations.OpenScadFileAsync(filePath);
+                }
+
+                // OR allow duplicates explicitly
+                await ScadFileOperations.OpenScadFileAsync(filePath, allowDuplicates: true); */
             }
         }
 
@@ -752,7 +769,7 @@ namespace NetScad.UI.ViewModels
             // Refresh ModuleDimensions DataGrid
             var moduleRecords = await new ModuleDimensions().GetByOuterDimensionsNameAsync(DbConnection, Name);
             ModuleDimensions = new ObservableCollection<ModuleDimensions>(moduleRecords);
-            await GetDimensionsPart(); // Refresh the DataGrid
+            await GetDimensionsPartAsync(); // Refresh the DataGrid
         }
 
         /* Create a union module from all "Add" parts. This assumes that the user will treat a collection of parts as a single part.
@@ -819,7 +836,7 @@ namespace NetScad.UI.ViewModels
                     // Refresh ModuleDimensions DataGrid
                     var moduleRecords = await new ModuleDimensions().GetByOuterDimensionsNameAsync(DbConnection, Name);
                     ModuleDimensions = new ObservableCollection<ModuleDimensions>(moduleRecords);
-                    await GetDimensionsPart(); // Refresh the DataGrid
+                    await GetDimensionsPartAsync(); // Refresh the DataGrid
                 }
             }
         }
@@ -860,20 +877,19 @@ namespace NetScad.UI.ViewModels
 
         private async Task UpdateScrewRadiusFromSelection()
         {
-            if (!IsScrewSelected) return;
+            if (!IsCylinderSelected) return;
 
             var screwData = SelectedScrewSize;
 
             double radiusValue = SelectedScrewProperty switch
             {
-                "ScrewRadius" => screwData.ScrewRadius,
-                "ScrewHeadRadius" => screwData.ScrewHeadRadius,
-                "ThreadedInsertRadius" => screwData.ThreadedInsertRadius,
-                "ClearanceHoleRadius" => screwData.ClearanceHoleRadius,
-                _ => screwData.ScrewRadius
+                "Threaded Portion" => screwData.ScrewRadius,
+                "Screw Head" => screwData.ScrewHeadRadius,
+                "Threaded Insert" => screwData.ThreadedInsertRadius,
+                "Clearance Hole" => screwData.ClearanceHoleRadius,
+                _ => 0
             };
-            RadiusMM = radiusValue;
-            //CylinderHeightIN = Math.Round(InchesToMillimeter(_cylinderHeightIN), _decimalPlaces);
+            RadiusMM = SelectedUnitValue == UnitSystem.Imperial ? Math.Round(MillimeterToInches(radiusValue), _decimalPlaces) : radiusValue;
         }
 
         public double RadiusMM { get => _radiusMM; set => this.RaiseAndSetIfChanged(ref _radiusMM, value); }
@@ -897,6 +913,7 @@ namespace NetScad.UI.ViewModels
                     _isScrewSelected = false;
                     this.RaisePropertyChanged(nameof(IsCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsScrewSelected));
+            
                     if (_isCubeSelected)
                     {
                         // If there are any parts to save in the file, or modules to save in the object file that are cube objects
@@ -926,12 +943,7 @@ namespace NetScad.UI.ViewModels
                         {
                             UnionButton = false;
                         }
-                        if (_baseSelectedUnit == UnitSystem.Imperial)
-                        {
-                            IsMetric = false; // If base object was Imperial, but then M screw was metric, then revert to Imperial for tubing, if user is measuring in Imperial units.
-                            IsImperial = true;
-                            SelectedUnitValue = UnitSystem.Imperial;
-                        }
+                        _ = UpdateServerRackDimensionsFromSelection();
                     }
                 }
             }
@@ -977,13 +989,6 @@ namespace NetScad.UI.ViewModels
                         else
                         {
                             UnionButton = false;
-                        }
-
-                        if (_baseSelectedUnit == UnitSystem.Imperial)
-                        {
-                            IsMetric = false; // If base object was Imperial, but then M screw was metric, then revert to Imperial for tubing, if user is measuring in Imperial units.
-                            IsImperial = true;
-                            SelectedUnitValue = UnitSystem.Imperial;
                         }
                     }
 
@@ -1033,23 +1038,18 @@ namespace NetScad.UI.ViewModels
                         {
                             UnionButton = false;
                         }
-
-                        //_baseSelectedUnit = SelectedUnitValue;
-                        IsMetric = true; // If base object was Imperial, but then M screw was metric, then revert to Imperial for tubing, if user is measuring in Imperial units.
-                        IsImperial = false;
-                        SelectedUnitValue = UnitSystem.Metric;
                     }
                 }
             }
         }
 
-        public ScrewSize SelectedScrewSize
+        public ScrewSize? SelectedScrewSize
         {
             get => _selectedScrewSize;
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedScrewSize, value);
-                if (IsScrewSelected)
+                if (IsScrewSelected || IsCylinderSelected)
                 {
                     _ = UpdateScrewRadiusFromSelection();
                 }
@@ -1062,7 +1062,7 @@ namespace NetScad.UI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedScrewProperty, value);
-                if (IsScrewSelected)
+                if (IsScrewSelected || IsCylinderSelected)
                 {
                     _ = UpdateScrewRadiusFromSelection();
                 }
@@ -1073,10 +1073,94 @@ namespace NetScad.UI.ViewModels
 
         public List<string> ScrewProperties { get; } = new List<string>
         {
-            "ScrewRadius",
-            "ScrewHeadRadius",
-            "ThreadedInsertRadius",
-            "ClearanceHoleRadius",
+            "Threaded Portion",
+            "Screw Head",
+            "Threaded Insert",
+            "Clearance Hole",
         };
+
+        public ServerRack? SelectedServerRack
+        {
+            get => _selectedServerRack;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedServerRack, value);
+                if (IsCubeSelected)
+                {
+                    _ = UpdateServerRackDimensionsFromSelection();
+                }
+            }
+        }
+
+        public string SelectedServerRackWidthType
+        {
+            get => _selectedServerRackWidthType;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedServerRackWidthType, value);
+                if (IsCubeSelected)
+                {
+                    _ = UpdateServerRackDimensionsFromSelection();
+                }
+            }
+        }
+
+        public List<ServerRack>? ServerRackSizes
+        {
+            get => _serverRackSizes;
+            set => this.RaiseAndSetIfChanged(ref _serverRackSizes, value);
+        }
+
+        public List<string> ServerRackWidthTypes { get; } = new List<string>
+        {
+            "Inner Width",
+            "Outer Width",
+        };
+
+        // Add this method to update dimensions when server rack is selected
+        private async Task UpdateServerRackDimensionsFromSelection()
+        {
+            if (!IsCubeSelected) return;
+
+            // Update width if a width type is selected
+            if (!string.IsNullOrEmpty(SelectedServerRackWidthType))
+            {
+                var rackData = ServerRackDimensions.GetAll().FirstOrDefault(); // Independent of Rack Height
+                double widthValue = SelectedServerRackWidthType switch
+                {
+                    "Inner Width" => rackData.InnerWidthMm,
+                    "Outer Width" => rackData.OuterWidthMm,
+                    _ => 0
+                };
+
+                // Update Width based on unit system
+                if (SelectedUnitValue == UnitSystem.Metric)
+                {
+                    WidthMM = widthValue;
+                }
+                else // Imperial
+                {
+                    WidthMM = SelectedServerRackWidthType == "Inner" 
+                        ? Math.Round(rackData.InnerWidthInches, _decimalPlaces)
+                        : Math.Round(rackData.OuterWidthInches, _decimalPlaces);
+                }
+            }
+
+            // Update height if server rack is selected
+            if (SelectedServerRack != null)
+            {
+                var rackData = SelectedServerRack;
+                
+                // Update Height based on unit system
+                if (SelectedUnitValue == UnitSystem.Metric)
+                {
+                    HeightMM = rackData.HeightMm;
+                }
+                else // Imperial
+                {
+                    HeightMM = Math.Round(rackData.HeightInches, _decimalPlaces);
+                }
+            }
+        }
     }
 }
