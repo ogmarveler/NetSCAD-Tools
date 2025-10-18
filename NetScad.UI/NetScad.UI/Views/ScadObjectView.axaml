@@ -37,23 +37,23 @@
     <UserControl.Styles>
         <!--  DataGrid Column Header Styles  -->
         <Style Selector="DataGrid#CubeDataGrid DataGridColumnHeader">
-            <Setter Property="Foreground" Value="{DynamicResource PurpleForeground}" />
-            <Setter Property="Background" Value="{DynamicResource PurpleBackground}" />
+            <Setter Property="Background" Value="{DynamicResource PurpleForeground}" />
+            <Setter Property="Foreground" Value="{DynamicResource PurpleBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style Selector="DataGrid#CylinderDataGrid DataGridColumnHeader">
-            <Setter Property="Foreground" Value="{DynamicResource PurpleForeground}" />
-            <Setter Property="Background" Value="{DynamicResource PurpleBackground}" />
+            <Setter Property="Background" Value="{DynamicResource PurpleForeground}" />
+            <Setter Property="Foreground" Value="{DynamicResource PurpleBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style Selector="DataGrid#ModulesUnionDataGrid DataGridColumnHeader">
-            <Setter Property="Foreground" Value="{DynamicResource BlueForeground}" />
-            <Setter Property="Background" Value="{DynamicResource BlueBackground}" />
+            <Setter Property="Background" Value="{DynamicResource BlueForeground}" />
+            <Setter Property="Foreground" Value="{DynamicResource BlueBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style Selector="DataGrid#ModulesDifferenceDataGrid DataGridColumnHeader">
-            <Setter Property="Foreground" Value="{DynamicResource TealForeground}" />
-            <Setter Property="Background" Value="{DynamicResource TealBackground}" />
+            <Setter Property="Background" Value="{DynamicResource TealForeground}" />
+            <Setter Property="Foreground" Value="{DynamicResource TealBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
     </UserControl.Styles>
@@ -169,7 +169,7 @@
                 VerticalAlignment="Center"
                 BorderBrush="{DynamicResource CardForeGround}"
                 BorderThickness="2"
-                CornerRadius="3"
+                CornerRadius="8"
                 IsEnabled="False"
                 IsVisible="{Binding !AxesSelectEnabled}">
                 <TextBlock
@@ -763,6 +763,7 @@
                 VerticalContentAlignment="Center"
                 BorderBrush="{DynamicResource CardForeground}"
                 BorderThickness="2"
+				CornerRadius="8"
                 Click="ApplyAxisButton_Click"
                 Content="Apply Axis"
                 IsEnabled="True"
@@ -785,6 +786,7 @@
                 VerticalContentAlignment="Center"
                 BorderBrush="{DynamicResource CardForeground}"
                 BorderThickness="1"
+				CornerRadius="8"
                 Click="ClearButton_Click"
                 Content="Clear Inputs"
                 IsEnabled="True"
@@ -807,6 +809,7 @@
                 VerticalContentAlignment="Center"
                 BorderBrush="{DynamicResource CardForeground}"
                 BorderThickness="1"
+				CornerRadius="8"
                 Click="ClearObjectButton_Click"
                 Content="Clear Object"
                 IsEnabled="True"
@@ -828,13 +831,14 @@
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Background="{DynamicResource PurpleBackground}"
-                BorderBrush="{DynamicResource PurpleForeground}"
+                Background="{DynamicResource PurpleForeground}"
+                BorderBrush="{DynamicResource PurpleBackground}"
                 BorderThickness="2"
+				CornerRadius="8"
                 Click="GetObjectButton_Click"
                 Content="Get Object"
                 FontWeight="SemiBold"
-                Foreground="{DynamicResource PurpleForeground}"
+                Foreground="{DynamicResource PurpleBackground}"
                 IsEnabled="{Binding Name, Converter={StaticResource StringNotNullOrEmptyConverter}}"
                 IsVisible="{Binding AxisStored}">
                 <ToolTip.Tip>
@@ -861,12 +865,13 @@
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Background="{DynamicResource PurpleBackground}"
-                BorderBrush="{DynamicResource PurpleForeground}"
+                Background="{DynamicResource PurpleForeground}"
+                BorderBrush="{DynamicResource PurpleBackground}"
                 BorderThickness="2"
+				CornerRadius="8"
                 Click="CreateButton_Click"
                 FontWeight="SemiBold"
-                Foreground="{DynamicResource PurpleForeground}"
+                Foreground="{DynamicResource PurpleBackground}"
                 IsVisible="{Binding AxisStored}">
                 <Button.Content>
                     <MultiBinding Converter="{StaticResource CollectionCountToTextConverter}" ConverterParameter="Create Object|Append Object">
@@ -903,13 +908,14 @@
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Background="{DynamicResource BlueBackground}"
-                BorderBrush="{DynamicResource BlueForeground}"
+                Background="{DynamicResource BlueForeground}"
+                BorderBrush="{DynamicResource BlueBackground}"
                 BorderThickness="2"
+				CornerRadius="8"
                 Click="CreateUnionButton_Click"
                 Content="Create Union"
                 FontWeight="SemiBold"
-                Foreground="{DynamicResource BlueForeground}"
+                Foreground="{DynamicResource BlueBackground}"
                 IsEnabled="True"
                 IsVisible="{Binding UnionButton}">
                 <ToolTip.Tip>
@@ -928,13 +934,14 @@
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Background="{DynamicResource TealBackground}"
-                BorderBrush="{DynamicResource TealForeground}"
+                Background="{DynamicResource TealForeground}"
+                BorderBrush="{DynamicResource TealBackground}"
                 BorderThickness="2"
+				CornerRadius="8"
                 Click="CreateDifferenceButton_Click"
                 Content="Create Difference"
                 FontWeight="SemiBold"
-                Foreground="{DynamicResource TealForeground}"
+                Foreground="{DynamicResource TealBackground}"
                 IsEnabled="True"
                 IsVisible="{Binding DifferenceButton}">
                 <ToolTip.Tip>
@@ -955,6 +962,7 @@
                 VerticalContentAlignment="Center"
                 BorderBrush="{DynamicResource CardForeground}"
                 BorderThickness="1"
+				CornerRadius="8"
                 Click="ObjectToScadFilesButton_Click"
                 Content="Save Object to OpenSCAD"
                 IsEnabled="True"

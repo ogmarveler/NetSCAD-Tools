@@ -22,6 +22,15 @@
         <conv:DoubleConverter x:Key="DoubleConverter" />
     </UserControl.Resources>
 
+    <UserControl.Styles>
+        <!--  DataGrid Column Header Style  -->
+        <Style Selector="DataGrid#AxesListDataGrid DataGridColumnHeader">
+            <Setter Property="Foreground" Value="{DynamicResource CardBackground}" />
+            <Setter Property="Background" Value="{DynamicResource CardForeground}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </UserControl.Styles>
+
     <Grid
         Margin="0"
         HorizontalAlignment="Stretch"
@@ -389,6 +398,7 @@
             BorderThickness="1"
             Click="_ClearInputsAsync"
             Content="Clear"
+            CornerRadius="8"
             IsEnabled="True">
             <ToolTip.Tip>
                 <StackPanel Orientation="Vertical">
@@ -409,9 +419,11 @@
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             BorderBrush="{DynamicResource CardForeground}"
-            BorderThickness="1"
+            BorderThickness="2"
             Click="_CreateCustomAxisAsync"
             Content="Create Axis"
+            CornerRadius="8"
+            FontWeight="SemiBold"
             IsEnabled="{Binding CreateButtonEnabled}">
             <ToolTip.Tip>
                 <StackPanel Orientation="Vertical">
@@ -594,6 +606,7 @@
             Text="Generated Axes" />
 
         <DataGrid
+            x:Name="AxesListDataGrid"
             Grid.Row="2"
             Grid.RowSpan="14"
             Grid.Column="3"
@@ -601,8 +614,9 @@
             Padding="5"
             HorizontalAlignment="Stretch"
             AutoGenerateColumns="True"
-            BorderBrush="Gray"
-            BorderThickness="1"
+            AutoGeneratingColumn="DataGrid_AutoGeneratingColumn"
+            BorderBrush="{DynamicResource CardForeground}"
+            BorderThickness="2"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
             ClipboardCopyMode="ExcludeHeader"
