@@ -19,7 +19,10 @@ namespace NetScad.Designer.Repositories
         public double Width_MM { get; set; }
         public double Height_MM { get; set; }
         public double Thickness_MM { get; set; }
-        public double Round_r_MM => Math.Round(RoundFromWidth(Width_MM), OpenSCAD_DecimalPlaces);
+        public double XOffset_MM { get; set; } // X-axis translation offset
+        public double YOffset_MM { get; set; } // Y-axis translation offset
+        public double ZOffset_MM { get; set; } // Z-axis translation offset
+        public double Round_r_MM  => Math.Round(RoundFromWidth(Width_MM), OpenSCAD_DecimalPlaces);
         public double Round_h_MM => Math.Round(RoundEdgeHeight(Round_r_MM), OpenSCAD_DecimalPlaces);
         public int Resolution => 180; // Default resolution for curves
 
@@ -28,6 +31,9 @@ namespace NetScad.Designer.Repositories
         public double Width_IN => Math.Round(MillimeterToInches(Width_MM), OpenSCAD_DecimalPlaces);
         public double Height_IN => Math.Round(MillimeterToInches(Height_MM), OpenSCAD_DecimalPlaces);
         public double Thickness_IN => Math.Round(MillimeterToInches(Thickness_MM), OpenSCAD_DecimalPlaces);
+        public double XOffset_IN => Math.Round(MillimeterToInches(XOffset_MM), OpenSCAD_DecimalPlaces);
+        public double YOffset_IN => Math.Round(MillimeterToInches(YOffset_MM), OpenSCAD_DecimalPlaces);
+        public double ZOffset_IN => Math.Round(MillimeterToInches(ZOffset_MM), OpenSCAD_DecimalPlaces);
         public double Round_r_IN => Math.Round(MillimeterToInches(RoundFromWidth(Width_MM)), OpenSCAD_DecimalPlaces);
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -54,11 +60,17 @@ namespace NetScad.Designer.Repositories
             { "Width_MM", Width_MM },
             { "Height_MM", Height_MM },
             { "Thickness_MM", Thickness_MM },
+            { "XOffset_MM", XOffset_MM },
+            { "YOffset_MM", YOffset_MM },
+            { "ZOffset_MM", ZOffset_MM },
             { "Round_r_MM", Round_r_MM },
             { "Length_IN", Length_IN },
             { "Width_IN", Width_IN },
             { "Height_IN", Height_IN },
             { "Thickness_IN", Thickness_IN },
+            { "XOffset_IN", XOffset_IN },
+            { "YOffset_IN", YOffset_IN },
+            { "ZOffset_IN", ZOffset_IN },
             { "Round_r_IN", Round_r_IN },
             { "Resolution", Resolution },
             { "OSCADMethod", OSCADMethod },
@@ -82,11 +94,17 @@ namespace NetScad.Designer.Repositories
             (nameof(OuterDimensions.Width_MM), typeof(double), false),
             (nameof(OuterDimensions.Height_MM), typeof(double), false),
             (nameof(OuterDimensions.Thickness_MM), typeof(double), false),
+            (nameof(OuterDimensions.XOffset_MM), typeof(double), false),
+            (nameof(OuterDimensions.YOffset_MM), typeof(double), false),
+            (nameof(OuterDimensions.ZOffset_MM), typeof(double), false),
             (nameof(OuterDimensions.Round_r_MM), typeof(double), false),
             (nameof(OuterDimensions.Length_IN), typeof(double), false),
             (nameof(OuterDimensions.Width_IN), typeof(double), false),
             (nameof(OuterDimensions.Height_IN), typeof(double), false),
             (nameof(OuterDimensions.Thickness_IN), typeof(double), false),
+            (nameof(OuterDimensions.XOffset_IN), typeof(double), false),
+            (nameof(OuterDimensions.YOffset_IN), typeof(double), false),
+            (nameof(OuterDimensions.ZOffset_IN), typeof(double), false),
             (nameof(OuterDimensions.Round_r_IN), typeof(double), false),
             (nameof(OuterDimensions.Resolution), typeof(int), false),
             (nameof(OuterDimensions.OSCADMethod), typeof(string), true),
@@ -123,9 +141,9 @@ namespace NetScad.Designer.Repositories
         public static async Task<int> UpsertAsync(this OuterDimensions entity, SqliteConnection connection)
         {
             // First, try to find an existing record with matching Name and Description
-            const string selectSql = "SELECT Id FROM OuterDimensions WHERE Name = @Name AND Description = @Description LIMIT 1";
-            var existingId = await connection.QuerySingleOrDefaultAsync<int?>(selectSql, new { entity.Name, entity.Description });
-            
+            const string selectSql = "SELECT Id FROM OuterDimensions WHERE Name = @Name AND Description = @Description AND OperationType = @OperationType LIMIT 1";
+            var existingId = await connection.QuerySingleOrDefaultAsync<int?>(selectSql, new { entity.Name, entity.Description, OperationType = entity.OperationType.ToString() });
+
             if (existingId.HasValue)
             {
                 // Update the existing record
@@ -316,7 +334,5 @@ namespace NetScad.Designer.Repositories
             
             return result;
         }
-
-        // ... (keep all existing query methods)
     }
 }

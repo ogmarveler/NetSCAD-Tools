@@ -16,16 +16,22 @@ namespace NetScad.Designer.Repositories
         public string OperationType { get; set; } = Core.Primitives.OperationType.Add.ToString(); // Add or Subtract
         public const int OpenSCAD_DecimalPlaces = 6; // High precision for 3D printing
         public double Radius_MM { get; set; } // Millimeters (default)
-        public double? Radius1_MM { get; set; } // Optional radius1 for cone
-        public double? Radius2_MM { get; set; } // Optional radius2 for cone
+        public double Radius1_MM { get; set; } = 0; // Optional radius1 for cone
+        public double Radius2_MM { get; set; } = 0; // Optional radius2 for cone
         public double Height_MM { get; set; }
+        public double XOffset_MM { get; set; } // X-axis translation offset
+        public double YOffset_MM { get; set; } // Y-axis translation offset
+        public double ZOffset_MM { get; set; } // Z-axis translation offset
         public int Resolution => 180; // Default resolution for curves
 
         // Imperial conversions (computed)
         public double Radius_IN => Math.Round(MillimeterToInches(Radius_MM), OpenSCAD_DecimalPlaces);
-        public double? Radius1_IN => Radius1_MM.HasValue ? Math.Round(MillimeterToInches(Radius1_MM.Value), OpenSCAD_DecimalPlaces) : null;
-        public double? Radius2_IN => Radius2_MM.HasValue ? Math.Round(MillimeterToInches(Radius2_MM.Value), OpenSCAD_DecimalPlaces) : null;
+        public double Radius1_IN => Math.Round(MillimeterToInches(Radius1_MM), OpenSCAD_DecimalPlaces);
+        public double Radius2_IN => Math.Round(MillimeterToInches(Radius2_MM), OpenSCAD_DecimalPlaces);
         public double Height_IN => Math.Round(MillimeterToInches(Height_MM), OpenSCAD_DecimalPlaces);
+        public double XOffset_IN => Math.Round(MillimeterToInches(XOffset_MM), OpenSCAD_DecimalPlaces);
+        public double YOffset_IN => Math.Round(MillimeterToInches(YOffset_MM), OpenSCAD_DecimalPlaces);
+        public double ZOffset_IN => Math.Round(MillimeterToInches(ZOffset_MM), OpenSCAD_DecimalPlaces);
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public string OSCADMethod { get; set; } = string.Empty;
@@ -48,13 +54,19 @@ namespace NetScad.Designer.Repositories
             { "Material", Material ?? (object)DBNull.Value },
             { "OperationType", OperationType },
             { "Radius_MM", Radius_MM },
-            { "Radius1_MM", Radius1_MM ?? (object)DBNull.Value },
-            { "Radius2_MM", Radius2_MM ?? (object)DBNull.Value },
+            { "Radius1_MM", Radius1_MM },
+            { "Radius2_MM", Radius2_MM },
             { "Height_MM", Height_MM },
+            { "XOffset_MM", XOffset_MM },
+            { "YOffset_MM", YOffset_MM },
+            { "ZOffset_MM", ZOffset_MM },
             { "Radius_IN", Radius_IN },
-            { "Radius1_IN", Radius1_IN ?? (object)DBNull.Value },
-            { "Radius2_IN", Radius2_IN ?? (object)DBNull.Value },
+            { "Radius1_IN", Radius1_IN },
+            { "Radius2_IN", Radius2_IN },
             { "Height_IN", Height_IN },
+            { "XOffset_IN", XOffset_IN },
+            { "YOffset_IN", YOffset_IN },
+            { "ZOffset_IN", ZOffset_IN },
             { "Resolution", Resolution },
             { "OSCADMethod", OSCADMethod },
             { "CreatedAt", CreatedAt }
@@ -77,10 +89,16 @@ namespace NetScad.Designer.Repositories
             (nameof(CylinderDimensions.Radius1_MM), typeof(double), true),
             (nameof(CylinderDimensions.Radius2_MM), typeof(double), true),
             (nameof(CylinderDimensions.Height_MM), typeof(double), false),
+            (nameof(CylinderDimensions.XOffset_MM), typeof(double), false),
+            (nameof(CylinderDimensions.YOffset_MM), typeof(double), false),
+            (nameof(CylinderDimensions.ZOffset_MM), typeof(double), false),
             (nameof(CylinderDimensions.Radius_IN), typeof(double), false),
             (nameof(CylinderDimensions.Radius1_IN), typeof(double), true),
             (nameof(CylinderDimensions.Radius2_IN), typeof(double), true),
             (nameof(CylinderDimensions.Height_IN), typeof(double), false),
+            (nameof(CylinderDimensions.XOffset_IN), typeof(double), false),
+            (nameof(CylinderDimensions.YOffset_IN), typeof(double), false),
+            (nameof(CylinderDimensions.ZOffset_IN), typeof(double), false),
             (nameof(CylinderDimensions.Resolution), typeof(int), false),
             (nameof(CylinderDimensions.OSCADMethod), typeof(string), true),
             (nameof(CylinderDimensions.CreatedAt), typeof(DateTime), false)
@@ -116,8 +134,8 @@ namespace NetScad.Designer.Repositories
         public static async Task<int> UpsertAsync(this CylinderDimensions entity, SqliteConnection connection)
         {
             // First, try to find an existing record with matching Name and Description
-            const string selectSql = "SELECT Id FROM CylinderDimensions WHERE Name = @Name AND Description = @Description LIMIT 1";
-            var existingId = await connection.QuerySingleOrDefaultAsync<int?>(selectSql, new { entity.Name, entity.Description });
+            const string selectSql = "SELECT Id FROM CylinderDimensions WHERE Name = @Name AND Description = @Description AND OperationType = @OperationType LIMIT 1";
+            var existingId = await connection.QuerySingleOrDefaultAsync<int?>(selectSql, new { entity.Name, entity.Description, OperationType = entity.OperationType.ToString() });
             
             if (existingId.HasValue)
             {

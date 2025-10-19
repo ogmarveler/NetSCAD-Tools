@@ -130,6 +130,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -433,14 +434,8 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Classes="textbox"
-                Text="Radius">
-                <TextBlock.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Path="IsCylinderSelected" />
-                        <Binding Path="IsScrewSelected" />
-                    </MultiBinding>
-                </TextBlock.IsVisible>
-            </TextBlock>
+                IsVisible="{Binding IsCylinderSelected}"
+                Text="Radius" />
             <TextBox
                 Grid.Row="1"
                 Grid.Column="4"
@@ -448,15 +443,10 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Classes="card"
+                IsVisible="{Binding IsCylinderSelected}"
                 SelectionBrush="Yellow"
                 Text="{Binding RadiusMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                 Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                <TextBox.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Path="IsCylinderSelected" />
-                        <Binding Path="IsScrewSelected" />
-                    </MultiBinding>
-                </TextBox.IsVisible>
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch" Text="Cylinder radius" />
@@ -472,14 +462,8 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Classes="textbox"
-                Text="Radius 1">
-                <TextBlock.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Path="IsCylinderSelected" />
-                        <Binding Path="IsScrewSelected" />
-                    </MultiBinding>
-                </TextBlock.IsVisible>
-            </TextBlock>
+                IsVisible="{Binding IsCylinderSelected}"
+                Text="Radius 1" />
             <TextBox
                 Grid.Row="1"
                 Grid.Column="5"
@@ -488,15 +472,10 @@
                 VerticalAlignment="Center"
                 Classes="card"
                 IsEnabled="{Binding AxisStored}"
+                IsVisible="{Binding IsCylinderSelected}"
                 SelectionBrush="Yellow"
                 Text="{Binding Radius1MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                 Watermark="Optional">
-                <TextBox.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Path="IsCylinderSelected" />
-                        <Binding Path="IsScrewSelected" />
-                    </MultiBinding>
-                </TextBox.IsVisible>
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch" Text="Optional first radius for cone" />
@@ -512,14 +491,8 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Classes="textbox"
-                Text="Radius 2">
-                <TextBlock.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Path="IsCylinderSelected" />
-                        <Binding Path="IsScrewSelected" />
-                    </MultiBinding>
-                </TextBlock.IsVisible>
-            </TextBlock>
+                IsVisible="{Binding IsCylinderSelected}"
+                Text="Radius 2" />
 
             <TextBox
                 Grid.Row="1"
@@ -529,15 +502,10 @@
                 VerticalAlignment="Center"
                 Classes="card"
                 IsEnabled="{Binding AxisStored}"
+                IsVisible="{Binding IsCylinderSelected}"
                 SelectionBrush="Yellow"
                 Text="{Binding Radius2MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                 Watermark="Optional">
-                <TextBox.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Path="IsCylinderSelected" />
-                        <Binding Path="IsScrewSelected" />
-                    </MultiBinding>
-                </TextBox.IsVisible>
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch" Text="Optional second radius for cone" />
@@ -553,14 +521,8 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Classes="textbox"
-                Text="Height">
-                <TextBlock.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Path="IsCylinderSelected" />
-                        <Binding Path="IsScrewSelected" />
-                    </MultiBinding>
-                </TextBlock.IsVisible>
-            </TextBlock>
+                IsVisible="{Binding IsCylinderSelected}"
+                Text="Height" />
 
             <TextBox
                 Grid.Row="1"
@@ -570,15 +532,10 @@
                 VerticalAlignment="Center"
                 Classes="card"
                 IsEnabled="{Binding AxisStored}"
+                IsVisible="{Binding IsCylinderSelected}"
                 SelectionBrush="Yellow"
                 Text="{Binding CylinderHeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                 Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                <TextBox.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Path="IsCylinderSelected" />
-                        <Binding Path="IsScrewSelected" />
-                    </MultiBinding>
-                </TextBox.IsVisible>
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch" Text="Cylinder height" />
@@ -639,6 +596,133 @@
                 </ToolTip.Tip>
             </ComboBox>
 
+            <!--  OFFSET INPUTS - X Offset, Y Offset, Z Offset (for Translate functions)  -->
+            <!--  X Offset  -->
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="4"
+                Margin="0,5,0,-3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                Text="X Offset">
+                <TextBlock.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBlock.IsVisible>
+            </TextBlock>
+            <TextBox
+                Grid.Row="3"
+                Grid.Column="4"
+                Margin="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Classes="card"
+                IsEnabled="{Binding AxisStored}"
+                SelectionBrush="Yellow"
+                Text="{Binding XOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                <TextBox.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBox.IsVisible>
+                <ToolTip.Tip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Stretch" Text="X-axis translation offset" />
+                    </StackPanel>
+                </ToolTip.Tip>
+            </TextBox>
+
+            <!--  Y Offset  -->
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="5"
+                Margin="0,5,0,-3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                Text="Y Offset">
+                <TextBlock.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBlock.IsVisible>
+            </TextBlock>
+            <TextBox
+                Grid.Row="3"
+                Grid.Column="5"
+                Margin="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Classes="card"
+                IsEnabled="{Binding AxisStored}"
+                SelectionBrush="Yellow"
+                Text="{Binding YOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                <TextBox.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBox.IsVisible>
+                <ToolTip.Tip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Stretch" Text="Y-axis translation offset" />
+                    </StackPanel>
+                </ToolTip.Tip>
+            </TextBox>
+
+            <!--  Z Offset  -->
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="6"
+                Margin="0,5,0,-3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                Text="Z Offset">
+                <TextBlock.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBlock.IsVisible>
+            </TextBlock>
+            <TextBox
+                Grid.Row="3"
+                Grid.Column="6"
+                Margin="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Classes="card"
+                IsEnabled="{Binding AxisStored}"
+                SelectionBrush="Yellow"
+                Text="{Binding ZOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                <TextBox.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBox.IsVisible>
+                <ToolTip.Tip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Stretch" Text="Z-axis translation offset" />
+                    </StackPanel>
+                </ToolTip.Tip>
+            </TextBox>
+
         </Grid>
 
         <!--  Radio Button Group for Shape Selection  -->
@@ -660,12 +744,6 @@
                 GroupName="ShapeType"
                 IsChecked="{Binding IsCubeSelected, Mode=TwoWay}"
                 IsEnabled="{Binding AxisStored}">
-                <RadioButton.IsEnabled>
-                    <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="AxisStored" />
-                        <Binding Path="!UnionButton" />
-                    </MultiBinding>
-                </RadioButton.IsEnabled>
                 <ToolTip.Tip>
                     <TextBlock Text="Create a rectangular cube object" />
                 </ToolTip.Tip>
@@ -675,13 +753,8 @@
                 VerticalAlignment="Center"
                 Content="Rounded Cube"
                 GroupName="ShapeType"
-                IsChecked="{Binding IsRoundCubeSelected, Mode=TwoWay}">
-                <RadioButton.IsEnabled>
-                    <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="AxisStored" />
-                        <Binding Path="!UnionButton" />
-                    </MultiBinding>
-                </RadioButton.IsEnabled>
+                IsChecked="{Binding IsRoundCubeSelected, Mode=TwoWay}"
+                IsEnabled="{Binding AxisStored}">
                 <ToolTip.Tip>
                     <TextBlock Text="Create a rectangular, rounded cube object" />
                 </ToolTip.Tip>
@@ -691,13 +764,8 @@
                 VerticalAlignment="Center"
                 Content="Cylinder"
                 GroupName="ShapeType"
-                IsChecked="{Binding IsCylinderSelected, Mode=TwoWay}">
-                <RadioButton.IsEnabled>
-                    <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="AxisStored" />
-                        <Binding Path="!UnionButton" />
-                    </MultiBinding>
-                </RadioButton.IsEnabled>
+                IsChecked="{Binding IsCylinderSelected, Mode=TwoWay}"
+                IsEnabled="{Binding AxisStored}">
                 <ToolTip.Tip>
                     <TextBlock Text="Create a cylindrical object" />
                 </ToolTip.Tip>
@@ -933,7 +1001,7 @@
                 Foreground="{DynamicResource PurpleBackground}"
                 IsVisible="{Binding AxisStored}">
                 <Button.Content>
-                    <MultiBinding Converter="{StaticResource CollectionCountToTextConverter}" ConverterParameter="Create Object|Append Object">
+                    <MultiBinding Converter="{StaticResource CollectionCountToTextConverter}" ConverterParameter="Create Object|Update Object">
                         <Binding Path="OuterDimensions" />
                         <Binding Path="CylinderDimensions" />
                     </MultiBinding>
@@ -1069,6 +1137,7 @@
             IsReadOnly="True"
             IsVisible="{Binding OuterDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
             ItemsSource="{Binding OuterDimensions}"
+            SelectionChanged="CubeDataGrid_SelectionChanged"
             SelectionMode="Single" />
 
         <!--  Separator  -->
@@ -1100,6 +1169,7 @@
             IsReadOnly="True"
             IsVisible="{Binding CylinderDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
             ItemsSource="{Binding CylinderDimensions}"
+            SelectionChanged="CylinderDataGrid_SelectionChanged"
             SelectionMode="Single" />
 
         <!--  Separator  -->
@@ -1112,6 +1182,7 @@
         <StackPanel
             Grid.Row="9"
             Grid.Column="0"
+            VerticalAlignment="Stretch"
             Orientation="Horizontal">
             <!--  DataGrid - ModuleDimensions - Unions  -->
             <DataGrid

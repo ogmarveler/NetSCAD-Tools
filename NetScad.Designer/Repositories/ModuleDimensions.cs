@@ -11,7 +11,15 @@ namespace NetScad.Designer.Repositories
         public string Name { get; set; } = string.Empty;
         public string ModuleType { get; set; } = string.Empty; // "Union" or "Difference"
         public string SolidType { get; set; } = string.Empty; // "Cube" or "Cylinder"
-        public string OuterDimensionsName { get; set; } = string.Empty; // Reference to OuterDimensions.Name
+        public string ObjectName { get; set; } = string.Empty; // Reference to Object Name
+        public string ObjectDescription { get; set; } = string.Empty; // Reference to Object Description
+        public double XOffset_MM { get; set; } // X-axis translation offset
+        public double YOffset_MM { get; set; } // Y-axis translation offset
+        public double ZOffset_MM { get; set; } // Z-axis translation offset
+        public double XOffset_IN { get; set; } // X-axis translation offset
+        public double YOffset_IN { get; set; } // Y-axis translation offset
+        public double ZOffset_IN { get; set; } // Z-axis translation offset
+        public string IncludeMethod { get; set; } = string.Empty;
         public string OSCADMethod { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -21,8 +29,16 @@ namespace NetScad.Designer.Repositories
             { "Name", Name },
             { "ModuleType", ModuleType },
             { "SolidType", SolidType },
-            { "OuterDimensionsName", OuterDimensionsName },
+            { "ObjectName", ObjectName },
+            { "ObjectDescription", ObjectDescription },
+            { "XOffset_MM", XOffset_MM },
+            { "YOffset_MM", YOffset_MM },
+            { "ZOffset_MM", ZOffset_MM },
+            { "XOffset_MM", XOffset_IN },
+            { "YOffset_MM", YOffset_IN },
+            { "ZOffset_MM", ZOffset_IN },
             { "OSCADMethod", OSCADMethod },
+            { "IncludeMethod", IncludeMethod },
             { "CreatedAt", CreatedAt }
         };
     }
@@ -37,8 +53,16 @@ namespace NetScad.Designer.Repositories
             (nameof(ModuleDimensions.Name), typeof(string), false),
             (nameof(ModuleDimensions.ModuleType), typeof(string), false),
             (nameof(ModuleDimensions.SolidType), typeof(string), false),
-            (nameof(ModuleDimensions.OuterDimensionsName), typeof(string), false),
+            (nameof(ModuleDimensions.ObjectName), typeof(string), false),
+            (nameof(ModuleDimensions.ObjectDescription), typeof(string), false),
+            (nameof(ModuleDimensions.XOffset_MM), typeof(double), false),
+            (nameof(ModuleDimensions.YOffset_MM), typeof(double), false),
+            (nameof(ModuleDimensions.ZOffset_MM), typeof(double), false),
+            (nameof(ModuleDimensions.XOffset_IN), typeof(double), false),
+            (nameof(ModuleDimensions.YOffset_IN), typeof(double), false),
+            (nameof(ModuleDimensions.ZOffset_IN), typeof(double), false),
             (nameof(ModuleDimensions.OSCADMethod), typeof(string), false),
+            (nameof(ModuleDimensions.IncludeMethod), typeof(string), false),
             (nameof(ModuleDimensions.CreatedAt), typeof(DateTime), false)
         ];
 
@@ -99,6 +123,12 @@ namespace NetScad.Designer.Repositories
             await connection.ExecuteAsync(sql, entity);
         }
 
+        public static async Task UpdateIncludeMethodByNameDescriptionSolidTypeAsync(this ModuleDimensions entity, SqliteConnection connection)
+        {
+            string updateSql = $"UPDATE ModuleDimensions SET IncludeMethod = @IncludeMethod WHERE ObjectName = @ObjectName AND SolidType = @SolidType AND ObjectDescription = @ObjectDescription";
+            await connection.ExecuteAsync(updateSql, entity);
+        }
+
         // Delete by Id
         public static async Task DeleteAsync(this ModuleDimensions entity, SqliteConnection connection) => 
             await connection.ExecuteAsync("DELETE FROM ModuleDimensions WHERE Id = @Id", new { entity.Id });
@@ -127,11 +157,11 @@ namespace NetScad.Designer.Repositories
                 "SELECT * FROM ModuleDimensions WHERE SolidType = @SolidType ORDER BY CreatedAt DESC",
                 new { SolidType = solidType });
 
-        // Get by OuterDimensionsName
-        public static async Task<IEnumerable<ModuleDimensions>> GetByOuterDimensionsNameAsync(this ModuleDimensions _, SqliteConnection connection, string outerDimensionsName) => 
+        // Get by ObjectName
+        public static async Task<IEnumerable<ModuleDimensions>> GetByObjectNameAsync(this ModuleDimensions _, SqliteConnection connection, string objectName) => 
             await connection.QueryAsync<ModuleDimensions>(
-                "SELECT * FROM ModuleDimensions WHERE OuterDimensionsName = @OuterDimensionsName ORDER BY ModuleType ASC, SolidType ASC",
-                new { OuterDimensionsName = outerDimensionsName });
+                "SELECT * FROM ModuleDimensions WHERE ObjectName = @ObjectName ORDER BY ModuleType ASC, SolidType ASC",
+                new { ObjectName = objectName });
 
         // Get by Name and ModuleType
         public static async Task<IEnumerable<ModuleDimensions>> GetByNameAndModuleTypeAsync(this ModuleDimensions _, SqliteConnection connection, string name, string moduleType) => 

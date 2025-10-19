@@ -14,7 +14,7 @@ namespace NetScad.Core.Utility
         /// <param name="name">Module name (whitespace will be replaced with underscores)</param>
         /// <param name="description">Module description (whitespace will be replaced with underscores)</param>
         /// <returns>A complete OpenSCAD module definition</returns>
-        public static string ToModule(string OSCADMethod, string name, string description = "")
+        public static string ToModule(string OSCADMethod, string name, string description, string operationType, string solidType)
         {
             // Sanitize and trim the input OSCADMethod
             var sanitizedMethod = OSCADMethod
@@ -24,7 +24,7 @@ namespace NetScad.Core.Utility
                 .Replace("\\\"", "\"")
                 .Trim() ?? string.Empty;
 
-            // Sanitize name and description - replace whitespace with underscores
+            // Sanitize name, operationType and description - replace whitespace with underscores
             var sanitizedName = name
                 ?.Trim()
                 .Replace(" ", "_")
@@ -39,13 +39,28 @@ namespace NetScad.Core.Utility
                 .Replace("\n", "_")
                 .Replace("\r", "_") ?? string.Empty;
 
+            var sanitizedOperationType = operationType
+                ?.Trim()
+                .Replace(" ", "_")
+                .Replace("\t", "_")
+                .Replace("\n", "_")
+                .Replace("\r", "_") ?? string.Empty;
+
+            // Sanitize solidType
+            var sanitizedSolidType = solidType
+                ?.Trim()
+                .Replace(" ", "_")
+                .Replace("\t", "_")
+                .Replace("\n", "_")
+                .Replace("\r", "_") ?? "nonsolid_difference";
+
             // Build module name
             var moduleName = string.IsNullOrWhiteSpace(sanitizedDescription)
                 ? sanitizedName
-                : $"{sanitizedName}_{sanitizedDescription}";
+                : $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}_{solidType}";
 
             // Return the module definition
-            return $"module {moduleName}() {{ {sanitizedMethod} }}";
+            return $"module {moduleName}() {{ {sanitizedMethod} }}".ToLower();
         }
 
         /// <summary>
@@ -56,7 +71,7 @@ namespace NetScad.Core.Utility
         /// <param name="description">Module description (whitespace will be replaced with underscores)</param>
         /// <param name="parameters">Module parameters (e.g., "width = 10, height = 20")</param>
         /// <returns>A complete OpenSCAD module definition with parameters</returns>
-        public static string ToModuleWithParams(string OSCADMethod, string name, string description = "", string parameters = "")
+        public static string ToModuleWithParams(string OSCADMethod, string name, string description, string parameters = "")
         {
             // Sanitize and trim the input OSCADMethod
             var sanitizedMethod = OSCADMethod
@@ -99,7 +114,7 @@ namespace NetScad.Core.Utility
         /// <param name="name">Module name (whitespace will be replaced with underscores)</param>
         /// <param name="solidType">Module solid type (whitespace will be replaced with underscores)</param>
         /// <returns>A module definition with a union operation</returns>
-        public static string ToUnionModule(List<string> osCADMethods, string name, string solidType)
+        public static string ToUnionModule(List<string> osCADMethods, string name, string description, string solidType)
         {
             // Sanitize name
             var sanitizedName = name
@@ -117,6 +132,14 @@ namespace NetScad.Core.Utility
                 .Replace("\n", "_")
                 .Replace("\r", "_") ?? "nonsolid_difference";
 
+            // Sanitize description
+            var sanitizedDescription = description
+                ?.Trim()
+                .Replace(" ", "_")
+                .Replace("\t", "_")
+                .Replace("\n", "_")
+                .Replace("\r", "_") ?? "nondescription_difference";
+
             // Sanitize and combine all OSCAD methods
             var sanitizedMethods = osCADMethods
                 ?.Select(method => method
@@ -132,7 +155,7 @@ namespace NetScad.Core.Utility
             var combinedMethods = string.Join(" ", sanitizedMethods);
 
             // Return the union module
-            return $"module union_{sanitizedName}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}";
+            return $"module union_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}".ToLower();
         }
 
         /// <summary>
@@ -143,7 +166,7 @@ namespace NetScad.Core.Utility
         /// <param name="name">Module name (whitespace will be replaced with underscores)</param>
         /// <param name="solidType">Module solid type (whitespace will be replaced with underscores)</param>
         /// <returns>A module definition with a difference operation</returns>
-        public static string ToDifferenceModule(string baseObject, List<string> subtractObjects, string name, string solidType)
+        public static string ToDifferenceModule(string baseObject, List<string> subtractObjects, string name, string description, string solidType)
         {
             // Sanitize name
             var sanitizedName = name
@@ -160,6 +183,14 @@ namespace NetScad.Core.Utility
                 .Replace("\t", "_")
                 .Replace("\n", "_")
                 .Replace("\r", "_") ?? "nonsolid_difference";
+
+            // Sanitize description
+            var sanitizedDescription = description
+                ?.Trim()
+                .Replace(" ", "_")
+                .Replace("\t", "_")
+                .Replace("\n", "_")
+                .Replace("\r", "_") ?? "nondescription_difference";
 
             // Sanitize base object
             var sanitizedBase = baseObject
@@ -184,7 +215,7 @@ namespace NetScad.Core.Utility
             }
 
             // Return the difference module
-            return $"module difference_{sanitizedName}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb.ToString()} }} }}";
+            return $"module difference_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb.ToString()} }} }}".ToLower();
         }
 
         /// <summary>
