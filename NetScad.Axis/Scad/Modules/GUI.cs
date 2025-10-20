@@ -20,7 +20,7 @@ namespace NetScad.Axis.SCAD.Modules
             // Write to file - import into output SCAD file
             var _axisFilePath = Path.Combine(_customAxis.Settings.OutputDirectory, $"{_moduleNameLower}.scad");
 
-            // Since this is a code-driven module, always overwrite generated module since it rgenerates in real-time
+            // Since this is a code-driven module, always overwrite generated module since it regenerates in real-time
             await Output.WriteToSCAD(content: _customAxis.AxisModule, filePath: _axisFilePath, overWrite: true, cancellationToken: cancellationToken);
             var axisColor = _customAxis.Settings.OpenScadColor.ToString().ToLower();
 

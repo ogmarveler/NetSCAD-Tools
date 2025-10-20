@@ -1,24 +1,16 @@
 ﻿using NetScad.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Resize : IScadObject, IDbSerializable
+    public partial class Resize(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Resize(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double RX => (double)_parameters["rx"];
         public double RY => (double)_parameters["ry"];
         public double RZ => (double)_parameters["rz"];
-        public bool Auto => _parameters.ContainsKey("auto") ? (bool)_parameters["auto"] : false;
-        public IScadObject[] Children => _parameters.ContainsKey("children") ? (IScadObject[])_parameters["children"] : Array.Empty<IScadObject>();
+        public bool Auto => _parameters.TryGetValue("auto", out object? value) && (bool)value;
+        public IScadObject[] Children => _parameters.TryGetValue("children", out object? value) ? (IScadObject[])value : [];
 
         public string OSCADMethod => $"resize([{RX}, {RY}, {RZ}], auto = {Auto.ToString().ToLower()}) {{ {string.Join("\n", Children.Select(c => c.OSCADMethod))} }};";
 

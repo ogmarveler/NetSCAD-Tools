@@ -89,7 +89,7 @@ namespace NetScad.Axis.Scad.Utility
             // Parse settings line
             var result = new GeneratedModule { CallingMethod = Module };
             string settingsContent = settingsLine.Substring("// Settings: ".Length);
-            string[] pairs = settingsContent.Split(new[] { ", " }, StringSplitOptions.None);
+            string[] pairs = settingsContent.Split([", "], StringSplitOptions.None);
 
             foreach (string pair in pairs)
             {

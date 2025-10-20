@@ -3,7 +3,6 @@ using Avalonia.Styling;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.UI.Views;
 using ReactiveUI;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace NetScad.UI.ViewModels
@@ -11,7 +10,7 @@ namespace NetScad.UI.ViewModels
     public class MainWindowViewModel : ReactiveObject
     {
         // Set MainView as the initial content
-        private object _mainViewContent = App.Host!.Services.GetRequiredService<AxisView>();
+        private object? _mainViewContent = App.Host?.Services.GetRequiredService<AxisView>();
 
         public MainWindowViewModel()
         {
@@ -25,16 +24,16 @@ namespace NetScad.UI.ViewModels
             DesignerViewCommand = ReactiveCommand.Create(LoadDesignerView);
         }
 
-        public object MainViewContent
+        public object? MainViewContent
         {
             get => _mainViewContent;
             set => this.RaiseAndSetIfChanged(ref _mainViewContent, value);
         }
 
         // SPA - Swap out views
-        public async void LoadCreateAxesView() => MainViewContent = App.Host!.Services.GetRequiredService<CreateAxesView>();
-        public async void LoadAxisView() => MainViewContent = App.Host!.Services.GetRequiredService<AxisView>();
-        public async void LoadDesignerView() => MainViewContent = App.Host!.Services.GetRequiredService<DesignerView>();
+        public async void LoadCreateAxesView() => MainViewContent = App.Host?.Services.GetRequiredService<CreateAxesView>();
+        public async void LoadAxisView() => MainViewContent = App.Host?.Services.GetRequiredService<AxisView>();
+        public async void LoadDesignerView() => MainViewContent = App.Host?.Services.GetRequiredService<DesignerView>();
         public async void LoadScadObjectView()
         {
             await App.Host!.Services.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services

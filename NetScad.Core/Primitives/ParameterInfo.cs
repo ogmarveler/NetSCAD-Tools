@@ -1,18 +1,9 @@
-﻿using System;
-
-namespace NetScad.Core.Primitives
+﻿namespace NetScad.Core.Primitives
 {
-    public class ParameterInfo
+    public class ParameterInfo(string name, Type type, object? defaultValue = null)
     {
-        public string Name { get; }
-        public Type Type { get; }
-        public object? DefaultValue { get; }
-
-        public ParameterInfo(string name, Type type, object? defaultValue = null)
-        {
-            Name = name;
-            Type = type;
-            DefaultValue = defaultValue;
-        }
+        public string Name { get; } = name;
+        public Type Type { get; } = type;
+        public object? DefaultValue { get; } = defaultValue;
     }
 }

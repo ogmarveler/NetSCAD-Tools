@@ -1,23 +1,16 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class ScrewHeadCountersink : IScadObject, IDbSerializable
+    public partial class ScrewHeadCountersink(ScrewSize screwSize, double resolution = 100) : IScadObject, IDbSerializable
     {
-        private readonly ScrewSize _screwSize;
-        private readonly double _resolution;
-
-        public ScrewHeadCountersink(ScrewSize screwSize, double resolution = 100)
-        {
-            _screwSize = screwSize;
-            _resolution = resolution;
-        }
+        private readonly ScrewSize _screwSize = screwSize;
+        private readonly double _resolution = resolution;
 
         public ScrewSize ScrewSize => _screwSize;
         public double Resolution => _resolution;
 
-        private Cylinder CountersinkCylinder => new Cylinder(new Dictionary<string, object>
+        private Cylinder CountersinkCylinder => new(new Dictionary<string, object>
         {
             { "r", ScrewSize.ScrewHeadRadius * 2 },
             { "h", ScrewSize.CountersunkHeight },

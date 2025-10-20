@@ -30,60 +30,60 @@ namespace NetScad.Core.Primitives
             switch (self)
             {
                 case OScad3D.Cube:
-                    ValidateKeys(parameters, new[] { "size_x", "size_y", "size_z" }, "Cube");
+                    ValidateKeys(parameters, ["size_x", "size_y", "size_z"], "Cube");
                     return new Cube(parameters);
 
                 case OScad3D.Cylinder:
-                    ValidateKeys(parameters, new[] { "r", "h" }, "Cylinder");
+                    ValidateKeys(parameters, ["r", "h"], "Cylinder");
                     return new Cylinder(parameters);
 
                 case OScad3D.Sphere:
-                    ValidateKeys(parameters, new[] { "r" }, "Sphere");
+                    ValidateKeys(parameters, ["r"], "Sphere");
                     return new Sphere(parameters);
 
                 case OScad3D.Polyhedron:
-                    ValidateKeys(parameters, new[] { "points", "faces" }, "Polyhedron");
+                    ValidateKeys(parameters, ["points", "faces"], "Polyhedron");
                     return new Polyhedron(
                         (List<List<double>>)parameters["points"],
                         (List<List<int>>)parameters["faces"],
-                        parameters.ContainsKey("convexity") ? (int)parameters["convexity"] : 1);
+                        parameters.TryGetValue("convexity", out object? value) ? (int)value : 1);
 
                 case OScad3D.Surface:
-                    ValidateKeys(parameters, new[] { "file" }, "Surface");
+                    ValidateKeys(parameters, ["file"], "Surface");
                     return new Surface(
                         (string)parameters["file"],
-                        parameters.ContainsKey("center") ? (bool)parameters["center"] : false,
-                        parameters.ContainsKey("convexity") ? (int)parameters["convexity"] : 1);
+                        parameters.ContainsKey("center") && (bool)parameters["center"],
+                        parameters.TryGetValue("convexity", out object? value1) ? (int)value1 : 1);
 
                 case OScad3D.RoundedCube:
-                    ValidateKeys(parameters, new[] { "size_x", "size_y", "size_z", "round_r" }, "RoundedCube");
+                    ValidateKeys(parameters, ["size_x", "size_y", "size_z", "round_r"], "RoundedCube");
                     return new RoundedCube(parameters);
 
                 case OScad3D.RoundedCylinder:
-                    ValidateKeys(parameters, new[] { "r", "h", "round_r" }, "RoundedCylinder");
+                    ValidateKeys(parameters, ["r", "h", "round_r"], "RoundedCylinder");
                     return new RoundedCylinder(parameters);
 
                 case OScad3D.RoundedSphere:
-                    ValidateKeys(parameters, new[] { "r", "round_r" }, "RoundedSphere");
+                    ValidateKeys(parameters, ["r", "round_r"], "RoundedSphere");
                     return new RoundedSphere(parameters);
 
                 case OScad3D.RoundedPolyhedron:
-                    ValidateKeys(parameters, new[] { "points", "faces", "round_r" }, "RoundedPolyhedron");
+                    ValidateKeys(parameters, ["points", "faces", "round_r"], "RoundedPolyhedron");
                     return new RoundedPolyhedron(
                         (List<List<double>>)parameters["points"],
                         (List<List<int>>)parameters["faces"],
                         (double)parameters["round_r"],
-                        parameters.ContainsKey("round_h") ? (double)parameters["round_h"] : 0.001,
-                        parameters.ContainsKey("resolution") ? (double)parameters["resolution"] : 200);
+                        parameters.TryGetValue("round_h", out object? value2) ? (double)value2 : 0.001,
+                        parameters.TryGetValue("resolution", out object? value3) ? (double)value3 : 200);
 
                 case OScad3D.RoundedSurface:
-                    ValidateKeys(parameters, new[] { "file", "round_r" }, "RoundedSurface");
+                    ValidateKeys(parameters, ["file", "round_r"], "RoundedSurface");
                     return new RoundedSurface(
                         (string)parameters["file"],
                         (double)parameters["round_r"],
-                        parameters.ContainsKey("center") ? (bool)parameters["center"] : false,
-                        parameters.ContainsKey("round_h") ? (double)parameters["round_h"] : 0.001,
-                        parameters.ContainsKey("resolution") ? (double)parameters["resolution"] : 200);
+                        parameters.ContainsKey("center") && (bool)parameters["center"],
+                        parameters.TryGetValue("round_h", out object? value4) ? (double)value4 : 0.001,
+                        parameters.TryGetValue("resolution", out object? value5) ? (double)value5 : 200);
 
                 default:
                     throw new ArgumentException("Unknown OScad3D type");
@@ -95,19 +95,19 @@ namespace NetScad.Core.Primitives
             switch (self)
             {
                 case OScad2D.Square:
-                    ValidateKeys(parameters, new[] { "size_x", "size_y" }, "Square");
+                    ValidateKeys(parameters, ["size_x", "size_y"], "Square");
                     return new Square(parameters);
 
                 case OScad2D.Circle:
-                    ValidateKeys(parameters, new[] { "r" }, "Circle");
+                    ValidateKeys(parameters, ["r"], "Circle");
                     return new Circle(parameters);
 
                 case OScad2D.Polygon:
-                    ValidateKeys(parameters, new[] { "points" }, "Polygon");
+                    ValidateKeys(parameters, ["points"], "Polygon");
                     return new Polygon(
                         (List<List<double>>)parameters["points"],
-                        parameters.ContainsKey("paths") ? (List<List<int>>?)parameters["paths"] : null,
-                        parameters.ContainsKey("convexity") ? (int)parameters["convexity"] : 1);
+                        parameters.TryGetValue("paths", out object? value) ? (List<List<int>>?)value : null,
+                        parameters.TryGetValue("convexity", out object? value1) ? (int)value1 : 1);
 
                 default:
                     throw new ArgumentException("Unknown OScad2D type");
@@ -119,11 +119,11 @@ namespace NetScad.Core.Primitives
             switch (self)
             {
                 case OScad1D.Line:
-                    ValidateKeys(parameters, new[] { "x1", "y1", "x2", "y2" }, "Line");
+                    ValidateKeys(parameters, ["x1", "y1", "x2", "y2"], "Line");
                     return new Line(parameters);
 
                 case OScad1D.Arc:
-                    ValidateKeys(parameters, new[] { "r", "start", "end" }, "Arc");
+                    ValidateKeys(parameters, ["r", "start", "end"], "Arc");
                     return new Arc(parameters);
 
                 default:
@@ -136,24 +136,24 @@ namespace NetScad.Core.Primitives
             switch (self)
             {
                 case OScadSpecial.Text:
-                    ValidateKeys(parameters, new[] { "text" }, "Text");
+                    ValidateKeys(parameters, ["text"], "Text");
                     return new Text(
                         (string)parameters["text"],
-                        parameters.ContainsKey("size") ? (double)parameters["size"] : 10,
-                        parameters.ContainsKey("font") ? (string?)parameters["font"] : null,
-                        parameters.ContainsKey("halign") ? (string)parameters["halign"] : "left",
-                        parameters.ContainsKey("valign") ? (string)parameters["valign"] : "baseline",
-                        parameters.ContainsKey("spacing") ? (double)parameters["spacing"] : 1,
-                        parameters.ContainsKey("direction") ? (string)parameters["direction"] : "ltr",
-                        parameters.ContainsKey("language") ? (string?)parameters["language"] : null,
-                        parameters.ContainsKey("script") ? (string?)parameters["script"] : null,
-                        parameters.ContainsKey("resolution") ? (double)parameters["resolution"] : 200);
+                        parameters.TryGetValue("size", out object? value) ? (double)value : 10,
+                        parameters.TryGetValue("font", out object? value1) ? (string?)value1 : null,
+                        parameters.TryGetValue("halign", out object? value2) ? (string)value2 : "left",
+                        parameters.TryGetValue("valign", out object? value3) ? (string)value3 : "baseline",
+                        parameters.TryGetValue("spacing", out object? value4) ? (double)value4 : 1,
+                        parameters.TryGetValue("direction", out object? value5) ? (string)value5 : "ltr",
+                        parameters.TryGetValue("language", out object? value6) ? (string?)value6 : null,
+                        parameters.TryGetValue("script", out object? value7) ? (string?)value7 : null,
+                        parameters.TryGetValue("resolution", out object? value8) ? (double)value8 : 200);
 
                 case OScadSpecial.Import:
-                    ValidateKeys(parameters, new[] { "file" }, "Import");
+                    ValidateKeys(parameters, ["file"], "Import");
                     return new Import(
                         (string)parameters["file"],
-                        parameters.ContainsKey("convexity") ? (int)parameters["convexity"] : 1);
+                        parameters.TryGetValue("convexity", out object? value9) ? (int)value9 : 1);
 
                 default:
                     throw new ArgumentException("Unknown OScadSpecial type");
@@ -165,18 +165,18 @@ namespace NetScad.Core.Primitives
             switch (self)
             {
                 case OScadTransform.Translate:
-                    ValidateKeys(parameters, new[] { "x", "y", "z" }, "Translate");
+                    ValidateKeys(parameters, ["x", "y", "z"], "Translate");
                     return new Translate(parameters);
 
                 case OScadTransform.Resize:
-                    ValidateKeys(parameters, new[] { "rx", "ry", "rz" }, "Resize");
+                    ValidateKeys(parameters, ["rx", "ry", "rz"], "Resize");
                     return new Resize(parameters);
 
                 case OScadTransform.Multmatrix:
-                    ValidateKeys(parameters, new[] { "matrix" }, "Multmatrix");
+                    ValidateKeys(parameters, ["matrix"], "Multmatrix");
                     return new Multmatrix(
                         (List<List<double>>)parameters["matrix"],
-                        parameters.ContainsKey("children") ? (IScadObject[])parameters["children"] : Array.Empty<IScadObject>());
+                        parameters.TryGetValue("children", out object? value) ? (IScadObject[])value : []);
 
                 default:
                     throw new ArgumentException("Unknown OScadTransform type");
@@ -188,15 +188,15 @@ namespace NetScad.Core.Primitives
             switch (self)
             {
                 case OScadModify.Rotate:
-                    ValidateKeys(parameters, new[] { "ax", "ay", "az" }, "Rotate");
+                    ValidateKeys(parameters, ["ax", "ay", "az"], "Rotate");
                     return new Rotate(parameters);
 
                 case OScadModify.Scale:
-                    ValidateKeys(parameters, new[] { "sx", "sy", "sz" }, "Scale");
+                    ValidateKeys(parameters, ["sx", "sy", "sz"], "Scale");
                     return new Scale(parameters);
 
                 case OScadModify.Mirror:
-                    ValidateKeys(parameters, new[] { "mx", "my", "mz" }, "Mirror");
+                    ValidateKeys(parameters, ["mx", "my", "mz"], "Mirror");
                     return new Mirror(parameters);
 
                 default:
@@ -206,7 +206,7 @@ namespace NetScad.Core.Primitives
 
         public static IScadObject ToScadObject(this OScadBooleanOperation self, Dictionary<string, object> parameters)
         {
-            ValidateKeys(parameters, new[] { "children" }, self.ToString());
+            ValidateKeys(parameters, ["children"], self.ToString());
             var children = (IScadObject[])parameters["children"];
             return self switch
             {
@@ -221,12 +221,12 @@ namespace NetScad.Core.Primitives
 
         public static IScadObject ToScadObject(this OScadIteration self, Dictionary<string, object> parameters)
         {
-            ValidateKeys(parameters, new[] { "loopExpression" }, "For");
+            ValidateKeys(parameters, ["loopExpression"], "For");
             return self switch
             {
                 OScadIteration.For => new ForLoop(
                     (string)parameters["loopExpression"],
-                    parameters.ContainsKey("body") ? (IScadObject[])parameters["body"] : Array.Empty<IScadObject>()),
+                    parameters.TryGetValue("body", out object? value) ? (IScadObject[])value : []),
                 _ => throw new ArgumentException("Unknown OScadIteration type")
             };
         }

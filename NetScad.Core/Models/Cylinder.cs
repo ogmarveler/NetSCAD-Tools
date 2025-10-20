@@ -2,20 +2,15 @@
 
 namespace NetScad.Core.Models
 {
-    public partial class Cylinder : IScadObject, IDbSerializable
+    public partial class Cylinder(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Cylinder(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double Radius => (double)_parameters["r"];
         public double Height => (double)_parameters["h"];
-        public double? Radius1 => _parameters.ContainsKey("r1") ? (double)_parameters["r1"] : null;
-        public double? Radius2 => _parameters.ContainsKey("r2") ? (double)_parameters["r2"] : null;
-        public int Resolution => _parameters.ContainsKey("resolution") ? (int)_parameters["resolution"] : 100;
+        public double? Radius1 => _parameters.TryGetValue("r1", out object? value) ? (double)value : null;
+        public double? Radius2 => _parameters.TryGetValue("r2", out object? value) ? (double)value : null;
+        public int Resolution => _parameters.TryGetValue("resolution", out object? value) ? (int)value : 100;
 
         public string OSCADMethod => $"cylinder(h = {Height}, {(Radius1 == null && Radius2 == null ? $"r = {Radius}" : $"r1 = {Radius1 ?? Radius}, r2 = {Radius2 ?? Radius}")}, $fn = {Resolution});";
 

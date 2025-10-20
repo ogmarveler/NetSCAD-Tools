@@ -1,19 +1,13 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class Circle : IScadObject, IDbSerializable
+    public partial class Circle(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Circle(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double Radius => (double)_parameters["r"];
-        public double Resolution => _parameters.ContainsKey("resolution") ? (double)_parameters["resolution"] : 100;
+        public double Resolution => _parameters.TryGetValue("resolution", out object? value) ? (double)value : 100;
 
         public string OSCADMethod => $"circle(r = {Radius}, $fn = {Resolution});";
 

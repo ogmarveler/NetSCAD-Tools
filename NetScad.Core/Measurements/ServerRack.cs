@@ -1,6 +1,6 @@
 ﻿namespace NetScad.Core.Measurements
 {
-    public class ServerRack
+    public partial class ServerRack
     {
         public int RackUnits { get; set; }
         public double InnerWidthMm { get; set; }

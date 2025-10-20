@@ -1,27 +1,20 @@
 ﻿using NetScad.Core.Interfaces;
-using System;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class RoundedCylinder : IScadObject, IDbSerializable
+    public partial class RoundedCylinder(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public RoundedCylinder(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double Radius => (double)_parameters["r"];
         public double Height => (double)_parameters["h"];
         public double RoundRadius => (double)_parameters["round_r"];
-        public double RoundHeight => _parameters.ContainsKey("round_h") ? (double)_parameters["round_h"] : 0.001;
-        public double? Radius1 => _parameters.ContainsKey("r1") ? (double)_parameters["r1"] : null;
-        public double? Radius2 => _parameters.ContainsKey("r2") ? (double)_parameters["r2"] : null;
-        public double Resolution => _parameters.ContainsKey("resolution") ? (double)_parameters["resolution"] : 200;
+        public double RoundHeight => _parameters.TryGetValue("round_h", out object? value) ? (double)value : 0.001;
+        public double? Radius1 => _parameters.TryGetValue("r1", out object? value) ? (double)value : null;
+        public double? Radius2 => _parameters.TryGetValue("r2", out object? value) ? (double)value : null;
+        public double Resolution => _parameters.TryGetValue("resolution", out object? value) ? (double)value : 200;
 
-        private Cylinder AdjustedCylinder => new Cylinder(new Dictionary<string, object>
+        private Cylinder AdjustedCylinder => new(new Dictionary<string, object>
         {
             { "r", Math.Max(0, Radius - RoundRadius) },
             { "h", Height },
@@ -30,7 +23,7 @@ namespace NetScad.Core.Models
             { "resolution", Resolution }
         });
 
-        private Cylinder RoundingCylinder => new Cylinder(new Dictionary<string, object>
+        private Cylinder RoundingCylinder => new(new Dictionary<string, object>
         {
             { "r", RoundRadius },
             { "h", RoundHeight },

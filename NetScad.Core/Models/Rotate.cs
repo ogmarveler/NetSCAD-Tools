@@ -1,23 +1,15 @@
 ﻿using NetScad.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Rotate : IScadObject, IDbSerializable
+    public partial class Rotate(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Rotate(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double AX => (double)_parameters["ax"];
         public double AY => (double)_parameters["ay"];
         public double AZ => (double)_parameters["az"];
-        public IScadObject[] Children => _parameters.ContainsKey("children") ? (IScadObject[])_parameters["children"] : Array.Empty<IScadObject>();
+        public IScadObject[] Children => _parameters.TryGetValue("children", out object? value) ? (IScadObject[])value : [];
 
         public string OSCADMethod => $"rotate([{AX}, {AY}, {AZ}]) {{ {string.Join("\n", Children.Select(c => c.OSCADMethod))} }};";
 

@@ -1,17 +1,10 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Intersection : IScadObject, IDbSerializable
+    public partial class Intersection(params IScadObject[] children) : IScadObject, IDbSerializable
     {
-        private readonly IScadObject[] _children;
-
-        public Intersection(params IScadObject[] children)
-        {
-            _children = children;
-        }
+        private readonly IScadObject[] _children = children;
 
         public IScadObject[] Children => _children;
 

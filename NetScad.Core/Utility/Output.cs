@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace NetScad.Core.Utility
 {
@@ -21,7 +17,7 @@ namespace NetScad.Core.Utility
         {
             if (!overWrite)
             {
-                filePath = filePath.Replace(".scad", $"_{DateTime.Now.ToString("yyyyMMddHHmmss")}.scad");
+                filePath = filePath.Replace(".scad", $"_{DateTime.Now:yyyyMMddHHmmss}.scad");
             }
             await File.WriteAllBytesAsync(path: filePath, bytes: Encoding.UTF8.GetBytes(content), cancellationToken: cancellationToken);
         }

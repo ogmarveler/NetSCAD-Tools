@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -31,30 +32,31 @@ namespace NetScad.UI.ViewModels
         private bool _unitHasChanged;
         private bool _isMetric;
         private bool _isImperial;
-        private CustomAxis _customAxis;
+        private CustomAxis? _customAxis;
         private bool _axisDetailsShown;
-        private string _moduleName;
-        private string _callingMethod;
-        private string _includeFile;
+        private string _moduleName = string.Empty;
+        private string _callingMethod = string.Empty;
+        private string _includeFile = string.Empty;
         private double _totalCubicVolume;
         private double _totalCubicVolumeScale;
         public int _decimalPlaces;
         public int _callingMethodLength;
-        private string _inputMinX;
-        private string _inputMaxX;
-        private string _inputMinY;
-        private string _inputMaxY;
-        private string _inputMinZ;
-        private string _inputMaxZ;
-        private ObservableCollection<GeneratedModule>? _axesList;
-        private ObservableCollection<GeneratedModule> _axesListImperial;
-        private ObservableCollection<GeneratedModule> _axesListMetric;
+        private string _inputMinX = string.Empty;
+        private string _inputMaxX = string.Empty;
+        private string _inputMinY = string.Empty;
+        private string _inputMaxY = string.Empty;
+        private string _inputMinZ = string.Empty;
+        private string _inputMaxZ = string.Empty;
+        private ObservableCollection<GeneratedModule> _axesList = [];
+        private ObservableCollection<GeneratedModule> _axesListImperial = [];
+        private ObservableCollection<GeneratedModule> _axesListMetric = [];
         private bool _createButtonEnabled;
 
+        [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>")]
         public CreateAxesViewModel()
         {
-            UnitSystemValues = Enum.GetValues(typeof(UnitSystem)).Cast<UnitSystem>().ToList();
-            BackgroundTypeValues = Enum.GetValues(typeof(BackgroundType)).Cast<BackgroundType>().ToList();
+            UnitSystemValues = [.. Enum.GetValues(typeof(UnitSystem)).Cast<UnitSystem>()];
+            BackgroundTypeValues = [.. Enum.GetValues(typeof(BackgroundType)).Cast<BackgroundType>()];
             SelectedBackgroundValue = BackgroundType.Light;
             SelectedUnitValue = UnitSystem.Metric;
             MaxXValue = SelectedUnitValue == UnitSystem.Metric ? 300 : 12; // Set based on defaults
@@ -66,10 +68,10 @@ namespace NetScad.UI.ViewModels
             _unitHasChanged = false;
             _createButtonEnabled = true;
             UnitHasChanged = false;
-            _isImperial = SelectedUnitValue == UnitSystem.Metric ? false : true; // Set based on SelectedUnit
-            _isMetric = SelectedUnitValue == UnitSystem.Metric ? true : false;
-            IsImperial = SelectedUnitValue == UnitSystem.Metric ? false : true;
-            IsMetric = SelectedUnitValue == UnitSystem.Metric ? true : false;
+            _isImperial = SelectedUnitValue != UnitSystem.Metric; // Set based on SelectedUnit
+            _isMetric = SelectedUnitValue == UnitSystem.Metric;
+            IsImperial = SelectedUnitValue != UnitSystem.Metric;
+            IsMetric = SelectedUnitValue == UnitSystem.Metric;
             _axisDetailsShown = true; // Module Details
             AxisDetailsShown = false;
             ModuleName = string.Empty;
@@ -175,8 +177,8 @@ namespace NetScad.UI.ViewModels
         {
             if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged) { await ConvertInputsImperial(decimalPlaces); }
             else if (_selectedUnit == UnitSystem.Metric && UnitHasChanged) { await ConvertInputsMetric(decimalPlaces); }
-            IsImperial = SelectedUnitValue == UnitSystem.Metric ? false : true;
-            IsMetric = SelectedUnitValue == UnitSystem.Metric ? true : false;
+            IsImperial = SelectedUnitValue != UnitSystem.Metric;
+            IsMetric = SelectedUnitValue == UnitSystem.Metric;
         }
 
         public async Task CreateCustomAxisAsync()
@@ -230,8 +232,8 @@ namespace NetScad.UI.ViewModels
                 }
 
                 // Set Post-Axis Generation Details
-                IsImperial = SelectedUnitValue == UnitSystem.Metric ? false : true;
-                IsMetric = SelectedUnitValue == UnitSystem.Metric ? true : false;
+                IsImperial = SelectedUnitValue != UnitSystem.Metric;
+                IsMetric = SelectedUnitValue == UnitSystem.Metric;
                 TotalCubicVolume = _customAxis.TotalCubicVolume; // Provides the total volume of the axes
                 TotalCubicVolumeScale = _customAxis.TotalCubicVolumeScale; // Provides the total volume of the axes
                 ModuleName = _customAxis.ModuleName;          // Update new axis details
@@ -278,21 +280,8 @@ namespace NetScad.UI.ViewModels
             var parser = new ScadParser();
             var filePath = Path.Combine("Scad", "Axes", "axes.scad");
             _axesList = parser.AxesModulesList(filePath);
-            // Filter and select based on unit system
-            //AxesList = SelectedUnitValue switch
-            //{
-            //    UnitSystem.Metric => [.. _axesList
-            //        .Where(x => x.CallingMethod.Contains("_MM_"))],
-
-            //    UnitSystem.Imperial => [.. _axesList
-            //        .Where(x => x.CallingMethod.Contains("_Inch_"))],
-
-            //    _ => _axesList
-            //};
-
-            AxesListMetric = [.. _axesList.Where(x => x.CallingMethod.Contains("_MM_"))];
-
-            AxesListImperial = [.. _axesList.Where(x => x.CallingMethod.Contains("_Inch_"))];
+            AxesListMetric = [.. _axesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_MM_"))];
+            AxesListImperial = [.. _axesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_Inch_"))];
         }
 
         // ViewModel helper functions for conversions - stateful

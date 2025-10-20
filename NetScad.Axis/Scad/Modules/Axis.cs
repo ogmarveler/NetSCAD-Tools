@@ -33,7 +33,7 @@ namespace NetScad.Axis.SCAD.Modules
                 // Use range if min and max inverted default to min and max
                 else if (axSet.MaxX < axSet.MinX)
                 {
-                    if (axSet.MaxX < 0) // MaxnX = 0, MinX --> -X
+                    if (axSet.MaxX < 0) // MaxX = 0, MinX --> -X
                     {
                         axSet.MinX = Math.Abs(axSet.MaxX - axSet.MinX) * -1;
                         axSet.MaxX = 0;
@@ -66,7 +66,7 @@ namespace NetScad.Axis.SCAD.Modules
                 // Use range if min and max inverted default to min and max
                 else if (axSet.MaxY < axSet.MinY)
                 {
-                    if (axSet.MaxY < 0) // MaxnY = 0, MinY --> -Y
+                    if (axSet.MaxY < 0) // MaxY = 0, MinY --> -Y
                     {
                         axSet.MinY = Math.Abs(axSet.MaxY - axSet.MinY) * -1;
                         axSet.MaxY = 0;
@@ -99,7 +99,7 @@ namespace NetScad.Axis.SCAD.Modules
                 // Use range if min and max inverted default to min and max
                 else if (axSet.MaxZ < axSet.MinZ)
                 {
-                    if (axSet.MaxZ < 0) // MaxnZ = 0, MinZ --> -Z
+                    if (axSet.MaxZ < 0) // MaxZ = 0, MinZ --> -Z
                     {
                         axSet.MinZ = Math.Abs(axSet.MaxZ - axSet.MinZ) * -1;
                         axSet.MaxZ = 0;
@@ -158,11 +158,12 @@ namespace NetScad.Axis.SCAD.Modules
             var startLabel = $"_Orig_{xStart}x{yStart}x{zStart}".Replace("-", "N");
 
             // Create the Axis Module
-            var axMod = new CustomAxis();
-
-            // Add the total cubic volume measurements
-            axMod.TotalCubicVolume = tVolume;
-            axMod.TotalCubicVolumeScale = tVolumeScale;
+            var axMod = new CustomAxis
+            {
+                // Add the total cubic volume measurements
+                TotalCubicVolume = tVolume,
+                TotalCubicVolumeScale = tVolumeScale
+            };
             var unit = axSet.UnitSystem == UnitSystem.Imperial ? "in" : "mm";
             var unitLabel = axSet.UnitSystem == UnitSystem.Imperial ? "Inch" : "MM";
             var scale = axSet.UnitSystem == UnitSystem.Imperial ? Inch.Inch.ToMm(1) : 1;

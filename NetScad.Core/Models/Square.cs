@@ -1,20 +1,14 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class Square : IScadObject, IDbSerializable
+    public partial class Square(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Square(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double SizeX => (double)_parameters["size_x"];
         public double SizeY => (double)_parameters["size_y"];
-        public bool Center => _parameters.ContainsKey("center") ? (bool)_parameters["center"] : false;
+        public bool Center => _parameters.ContainsKey("center") && (bool)_parameters["center"];
 
         public string OSCADMethod => $"square([{SizeX}, {SizeY}]{(Center ? $", center = {Center.ToString().ToLower()}" : "")});";
 

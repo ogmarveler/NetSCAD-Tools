@@ -1,24 +1,14 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class RoundedSurface : IScadObject, IDbSerializable
+    public partial class RoundedSurface(string file, double round_r, bool center = false, double round_h = 0.001, double resolution = 200) : IScadObject, IDbSerializable
     {
-        private readonly string _file;
-        private readonly double _roundRadius;
-        private readonly bool _center;
-        private readonly double _roundHeight;
-        private readonly double _resolution;
-
-        public RoundedSurface(string file, double round_r, bool center = false, double round_h = 0.001, double resolution = 200)
-        {
-            _file = file;
-            _roundRadius = round_r;
-            _center = center;
-            _roundHeight = round_h;
-            _resolution = resolution;
-        }
+        private readonly string _file = file;
+        private readonly double _roundRadius = round_r;
+        private readonly bool _center = center;
+        private readonly double _roundHeight = round_h;
+        private readonly double _resolution = resolution;
 
         public string File => _file;
         public double RoundRadius => _roundRadius;
@@ -26,9 +16,9 @@ namespace NetScad.Core.Models
         public double RoundHeight => _roundHeight;
         public double Resolution => _resolution;
 
-        private Surface AdjustedSurface => new Surface(File, Center, 1);
+        private Surface AdjustedSurface => new(File, Center, 1);
 
-        private Cylinder RoundingCylinder => new Cylinder(new Dictionary<string, object>
+        private Cylinder RoundingCylinder => new(new Dictionary<string, object>
         {
             { "r", RoundRadius },
             { "h", RoundHeight },

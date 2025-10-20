@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace NetScad.Core.Utility
@@ -14,6 +13,7 @@ namespace NetScad.Core.Utility
 
     public static class PathHelper
     {
+        [UnconditionalSuppressMessage("SingleFile", "IL3000:Avoid accessing Assembly file path when publishing as a single file", Justification = "<Pending>")]
         public static string GetProjectFolder(ProjectType project)
         {
             // Get the directory of the executing assembly (e.g., bin/Debug/net8.0)
@@ -45,6 +45,7 @@ namespace NetScad.Core.Utility
         }
 
         // Cache if called multiple times
+        [UnconditionalSuppressMessage("SingleFile", "IL3000:Avoid accessing Assembly file path when publishing as a single file", Justification = "<Pending>")]
         public static string GetProjectRoot()
         {
             var assemblyLocation = Assembly.GetExecutingAssembly().Location;

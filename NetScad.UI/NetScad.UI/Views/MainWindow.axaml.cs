@@ -12,7 +12,7 @@ namespace NetScad.UI.Views
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = App.Host!.Services.GetRequiredService<MainWindowViewModel>();
+            DataContext = App.Host?.Services.GetRequiredService<MainWindowViewModel>();
         }
 
         public static async Task OpenFolderAsync()

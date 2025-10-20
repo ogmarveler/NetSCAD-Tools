@@ -2,30 +2,25 @@
 
 namespace NetScad.Core.Models
 {
-    public partial class RoundedCube : IScadObject, IDbSerializable
+    public partial class RoundedCube(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public RoundedCube(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double SizeX => (double)_parameters["size_x"];
         public double SizeY => (double)_parameters["size_y"];
         public double SizeZ => (double)_parameters["size_z"];
-        public double RoundRadius => _parameters.ContainsKey("round_r") ? (double)_parameters["round_r"] : 0;
-        public double RoundHeight => _parameters.ContainsKey("round_h") ? (double)_parameters["round_h"] : 0;
-        public int Resolution => _parameters.ContainsKey("resolution") ? (int)_parameters["resolution"] : 180;
+        public double RoundRadius => _parameters.TryGetValue("round_r", out object? value) ? (double)value : 0;
+        public double RoundHeight => _parameters.TryGetValue("round_h", out object? value) ? (double)value : 0;
+        public int Resolution => _parameters.TryGetValue("resolution", out object? value) ? (int)value : 180;
 
-        private Cube AdjustedCube => new Cube(new Dictionary<string, object>
+        private Cube AdjustedCube => new(new Dictionary<string, object>
         {
             { "size_x", Math.Max(0, SizeX - 2 * RoundRadius) },
             { "size_y", Math.Max(0, SizeY - 2 * RoundRadius) },
             { "size_z", SizeZ }
         });
 
-        private Cylinder RoundingCylinder => new Cylinder(new Dictionary<string, object>
+        private Cylinder RoundingCylinder => new(new Dictionary<string, object>
         {
             { "r", RoundRadius },
             { "h", RoundHeight },

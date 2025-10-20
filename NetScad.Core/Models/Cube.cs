@@ -1,17 +1,10 @@
 ﻿using NetScad.Core.Interfaces;
-using System;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class Cube : IScadObject, IDbSerializable
+    public partial class Cube(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Cube(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-        }
+        private readonly Dictionary<string, object> _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
         public double SizeX => (double)_parameters["size_x"];
         public double SizeY => (double)_parameters["size_y"];

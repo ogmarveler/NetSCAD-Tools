@@ -14,7 +14,7 @@ public partial class AxisView : UserControl
     public AxisView()
     {
         InitializeComponent();
-        DataContext = App.Host!.Services.GetRequiredService<AxisViewModel>();
+        DataContext = App.Host?.Services.GetRequiredService<AxisViewModel>();
         LoadMarkdownAsync("avares://NetScad.UI/Assets/Guides/Axis.markdown");  // Relative or absolute path
     }
 

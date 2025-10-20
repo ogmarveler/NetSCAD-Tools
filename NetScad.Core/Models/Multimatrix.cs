@@ -1,19 +1,11 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Multmatrix : IScadObject, IDbSerializable
+    public partial class Multmatrix(List<List<double>> matrix, IScadObject[] children) : IScadObject, IDbSerializable
     {
-        private readonly List<List<double>> _matrix;
-        private readonly IScadObject[] _children;
-
-        public Multmatrix(List<List<double>> matrix, IScadObject[] children)
-        {
-            _matrix = matrix;
-            _children = children;
-        }
+        private readonly List<List<double>> _matrix = matrix;
+        private readonly IScadObject[] _children = children;
 
         public List<List<double>> Matrix => _matrix;
         public IScadObject[] Children => _children;

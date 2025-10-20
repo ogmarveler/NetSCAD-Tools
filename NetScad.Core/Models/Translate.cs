@@ -1,23 +1,15 @@
 ﻿using NetScad.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Translate : IScadObject, IDbSerializable
+    public partial class Translate(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Translate(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double X => (double)_parameters["x"];
         public double Y => (double)_parameters["y"];
         public double Z => (double)_parameters["z"];
-        public IScadObject[] Children => _parameters.ContainsKey("children") ? (IScadObject[])_parameters["children"] : Array.Empty<IScadObject>();
+        public IScadObject[] Children => _parameters.TryGetValue("children", out object? value) ? (IScadObject[])value : [];
 
         public string OSCADMethod => $"translate([{X}, {Y}, {Z}]) {{ {string.Join(" ", Children.Select(c => c.OSCADMethod))} }};";
 

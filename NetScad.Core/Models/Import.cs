@@ -1,18 +1,11 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class Import : IScadObject, IDbSerializable
+    public partial class Import(string file, int convexity = 1) : IScadObject, IDbSerializable
     {
-        private readonly string _file;
-        private readonly int _convexity;
-
-        public Import(string file, int convexity = 1)
-        {
-            _file = file;
-            _convexity = convexity;
-        }
+        private readonly string _file = file;
+        private readonly int _convexity = convexity;
 
         public string File => _file;
         public int Convexity => _convexity;

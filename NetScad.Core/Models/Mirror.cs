@@ -1,23 +1,15 @@
 ﻿using NetScad.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Mirror : IScadObject, IDbSerializable
+    public partial class Mirror(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Mirror(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double MX => (double)_parameters["mx"];
         public double MY => (double)_parameters["my"];
         public double MZ => (double)_parameters["mz"];
-        public IScadObject[] Children => _parameters.ContainsKey("children") ? (IScadObject[])_parameters["children"] : Array.Empty<IScadObject>();
+        public IScadObject[] Children => _parameters.TryGetValue("children", out object? value) ? (IScadObject[])value : [];
 
         public string OSCADMethod => $"mirror([{MX}, {MY}, {MZ}]) {{ {string.Join("\n", Children.Select(c => c.OSCADMethod))} }};";
 

@@ -1,25 +1,41 @@
 using Avalonia.Data.Converters;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
+using System.Reflection;
 
 namespace NetScad.UI.Converters
 {
     public class EnumDescriptionConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        [UnconditionalSuppressMessage("Trimming", "IL2075:DynamicallyAccessedMembers", Justification = "Enum field reflection is guaranteed at runtime for enum types")]
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is Enum enumValue)
+            if (value == null)
+                return string.Empty;
+
+            var type = value.GetType();
+            if (!type.IsEnum)
+                return value.ToString() ?? string.Empty;
+
+            var fieldName = value.ToString();
+            if (string.IsNullOrEmpty(fieldName))
+                return string.Empty;
+
+            var field = type.GetField(fieldName);
+            if (field == null)
+                return fieldName;
+
+            if (field.GetCustomAttribute<DescriptionAttribute>() is DescriptionAttribute attribute)
             {
-                var fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
-                var descriptionAttribute = fieldInfo?.GetCustomAttributes(typeof(DescriptionAttribute), false)
-                                                   .FirstOrDefault() as DescriptionAttribute;
-                return descriptionAttribute?.Description ?? enumValue.ToString();
+                return attribute.Description;
             }
-            return value?.ToString();
+
+            return fieldName;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => 
+            throw new NotSupportedException();
     }
 }

@@ -17,7 +17,7 @@ namespace NetScad.Core.Measurements
             var xAxis = Math.Abs(maxX - minX);
             var yAxis = Math.Abs(maxY - minY);
             var zAxis = Math.Abs(maxZ - minZ);
-            var _volume = "";
+            string? _volume;
             if (unit == "mm")
             {
                 _volume = $"{MillimeterToCentimeter(xAxis) * MillimeterToCentimeter(yAxis) * MillimeterToCentimeter(zAxis)} cm³";

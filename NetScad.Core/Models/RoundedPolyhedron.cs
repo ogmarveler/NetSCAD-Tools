@@ -1,24 +1,14 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class RoundedPolyhedron : IScadObject, IDbSerializable
+    public partial class RoundedPolyhedron(List<List<double>> points, List<List<int>> faces, double round_r, double round_h = 0.001, double resolution = 200) : IScadObject, IDbSerializable
     {
-        private readonly List<List<double>> _points;
-        private readonly List<List<int>> _faces;
-        private readonly double _roundRadius;
-        private readonly double _roundHeight;
-        private readonly double _resolution;
-
-        public RoundedPolyhedron(List<List<double>> points, List<List<int>> faces, double round_r, double round_h = 0.001, double resolution = 200)
-        {
-            _points = points;
-            _faces = faces;
-            _roundRadius = round_r;
-            _roundHeight = round_h;
-            _resolution = resolution;
-        }
+        private readonly List<List<double>> _points = points;
+        private readonly List<List<int>> _faces = faces;
+        private readonly double _roundRadius = round_r;
+        private readonly double _roundHeight = round_h;
+        private readonly double _resolution = resolution;
 
         public List<List<double>> Points => _points;
         public List<List<int>> Faces => _faces;
@@ -26,9 +16,9 @@ namespace NetScad.Core.Models
         public double RoundHeight => _roundHeight;
         public double Resolution => _resolution;
 
-        private Polyhedron AdjustedPolyhedron => new Polyhedron(Points, Faces, 1);
+        private Polyhedron AdjustedPolyhedron => new(Points, Faces, 1);
 
-        private Cylinder RoundingCylinder => new Cylinder(new Dictionary<string, object>
+        private Cylinder RoundingCylinder => new(new Dictionary<string, object>
         {
             { "r", RoundRadius },
             { "h", RoundHeight },

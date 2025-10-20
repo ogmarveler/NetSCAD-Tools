@@ -7,13 +7,8 @@
     }
 
     // Implementation
-    public class ScadPathProvider : IScadPathProvider
+    public class ScadPathProvider(string scadPath) : IScadPathProvider
     {
-        public string ScadPath { get; }
-
-        public ScadPathProvider(string scadPath)
-        {
-            ScadPath = scadPath;
-        }
+        public string ScadPath { get; } = scadPath;
     }
 }

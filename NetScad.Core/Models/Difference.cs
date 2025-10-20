@@ -1,17 +1,10 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Difference : IScadObject, IDbSerializable
+    public partial class Difference(params IScadObject[] children) : IScadObject, IDbSerializable
     {
-        private readonly IScadObject[] _children;
-
-        public Difference(params IScadObject[] children)
-        {
-            _children = children;
-        }
+        private readonly IScadObject[] _children = children;
 
         public IScadObject[] Children => _children;
 

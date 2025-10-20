@@ -1,21 +1,12 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Polyhedron : IScadObject, IDbSerializable
+    public partial class Polyhedron(List<List<double>> points, List<List<int>> faces, int convexity = 1) : IScadObject, IDbSerializable
     {
-        private readonly List<List<double>> _points;
-        private readonly List<List<int>> _faces;
-        private readonly int _convexity;
-
-        public Polyhedron(List<List<double>> points, List<List<int>> faces, int convexity = 1)
-        {
-            _points = points;
-            _faces = faces;
-            _convexity = convexity;
-        }
+        private readonly List<List<double>> _points = points;
+        private readonly List<List<int>> _faces = faces;
+        private readonly int _convexity = convexity;
 
         public List<List<double>> Points => _points;
         public List<List<int>> Faces => _faces;

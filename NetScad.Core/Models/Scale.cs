@@ -1,23 +1,15 @@
 ﻿using NetScad.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Scale : IScadObject, IDbSerializable
+    public partial class Scale(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Scale(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double SX => (double)_parameters["sx"];
         public double SY => (double)_parameters["sy"];
         public double SZ => (double)_parameters["sz"];
-        public IScadObject[] Children => _parameters.ContainsKey("children") ? (IScadObject[])_parameters["children"] : Array.Empty<IScadObject>();
+        public IScadObject[] Children => _parameters.TryGetValue("children", out object? value) ? (IScadObject[])value : [];
 
         public string OSCADMethod => $"scale([{SX}, {SY}, {SZ}]) {{ {string.Join("\n", Children.Select(c => c.OSCADMethod))} }};";
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -10,19 +11,16 @@ namespace NetScad.UI.ViewModels
 {
 	public abstract class ValidatableBase : ReactiveObject, INotifyDataErrorInfo
 	{
-        protected readonly Dictionary<string, List<string>> _errors = new();
+        protected readonly Dictionary<string, List<string>> _errors = [];
 
-        public bool HasErrors => _errors.Any();
+        public bool HasErrors => _errors.Count != 0;
 
-        public IEnumerable GetErrors(string? propertyName)
-        {
-            return propertyName != null && _errors.ContainsKey(propertyName)
-                ? _errors[propertyName]
-                : Enumerable.Empty<string>();
-        }
+        public IEnumerable GetErrors(string? propertyName) => propertyName != null && _errors.TryGetValue(propertyName, out List<string>? value)
+                ? value : Enumerable.Empty<string>();
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         protected void ValidateProperty<T>(T value, [CallerMemberName] string? propertyName = null)
         {
             if (string.IsNullOrEmpty(propertyName)) return;
@@ -32,18 +30,20 @@ namespace NetScad.UI.ViewModels
             var results = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
             if (!System.ComponentModel.DataAnnotations.Validator.TryValidateProperty(value, validationContext, results))
             {
-                _errors[propertyName] = results.Select(r => r.ErrorMessage ?? "").ToList();
+                _errors[propertyName] = [.. results.Select(r => r.ErrorMessage ?? "")];
                 ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
             }
         }
 
         protected void AddError(string propertyName, string error)
         {
-            if (!_errors.ContainsKey(propertyName))
+            if (!_errors.TryGetValue(propertyName, out List<string>? value))
             {
-                _errors[propertyName] = new List<string>();
+                value = [];
+                _errors[propertyName] = value;
             }
-            _errors[propertyName].Add(error);
+
+            value.Add(error);
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
 
@@ -53,10 +53,7 @@ namespace NetScad.UI.ViewModels
             {
                 _errors.Clear();
             }
-            else if (_errors.ContainsKey(propertyName))
-            {
-                _errors.Remove(propertyName);
-            }
+            else _errors.Remove(propertyName);
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
     }

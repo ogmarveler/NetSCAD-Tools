@@ -2,7 +2,7 @@
 
 namespace NetScad.Core.Measurements
 {
-    public class Selector
+    public partial class Selector
     {
         public enum UnitSystem
         {

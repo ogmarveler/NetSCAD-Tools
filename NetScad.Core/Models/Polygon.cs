@@ -1,21 +1,12 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Polygon : IScadObject, IDbSerializable
+    public partial class Polygon(List<List<double>> points, List<List<int>>? paths = null, int convexity = 1) : IScadObject, IDbSerializable
     {
-        private readonly List<List<double>> _points;
-        private readonly List<List<int>>? _paths;
-        private readonly int _convexity;
-
-        public Polygon(List<List<double>> points, List<List<int>>? paths = null, int convexity = 1)
-        {
-            _points = points;
-            _paths = paths;
-            _convexity = convexity;
-        }
+        private readonly List<List<double>> _points = points;
+        private readonly List<List<int>>? _paths = paths;
+        private readonly int _convexity = convexity;
 
         public List<List<double>> Points => _points;
         public List<List<int>>? Paths => _paths;

@@ -12,7 +12,7 @@ namespace NetScad.Core.Interfaces
     public class ConnectionManager : IConnectionManager
     {
         private readonly SqliteConnection _connection;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _semaphore = new(1, 1);
         private bool _isDisposed;
 
         public ConnectionManager(IConfiguration configuration)

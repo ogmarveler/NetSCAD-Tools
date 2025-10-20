@@ -1,17 +1,10 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Hull : IScadObject, IDbSerializable
+    public partial class Hull(params IScadObject[] children) : IScadObject, IDbSerializable
     {
-        private readonly IScadObject[] _children;
-
-        public Hull(params IScadObject[] children)
-        {
-            _children = children;
-        }
+        private readonly IScadObject[] _children = children;
 
         public IScadObject[] Children => _children;
 

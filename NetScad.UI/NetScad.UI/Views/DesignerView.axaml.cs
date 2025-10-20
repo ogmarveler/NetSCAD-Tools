@@ -15,7 +15,7 @@ public partial class DesignerView : UserControl
     public DesignerView()
     {
         InitializeComponent();
-        DataContext = App.Host!.Services.GetRequiredService<DesignerViewModel>();
+        DataContext = App.Host?.Services.GetRequiredService<DesignerViewModel>();
         LoadMarkdownAsync("avares://NetScad.UI/Assets/Guides/Designer.markdown");  // Relative or absolute path
     }
 

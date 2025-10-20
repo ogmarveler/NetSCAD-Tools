@@ -1,19 +1,11 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class ForLoop : IScadObject, IDbSerializable
+    public partial class ForLoop(string loopExpression, IScadObject[] body) : IScadObject, IDbSerializable
     {
-        private readonly string _loopExpression;
-        private readonly IScadObject[] _body;
-
-        public ForLoop(string loopExpression, IScadObject[] body)
-        {
-            _loopExpression = loopExpression;
-            _body = body;
-        }
+        private readonly string _loopExpression = loopExpression;
+        private readonly IScadObject[] _body = body;
 
         public string LoopExpression => _loopExpression;
         public IScadObject[] Body => _body;

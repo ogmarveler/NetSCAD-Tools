@@ -12,7 +12,7 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
     public CreateAxesView()
     {
         InitializeComponent();
-        DataContext = App.Host!.Services.GetRequiredService<CreateAxesViewModel>();
+        DataContext = App.Host?.Services.GetRequiredService<CreateAxesViewModel>();
     }
 
     // Convert from one unit to another

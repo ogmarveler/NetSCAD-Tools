@@ -1,26 +1,18 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class ScrewHole : IScadObject, IDbSerializable
+    public partial class ScrewHole(ScrewSize screwSize, double h, double resolution = 100) : IScadObject, IDbSerializable
     {
-        private readonly ScrewSize _screwSize;
-        private readonly double _height;
-        private readonly double _resolution;
-
-        public ScrewHole(ScrewSize screwSize, double h, double resolution = 100)
-        {
-            _screwSize = screwSize;
-            _height = h;
-            _resolution = resolution;
-        }
+        private readonly ScrewSize _screwSize = screwSize;
+        private readonly double _height = h;
+        private readonly double _resolution = resolution;
 
         public ScrewSize ScrewSize => _screwSize;
         public double Height => _height;
         public double Resolution => _resolution;
 
-        private Cylinder HoleCylinder => new Cylinder(new Dictionary<string, object>
+        private Cylinder HoleCylinder => new(new Dictionary<string, object>
         {
             { "r", ScrewSize.ClearanceHoleRadius },
             { "h", Height },

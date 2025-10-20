@@ -1,21 +1,15 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class Arc : IScadObject, IDbSerializable
+    public partial class Arc(Dictionary<string, object> parameters) : IScadObject, IDbSerializable
     {
-        private readonly Dictionary<string, object> _parameters;
-
-        public Arc(Dictionary<string, object> parameters)
-        {
-            _parameters = parameters;
-        }
+        private readonly Dictionary<string, object> _parameters = parameters;
 
         public double Radius => (double)_parameters["r"];
         public double Start => (double)_parameters["start"];
         public double End => (double)_parameters["end"];
-        public double Resolution => _parameters.ContainsKey("resolution") ? (double)_parameters["resolution"] : 100;
+        public double Resolution => _parameters.TryGetValue("resolution", out object? value) ? (double)value : 100;
 
         public string OSCADMethod => $"arc(r = {Radius}, start = {Start}, end = {End}, $fn = {Resolution});";
 

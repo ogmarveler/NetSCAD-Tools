@@ -1,17 +1,10 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Minkowski : IScadObject, IDbSerializable
+    public partial class Minkowski(params IScadObject[] children) : IScadObject, IDbSerializable
     {
-        private readonly IScadObject[] _children;
-
-        public Minkowski(params IScadObject[] children)
-        {
-            _children = children;
-        }
+        private readonly IScadObject[] _children = children;
 
         public IScadObject[] Children => _children;
 

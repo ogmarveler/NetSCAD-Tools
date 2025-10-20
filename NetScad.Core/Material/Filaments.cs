@@ -26,11 +26,11 @@
         public int MaxExtruderTemp { get; init; } // °C
         public int MinBedTemp { get; init; }      // °C
         public int MaxBedTemp { get; init; }      // °C
-        public string Cooling { get; init; }      // Cooling fan requirements
-        public string UL94Rating { get; init; }   // UL94 flammability rating
+        public string Cooling { get; init; } = string.Empty;      // Cooling fan requirements
+        public string UL94Rating { get; init; } = string.Empty;   // UL94 flammability rating
         public bool RoHSCompliant { get; init; }  // RoHS compliance
         public int MaxWeightSupportKg { get; init; } // Max weight support in kg (stress-tested)
-        public string Notes { get; init; }        // Printing, electrical, and durability considerations
+        public string Notes { get; init; } = string.Empty;        // Printing, electrical, and durability considerations
     }
 
     // Extension methods for FilamentType

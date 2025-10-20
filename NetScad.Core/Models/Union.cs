@@ -1,17 +1,10 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetScad.Core.Models
 {
-    public partial class Union : IScadObject, IDbSerializable
+    public partial class Union(params IScadObject[] children) : IScadObject, IDbSerializable
     {
-        private readonly IScadObject[] _children;
-
-        public Union(params IScadObject[] children)
-        {
-            _children = children;
-        }
+        private readonly IScadObject[] _children = children;
 
         public IScadObject[] Children => _children;
 

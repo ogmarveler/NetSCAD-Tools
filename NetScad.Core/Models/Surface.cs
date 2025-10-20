@@ -1,20 +1,12 @@
 ﻿using NetScad.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace NetScad.Core.Models
 {
-    public partial class Surface : IScadObject, IDbSerializable
+    public partial class Surface(string file, bool center = false, int convexity = 1) : IScadObject, IDbSerializable
     {
-        private readonly string _file;
-        private readonly bool _center;
-        private readonly int _convexity;
-
-        public Surface(string file, bool center = false, int convexity = 1)
-        {
-            _file = file;
-            _center = center;
-            _convexity = convexity;
-        }
+        private readonly string _file = file;
+        private readonly bool _center = center;
+        private readonly int _convexity = convexity;
 
         public string File => _file;
         public bool Center => _center;

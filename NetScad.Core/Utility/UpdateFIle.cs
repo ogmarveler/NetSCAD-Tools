@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace NetScad.Core.Utility
+﻿namespace NetScad.Core.Utility
 {
     public static class UpdateFIle
     {
