@@ -197,7 +197,7 @@ namespace NetScad.UI.ViewModels
         public async Task ClearInputsAsync()
         {
             Name = string.IsNullOrEmpty(Name) ? string.Empty : Name; // Needs to remain since object process can have multiple components
-            Description = string.IsNullOrEmpty(Description) ? string.Empty : Description;  // Redundant but for convenience
+            Description = string.Empty;  // Needed for making sure that parts added don't have the same description
             LengthMM = 0;
             WidthMM = 0;
             HeightMM = 0;
@@ -301,10 +301,13 @@ namespace NetScad.UI.ViewModels
                 await GetDimensionsPartAsync(); // Refresh the DataGrid
                 await PartsToScadFilesAsync(); // Refresh object.scad file
 
-                if (AxesSelectEnabled && OuterDimensions.Count > 0)
+                if (AxesSelectEnabled)
                 {
-                    var axisUsed = OuterDimensions.SingleOrDefault()?.AxisOSCADMethod;
-                    AxesSelectEnabled = false; // Disable axis selection after first object is created, since axis should be reused
+                    var axisUsed = string.Empty;
+                    if (OuterDimensions.Count > 0)
+                        axisUsed = OuterDimensions.SingleOrDefault()?.AxisOSCADMethod;
+                    else
+                        AxesSelectEnabled = false; // Disable axis selection after it has been created, to use within the same object
                     ObjectAxisDisplay = $"Dimensions: {axisUsed?
                         .Replace("use <Axes/axes.scad>; ", "")
                         .Replace("Get_", "")
@@ -318,7 +321,7 @@ namespace NetScad.UI.ViewModels
                         .Replace("Inch", "in")
                         .Replace("x", " x ")}"; // Format for display
                 }
-
+                await ClearInputsAsync(); // After new part added, make sure that description is cleared out
                 return newObject.Id;
             }
             else if (IsCylinderSelected)
@@ -373,6 +376,7 @@ namespace NetScad.UI.ViewModels
                         .Replace("Inch", "in")
                         .Replace("x", " x ")}"; // Format for display
                 }
+                await ClearInputsAsync(); // After new part added, make sure that description is cleared out
                 return newCylinder.Id;
             }
             return 0;
@@ -517,12 +521,23 @@ namespace NetScad.UI.ViewModels
                     case OperationType.Add:
                         XOffset_MM += oDim.Round_r_MM;
                         YOffset_MM += oDim.Round_r_MM;
-                        ZOffset_MM += oDim.Round_h_MM;
+                        ZOffset_MM -= oDim.Round_h_MM;
                         break;
                     case OperationType.Subtract:
                         XOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
                         YOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
-                        ZOffset_MM += oDim.Round_h_MM + oDim.Thickness_MM;
+                        ZOffset_MM += -oDim.Round_h_MM + oDim.Thickness_MM;
+                        break;
+                }
+            }
+            else if (IsCubeSelected)  // For regular cubes, if thickness has been added, then factor this into offsets
+            {
+                switch (SelectedOperationType)
+                {
+                    case OperationType.Subtract:
+                        XOffset_MM += oDim.Thickness_MM;
+                        YOffset_MM += oDim.Thickness_MM;
+                        ZOffset_MM += oDim.Thickness_MM;
                         break;
                 }
             }
@@ -660,8 +675,9 @@ namespace NetScad.UI.ViewModels
         {
             // Get any additional updates to parts
             await PartsToScadFilesAsync();
-            await GetAxesList();
-            await CreateAxisAsync(); // Create or get AxisDimensions and return its Id
+
+           // if (_axisId is null) // New axis being applied
+                await CreateAxisAsync(); // Create or get AxisDimensions and return its Id
 
             // Put Scad object file together
             var sb = new StringBuilder();
@@ -792,8 +808,8 @@ namespace NetScad.UI.ViewModels
         public async Task CreateUnionModuleAsync()
         {
             // Get all objects marked as "Add"
-            var cylinders = CylinderDimensions.Where(o => o.OperationType == "Add" && o.Description == Description).ToList();
-            var objects = OuterDimensions.Where(o => o.OperationType == "Add" && o.Description == Description).ToList();
+            var cylinders = CylinderDimensions.Where(o => o.OperationType == "Add").ToList();
+            var objects = OuterDimensions.Where(o => o.OperationType == "Add").ToList();
             // If user has selected cube, create union of cubes
             if ((IsCubeSelected || IsRoundCubeSelected) && objects.Any())
             {
@@ -805,7 +821,7 @@ namespace NetScad.UI.ViewModels
                     ObjectName = Name,
                     ObjectDescription = Description,
                     SolidType = "Cube",
-                    OSCADMethod = ToUnionModule(methods, Name, Description, "Cube").ToLower(),
+                    OSCADMethod = ToUnionModule(methods, Name, string.Empty, "Cube").ToLower(),
                     CreatedAt = DateTime.UtcNow
                 };
                 unionModule.Name = ExtractModuleCallMethod(unionModule.OSCADMethod).ToLower();
@@ -820,7 +836,7 @@ namespace NetScad.UI.ViewModels
                     ObjectName = Name,
                     ObjectDescription = Description,
                     SolidType = "Cylinder",
-                    OSCADMethod = ToUnionModule(cylinderMethods, Name, Description, "Cylinder").ToLower(),
+                    OSCADMethod = ToUnionModule(cylinderMethods, Name, string.Empty, "Cylinder").ToLower(),
                     CreatedAt = DateTime.UtcNow
                 };
                 unionModuleCylinder.Name = ExtractModuleCallMethod(unionModuleCylinder.OSCADMethod).ToLower();
@@ -838,8 +854,8 @@ namespace NetScad.UI.ViewModels
         {
 
             // Get all objects marked as "Subtract"
-            var cylinders = CylinderDimensions.Where(o => o.OperationType == "Subtract" && o.Description == Description).ToList();
-            var objects = OuterDimensions.Where(o => o.OperationType == "Subtract" && o.Description == Description).ToList();
+            var cylinders = CylinderDimensions.Where(o => o.OperationType == "Subtract").ToList();
+            var objects = OuterDimensions.Where(o => o.OperationType == "Subtract").ToList();
             ModuleDimensions? baseObj;
 
             if ((IsCubeSelected || IsRoundCubeSelected) && objects.Any())
@@ -858,7 +874,7 @@ namespace NetScad.UI.ViewModels
                         ObjectName = Name,
                         ObjectDescription = Description,
                         SolidType = baseObj.SolidType,
-                        OSCADMethod = ToDifferenceModule(baseCallMethod, subtractMethods, Name, Description, baseObj.SolidType).ToLower(),
+                        OSCADMethod = ToDifferenceModule(baseCallMethod, subtractMethods, Name, string.Empty, baseObj.SolidType).ToLower(),
                         CreatedAt = DateTime.UtcNow
                     };
                     // get calling method for differenceModule
@@ -884,7 +900,7 @@ namespace NetScad.UI.ViewModels
                         ObjectName = Name,
                         ObjectDescription = Description,
                         SolidType = baseObj.SolidType,
-                        OSCADMethod = ToDifferenceModule(baseCallMethod, subtractMethods, Name, Description, baseObj.SolidType).ToLower(),
+                        OSCADMethod = ToDifferenceModule(baseCallMethod, subtractMethods, Name, string.Empty, baseObj.SolidType).ToLower(),
                         CreatedAt = DateTime.UtcNow
                     };
                     // get calling method for differenceModule
@@ -1278,7 +1294,8 @@ namespace NetScad.UI.ViewModels
                 this.RaiseAndSetIfChanged(ref _selectedUnit, value);
                 UnitHasChanged = true;
                 _ = ConvertInputs(_decimalPlaces);
-                _ = GetAxesList(); // Refresh axes list when unit changes
+                if (!_axisStored)
+                    _ = GetAxesList(); // Refresh axes list when unit changes
             }
         }
 
