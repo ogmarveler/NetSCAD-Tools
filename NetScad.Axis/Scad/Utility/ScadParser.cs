@@ -180,7 +180,7 @@ namespace NetScad.Axis.Scad.Utility
                     maxY: result.MaxY,
                     minZ: result.MinZ,
                     maxZ: result.MaxZ,
-                    unit: result.Unit);
+                    unit: result.Unit ?? "mm");
 
                 result.Volume = volume;
                 result.RangeX = rangeX; 
@@ -196,7 +196,7 @@ namespace NetScad.Axis.Scad.Utility
                     maxY: result.MaxY,
                     minZ: result.MinZ,
                     maxZ: result.MaxZ,
-                    unit: result.Unit);
+                    unit: result.Unit ?? "mm");
 
                 result.Volume = volume;
                 result.RangeX = rangeX;

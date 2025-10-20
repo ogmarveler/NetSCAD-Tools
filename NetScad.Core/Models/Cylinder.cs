@@ -19,8 +19,8 @@ namespace NetScad.Core.Models
             { "type", "Cylinder" },
             { "r", Radius },
             { "h", Height },
-            { "r1", Radius1 },
-            { "r2", Radius2 },
+            { "r1", Radius1 ?? 0 },
+            { "r2", Radius2 ?? 0 },
             { "resolution", Resolution }
         };
 
@@ -30,7 +30,7 @@ namespace NetScad.Core.Models
         var cylinder = OScad3D.Cylinder.ToScadObject(cylParams);
         Console.WriteLine(cylinder.OSCADMethod); // cylinder(h=10, r=5, $fn=50);
         var dbData = cylinder.ToDbDictionary(); // { "type": "Cylinder", "r": 5, "h": 10, "r1": null, "r2": null, "resolution": 50 }
-        // SQLite: INSERT INTO Models (Type, Radius, Height, Radius1, Radius2, Resolution) VALUES ('Cylinder', 5, 10, NULL, NULL, 50);
+        // SQLite: INSERT INTO Models (Type, Radius, Height, Radius1, Radius2, Resolution) VALUES ('Cylinder', 5, 10, null, null, 50);
         */
     }
 }

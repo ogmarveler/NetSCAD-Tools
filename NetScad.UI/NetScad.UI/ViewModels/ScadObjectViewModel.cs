@@ -796,30 +796,40 @@ namespace NetScad.UI.ViewModels
             // Get all objects marked as "Add"
             var cylinders = CylinderDimensions.Where(o => o.OperationType == "Add").ToList();
             var objects = OuterDimensions.Where(o => o.OperationType == "Add").ToList();
-            var methods = objects.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
-            var unionModule = new ModuleDimensions
+
+            if (objects.Count > 0)
             {
-                ModuleType = "Union",
-                ObjectName = Name,
-                ObjectDescription = Description,
-                SolidType = "Cube",
-                OSCADMethod = ToUnionModule(methods, Name, string.Empty, "Cube").ToLower(),
-                CreatedAt = DateTime.UtcNow
-            };
-            unionModule.Name = ExtractModuleCallMethod(unionModule.OSCADMethod).ToLower();
-            await unionModule.UpsertAsync(DbConnection!);
-            var cylinderMethods = cylinders.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
-            var unionModuleCylinder = new ModuleDimensions
+                var methods = objects.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
+                var unionModule = new ModuleDimensions
+                {
+                    ModuleType = "Union",
+                    ObjectName = Name,
+                    ObjectDescription = Description,
+                    SolidType = "Cube",
+                    OSCADMethod = ToUnionModule(methods, Name, string.Empty, "Cube").ToLower(),
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                unionModule.Name = ExtractModuleCallMethod(unionModule.OSCADMethod).ToLower();
+                await unionModule.UpsertAsync(DbConnection!);
+            }
+
+            if (cylinders.Count > 0)
             {
-                ModuleType = "Union",
-                ObjectName = Name,
-                ObjectDescription = Description,
-                SolidType = "Cylinder",
-                OSCADMethod = ToUnionModule(cylinderMethods, Name, string.Empty, "Cylinder").ToLower(),
-                CreatedAt = DateTime.UtcNow
-            };
-            unionModuleCylinder.Name = ExtractModuleCallMethod(unionModuleCylinder.OSCADMethod).ToLower();
-            await unionModuleCylinder.UpsertAsync(DbConnection!);
+                var cylinderMethods = cylinders.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
+                var unionModuleCylinder = new ModuleDimensions
+                {
+                    ModuleType = "Union",
+                    ObjectName = Name,
+                    ObjectDescription = Description,
+                    SolidType = "Cylinder",
+                    OSCADMethod = ToUnionModule(cylinderMethods, Name, string.Empty, "Cylinder").ToLower(),
+                    CreatedAt = DateTime.UtcNow
+                };
+                unionModuleCylinder.Name = ExtractModuleCallMethod(unionModuleCylinder.OSCADMethod).ToLower();
+                await unionModuleCylinder.UpsertAsync(DbConnection!);
+            }
+            
             await GetDimensionsPartAsync(); // Refresh the DataGrid
             if (SaveFileButton)  // If the SaveFile button is true, this means that object updates should be real-time
                 await ObjectToScadFilesAsync();  // Refresh object.scad file
