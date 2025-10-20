@@ -26,14 +26,14 @@ namespace NetScad.UI
             {
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = Host?.Services.GetRequiredService<MainWindowViewModel>()
+                    DataContext = Host!.Services.GetRequiredService<MainWindowViewModel>()
                 };
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {
                 singleViewPlatform.MainView = new MainWindow
                 {
-                    DataContext = Host?.Services.GetRequiredService<MainWindowViewModel>()
+                    DataContext = Host!.Services.GetRequiredService<MainWindowViewModel>()
                 };
             }
 

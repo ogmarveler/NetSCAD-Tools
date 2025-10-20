@@ -24,7 +24,7 @@ namespace NetScad.Designer.Repositories
         public double ZOffset_MM { get; set; } // Z-axis translation offset
         public double Round_r_MM  => Math.Round(RoundFromWidth(Width_MM), OpenSCAD_DecimalPlaces);
         public double Round_h_MM => Math.Round(RoundEdgeHeight(Round_r_MM), OpenSCAD_DecimalPlaces);
-        public int Resolution => 180; // Default resolution for curves
+        public int Resolution { get; set; } = 180; // Default resolution for curves
 
         // Imperial conversions (computed)
         public double Length_IN => Math.Round(MillimeterToInches(Length_MM), OpenSCAD_DecimalPlaces);

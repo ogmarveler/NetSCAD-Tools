@@ -6,7 +6,7 @@ namespace NetScad.Axis.SCAD.Utility
     {
         public static string GetCoordinates(Enum scope, List<double> coordinates)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append($"{scope.ToString().ToLower()} ([");
             foreach (var (coordinate, index) in coordinates.Select((v, i) => (v, i)))
             {
@@ -21,7 +21,7 @@ namespace NetScad.Axis.SCAD.Utility
 
         public static string GetIterationHeader(Enum scope, string iterator, List<double> range)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             sb.Append($"{scope.ToString().ToLower()} ({iterator} = [");
             foreach (var (point, index) in range.Select((v, i) => (v, i)))
@@ -29,7 +29,7 @@ namespace NetScad.Axis.SCAD.Utility
                 sb.Append(point);
 
                 if (index < range.Count - 1)
-                    sb.Append(":");
+                    sb.Append(':');
             }
             sb.Append("])");
             return sb.ToString();
@@ -37,7 +37,7 @@ namespace NetScad.Axis.SCAD.Utility
 
         public static string GetModule(string name, List<string> parameters, string content)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             sb.Append($"module {name.ToString().ToLower()} (");
 

@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.Core.Interfaces;
 using NetScad.Designer.Utility;
@@ -13,12 +12,12 @@ namespace NetScad.UI.Views
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = App.Host.Services.GetRequiredService<MainWindowViewModel>();
+            DataContext = App.Host!.Services.GetRequiredService<MainWindowViewModel>();
         }
 
-        public async Task OpenFolderAsync()
+        public static async Task OpenFolderAsync()
         {
-            var scadPath = App.Host?.Services.GetRequiredService<IScadPathProvider>().ScadPath;
+            var scadPath = App.Host!.Services.GetRequiredService<IScadPathProvider>().ScadPath;
 
             await ScadFileOperations.OpenFolderAsync(scadPath);
         }

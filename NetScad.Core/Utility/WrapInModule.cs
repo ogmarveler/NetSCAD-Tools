@@ -149,13 +149,16 @@ namespace NetScad.Core.Utility
                     .Replace("\\\"", "\"")
                     .Trim() ?? string.Empty)
                 .Where(method => !string.IsNullOrWhiteSpace(method))
-                .ToList() ?? new List<string>();
+                .ToList() ?? [];
 
             // Join all methods with spaces
             var combinedMethods = string.Join(" ", sanitizedMethods);
 
             // Return the union module
-            return $"module union_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}".ToLower();
+            if (!string.IsNullOrEmpty(description))
+                return $"module union_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}".ToLower();
+            else
+                return $"module union_{sanitizedName}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}".ToLower();
         }
 
         /// <summary>
@@ -215,7 +218,10 @@ namespace NetScad.Core.Utility
             }
 
             // Return the difference module
-            return $"module difference_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb.ToString()} }} }}".ToLower();
+            if (!string.IsNullOrEmpty(description))
+                return $"module difference_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb} }} }}".ToLower();
+            else
+                return $"module difference_{sanitizedName}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb} }} }}".ToLower();
         }
 
         /// <summary>

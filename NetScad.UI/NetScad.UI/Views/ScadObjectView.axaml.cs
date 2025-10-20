@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
+using NetScad.Core.Material;
 using NetScad.Core.Primitives;
 using NetScad.Designer.Repositories;
 using NetScad.UI.ViewModels;
@@ -16,10 +17,24 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 {
     private ScadObjectViewModel ViewModel => (ScadObjectViewModel)DataContext!;
 
-    public ScadObjectView()  // ✅ Inject via constructor
+    public ScadObjectView()
     {
         InitializeComponent();
-        DataContext = App.Host.Services.GetRequiredService<ScadObjectViewModel>();
+        DataContext = App.Host?.Services.GetRequiredService<ScadObjectViewModel>();
+    }
+
+    private async void DeleteButton_Click(object? sender, RoutedEventArgs e)
+    {
+        // Check each DataGrid for a selected item
+        object? selectedItem = CubeDataGrid.SelectedItem
+                            ?? CylinderDataGrid.SelectedItem
+                            ?? ModulesUnionDataGrid.SelectedItem
+                            ?? ModulesDifferenceDataGrid.SelectedItem;
+
+        if (selectedItem != null)
+        {
+            await ViewModel.DeleteSelectedItemAsync(selectedItem);
+        }
     }
 
     private void DataGrid_AutoGeneratingColumnObject(object? sender, DataGridAutoGeneratingColumnEventArgs e)
@@ -76,6 +91,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.XOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.XOffset_MM : selected.XOffset_IN;
             ViewModel.YOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.YOffset_MM : selected.YOffset_IN; 
             ViewModel.ZOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.ZOffset_MM : selected.ZOffset_IN;
+            ViewModel.SelectedFilament = Enum.Parse<FilamentType>(selected.Material!, ignoreCase: true);
             ViewModel.Name = selected.Name;
             ViewModel.Description = selected.Description ?? string.Empty;
             ViewModel.SelectedOperationType = Enum.Parse<OperationType>(selected.OperationType, ignoreCase: true);
@@ -85,7 +101,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private void DataGrid_AutoGeneratingColumnModule(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         // List of columns to exclude from display for ModuleDimensions
-        var excludedColumns = new[] { "Id", "CreatedAt", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "OSCADMethod", "Description" };
+        var excludedColumns = new[] { "Id", "CreatedAt", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "OSCADMethod", "ObjectDescription" };
 
         if (excludedColumns.Contains(e.PropertyName))
         {   
@@ -168,6 +184,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.XOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.XOffset_MM : selected.XOffset_IN;
             ViewModel.YOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.YOffset_MM : selected.YOffset_IN;
             ViewModel.ZOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.ZOffset_MM : selected.ZOffset_IN;
+            ViewModel.SelectedFilament = Enum.Parse<FilamentType>(selected.Material!, ignoreCase: true);
             ViewModel.Name = selected.Name;
             ViewModel.Description = selected.Description ?? string.Empty;
             ViewModel.SelectedOperationType = Enum.Parse<OperationType>(selected.OperationType, ignoreCase: true);

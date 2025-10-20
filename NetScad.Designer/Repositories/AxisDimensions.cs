@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Dapper;
 using NetScad.Core.Interfaces;
-using static NetScad.Core.Measurements.Selector;
 
 namespace NetScad.Designer.Repositories
 {
@@ -9,16 +8,16 @@ namespace NetScad.Designer.Repositories
     public class AxisDimensions : IScadObject
     {
         public int Id { get; set; }
-        public string Theme { get; set; }
-        public string Unit { get; set; }
+        public string Theme { get; set; } = string.Empty;
+        public string Unit { get; set; } = string.Empty;
         public double MinX { get; set; }
         public double MaxX { get; set; }
         public double MinY { get; set; }
         public double MaxY { get; set; }
         public double MinZ { get; set; }
         public double MaxZ { get; set; }
-        public string OSCADMethod { get; set; }
-        public string IncludeMethod => "use <Axes/axes.scad>;";
+        public string OSCADMethod { get; set; } = string.Empty;
+        public string IncludeMethod { get; set; } = "use <../Axes/axes.scad>;";
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Dictionary<string, object> ToDbDictionary() => new()
@@ -108,7 +107,7 @@ namespace NetScad.Designer.Repositories
                     entity.MinY, 
                     entity.MaxY, 
                     entity.MinZ, 
-                    entity.MaxZ, 
+                    entity.MaxZ,
                     entity.IncludeMethod, 
                     entity.OSCADMethod 
                 });

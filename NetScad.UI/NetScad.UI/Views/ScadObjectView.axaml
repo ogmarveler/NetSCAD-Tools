@@ -7,7 +7,6 @@
     xmlns:local="clr-namespace:NetScad.UI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="using:NetScad.Designer.Scad.Repositories"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:t="clr-namespace:Avalonia.Controls.Templates"
     xmlns:views="using:NetScad.UI.Views"
     xmlns:vm="using:NetScad.UI.ViewModels"
@@ -18,9 +17,6 @@
     Background="{DynamicResource WindowBackground}"
     mc:Ignorable="d">
 
-    <Design.DataContext>
-        <vm:ScadObjectViewModel />
-    </Design.DataContext>
 
     <UserControl.Resources>
         <conv:DoubleToNullableConverter x:Key="DoubleToNullableConverter" />
@@ -966,8 +962,14 @@
                 CornerRadius="3"
                 FontWeight="SemiBold"
                 Foreground="{DynamicResource PurpleBackground}"
-                IsEnabled="{Binding Name, Converter={StaticResource StringNotNullOrEmptyConverter}}"
-                IsVisible="{Binding AxisStored}">
+                IsVisible="{Binding Name, Converter={StaticResource StringNotNullOrEmptyConverter}}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="!UnionButton" />
+                        <Binding Path="!DifferenceButton" />
+                        <Binding Path="AxisStored" />
+                    </MultiBinding>
+                </Button.IsEnabled>
                 <ToolTip.Tip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Stretch">
@@ -1093,7 +1095,7 @@
                 BorderBrush="{DynamicResource CardForeground}"
                 BorderThickness="1"
                 Click="ObjectToScadFilesButton_Click"
-                Content="Save Object to OpenSCAD"
+                Content="View in OpenSCAD"
                 CornerRadius="3"
                 IsEnabled="True"
                 IsVisible="{Binding SaveFileButton}">
@@ -1103,6 +1105,48 @@
                             This action will save the current object to a .scad file for use in OpenSCAD.
                         </TextBlock>
                     </StackPanel>
+                </ToolTip.Tip>
+            </Button>
+
+            <!--  Delete Selected Item Button (Works for all DataGrids)  -->
+            <Button
+                MinWidth="100"
+                Margin="10,0,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                BorderBrush="{DynamicResource CardForeground}"
+                BorderThickness="1"
+                Click="DeleteButton_Click"
+                Content="Delete Selected"
+                CornerRadius="3">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CubeDataGrid.SelectedItem" />
+                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CylinderDataGrid.SelectedItem" />
+                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesUnionDataGrid.SelectedItem" />
+                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesDifferenceDataGrid.SelectedItem" />
+                    </MultiBinding>
+                </Button.IsEnabled>
+                <Button.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding
+                            Converter="{StaticResource CollectionCountToBooleanConverter}"
+                            ConverterParameter="1"
+                            Path="OuterDimensions" />
+                        <Binding
+                            Converter="{StaticResource CollectionCountToBooleanConverter}"
+                            ConverterParameter="1"
+                            Path="CylinderDimensions" />
+                        <Binding
+                            Converter="{StaticResource CollectionCountToBooleanConverter}"
+                            ConverterParameter="1"
+                            Path="ModuleDimensions" />
+                    </MultiBinding>
+                </Button.IsVisible>
+                <ToolTip.Tip>
+                    <TextBlock Text="Delete the selected item from the database" />
                 </ToolTip.Tip>
             </Button>
 

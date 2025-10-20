@@ -124,27 +124,6 @@
             </ToolTip.Tip>
         </TextBlock>
 
-        <!--  Change Unit Measure of X, Y, Z  -->
-        <Button
-            Grid.Row="2"
-            Grid.Column="2"
-            Margin="10,10,20,10"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Click="_ConvertInputsAsync"
-            Content="Convert Inputs"
-            IsVisible="False">
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch">
-                        Select a different Unit Type to convert the<LineBreak />
-                        X,Y,Z inputs to the newly selected unit type.</TextBlock>
-                </StackPanel>
-            </ToolTip.Tip>
-        </Button>
-
         <!--  Background Type Combo Box  -->
         <TextBlock
             Grid.Row="3"
@@ -403,7 +382,7 @@
             VerticalContentAlignment="Center"
             BorderBrush="{DynamicResource CardForeground}"
             BorderThickness="1"
-            Click="_ClearInputsAsync"
+            Click="ClearInputsAsync"
             Content="Clear"
             CornerRadius="3"
             IsEnabled="True">
@@ -427,7 +406,7 @@
             VerticalContentAlignment="Center"
             BorderBrush="{DynamicResource CardForeground}"
             BorderThickness="1"
-            Click="_CreateCustomAxisAsync"
+            Click="CreateCustomAxis"
             Content="Create Axis"
             CornerRadius="3"
             FontWeight="SemiBold"

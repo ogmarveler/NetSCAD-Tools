@@ -9,7 +9,9 @@ namespace NetScad.Axis.SCAD.Utility
     public class AxisConfig
     {
         public static double AdjustCoordinate(
+#pragma warning disable IDE0060 // Remove unused parameter
         double coordinate, double increment, double scale = 1.0, double precision = 1.0)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             // Get quotient and remainder
             if (increment == 0 || scale == 0)
@@ -22,7 +24,7 @@ namespace NetScad.Axis.SCAD.Utility
                 return coordinate; // Already valid
 
             // Round up to the next increment
-            double adjustedScaled = 0;
+            double adjustedScaled;
             if (scaledCoord > 0)
                 adjustedScaled = scaledCoord + increment - remainder;  // Positive axis <-
             else
@@ -101,7 +103,7 @@ namespace NetScad.Axis.SCAD.Utility
             // Non-editable properties
             public string OutputDirectory { get; set; } = Path.Combine(outputDirectory,"Scad", "Axes");
             public OpenScadColor OpenScadColor => BackgroundType == BackgroundType.Light ? OpenScadColor.Black : OpenScadColor.White; // Default color if light or dark background
-            public double AxisColorAlpha => 1;
+            public double AxisColorAlpha = 1;
             public double IncrementX => UnitSystem == UnitSystem.Imperial ? Inch4.ToMm(1) : 20;
             public double IncrementY => UnitSystem == UnitSystem.Imperial ? Inch4.ToMm(1) : 20;
             public double IncrementZ => UnitSystem == UnitSystem.Imperial ? Inch4.ToMm(1) : 20;
@@ -123,7 +125,7 @@ namespace NetScad.Axis.SCAD.Utility
             public AxisSettings Settings { get; set; } = new AxisSettings(outputDirectory: PathHelper.GetProjectRoot());
             public string CallingMethod { get; set; } = string.Empty;
             public string ModuleName { get; set; } = string.Empty;
-            public string MainFileInstruction => "use <Axes/axes.scad>;  // add to your main file";
+            public string MainFileInstruction = "use <Axes/axes.scad>;  // add to your main file";
             public double TotalCubicVolume { get; set; } = 0;
             public double TotalCubicVolumeScale { get; set; } = 0;
         }

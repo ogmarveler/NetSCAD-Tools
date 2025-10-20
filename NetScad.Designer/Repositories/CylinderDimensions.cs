@@ -22,7 +22,7 @@ namespace NetScad.Designer.Repositories
         public double XOffset_MM { get; set; } // X-axis translation offset
         public double YOffset_MM { get; set; } // Y-axis translation offset
         public double ZOffset_MM { get; set; } // Z-axis translation offset
-        public int Resolution => 180; // Default resolution for curves
+        public int Resolution { get; set; } = 180; // Default resolution for curves
 
         // Imperial conversions (computed)
         public double Radius_IN => Math.Round(MillimeterToInches(Radius_MM), OpenSCAD_DecimalPlaces);

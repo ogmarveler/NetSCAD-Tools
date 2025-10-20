@@ -48,7 +48,7 @@ namespace NetScad.Designer.Utility
                 }
                 if (alreadyOpen)
                 {
-                    Console.WriteLine($"File already open: {normalizedPath}");
+                    //Console.WriteLine($"File already open: {normalizedPath}");
 
                     // Try to bring the existing window to front
                     await BringToFrontAsync(normalizedPath);

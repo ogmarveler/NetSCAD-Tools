@@ -1,9 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.UI.ViewModels;
-using System;
 using System.ComponentModel;
 
 namespace NetScad.UI.Views;
@@ -14,24 +12,13 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
     public CreateAxesView()
     {
         InitializeComponent();
-        DataContext = App.Host?.Services.GetRequiredService<CreateAxesViewModel>();
+        DataContext = App.Host!.Services.GetRequiredService<CreateAxesViewModel>();
     }
 
     // Convert from one unit to another
-    private async void _ConvertInputsAsync(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.ConvertInputs(ViewModel._decimalPlaces);
-    }
+    private async void CreateCustomAxis(object? sender, RoutedEventArgs e) => await ViewModel.CreateCustomAxisAsync();
 
-    private async void _CreateCustomAxisAsync(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.CreateCustomAxisAsync();
-    }
-
-    private async void _ClearInputsAsync(object? sender, RoutedEventArgs e)
-    {
-        await ViewModel.ClearInputs();
-    }
+    private async void ClearInputsAsync(object? sender, RoutedEventArgs e) => await ViewModel.ClearInputs();
 
     /// <summary>
     /// Handles auto-generating columns for the AxesList DataGrid

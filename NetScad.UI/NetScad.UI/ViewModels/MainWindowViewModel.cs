@@ -11,7 +11,7 @@ namespace NetScad.UI.ViewModels
     public class MainWindowViewModel : ReactiveObject
     {
         // Set MainView as the initial content
-        private object _mainViewContent = App.Host.Services.GetRequiredService<AxisView>();
+        private object _mainViewContent = App.Host!.Services.GetRequiredService<AxisView>();
 
         public MainWindowViewModel()
         {
@@ -19,7 +19,7 @@ namespace NetScad.UI.ViewModels
             // Initialize menu commands
             NewAxesCommand = ReactiveCommand.Create(LoadCreateAxesView);
             NewObjectCommand = ReactiveCommand.Create(LoadScadObjectView);
-            OpenFolderCommand = ReactiveCommand.Create(() => { using Task _ = new MainWindow().OpenFolderAsync(); });
+            OpenFolderCommand = ReactiveCommand.CreateFromTask(MainWindow.OpenFolderAsync);
             ToggleCommand = ReactiveCommand.Create(ToggleTheme);
             AxisViewCommand = ReactiveCommand.Create(LoadAxisView);
             DesignerViewCommand = ReactiveCommand.Create(LoadDesignerView);
@@ -32,16 +32,16 @@ namespace NetScad.UI.ViewModels
         }
 
         // SPA - Swap out views
-        public async void LoadCreateAxesView() => MainViewContent = App.Host.Services.GetRequiredService<CreateAxesView>();
-        public async void LoadAxisView() => MainViewContent = App.Host.Services.GetRequiredService<AxisView>();
-        public async void LoadDesignerView() => MainViewContent = App.Host.Services.GetRequiredService<DesignerView>();
+        public async void LoadCreateAxesView() => MainViewContent = App.Host!.Services.GetRequiredService<CreateAxesView>();
+        public async void LoadAxisView() => MainViewContent = App.Host!.Services.GetRequiredService<AxisView>();
+        public async void LoadDesignerView() => MainViewContent = App.Host!.Services.GetRequiredService<DesignerView>();
         public async void LoadScadObjectView()
         {
-            await App.Host.Services.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
-            MainViewContent = App.Host.Services.GetRequiredService<ScadObjectView>();
+            await App.Host!.Services.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
+            MainViewContent = App.Host!.Services.GetRequiredService<ScadObjectView>();
         }
 
-        public async void ToggleTheme() => Application.Current?.RequestedThemeVariant =
+        public static async void ToggleTheme() => Application.Current?.RequestedThemeVariant =
                 Application.Current.ActualThemeVariant == ThemeVariant.Light
                     ? ThemeVariant.Dark
                     : ThemeVariant.Light;
