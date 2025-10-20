@@ -25,13 +25,13 @@
     <UserControl.Styles>
         <!--  DataGrid Column Header Style  -->
         <Style Selector="DataGrid#AxesListImperialDataGrid DataGridColumnHeader">
-            <Setter Property="Foreground" Value="{DynamicResource RedBackground}" />
-            <Setter Property="Background" Value="{DynamicResource RedForeground}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaroonBackground}" />
+            <Setter Property="Background" Value="{DynamicResource MaroonForeground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style Selector="DataGrid#AxesListMetricDataGrid DataGridColumnHeader">
-            <Setter Property="Foreground" Value="{DynamicResource CardBackground}" />
-            <Setter Property="Background" Value="{DynamicResource CardForeground}" />
+            <Setter Property="Foreground" Value="{DynamicResource DarkBlueBackground}" />
+            <Setter Property="Background" Value="{DynamicResource DarkBlueForeground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
     </UserControl.Styles>
@@ -610,7 +610,7 @@
                 VerticalAlignment="Stretch"
                 AutoGenerateColumns="True"
                 AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
-                BorderBrush="{DynamicResource RedForeground}"
+                BorderBrush="{DynamicResource MaroonForeground}"
                 BorderThickness="2"
                 CanUserReorderColumns="True"
                 CanUserResizeColumns="True"
@@ -631,7 +631,7 @@
                 VerticalAlignment="Stretch"
                 AutoGenerateColumns="True"
                 AutoGeneratingColumn="DataGrid_AutoGeneratingColumnMetric"
-                BorderBrush="{DynamicResource CardForeground}"
+                BorderBrush="{DynamicResource DarkBlueForeground}"
                 BorderThickness="2"
                 CanUserReorderColumns="True"
                 CanUserResizeColumns="True"

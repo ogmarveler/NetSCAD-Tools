@@ -29,11 +29,11 @@
     <PackageVersion Include="Markdown.Avalonia.SyntaxHigh" Version="11.0.2" />
     <PackageVersion Include="Markdown.Avalonia.Tight" Version="11.0.2" />
     <PackageVersion Include="MdXaml.Html" Version="1.27.0" />
-    <PackageVersion Include="Microsoft.Data.Sqlite" Version="9.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.9" />
-    <PackageVersion Include="Microsoft.NET.ILLink.Tasks" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.NET.ILLink.Tasks" Version="9.0.10" />
     <PackageVersion Include="Prism.Core" Version="9.0.537" />
     <PackageVersion Include="ReactiveUI.Fody" Version="19.5.41" />
     <PackageVersion Include="ReactiveUI.SourceGenerators" Version="2.4.1" />

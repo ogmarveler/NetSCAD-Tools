@@ -57,7 +57,8 @@ namespace NetScad.Core.Utility
             // Build module name
             var moduleName = string.IsNullOrWhiteSpace(sanitizedDescription)
                 ? sanitizedName
-                : $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}_{solidType}";
+                //: $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}_{solidType}";
+            : $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}";
 
             // Return the module definition
             return $"module {moduleName}() {{ {sanitizedMethod} }}".ToLower();
