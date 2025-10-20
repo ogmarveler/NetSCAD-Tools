@@ -66,6 +66,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "XOffset_IN", "X (in)" },
             { "YOffset_IN", "Y (in)" },
             { "ZOffset_IN", "Z (in)" },
+            { "XRotate", "Rotate X°" },
+            { "YRotate", "Rotate Y°" },
+            { "ZRotate", "Rotate X°)" },
             { "Round_r_IN", "Rounded (in)" },
             { "OperationType", "Action" },
             { "Description", "Cube Description" },
@@ -91,6 +94,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.XOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.XOffset_MM : selected.XOffset_IN;
             ViewModel.YOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.YOffset_MM : selected.YOffset_IN; 
             ViewModel.ZOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.ZOffset_MM : selected.ZOffset_IN;
+            ViewModel.XRotate = selected.XRotate;  // Add rotation
+            ViewModel.YRotate = selected.YRotate;
+            ViewModel.ZRotate = selected.ZRotate;
             ViewModel.SelectedFilament = Enum.Parse<FilamentType>(selected.Material!, ignoreCase: true);
             ViewModel.Name = selected.Name;
             ViewModel.Description = selected.Description ?? string.Empty;
@@ -184,6 +190,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.XOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.XOffset_MM : selected.XOffset_IN;
             ViewModel.YOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.YOffset_MM : selected.YOffset_IN;
             ViewModel.ZOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.ZOffset_MM : selected.ZOffset_IN;
+            ViewModel.XRotate = selected.XRotate;  // Add rotation
+            ViewModel.YRotate = selected.YRotate;
+            ViewModel.ZRotate = selected.ZRotate;
             ViewModel.SelectedFilament = Enum.Parse<FilamentType>(selected.Material!, ignoreCase: true);
             ViewModel.Name = selected.Name;
             ViewModel.Description = selected.Description ?? string.Empty;

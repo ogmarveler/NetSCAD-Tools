@@ -22,6 +22,9 @@ namespace NetScad.Designer.Repositories
         public double XOffset_MM { get; set; } // X-axis translation offset
         public double YOffset_MM { get; set; } // Y-axis translation offset
         public double ZOffset_MM { get; set; } // Z-axis translation offset
+        public double XRotate { get; set; } = 0;
+        public double YRotate { get; set; } = 0;
+        public double ZRotate { get; set; } = 0;
         public int Resolution { get; set; } = 180; // Default resolution for curves
 
         // Imperial conversions (computed)
@@ -92,6 +95,9 @@ namespace NetScad.Designer.Repositories
             (nameof(CylinderDimensions.XOffset_MM), typeof(double), false),
             (nameof(CylinderDimensions.YOffset_MM), typeof(double), false),
             (nameof(CylinderDimensions.ZOffset_MM), typeof(double), false),
+            (nameof(CylinderDimensions.XRotate), typeof(double), false),
+            (nameof(CylinderDimensions.YRotate), typeof(double), false),
+            (nameof(CylinderDimensions.ZRotate), typeof(double), false),
             (nameof(CylinderDimensions.Radius_IN), typeof(double), false),
             (nameof(CylinderDimensions.Radius1_IN), typeof(double), true),
             (nameof(CylinderDimensions.Radius2_IN), typeof(double), true),

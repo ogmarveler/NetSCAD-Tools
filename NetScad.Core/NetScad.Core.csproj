@@ -50,7 +50,7 @@
 
 	<ItemGroup>
 	  <None Update="Data\netscad.db">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 

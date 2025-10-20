@@ -14,7 +14,7 @@ namespace NetScad.Designer.Repositories
         public string? Description { get; set; }
         public string? Material { get; set; }
         public string OperationType { get; set; } = Core.Primitives.OperationType.Add.ToString(); // Add or Subtract
-        public const int OpenSCAD_DecimalPlaces = 6; // High precision for 3D printing
+        public const int OpenSCAD_DecimalPlaces = 10; // High precision for 3D printing
         public double Length_MM { get; set; } // Millimeters (default)
         public double Width_MM { get; set; }
         public double Height_MM { get; set; }
@@ -22,6 +22,9 @@ namespace NetScad.Designer.Repositories
         public double XOffset_MM { get; set; } // X-axis translation offset
         public double YOffset_MM { get; set; } // Y-axis translation offset
         public double ZOffset_MM { get; set; } // Z-axis translation offset
+        public double XRotate { get; set; } = 0; // X-axis rotation in degrees
+        public double YRotate { get; set; } = 0; // Y-axis rotation in degrees
+        public double ZRotate { get; set; } = 0; // Z-axis rotation in degrees
         public double Round_r_MM  => Math.Round(RoundFromWidth(Width_MM), OpenSCAD_DecimalPlaces);
         public double Round_h_MM => Math.Round(RoundEdgeHeight(Round_r_MM), OpenSCAD_DecimalPlaces);
         public int Resolution { get; set; } = 180; // Default resolution for curves
@@ -63,6 +66,9 @@ namespace NetScad.Designer.Repositories
             { "XOffset_MM", XOffset_MM },
             { "YOffset_MM", YOffset_MM },
             { "ZOffset_MM", ZOffset_MM },
+            { "XRotate", XRotate },  // Add rotation
+            { "YRotate", YRotate },
+            { "ZRotate", ZRotate },
             { "Round_r_MM", Round_r_MM },
             { "Length_IN", Length_IN },
             { "Width_IN", Width_IN },
@@ -97,6 +103,9 @@ namespace NetScad.Designer.Repositories
             (nameof(OuterDimensions.XOffset_MM), typeof(double), false),
             (nameof(OuterDimensions.YOffset_MM), typeof(double), false),
             (nameof(OuterDimensions.ZOffset_MM), typeof(double), false),
+            (nameof(OuterDimensions.XRotate), typeof(double), false),  // Add rotation
+            (nameof(OuterDimensions.YRotate), typeof(double), false),
+            (nameof(OuterDimensions.ZRotate), typeof(double), false),
             (nameof(OuterDimensions.Round_r_MM), typeof(double), false),
             (nameof(OuterDimensions.Length_IN), typeof(double), false),
             (nameof(OuterDimensions.Width_IN), typeof(double), false),

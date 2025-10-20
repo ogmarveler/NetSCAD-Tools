@@ -204,14 +204,8 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontWeight="SemiBold"
-                    Text="{Binding ObjectAxisDisplay}">
-                    <TextBlock.Foreground>
-                        <Binding
-                            Converter="{StaticResource UnitSystemToColorConverter}"
-                            ConverterParameter="Background"
-                            Path="IsMetric" />
-                    </TextBlock.Foreground>
-                </TextBlock>
+                    Foreground="{DynamicResource CardForeground}"
+                    Text="{Binding ObjectAxisDisplay}" />
             </Border>
 
             <!--  Name  -->
@@ -792,6 +786,131 @@
                 </ToolTip.Tip>
             </TextBox>
 
+            <!--  X Rotate TextBox (same column as Thickness)  -->
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="7"
+                Margin="0,5,0,-3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                Text="X Rotate">
+                <TextBlock.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBlock.IsVisible>
+            </TextBlock>
+            <TextBox
+                Grid.Row="3"
+                Grid.Column="7"
+                Margin="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Classes="card"
+                IsEnabled="{Binding AxisStored}"
+                SelectionBrush="Yellow"
+                Text="{Binding XRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                Watermark="deg °">
+                <TextBox.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBox.IsVisible>
+                <ToolTip.Tip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Stretch" Text="Set the 360 degree X-axis rotation" />
+                    </StackPanel>
+                </ToolTip.Tip>
+            </TextBox>
+
+            <!--  Y Rotate TextBox (same column as Material)  -->
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="8"
+                Margin="0,5,0,-3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                Text="Y Rotate">
+                <TextBlock.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBlock.IsVisible>
+            </TextBlock>
+            <TextBox
+                Grid.Row="3"
+                Grid.Column="8"
+                Margin="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Classes="card"
+                IsEnabled="{Binding AxisStored}"
+                SelectionBrush="Yellow"
+                Text="{Binding YRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                Watermark="deg °">
+                <TextBox.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBox.IsVisible>
+                <ToolTip.Tip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Stretch" Text="Set the 360 degree Y-axis rotation" />
+                    </StackPanel>
+                </ToolTip.Tip>
+            </TextBox>
+
+            <!--  Z Rotate TextBox (same column as Operation)  -->
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="9"
+                Margin="0,5,0,-3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                Text="Z Rotate">
+                <TextBlock.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBlock.IsVisible>
+            </TextBlock>
+            <TextBox
+                Grid.Row="3"
+                Grid.Column="9"
+                Margin="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Classes="card"
+                IsEnabled="{Binding AxisStored}"
+                SelectionBrush="Yellow"
+                Text="{Binding ZRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                Watermark="deg °">
+                <TextBox.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="IsCubeSelected" />
+                        <Binding Path="IsRoundCubeSelected" />
+                        <Binding Path="IsCylinderSelected" />
+                    </MultiBinding>
+                </TextBox.IsVisible>
+                <ToolTip.Tip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Stretch" Text="Set the 360 degree Z-axis rotation" />
+                    </StackPanel>
+                </ToolTip.Tip>
+            </TextBox>
         </Grid>
 
         <!--  Radio Button Group for Shape Selection  -->

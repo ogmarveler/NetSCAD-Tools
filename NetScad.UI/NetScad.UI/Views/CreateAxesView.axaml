@@ -661,6 +661,7 @@
                 GridLinesVisibility="All"
                 IsReadOnly="True"
                 ItemsSource="{Binding AxesListImperial}"
+                SelectionChanged="DataGridImperial_SelectionChanged"
                 SelectionMode="Single" />
 
             <DataGrid
@@ -682,6 +683,7 @@
                 GridLinesVisibility="All"
                 IsReadOnly="True"
                 ItemsSource="{Binding AxesListMetric}"
+                SelectionChanged="DataGridMetric_SelectionChanged"
                 SelectionMode="Single" />
         </Grid>
 

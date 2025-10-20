@@ -19,6 +19,9 @@ namespace NetScad.Designer.Repositories
         public double XOffset_IN { get; set; } // X-axis translation offset
         public double YOffset_IN { get; set; } // Y-axis translation offset
         public double ZOffset_IN { get; set; } // Z-axis translation offset
+        public double XRotate { get; set; } = 0;
+        public double YRotate { get; set; } = 0;
+        public double ZRotate { get; set; } = 0;
         public string IncludeMethod { get; set; } = string.Empty;
         public string OSCADMethod { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -37,6 +40,9 @@ namespace NetScad.Designer.Repositories
             { "XOffset_MM", XOffset_IN },
             { "YOffset_MM", YOffset_IN },
             { "ZOffset_MM", ZOffset_IN },
+            { "XRotate", XRotate },
+            { "YRotate", YRotate },
+            { "ZRotate", ZRotate },
             { "OSCADMethod", OSCADMethod },
             { "IncludeMethod", IncludeMethod },
             { "CreatedAt", CreatedAt }
@@ -61,6 +67,9 @@ namespace NetScad.Designer.Repositories
             (nameof(ModuleDimensions.XOffset_IN), typeof(double), false),
             (nameof(ModuleDimensions.YOffset_IN), typeof(double), false),
             (nameof(ModuleDimensions.ZOffset_IN), typeof(double), false),
+            (nameof(ModuleDimensions.XRotate), typeof(double), false),
+            (nameof(ModuleDimensions.YRotate), typeof(double), false),
+            (nameof(ModuleDimensions.ZRotate), typeof(double), false),
             (nameof(ModuleDimensions.OSCADMethod), typeof(string), false),
             (nameof(ModuleDimensions.IncludeMethod), typeof(string), false),
             (nameof(ModuleDimensions.CreatedAt), typeof(DateTime), false)

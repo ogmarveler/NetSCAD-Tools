@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.UI.ViewModels;
 using System.ComponentModel;
+using static NetScad.Core.Measurements.Selector;
 
 namespace NetScad.UI.Views;
 
@@ -84,5 +85,57 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
             nameof(Axis.Scad.Models.GeneratedModule.CallingMethod) => new DataGridLength(450), // Fixed 450px
             _ => new DataGridLength(1, DataGridLengthUnitType.Auto)
         };
+    }
+
+    /// <summary>
+    /// Handles selection changes in the Imperial DataGrid
+    /// Populates the input textboxes with the selected row's values
+    /// </summary>
+    private void DataGridImperial_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (sender is DataGrid dataGrid && dataGrid.SelectedItem is Axis.Scad.Models.GeneratedModule selected)
+        {
+            // Set unit system to Imperial
+            ViewModel.SelectedUnitValue = UnitSystem.Imperial;
+
+            // Populate ViewModel properties with Imperial values
+            ViewModel.MinXValue = selected.MinX;
+            ViewModel.MaxXValue = selected.MaxX;
+            ViewModel.MinYValue = selected.MinY;
+            ViewModel.MaxYValue = selected.MaxY;
+            ViewModel.MinZValue = selected.MinZ;
+            ViewModel.MaxZValue = selected.MaxZ;
+
+            // Set background type based on Theme
+            ViewModel.SelectedBackgroundValue = selected.Theme?.Contains("Light") == true
+                ? BackgroundType.Light
+                : BackgroundType.Dark;
+        }
+    }
+
+    /// <summary>
+    /// Handles selection changes in the Metric DataGrid
+    /// Populates the input textboxes with the selected row's values
+    /// </summary>
+    private void DataGridMetric_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (sender is DataGrid dataGrid && dataGrid.SelectedItem is Axis.Scad.Models.GeneratedModule selected)
+        {
+            // Set unit system to Metric
+            ViewModel.SelectedUnitValue = UnitSystem.Metric;
+
+            // Populate ViewModel properties with Metric values
+            ViewModel.MinXValue = selected.MinX;
+            ViewModel.MaxXValue = selected.MaxX;
+            ViewModel.MinYValue = selected.MinY;
+            ViewModel.MaxYValue = selected.MaxY;
+            ViewModel.MinZValue = selected.MinZ;
+            ViewModel.MaxZValue = selected.MaxZ;
+
+            // Set background type based on Theme
+            ViewModel.SelectedBackgroundValue = selected.Theme?.Contains("Light") == true
+                ? BackgroundType.Light
+                : BackgroundType.Dark;
+        }
     }
 }
