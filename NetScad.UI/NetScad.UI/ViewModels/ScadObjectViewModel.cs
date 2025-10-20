@@ -34,8 +34,8 @@ namespace NetScad.UI.ViewModels
         private ObservableCollection<ModuleDimensions> _moduleDimensionsDifferences;
         private ObservableCollection<ModuleDimensions> _moduleDimensionsUnions;
         private ObservableCollection<CylinderDimensions> _cylinderDimensions;
-        private AxisDimensions? _axisDimensions;
-        private List<string>? _axesList;
+        private AxisDimensions? _axisDimensions = new();
+        private List<string>? _axesList = [];
         private SqliteConnection? _dbConnection;
         private string _name = string.Empty;
         private string _description = string.Empty;
@@ -49,7 +49,7 @@ namespace NetScad.UI.ViewModels
         private double _thicknessIN = 0;
         private FilamentType _selectedFilament = FilamentType.Other;
         private UnitSystem _selectedUnit = UnitSystem.Metric;
-        private GeneratedModule? _selectedAxis;
+        private GeneratedModule? _selectedAxis = new();
         private string? _selectedAxisValue;
         private string _objectAxisDisplay = string.Empty;
         private bool _unitHasChanged;
@@ -108,11 +108,14 @@ namespace NetScad.UI.ViewModels
             _moduleDimensionsUnions = [];
             _moduleDimensionsDifferences = [];
             DbConnection = App.Host!.Services.GetRequiredService<SqliteConnection>(); // Get the DbConnection from the DI container
-            _ = ClearObjectAsync();
+            ClearObjectAsync().Wait();
+            GetAxesList().Wait();
             _decimalPlaces = Designer.Repositories.OuterDimensions.OpenSCAD_DecimalPlaces;
             FilamentTypes = [.. Enum.GetValues<FilamentType>()];
             UnitSystemValues = [.. Enum.GetValues(typeof(UnitSystem)).Cast<UnitSystem>()];
             SelectedUnitValue = UnitSystem.Metric;
+            SelectedAxisValue = AxesList?.FirstOrDefault() ?? string.Empty;
+            _selectedAxis = _axesModulesList.FirstOrDefault(x => x.CallingMethod == SelectedAxisValue);
             ScrewSizes = new ScrewSizeService().ScrewSizes;
             OperationTypes = [.. Enum.GetValues<OperationType>()];
             _objectFilePath = App.Host!.Services.GetRequiredService<IScadPathProvider>().ScadPath;

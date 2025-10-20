@@ -59,34 +59,6 @@
     <!--  Convert for Enum descriptions  -->
     <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
 
-    <!--  Unit Selection Combo Box  -->
-    <StackPanel x:Key="UnitComboBox" x:DataType="vm:CreateAxesViewModel">
-        <ComboBox
-            Classes="card"
-            ItemsSource="{Binding UnitSystemValues}"
-            SelectedValue="{Binding SelectedUnitValue}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-    </StackPanel>
-
-    <!--  Unit Selection Combo Box  -->
-    <StackPanel x:Key="UnitComboBox2" x:DataType="vm:ScadObjectViewModel">
-        <ComboBox
-            Classes="card"
-            ItemsSource="{Binding UnitSystemValues}"
-            SelectedValue="{Binding SelectedUnitValue}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-    </StackPanel>
-
     <!--  Axes Combo Box  -->
     <StackPanel x:Key="AxesComboBox" x:DataType="vm:ScadObjectViewModel">
         <ComboBox
@@ -102,7 +74,7 @@
         </ComboBox>
     </StackPanel>
 
-    <!--  Unit Selection Combo Box  -->
+    <!--  Theme Combo Box  -->
     <StackPanel x:Key="BackgroundComboBox" x:DataType="vm:CreateAxesViewModel">
         <ComboBox
             Classes="card"

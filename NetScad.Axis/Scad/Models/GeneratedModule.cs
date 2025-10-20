@@ -2,9 +2,9 @@
 {
     public class GeneratedModule
     {
-        public string? CallingMethod { get; set; }
-        public string? Unit { get; set; }
-        public string? Theme { get; set; }
+        public string? CallingMethod { get; set; } = string.Empty;
+        public string? Unit { get; set; } = "Metric";
+        public string? Theme { get; set; } = "Light";
         public double RangeX { get; set; } = 0;
         public double RangeY { get; set; } = 0;
         public double RangeZ { get; set; } = 0;
@@ -14,6 +14,6 @@
         public double MaxY { get; set; } = 0;
         public double MinZ { get; set; } = 0;
         public double MaxZ { get; set; } = 0;
-        public string? Volume { get; set; }
+        public string? Volume { get; set; } = "0";
     }
 }

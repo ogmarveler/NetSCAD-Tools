@@ -89,6 +89,11 @@ namespace NetScad.UI.ViewModels
             _inputMaxZ = "Max Z > Min Z";
             _ = GetAxesList();  // Get existing list of axes generated
         }
+
+        public void RaisePropertyChanged(string propertyName)
+        {
+            this.RaisePropertyChanged(propertyName);
+        }
         public double MinXValue
         {
             get => _minX; set
@@ -150,6 +155,10 @@ namespace NetScad.UI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedUnit, value);
+                // Update IsMetric and IsImperial IMMEDIATELY (synchronously)
+                IsImperial = _selectedUnit != UnitSystem.Metric;
+                IsMetric = _selectedUnit == UnitSystem.Metric;
+
                 UnitHasChanged = true; // For use in conversions when _selectedUnit has changed
                 _ = ConvertInputs(_decimalPlaces);
                 _ = GetAxesList(); // Update AxesList based on unit system
@@ -177,8 +186,8 @@ namespace NetScad.UI.ViewModels
         {
             if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged) { await ConvertInputsImperial(decimalPlaces); }
             else if (_selectedUnit == UnitSystem.Metric && UnitHasChanged) { await ConvertInputsMetric(decimalPlaces); }
-            IsImperial = SelectedUnitValue != UnitSystem.Metric;
-            IsMetric = SelectedUnitValue == UnitSystem.Metric;
+            //IsImperial = SelectedUnitValue != UnitSystem.Metric;
+            //IsMetric = SelectedUnitValue == UnitSystem.Metric;
         }
 
         public async Task CreateCustomAxisAsync()

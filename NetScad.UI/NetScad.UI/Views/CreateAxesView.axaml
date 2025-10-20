@@ -17,6 +17,8 @@
 
     <UserControl.Resources>
         <conv:DoubleConverter x:Key="DoubleConverter" />
+        <conv:UnitSystemToColorConverter x:Key="UnitSystemToColorConverter" />
+        <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -98,11 +100,53 @@
             FontWeight="SemiBold"
             Text="Unit Type" />
 
-        <ContentControl
+        <!--  Unit Selection Combo Box with Direct Bindings  -->
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Classes="textbox"
+            FontWeight="SemiBold"
+            Text="Unit Type" />
+
+        <ComboBox
+            x:Name="UnitComboBox"
             Grid.Row="2"
             Grid.Column="1"
-            Content="{DynamicResource UnitComboBox}"
-            FontWeight="SemiBold" />
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            Classes="card"
+            FontWeight="SemiBold"
+            ItemsSource="{Binding UnitSystemValues}"
+            SelectedItem="{Binding SelectedUnitValue, Mode=TwoWay}">
+
+            <!--  Bind directly to IsMetric with custom converter  -->
+            <ComboBox.Foreground>
+                <Binding
+                    Converter="{StaticResource UnitSystemToColorConverter}"
+                    ConverterParameter="Foreground"
+                    Path="IsMetric" />
+            </ComboBox.Foreground>
+
+            <ComboBox.Background>
+                <Binding
+                    Converter="{StaticResource UnitSystemToColorConverter}"
+                    ConverterParameter="Background"
+                    Path="IsMetric" />
+            </ComboBox.Background>
+
+            <ComboBox.BorderBrush>
+                <Binding
+                    Converter="{StaticResource UnitSystemToColorConverter}"
+                    ConverterParameter="BorderBrush"
+                    Path="IsMetric" />
+            </ComboBox.BorderBrush>
+            <!--  Apply EnumDescriptionConverter for display text  -->
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
         <TextBlock
             Grid.Row="2"

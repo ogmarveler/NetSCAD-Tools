@@ -17,7 +17,6 @@
     Background="{DynamicResource WindowBackground}"
     mc:Ignorable="d">
 
-
     <UserControl.Resources>
         <conv:DoubleToNullableConverter x:Key="DoubleToNullableConverter" />
         <conv:UnitTextConverter x:Key="UnitTextConverter" />
@@ -28,6 +27,8 @@
         <conv:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter" />
         <conv:MultiStringNotNullOrEmptyConverter x:Key="MultiStringNotNullOrEmptyConverter" />
         <conv:ShapeValidationConverter x:Key="ShapeValidationConverter" />
+        <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+        <conv:UnitSystemToColorConverter x:Key="UnitSystemToColorConverter" />
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -140,11 +141,41 @@
                 Classes="textbox"
                 IsVisible="{Binding AxesSelectEnabled}"
                 Text="Axes" />
-            <ContentControl
+
+            <ComboBox
+                x:Name="AxesComboBox"
                 Grid.Row="1"
                 Grid.Column="0"
-                Content="{DynamicResource AxesComboBox}"
-                IsVisible="{Binding AxesSelectEnabled}" />
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                BorderThickness="2"
+                Classes="card"
+                FontWeight="SemiBold"
+                IsVisible="{Binding AxesSelectEnabled}"
+                ItemsSource="{Binding AxesList}"
+                SelectedItem="{Binding SelectedAxisValue, Mode=TwoWay}">
+
+                <ComboBox.Foreground>
+                    <Binding
+                        Converter="{StaticResource UnitSystemToColorConverter}"
+                        ConverterParameter="Foreground"
+                        Path="IsMetric" />
+                </ComboBox.Foreground>
+
+                <ComboBox.Background>
+                    <Binding
+                        Converter="{StaticResource UnitSystemToColorConverter}"
+                        ConverterParameter="Background"
+                        Path="IsMetric" />
+                </ComboBox.Background>
+
+                <ComboBox.BorderBrush>
+                    <Binding
+                        Converter="{StaticResource UnitSystemToColorConverter}"
+                        ConverterParameter="BorderBrush"
+                        Path="IsMetric" />
+                </ComboBox.BorderBrush>
+            </ComboBox>
 
             <!--  Axes Display  -->
             <TextBlock
@@ -169,10 +200,18 @@
                 CornerRadius="8"
                 IsEnabled="False"
                 IsVisible="{Binding !AxesSelectEnabled}">
+
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontWeight="SemiBold"
-                    Text="{Binding ObjectAxisDisplay}" />
+                    Text="{Binding ObjectAxisDisplay}">
+                    <TextBlock.Foreground>
+                        <Binding
+                            Converter="{StaticResource UnitSystemToColorConverter}"
+                            ConverterParameter="Background"
+                            Path="IsMetric" />
+                    </TextBlock.Foreground>
+                </TextBlock>
             </Border>
 
             <!--  Name  -->
@@ -249,15 +288,49 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Classes="textbox"
+                FontWeight="SemiBold"
                 Text="Unit Type" />
-            <ContentControl
+
+            <ComboBox
+                x:Name="UnitComboBox"
                 Grid.Row="1"
                 Grid.Column="3"
                 Margin="0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Content="{DynamicResource UnitComboBox2}"
-                IsEnabled="True" />
+                FontWeight="SemiBold"
+                IsEnabled="True"
+                ItemsSource="{Binding UnitSystemValues}"
+                SelectedItem="{Binding SelectedUnitValue, Mode=TwoWay}">
+
+                <!--  Bind directly to IsMetric with custom converter  -->
+                <ComboBox.Foreground>
+                    <Binding
+                        Converter="{StaticResource UnitSystemToColorConverter}"
+                        ConverterParameter="Foreground"
+                        Path="IsMetric" />
+                </ComboBox.Foreground>
+
+                <ComboBox.Background>
+                    <Binding
+                        Converter="{StaticResource UnitSystemToColorConverter}"
+                        ConverterParameter="Background"
+                        Path="IsMetric" />
+                </ComboBox.Background>
+
+                <ComboBox.BorderBrush>
+                    <Binding
+                        Converter="{StaticResource UnitSystemToColorConverter}"
+                        ConverterParameter="BorderBrush"
+                        Path="IsMetric" />
+                </ComboBox.BorderBrush>
+                <!--  Apply EnumDescriptionConverter for display text  -->
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
             <!--  CUBE INPUTS - Length, Width, Height, Thickness  -->
             <!--  Length  -->
