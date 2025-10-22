@@ -10,6 +10,7 @@ Welcome to the NetSCAD Designer Guide! This tutorial covers the basics of defini
 #### Types of Solids Available
 Cubes and cylinders can be generated from the Designer module within this application. Rounded versions of cubes are available in this iteration, in order to show how to offset Minkowski rounding to align with 0,0 axes. Future iterations will have more solid types available, but if needed, generated outputs can be modified within SCAD files directly. Solids available are as follows:
 ###### 
+* **Cube** - aligned on the 0,0 axes
 * **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0 axes
 * **Cylinder** - all cylinders are aligned on the 0,0 axes, with the center point of the top of the cylinder (center circle)
 * **Rounded Box with Chamfered Edges** - using Minkowski rounding with chamfered edges, aligned on the 0,0 axes, and utilizing the difference function to remove part of the cube cutout

@@ -112,7 +112,7 @@
                 <ColumnDefinition Width="110" />
                 <ColumnDefinition Width="110" />
                 <ColumnDefinition Width="110" />
-                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="115" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -139,8 +139,9 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Classes="textbox"
+                FontWeight="SemiBold"
                 IsVisible="{Binding AxesSelectEnabled}"
-                Text="Axes" />
+                Text="Select an Axis First" />
 
             <ComboBox
                 x:Name="AxesComboBox"
@@ -195,18 +196,132 @@
                 Padding="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                BorderBrush="{DynamicResource CardForeGround}"
                 BorderThickness="2"
-                CornerRadius="8"
+                CornerRadius="2"
                 IsEnabled="False"
                 IsVisible="{Binding !AxesSelectEnabled}">
 
+                <Border.Background>
+                    <Binding
+                        Converter="{StaticResource UnitSystemToColorConverter}"
+                        ConverterParameter="Background"
+                        Path="IsMetric" />
+                </Border.Background>
+
+                <Border.BorderBrush>
+                    <Binding
+                        Converter="{StaticResource UnitSystemToColorConverter}"
+                        ConverterParameter="BorderBrush"
+                        Path="IsMetric" />
+                </Border.BorderBrush>
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontWeight="SemiBold"
-                    Foreground="{DynamicResource CardForeground}"
+                    Foreground="{Binding IsMetric, Converter={StaticResource UnitSystemToColorConverter}, ConverterParameter=Foreground}"
                     Text="{Binding ObjectAxisDisplay}" />
             </Border>
+
+
+            <Grid
+                Grid.Row="2"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="1"
+                Width="330"
+                Margin="0,5,0,4"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+
+                <!--  Axis Position Controls - X, Y, Z Translation  -->
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0,5,0,-3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="textbox"
+                    Text="Adjust X" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Width="100"
+                    Margin="5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Classes="card"
+                    SelectionBrush="Yellow"
+                    Text="{Binding AxisXPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="Move the X-axis starting point for the current axis" />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBox>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="0,5,0,-3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="textbox"
+                    Text="Adjust Y" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Width="100"
+                    Margin="5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Classes="card"
+                    SelectionBrush="Yellow"
+                    Text="{Binding AxisYPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="Move the Y-axis starting point for the current axis" />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBox>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="0,5,0,-3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="textbox"
+                    Text="Adjust Z" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Width="100"
+                    Margin="5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Classes="card"
+                    SelectionBrush="Yellow"
+                    Text="{Binding AxisZPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="Move the Z-axis starting point for the current axis" />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBox>
+
+            </Grid>
 
             <!--  Name  -->
             <TextBlock
@@ -217,7 +332,6 @@
                 VerticalAlignment="Center"
                 Classes="textbox"
                 FontWeight="SemiBold"
-                Foreground="{DynamicResource PurpleForeground}"
                 Text="Name" />
             <TextBox
                 Grid.Row="1"
@@ -225,13 +339,15 @@
                 Margin="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                Background="{DynamicResource PurpleBackground}"
-                BorderBrush="{DynamicResource PurpleForeground}"
+                Background="{DynamicResource PurpleForeground}"
+                BorderBrush="{DynamicResource PurpleBackground}"
                 BorderThickness="2"
+                CaretBrush="{DynamicResource PurpleBackground}"
                 Classes="card"
                 FontWeight="SemiBold"
-                Foreground="{DynamicResource PurpleForeground}"
+                Foreground="{DynamicResource PurpleBackground}"
                 SelectionBrush="Yellow"
+                SelectionForegroundBrush="{DynamicResource PurpleForeground}"
                 Text="{Binding Name, Mode=TwoWay}"
                 Watermark="Name">
                 <TextBox.IsEnabled>
@@ -255,6 +371,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Classes="textbox"
+                FontWeight="SemiBold"
                 Text="Description" />
             <TextBox
                 Grid.Row="1"
@@ -283,7 +400,19 @@
                 VerticalAlignment="Center"
                 Classes="textbox"
                 FontWeight="SemiBold"
+                IsVisible="{Binding !AxesSelectEnabled}"
                 Text="Unit Type" />
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="3"
+                Margin="0,5,0,-3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Classes="textbox"
+                FontWeight="SemiBold"
+                IsVisible="{Binding AxesSelectEnabled}"
+                Text="Axis Type" />
 
             <ComboBox
                 x:Name="UnitComboBox"
@@ -918,6 +1047,7 @@
             Grid.Row="2"
             Margin="28,10,0,10"
             HorizontalAlignment="Left"
+            IsVisible="{Binding AxisStored}"
             Orientation="Horizontal">
             <TextBlock
                 Margin="0,0,10,0"
@@ -1093,6 +1223,38 @@
             </Button>
 
             <Button
+                MinWidth="100"
+                Margin="0,0,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                BorderBrush="{DynamicResource CardForeground}"
+                BorderThickness="1"
+                Click="UpdateAxisPositionButton_Click"
+                Content="Adjust Axis"
+                CornerRadius="3"
+                IsEnabled="True"
+                IsVisible="{Binding AxisStored}">
+                <ToolTip.Tip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Stretch">
+                            This action will apply the selected axis to the object.scad file for use in OpenSCAD.
+                        </TextBlock>
+                    </StackPanel>
+                </ToolTip.Tip>
+            </Button>
+
+            <!--  Separator  -->
+            <Border
+                Width="1"
+                Height="30"
+                Margin="20"
+                VerticalAlignment="Stretch"
+                Background="{DynamicResource LabelBackground}"
+                IsVisible="{Binding AxisStored}" />
+
+            <Button
                 MaxWidth="100"
                 Margin="0,0,10,0"
                 HorizontalAlignment="Stretch"
@@ -1177,11 +1339,12 @@
                 Height="30"
                 Margin="20"
                 VerticalAlignment="Stretch"
-                Background="{DynamicResource LabelBackground}" />
+                Background="{DynamicResource LabelBackground}"
+                IsVisible="{Binding AxisStored}" />
 
             <Button
                 MinWidth="100"
-                Margin="10,0,0,0"
+                Margin="0,0,0,0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"

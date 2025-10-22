@@ -19,40 +19,41 @@
             <SolidColorBrush x:Key="CardForeground" Color="Black" />
             <SolidColorBrush x:Key="WindowBackground" Color="#F5F5F5" />
             <SolidColorBrush x:Key="LabelBackground" Color="#DADDE2" />
-            <SolidColorBrush x:Key="PurpleBackground" Color="#ffedff" />
-            <SolidColorBrush x:Key="PurpleForeground" Color="#423443" />
-            <SolidColorBrush x:Key="TealBackground" Color="#c0fcf7" />
-            <SolidColorBrush x:Key="TealForeground" Color="#48817c" />
-            <SolidColorBrush x:Key="BlueBackground" Color="#dfe5f6" />
-            <SolidColorBrush x:Key="BlueForeground" Color="#617aaa" />
-            <SolidColorBrush x:Key="RedBackground" Color="#fff4f4" />
-            <SolidColorBrush x:Key="RedForeground" Color="#b4676b" />
-            <SolidColorBrush x:Key="GoldBackground" Color="#ffeecb" />
-            <SolidColorBrush x:Key="GoldForeground" Color="#77623c" />
-            <SolidColorBrush x:Key="MaroonBackground" Color="#f1e4f3" />
-            <SolidColorBrush x:Key="MaroonForeground" Color="#7a4c5f" />
-            <SolidColorBrush x:Key="DarkBlueBackground" Color="#f2ecff" />
-            <SolidColorBrush x:Key="DarkBlueForeground" Color="#514e65" />
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="CardBackground" Color="#212121" />
-            <SolidColorBrush x:Key="CardForeground" Color="White" />
-            <SolidColorBrush x:Key="WindowBackground" Color="#121212" />
-            <SolidColorBrush x:Key="LabelBackground" Color="#545F66" />
             <SolidColorBrush x:Key="PurpleBackground" Color="#423443" />
             <SolidColorBrush x:Key="PurpleForeground" Color="#ffedff" />
             <SolidColorBrush x:Key="TealForeground" Color="#c0fcf7" />
             <SolidColorBrush x:Key="TealBackground" Color="#48817c" />
             <SolidColorBrush x:Key="BlueForeground" Color="#dfe5f6" />
             <SolidColorBrush x:Key="BlueBackground" Color="#617aaa" />
-            <SolidColorBrush x:Key="RedForeground" Color="#fff4f4" />
-            <SolidColorBrush x:Key="RedBackground" Color="#b4676b" />
-            <SolidColorBrush x:Key="GoldForeground" Color="#ffeecb" />
-            <SolidColorBrush x:Key="GoldBackground" Color="#77623c" />
+            <SolidColorBrush x:Key="RedBackground" Color="#fff4f4" />
+            <SolidColorBrush x:Key="RedForeground" Color="#b4676b" />
+            <SolidColorBrush x:Key="GoldBackground" Color="#ffeecb" />
+            <SolidColorBrush x:Key="GoldForeground" Color="#77623c" />
             <SolidColorBrush x:Key="MaroonForeground" Color="#f1e4f3" />
             <SolidColorBrush x:Key="MaroonBackground" Color="#7a4c5f" />
             <SolidColorBrush x:Key="DarkBlueForeground" Color="#f2ecff" />
             <SolidColorBrush x:Key="DarkBlueBackground" Color="#514e65" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="CardBackground" Color="#212121" />
+            <SolidColorBrush x:Key="CardForeground" Color="White" />
+            <SolidColorBrush x:Key="WindowBackground" Color="#121212" />
+            <SolidColorBrush x:Key="LabelBackground" Color="#545F66" />
+            <SolidColorBrush x:Key="PurpleBackground" Color="#ffedff" />
+            <SolidColorBrush x:Key="PurpleForeground" Color="#423443" />
+            <SolidColorBrush x:Key="TealBackground" Color="#c0fcf7" />
+            <SolidColorBrush x:Key="TealForeground" Color="#48817c" />
+            <SolidColorBrush x:Key="BlueBackground" Color="#dfe5f6" />
+            <SolidColorBrush x:Key="BlueForeground" Color="#617aaa" />
+            <SolidColorBrush x:Key="RedForeground" Color="#fff4f4" />
+            <SolidColorBrush x:Key="RedBackground" Color="#b4676b" />
+            <SolidColorBrush x:Key="GoldForeground" Color="#ffeecb" />
+            <SolidColorBrush x:Key="GoldBackground" Color="#77623c" />
+            <SolidColorBrush x:Key="MaroonBackground" Color="#f1e4f3" />
+            <SolidColorBrush x:Key="MaroonForeground" Color="#7a4c5f" />
+            <SolidColorBrush x:Key="DarkBlueBackground" Color="#f2ecff" />
+            <SolidColorBrush x:Key="DarkBlueForeground" Color="#514e65" />
+
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

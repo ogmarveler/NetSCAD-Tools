@@ -68,7 +68,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "ZOffset_IN", "Z (in)" },
             { "XRotate", "Rotate X°" },
             { "YRotate", "Rotate Y°" },
-            { "ZRotate", "Rotate X°)" },
+            { "ZRotate", "Rotate Z°)" },
             { "Round_r_IN", "Rounded (in)" },
             { "OperationType", "Action" },
             { "Description", "Cube Description" },
@@ -215,4 +215,6 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private async void ApplyAxisButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateAxisAsync();
 
     private async void GetObjectButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.GetDimensionsPartAsync();
+
+    private async void UpdateAxisPositionButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.UpdateAxisTranslateAsync();
 }

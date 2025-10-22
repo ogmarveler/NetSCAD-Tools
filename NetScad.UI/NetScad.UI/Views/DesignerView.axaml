@@ -16,6 +16,7 @@
     mc:Ignorable="d">
 
     <StackPanel
+        MaxWidth="800"
         Margin="0"
         HorizontalAlignment="Stretch"
         Background="{DynamicResource CardBackground}">
@@ -27,5 +28,4 @@
             TextBlock.TextAlignment="Justify"
             TextBlock.TextWrapping="Wrap" />
     </StackPanel>
-
 </UserControl>
