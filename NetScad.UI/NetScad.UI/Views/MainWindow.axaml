@@ -31,7 +31,7 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <DockPanel>
+    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Menu DockPanel.Dock="Top">
             <!--  File and Folder Explorer  -->
             <MenuItem Header="_Open">
@@ -78,7 +78,7 @@
         </Menu>
 
 
-        <!--  Main content  -->
+        <!--  Main content
         <Grid
             Margin="10"
             HorizontalAlignment="Center"
@@ -90,30 +90,25 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!--  Main View - SPA  -->
-            <Border
-                Grid.Row="0"
-                Grid.Column="0"
-                Margin="10"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                BorderThickness="2"
-                BoxShadow="1 1 2 0 Gray"
-                Classes="card_main">
-                <ScrollViewer>
-                    <StackPanel Classes="card">
-                        <ContentControl
-                            Padding="10"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch"
-                            VerticalContentAlignment="Stretch"
-                            Content="{Binding MainViewContent}" />
-                    </StackPanel>
-                </ScrollViewer>
-            </Border>
+        -->
+        <!--  Main View - SPA  -->
+        <Border
+            Margin="30"
+            BorderThickness="2"
+            BoxShadow="1 1 2 0 Gray"
+            Classes="card_main">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <ContentControl
+                    Padding="10"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    Content="{Binding MainViewContent}" />
+            </ScrollViewer>
+        </Border>
 
-        </Grid>
+        <!--    </Grid> -->
     </DockPanel>
 
 </Window>
