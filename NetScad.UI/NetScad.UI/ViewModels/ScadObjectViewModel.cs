@@ -917,10 +917,10 @@ namespace NetScad.UI.ViewModels
 
             double radiusValue = SelectedScrewProperty switch
             {
-                "Threaded Portion" => screwData!.ScrewRadius,
+                "Thread Part" => screwData!.ScrewRadius,
                 "Screw Head" => screwData!.ScrewHeadRadius,
-                "Threaded Insert" => screwData!.ThreadedInsertRadius,
-                "Clearance Hole" => screwData!.ClearanceHoleRadius,
+                "Thread Insert" => screwData!.ThreadedInsertRadius,
+                "Screw Hole" => screwData!.ClearanceHoleRadius,
                 _ => 0
             };
             RadiusMM = SelectedUnitValue == UnitSystem.Imperial ? Math.Round(MillimeterToInches(radiusValue), _decimalPlaces) : radiusValue;
@@ -1218,7 +1218,7 @@ namespace NetScad.UI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedScrewSize, value);
-                SelectedScrewProperty ??= ScrewProperties!.FirstOrDefault(s=>s == "Threaded Portion")!;
+                SelectedScrewProperty ??= ScrewProperties!.FirstOrDefault(s=>s == "Thread Part")!;
                 if (IsCylinderSelected)
                 {
                     _ = UpdateScrewRadiusFromSelection();
@@ -1240,10 +1240,10 @@ namespace NetScad.UI.ViewModels
         public List<ScrewSize>? ScrewSizes { get => _screwSizes; set => this.RaiseAndSetIfChanged(ref _screwSizes, value); }
         public List<string> ScrewProperties { get; } =
         [
-            "Threaded Portion",
+            "Thread Part",
             "Screw Head",
-            "Threaded Insert",
-            "Clearance Hole",
+            "Thread Insert",
+            "Screw Hole",
         ];
         public ServerRack? SelectedServerRack
         {
