@@ -10,7 +10,7 @@ namespace NetScad.UI.ViewModels
     public class MainWindowViewModel : ReactiveObject
     {
         // Set MainView as the initial content
-        private object? _mainViewContent = App.Host?.Services.GetRequiredService<AxisView>();
+        private object? _mainViewContent = App.Host?.Services.GetRequiredService<ScadObjectView>();
 
         public MainWindowViewModel()
         {

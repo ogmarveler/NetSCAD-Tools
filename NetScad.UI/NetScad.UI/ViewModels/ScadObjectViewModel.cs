@@ -1,9 +1,7 @@
-using Avalonia.Animation;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.Axis.Scad.Models;
 using NetScad.Axis.Scad.Utility;
-using NetScad.Axis.SCAD.Objects;
 using NetScad.Core.Interfaces;
 using NetScad.Core.Material;
 using NetScad.Core.Measurements;
@@ -93,6 +91,7 @@ namespace NetScad.UI.ViewModels
         private double _xRotate = 0;
         private double _yRotate = 0;
         private double _zRotate = 0;
+        private string _selectedShapeType = "Cube";
 
         [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>")]
         public ScadObjectViewModel()
@@ -1021,6 +1020,7 @@ namespace NetScad.UI.ViewModels
             }
         }
 
+
         public double AxisXPositionMM { get => _axisXPositionMM; set => this.RaiseAndSetIfChanged(ref _axisXPositionMM, value); }
         public double AxisYPositionMM { get => _axisYPositionMM; set => this.RaiseAndSetIfChanged(ref _axisYPositionMM, value); }
         public double AxisZPositionMM { get => _axisZPositionMM; set => this.RaiseAndSetIfChanged(ref _axisZPositionMM, value); }
@@ -1305,6 +1305,29 @@ namespace NetScad.UI.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _selectedAxisValue, value);
                 _selectedAxis = _axesModulesList.FirstOrDefault(x => x.CallingMethod == SelectedAxisValue);
+            }
+        }
+        public List<string> ShapeTypes { get; } = ["Cube", "Round Cube", "Cylinder"];
+        public string SelectedShapeType
+        {
+            get => _selectedShapeType;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedShapeType, value);
+
+                // Update the individual shape selection properties based on the combo box selection
+                switch (value)
+                {
+                    case "Cube":
+                        IsCubeSelected = true;
+                        break;
+                    case "Round Cube":
+                        IsRoundCubeSelected = true;
+                        break;
+                    case "Cylinder":
+                        IsCylinderSelected = true;
+                        break;
+                }
             }
         }
     }

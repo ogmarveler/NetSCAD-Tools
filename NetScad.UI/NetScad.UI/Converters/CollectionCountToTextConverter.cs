@@ -15,7 +15,7 @@ namespace NetScad.UI.Converters
         {
             // Get the first value which should be the collection
             if (values == null || values.Count == 0)
-                return "Create Object";
+                return "Create Part";
 
             var value = values[0];
 
@@ -35,7 +35,7 @@ namespace NetScad.UI.Converters
                 }
             }
 
-            return "Create Object";
+            return "Create Part";
         }
 
         public object?[]? ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) => throw new NotImplementedException();

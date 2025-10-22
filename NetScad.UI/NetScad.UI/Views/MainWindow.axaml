@@ -103,6 +103,7 @@
                 <ScrollViewer>
                     <StackPanel Classes="card">
                         <ContentControl
+                            Padding="10"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"

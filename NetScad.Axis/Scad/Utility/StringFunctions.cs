@@ -4,7 +4,7 @@
     {
         public static string FormatAxisDisplay(string? axisUsed)
         {
-            return $"Dimensions: {axisUsed?
+            return $"{axisUsed?
                         .Replace("use <../Axes/axes.scad>; ", "")
                         .Replace("Get_", "")
                         .Replace("_", " ")

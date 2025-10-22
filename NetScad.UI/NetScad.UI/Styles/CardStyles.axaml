@@ -178,4 +178,71 @@
 
 
 
+    <!--  RadioButton Card Style (matches ComboBox/TextBox card style)  -->
+    <Style Selector="RadioButton.card">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource CardForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardForeground}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="10,5" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    Padding="{TemplateBinding Padding}"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+                    <ContentPresenter
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="{TemplateBinding Content}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="RadioButton.card:checked">
+        <Setter Property="Background" Value="{DynamicResource PurpleForeground}" />
+        <Setter Property="Foreground" Value="{DynamicResource PurpleBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PurpleBackground}" />
+    </Style>
+
+    <Style Selector="RadioButton.card:pointerover /template/ Border">
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightBaseHighBrush}" />
+        <Setter Property="Opacity" Value="0.8" />
+    </Style>
+
+    <!--  Grid Uniform Spacing Style  -->
+    <Style Selector="Grid.input-form">
+        <Setter Property="Margin" Value="20,0,20,10" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+    </Style>
+
+    <!--  Standard Label Style  -->
+    <Style Selector="TextBlock.input-label">
+        <Setter Property="Margin" Value="0,5,0,-3" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!--  Standard Input Style (for consistent spacing)  -->
+    <Style Selector="TextBox.input-field, ComboBox.input-field">
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
 </Styles>
