@@ -66,22 +66,7 @@
 	  <None Update="Scad\Axes\axes.scad">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="Scad\Axes\dark_1x3x4_inch_orig_0x0xn2.scad">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Scad\Axes\dark_40x80x120_mm_orig_0x0xn60.scad">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Scad\Axes\light_1x3x4_inch_orig_0x0xn2.scad">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Scad\Axes\light_40x80x120_mm_orig_0x0xn60.scad">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	  <None Update="Scad\Solids\object.scad">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Scad\sample.scad">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

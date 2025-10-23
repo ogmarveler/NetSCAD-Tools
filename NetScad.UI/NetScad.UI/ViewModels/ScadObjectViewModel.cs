@@ -92,6 +92,8 @@ namespace NetScad.UI.ViewModels
         private double _yRotate = 0;
         private double _zRotate = 0;
         private string _selectedShapeType = "Cube";
+        private bool _isFileOpen = false;
+        private string _originalAxisCall = string.Empty;
 
         [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>")]
         public ScadObjectViewModel()
@@ -157,6 +159,7 @@ namespace NetScad.UI.ViewModels
             Radius2MM = 0;
             CylinderHeightMM = 0;
             SelectedServerRack = null;
+            SelectedShapeType = "Select Solid";
             SelectedServerRackWidthType = string.Empty;
             SelectedScrewProperty = string.Empty;
             SelectedScrewSize = null;
@@ -299,10 +302,26 @@ namespace NetScad.UI.ViewModels
 
         public async Task UpdateAxisTranslateAsync()
         {
-            if (!AxisStored) return;  // No axis has been applied yet
+            //if (!AxisStored) return;  // No axis has been applied yet
 
             /** Need to find the original scad statement before updating variables **/
-            var originalAxisCall = $"translate ([{_AxisXPositionMM}, {_AxisYPositionMM}, {_AxisZPositionMM}]) {_axisDimensions?.OSCADMethod.Replace(_axisDimensions.IncludeMethod, "")}";
+            _originalAxisCall = $"translate ([{_AxisXPositionMM}, {_AxisYPositionMM}, {_AxisZPositionMM}]) {_axisDimensions?.OSCADMethod.Replace(_axisDimensions.IncludeMethod, "")}";
+
+            _axisDimensions = new AxisDimensions
+            {
+                Theme = _selectedAxis?.Theme!,
+                OSCADMethod = _selectedAxis?.CallingMethod!,
+                Unit = _selectedAxis?.Unit!,
+                MinX = _selectedAxis!.MinX,
+                MaxX = _selectedAxis!.MaxX,
+                MinY = _selectedAxis!.MinY,
+                MaxY = _selectedAxis!.MaxY,
+                MinZ = _selectedAxis!.MinZ,
+                MaxZ = _selectedAxis!.MaxZ,
+                CreatedAt = DateTime.UtcNow,
+            };
+            _axisDimensions.OSCADMethod = $"{_axisDimensions.IncludeMethod} {_selectedAxis.CallingMethod}";
+            _axisId = await _axisDimensions.UpsertAsync(DbConnection!); // Save to database
 
             if (_selectedUnit == UnitSystem.Imperial) // Need to convert since logic is textboxes are display variables
             {
@@ -322,7 +341,7 @@ namespace NetScad.UI.ViewModels
             if (!File.Exists(filePath)) return;
             // Match with CreateAxisAsync logic
             var wrappedAxisCall = $"translate ([{_AxisXPositionMM}, {_AxisYPositionMM}, {_AxisZPositionMM}]) {_axisDimensions?.OSCADMethod.Replace(_axisDimensions.IncludeMethod, "")}"; // Wrap axis call in translate module, this is the search string for replacement
-            _ = UpdateFIle.ChangeContentBlockFile(oldCodeBlock: originalAxisCall, newCodeBlock: wrappedAxisCall, filePath: filePath);  // Append updated axis call to object.scad file
+            _ = UpdateFIle.ChangeContentBlockFile(oldCodeBlock: _originalAxisCall, newCodeBlock: wrappedAxisCall, filePath: filePath);  // Append updated axis call to object.scad file
         }
 
         public async Task CreateAxisAsync()
@@ -372,6 +391,9 @@ namespace NetScad.UI.ViewModels
                 AxesSelectEnabled = false;
                 await GetDimensionsPartAsync();
                 ObjectAxisDisplay = StringFunctions.FormatAxisDisplay(_axisDimensions?.OSCADMethod); // Format for display
+                AxisXPositionMM = _axisDimensions!.MinX;  // Set to axis value, Min X
+                AxisYPositionMM = _axisDimensions!.MinY;  // Set to axis value, Min Y
+                AxisZPositionMM = _axisDimensions!.MinZ;  // Set to axis value, Min Z
             }
         }
 
@@ -667,7 +689,7 @@ namespace NetScad.UI.ViewModels
         {
             // Get any additional updates to parts
             await PartsToScadFilesAsync();
-            await CreateAxisAsync(); // Create or get AxisDimensions and return its Id
+            //await CreateAxisAsync(); // Create or get AxisDimensions and return its Id
 
             // Put Scad object file together
             var sb = new StringBuilder();
@@ -720,10 +742,8 @@ namespace NetScad.UI.ViewModels
             await Output.AppendToSCAD(content: sb.ToString(), filePath: filePath, cancellationToken: new CancellationToken());
 
             // Open the file in whatever the user has designated as the SCAD IDE associated with opening .scad files
-            await ScadFileOperations.OpenScadFileAsync(filePath);
-
-            // OR allow duplicates explicitly
-            //await ScadFileOperations.OpenScadFileAsync(filePath, allowDuplicates: false);
+                // Handle the case where the file could not be opened
+                _isFileOpen = await ScadFileOperations.OpenScadFileAsync(filePath, allowDuplicates: false);
         }
 
         /**** Unit Conversion ****/
@@ -789,17 +809,25 @@ namespace NetScad.UI.ViewModels
             _axesModulesList = parser.AxesModulesList(filePath);
 
             // Filter and select based on unit system
-            AxesList = SelectedUnitValue switch
+            var filteredAxes = SelectedUnitValue switch
             {
-                UnitSystem.Metric => [.. _axesModulesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_MM_")).Select(x => x.CallingMethod!)],
-                UnitSystem.Imperial => [.. _axesModulesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_Inch_")).Select(x => x.CallingMethod!)],
-                _ => [.. _axesModulesList.Where(x => x.CallingMethod != null).Select(x => x.CallingMethod!)]
+                UnitSystem.Metric => _axesModulesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_MM_")).Select(x => x.CallingMethod!).ToList(),
+                UnitSystem.Imperial => _axesModulesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_Inch_")).Select(x => x.CallingMethod!).ToList(),
+                _ => _axesModulesList.Where(x => x.CallingMethod != null).Select(x => x.CallingMethod!).ToList()
             };
+
+            // Add "Select Axis" as the first item if no axis is stored
+            if (!AxisStored)
+            {
+                filteredAxes.Insert(0, "Select Axis");
+            }
+
+            AxesList = [.. filteredAxes];
 
             // Update selected axis if current selection is no longer valid
             if (!AxesList.Contains(SelectedAxisValue!))
             {
-                SelectedAxisValue = AxesList.FirstOrDefault() ?? string.Empty;
+                SelectedAxisValue = AxisStored ? AxesList.FirstOrDefault() : "Select Axis";
                 _selectedAxis = _axesModulesList.FirstOrDefault(x => x.CallingMethod == SelectedAxisValue);
             }
         }
@@ -1021,9 +1049,9 @@ namespace NetScad.UI.ViewModels
         }
 
 
-        public double AxisXPositionMM { get => _axisXPositionMM; set => this.RaiseAndSetIfChanged(ref _axisXPositionMM, value); }
-        public double AxisYPositionMM { get => _axisYPositionMM; set => this.RaiseAndSetIfChanged(ref _axisYPositionMM, value); }
-        public double AxisZPositionMM { get => _axisZPositionMM; set => this.RaiseAndSetIfChanged(ref _axisZPositionMM, value); }
+        public double AxisXPositionMM { get => _axisXPositionMM; set { this.RaiseAndSetIfChanged(ref _axisXPositionMM, value); if(AxisStored) _ = UpdateAxisTranslateAsync(); } }
+        public double AxisYPositionMM { get => _axisYPositionMM; set { this.RaiseAndSetIfChanged(ref _axisYPositionMM, value); if (AxisStored) _ = UpdateAxisTranslateAsync(); } }
+        public double AxisZPositionMM { get => _axisZPositionMM; set { this.RaiseAndSetIfChanged(ref _axisZPositionMM, value); if(AxisStored) _ = UpdateAxisTranslateAsync(); } }
         public bool UnitHasChanged { get => _unitHasChanged; set => this.RaiseAndSetIfChanged(ref _unitHasChanged, value); }
         public bool IsMetric { get => _isMetric; set => this.RaiseAndSetIfChanged(ref _isMetric, value); }
         public bool IsImperial { get => _isImperial; set => this.RaiseAndSetIfChanged(ref _isImperial, value); }
@@ -1295,7 +1323,7 @@ namespace NetScad.UI.ViewModels
                 UnitHasChanged = true;
                 _ = ConvertInputs(_decimalPlaces);
                 if (!_axisStored)
-                    _ = GetAxesList(); // Refresh axes list when unit changes
+                    _ = GetAxesList(); // Refresh axes list when unit changes and the user has specified they want to change the axis
             }
         }
         public string? SelectedAxisValue
@@ -1305,6 +1333,13 @@ namespace NetScad.UI.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _selectedAxisValue, value);
                 _selectedAxis = _axesModulesList.FirstOrDefault(x => x.CallingMethod == SelectedAxisValue);
+                AxisXPositionMM = _selectedAxis != null ? _selectedAxis.MinX : 0;
+                AxisYPositionMM = _selectedAxis != null ? _selectedAxis.MinY : 0;
+                AxisZPositionMM = _selectedAxis != null ? _selectedAxis.MinZ : 0;
+                if (AxisStored)
+                    _ = UpdateAxisTranslateAsync();
+                else if (SelectedAxisValue != "Select Axis")
+                    _ = CreateAxisAsync();
             }
         }
         public List<string> ShapeTypes { get; } = ["Cube", "Round Cube", "Cylinder"];

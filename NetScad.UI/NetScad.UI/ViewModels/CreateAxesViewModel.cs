@@ -228,7 +228,13 @@ namespace NetScad.UI.ViewModels
                 // Convert values back to inches since backend function uses mm
                 if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged)  // Update frontend with adjusted imperial values
                 {
-                    await ConvertInputsImperial((int)(_decimalPlaces / 1.5));
+                    MinXValue = Math.Round(MillimeterToInches(_customAxis.Settings.MinX), (int)(_decimalPlaces / 1.5));
+                    MaxXValue = Math.Round(MillimeterToInches(_customAxis.Settings.MaxX), (int)(_decimalPlaces / 1.5));
+                    MinYValue = Math.Round(MillimeterToInches(_customAxis.Settings.MinY), (int)(_decimalPlaces / 1.5));
+                    MaxYValue = Math.Round(MillimeterToInches(_customAxis.Settings.MaxY), (int)(_decimalPlaces / 1.5));
+                    MinZValue = Math.Round(MillimeterToInches(_customAxis.Settings.MinZ), (int)(_decimalPlaces / 1.5));
+                    MaxZValue = Math.Round(MillimeterToInches(_customAxis.Settings.MaxZ), (int)(_decimalPlaces / 1.5));
+                    UnitHasChanged = false;
                 }
                 else   // Update frontend with adjusted metric values, no conversion needed
                 {

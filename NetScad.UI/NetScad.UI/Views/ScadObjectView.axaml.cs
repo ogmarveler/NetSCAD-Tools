@@ -282,4 +282,10 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private async void GetObjectButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.GetDimensionsPartAsync();
 
     private async void UpdateAxisPositionButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.UpdateAxisTranslateAsync();
+    private async void ChangeAxisButton_Click(object? sender, RoutedEventArgs e)
+    {
+        ViewModel.AxisStored = false;
+        ViewModel.AxesSelectEnabled = true;
+        ViewModel.SelectedAxisValue = "Select Axis";
+    } 
 }

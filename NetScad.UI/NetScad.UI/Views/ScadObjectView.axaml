@@ -55,7 +55,6 @@
         <Style Selector="Grid#MainInputGrid > :is(Control)">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="3" />
         </Style>
 
         <!--  Button Content Alignment  -->
@@ -91,7 +90,6 @@
         <Style Selector="StackPanel.inputGroup">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="10" />
             <Setter Property="Spacing" Value="3" />
         </Style>
 
@@ -118,7 +116,8 @@
             x:Name="MainInputGrid"
             Grid.Row="0"
             MinWidth="800"
-            Margin="10">
+            ColumnSpacing="10"
+            RowSpacing="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <!--  Row 0: Title  -->
@@ -131,20 +130,22 @@
                 <RowDefinition Height="Auto" />
                 <!--  Row 4: Object Name/Description/Shape  -->
                 <RowDefinition Height="Auto" />
-                <!--  Row 5: Dimensions  -->
+                <!--  Row 5: Object Name/Description/Shape  -->
                 <RowDefinition Height="Auto" />
-                <!--  Row 6: Rotations  -->
+                <!--  Row 6: Dimensions  -->
                 <RowDefinition Height="Auto" />
-                <!--  Row 7: Separator  -->
+                <!--  Row 7: Rotations  -->
                 <RowDefinition Height="Auto" />
-                <!--  Row 8: Action Buttons  -->
+                <!--  Row 8: Separator  -->
+                <RowDefinition Height="Auto" />
+                <!--  Row 9: Action Buttons  -->
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" MinWidth="130" />
                 <!--  Column 0  -->
-                <ColumnDefinition Width="Auto" MaxWidth="100" />
+                <ColumnDefinition Width="Auto" MaxWidth="230" />
                 <!--  Column 1  -->
                 <ColumnDefinition Width="Auto" MaxWidth="100" />
                 <!--  Column 2  -->
@@ -194,7 +195,6 @@
                 Grid.Column="0"
                 Grid.ColumnSpan="9"
                 Height="2"
-                Margin="0,5,0,20"
                 HorizontalAlignment="Stretch"
                 Background="{DynamicResource CardForeground}"
                 Opacity="0.25" />
@@ -222,7 +222,6 @@
                     Text="Axis Type" />
                 <ComboBox
                     x:Name="UnitComboBox"
-                    MinWidth="130"
                     FontWeight="SemiBold"
                     IsEnabled="True"
                     ItemsSource="{Binding UnitSystemValues}"
@@ -257,22 +256,22 @@
             <StackPanel
                 Grid.Row="2"
                 Grid.Column="1"
-                Grid.ColumnSpan="3"
+                Grid.ColumnSpan="2"
                 Classes="inputGroup">
                 <TextBlock
                     Classes="standardLabel"
                     IsVisible="{Binding AxesSelectEnabled}"
-                    Text="Select Axis" />
+                    Text="Available Axes" />
                 <TextBlock
                     Classes="standardLabel"
                     IsVisible="{Binding !AxesSelectEnabled}"
                     Text="Using Axis" />
 
+
                 <!--  Axis Selection ComboBox  -->
                 <ComboBox
                     x:Name="AxesComboBox"
-                    MinWidth="340"
-                    Margin="4,0,0,0"
+                    MinWidth="220"
                     FontWeight="SemiBold"
                     IsVisible="{Binding AxesSelectEnabled}"
                     ItemsSource="{Binding AxesList}"
@@ -308,8 +307,7 @@
                 <!--  Axis Display Border (when axis is stored) - Fixed Height to Match ComboBox  -->
                 <Border
                     Height="32"
-                    MinWidth="340"
-                    Margin="4,-0,0,0"
+                    MinWidth="220"
                     Padding="5"
                     VerticalAlignment="Center"
                     BorderThickness="1"
@@ -338,11 +336,30 @@
                 </Border>
             </StackPanel>
 
+            <!--  Get Object Button  -->
+            <StackPanel
+                Grid.Row="2"
+                Grid.Column="3"
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
+
+                <TextBlock Classes="standardLabel" Text="" />
+                <Button
+                    Click="ChangeAxisButton_Click"
+                    Content="Change Axis"
+                    IsEnabled="True">
+                    <ToolTip.Tip>
+                        <TextBlock Text="Change the axis and/or its position being applied" />
+                    </ToolTip.Tip>
+                </Button>
+            </StackPanel>
+
             <!--  Adjust X  -->
             <StackPanel
                 Grid.Row="2"
                 Grid.Column="4"
-                Classes="inputGroup">
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
                 <TextBlock Classes="standardLabel" Text="Adjust X" />
                 <TextBox
                     MaxWidth="105"
@@ -359,8 +376,8 @@
             <StackPanel
                 Grid.Row="2"
                 Grid.Column="5"
-                Margin="15,0,10,0"
-                Classes="inputGroup">
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
                 <TextBlock Classes="standardLabel" Text="Adjust Y" />
                 <TextBox
                     MaxWidth="105"
@@ -377,8 +394,8 @@
             <StackPanel
                 Grid.Row="2"
                 Grid.Column="6"
-                Margin="-30,-20,-20,-20"
-                Classes="inputGroup">
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
                 <TextBlock Classes="standardLabel" Text="Adjust Z" />
                 <TextBox
                     MaxWidth="105"
@@ -391,10 +408,42 @@
                 </TextBox>
             </StackPanel>
 
+            <!--  Row 3: Separator  -->
+            <Separator
+                Grid.Row="3"
+                Grid.Column="0"
+                Grid.ColumnSpan="9"
+                Height="2"
+                HorizontalAlignment="Stretch"
+                Background="{DynamicResource CardForeground}"
+                Opacity="0.25" />
+
+            <!--  Get Object Button  -->
+            <StackPanel
+                Grid.Row="4"
+                Grid.Column="0"
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
+
+                <TextBlock Classes="standardLabel" Text="" />
+                <Button Click="GetObjectButton_Click" Content="Import Object">
+                    <Button.IsEnabled>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="!UnionButton" />
+                            <Binding Path="!DifferenceButton" />
+                            <Binding Path="AxisStored" />
+                        </MultiBinding>
+                    </Button.IsEnabled>
+                    <ToolTip.Tip>
+                        <TextBlock Text="Retrieve an existing object and load into inputs" />
+                    </ToolTip.Tip>
+                </Button>
+            </StackPanel>
+
             <!--  Row 4: Object Name/Description/Shape  -->
             <!--  Shape Type ComboBox  -->
             <StackPanel
-                Grid.Row="4"
+                Grid.Row="5"
                 Grid.Column="0"
                 Classes="inputGroup">
                 <TextBlock
@@ -405,13 +454,13 @@
                     MinWidth="130"
                     Background="{DynamicResource PurpleForeground}"
                     BorderBrush="{DynamicResource PurpleBackground}"
-                    BorderThickness="2"
+                    BorderThickness="1"
                     FontWeight="SemiBold"
                     Foreground="{DynamicResource PurpleBackground}"
                     IsEnabled="{Binding AxisStored}"
                     IsVisible="{Binding AxisStored}"
                     ItemsSource="{Binding ShapeTypes}"
-                    PlaceholderText="Choose Solid"
+                    PlaceholderText="Select Solid"
                     SelectedItem="{Binding SelectedShapeType, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -429,7 +478,6 @@
                 Grid.Row="4"
                 Grid.Column="1"
                 Grid.ColumnSpan="2"
-                Margin="5,0,5,0"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel" Text="Object Name" />
                 <TextBox
@@ -454,9 +502,116 @@
                 </TextBox>
             </StackPanel>
 
-            <!--  Material  -->
+            <!--  Clear Object Button - Moved to Row 4, Column 3  -->
             <StackPanel
                 Grid.Row="4"
+                Grid.Column="3"
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
+
+                <TextBlock Classes="standardLabel" Text="" />
+                <Button
+                    Click="ClearObjectButton_Click"
+                    Content="Clear Object"
+                    IsEnabled="True">
+                    <ToolTip.Tip>
+                        <TextBlock Text="Clear out the existing object from the database for new object creation in OpenSCAD" />
+                    </ToolTip.Tip>
+                </Button>
+            </StackPanel>
+
+            <!--  Row 2  -->
+            <!--  Clear Inputs Button  -->
+            <StackPanel
+                Grid.Row="4"
+                Grid.Column="4"
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
+
+                <TextBlock Classes="standardLabel" Text="" />
+                <Button
+                    Click="ClearButton_Click"
+                    Content="Clear Inputs"
+                    IsEnabled="True">
+                    <ToolTip.Tip>
+                        <TextBlock Text="Clears all part input fields" />
+                    </ToolTip.Tip>
+                </Button>
+            </StackPanel>
+
+            <StackPanel
+                Grid.Row="4"
+                Grid.Column="5"
+                MinWidth="100"
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
+
+                <TextBlock Classes="standardLabel" Text="" />
+                <!--  Create Union  -->
+                <Button
+                    Background="{DynamicResource BlueForeground}"
+                    BorderBrush="{DynamicResource BlueBackground}"
+                    Click="CreateUnionButton_Click"
+                    Content="To Union"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource BlueBackground}"
+                    IsEnabled="True"
+                    IsVisible="{Binding UnionButton}">
+                    <ToolTip.Tip>
+                        <TextBlock Text="This action will create a union of the selected objects in the database for use in OpenSCAD." />
+                    </ToolTip.Tip>
+                </Button>
+            </StackPanel>
+
+            <StackPanel
+                Grid.Row="4"
+                Grid.Column="6"
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
+
+                <TextBlock Classes="standardLabel" Text="" />
+                <!--  Create Difference  -->
+                <Button
+                    Background="{DynamicResource TealForeground}"
+                    BorderBrush="{DynamicResource TealBackground}"
+                    Click="CreateDifferenceButton_Click"
+                    Content="To Difference"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource TealBackground}"
+                    IsEnabled="True"
+                    IsVisible="{Binding DifferenceButton}">
+                    <ToolTip.Tip>
+                        <TextBlock Text="This action will create a difference of the selected objects in the database for use in OpenSCAD." />
+                    </ToolTip.Tip>
+                </Button>
+            </StackPanel>
+
+
+            <!--  Preview Object Button - Moved to Row 4, Column 4  -->
+            <StackPanel
+                Grid.Row="2"
+                Grid.Column="7"
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
+
+                <TextBlock Classes="standardLabel" Text="" />
+                <Button
+                    Click="ObjectToScadFilesButton_Click"
+                    Content="View Output"
+                    IsEnabled="True">
+                    <ToolTip.Tip>
+                        <TextBlock Text="Open and view the .scad file in the default application set by the OS." />
+                    </ToolTip.Tip>
+                </Button>
+            </StackPanel>
+
+
+
+
+
+            <!--  Material  -->
+            <StackPanel
+                Grid.Row="5"
                 Grid.Column="3"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel" Text="Material" />
@@ -474,10 +629,10 @@
 
             <!--  Operation  -->
             <StackPanel
-                Grid.Row="4"
+                Grid.Row="5"
                 Grid.Column="4"
                 Classes="inputGroup">
-                <TextBlock Classes="standardLabel" Text="Operation" />
+                <TextBlock Classes="standardLabel" Text="Scad Function" />
                 <ComboBox
                     MinWidth="100"
                     FontWeight="SemiBold"
@@ -491,14 +646,100 @@
                 </ComboBox>
             </StackPanel>
 
-            <!--  Object Description (spans 2 columns)  -->
             <StackPanel
-                Grid.Row="4"
+                Grid.Row="5"
                 Grid.Column="5"
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
+
+                <TextBlock Classes="standardLabel" Text="" />
+                <!--  Create/Update Button  -->
+                <Button
+                    Grid.Row="8"
+                    Grid.Column="2"
+                    MaxWidth="105"
+                    Background="{DynamicResource PurpleForeground}"
+                    BorderBrush="{DynamicResource PurpleBackground}"
+                    Click="CreateButton_Click"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource PurpleBackground}"
+                    IsVisible="{Binding AxisStored}">
+                    <Button.Content>
+                        <MultiBinding Converter="{StaticResource CollectionCountToTextConverter}" ConverterParameter="Create Part|Update Part">
+                            <Binding Path="OuterDimensions" />
+                            <Binding Path="CylinderDimensions" />
+                        </MultiBinding>
+                    </Button.Content>
+                    <Button.IsEnabled>
+                        <MultiBinding Converter="{StaticResource ShapeValidationConverter}">
+                            <Binding Path="IsCubeSelected" />
+                            <Binding Path="IsRoundCubeSelected" />
+                            <Binding Path="IsCylinderSelected" />
+                            <Binding Path="LengthMM" />
+                            <Binding Path="WidthMM" />
+                            <Binding Path="HeightMM" />
+                            <Binding Path="RadiusMM" />
+                            <Binding Path="Radius1MM" />
+                            <Binding Path="Radius2MM" />
+                            <Binding Path="CylinderHeightMM" />
+                            <Binding Path="Name" />
+                            <Binding Path="Description" />
+                        </MultiBinding>
+                    </Button.IsEnabled>
+                    <ToolTip.Tip>
+                        <TextBlock Text="Create a custom object and save it to the database for use in OpenSCAD" />
+                    </ToolTip.Tip>
+                </Button>
+            </StackPanel>
+
+            <!--  Delete Selected  -->
+            <StackPanel
+                Grid.Row="5"
+                Grid.Column="6"
+                Classes="inputGroup"
+                IsVisible="{Binding AxisStored}">
+
+                <TextBlock Classes="standardLabel" Text="" />
+                <Button Click="DeleteButton_Click" Content="Remove Part">
+                    <Button.IsEnabled>
+                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CubeDataGrid.SelectedItem" />
+                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CubeDataGridImperial.SelectedItem" />
+                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CylinderDataGrid.SelectedItem" />
+                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CylinderDataGridImperial.SelectedItem" />
+                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesUnionDataGrid.SelectedItem" />
+                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesDifferenceDataGrid.SelectedItem" />
+                        </MultiBinding>
+                    </Button.IsEnabled>
+                    <Button.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                            <Binding
+                                Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                ConverterParameter="1"
+                                Path="OuterDimensions" />
+                            <Binding
+                                Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                ConverterParameter="1"
+                                Path="CylinderDimensions" />
+                            <Binding
+                                Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                ConverterParameter="1"
+                                Path="ModuleDimensions" />
+                        </MultiBinding>
+                    </Button.IsVisible>
+                    <ToolTip.Tip>
+                        <TextBlock Text="Delete the selected item from the database" />
+                    </ToolTip.Tip>
+                </Button>
+            </StackPanel>
+
+            <!--  Part Description (spans 2 columns)  -->
+            <StackPanel
+                Grid.Row="5"
+                Grid.Column="1"
                 Grid.ColumnSpan="2"
-                Margin="33,0,3,0"
                 Classes="inputGroup">
-                <TextBlock Classes="standardLabel" Text="Description" />
+                <TextBlock Classes="standardLabel" Text="Part Description" />
                 <TextBox
                     MinWidth="220"
                     Classes="standardInput"
@@ -514,7 +755,7 @@
             <!--  Row 5: Dimensions  -->
             <!--  Server Rack Width / Screw Size  -->
             <StackPanel
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="0"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -574,7 +815,7 @@
 
             <!--  Length/Radius  -->
             <StackPanel
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="1"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -624,7 +865,7 @@
 
             <!--  Width/Radius1  -->
             <StackPanel
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="2"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -674,7 +915,7 @@
 
             <!--  Height/Radius2  -->
             <StackPanel
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="3"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -724,7 +965,7 @@
 
             <!--  Thickness/Cylinder Height  -->
             <StackPanel
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="4"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -775,7 +1016,7 @@
             <!--  Row 6: Rack Height/Screw Property and Offsets/Rotations  -->
             <!--  Server Rack Height / Screw Property  -->
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="0"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -839,7 +1080,7 @@
 
             <!--  X Offset  -->
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="1"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -873,7 +1114,7 @@
 
             <!--  Y Offset  -->
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="2"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -907,7 +1148,7 @@
 
             <!--  Z Offset  -->
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="3"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -941,7 +1182,7 @@
 
             <!--  Rotate X  -->
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="4"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
@@ -975,9 +1216,8 @@
 
             <!--  Rotate Y  -->
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="5"
-                Margin="10,0,5,0"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
                     <TextBlock.IsVisible>
@@ -1010,9 +1250,8 @@
 
             <!--  Rotate Z  -->
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="6"
-                Margin="-30,-20,-20,-20"
                 Classes="inputGroup">
                 <TextBlock Classes="standardLabel">
                     <TextBlock.IsVisible>
@@ -1045,231 +1284,21 @@
 
             <!--  Row 8: Action Buttons in Uniform Grid (2 rows instead of 3)  -->
             <!--  Row 1  -->
-            <!--  Apply/Adjust Axis Button - Both in same cell  -->
-            <Grid
-                Grid.Row="8"
-                Grid.Column="0"
-                MaxWidth="130"
-                Margin="10"
-                HorizontalAlignment="Stretch">
-                <Button
-                    Click="ApplyAxisButton_Click"
-                    Content="Apply Axis"
-                    IsEnabled="True"
-                    IsVisible="{Binding !AxisStored}">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Apply the selected axis to the object.scad file" />
-                    </ToolTip.Tip>
-                </Button>
 
-                <Button
-                    MaxWidth="130"
-                    Click="UpdateAxisPositionButton_Click"
-                    Content="Adjust Axis"
-                    IsEnabled="True"
-                    IsVisible="{Binding AxisStored}">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Update the axis position" />
-                    </ToolTip.Tip>
-                </Button>
-            </Grid>
 
-            <!--  Get Object Button  -->
-            <Button
-                Grid.Row="8"
-                Grid.Column="1"
-                MaxWidth="105"
-                Margin="2,0,2,0"
-                Click="GetObjectButton_Click"
-                Content="Get Object"
-                IsVisible="{Binding Name, Converter={StaticResource StringNotNullOrEmptyConverter}}">
-                <Button.IsEnabled>
-                    <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="!UnionButton" />
-                        <Binding Path="!DifferenceButton" />
-                        <Binding Path="AxisStored" />
-                    </MultiBinding>
-                </Button.IsEnabled>
-                <ToolTip.Tip>
-                    <TextBlock Text="Retrieve the object from database and load into inputs" />
-                </ToolTip.Tip>
-            </Button>
 
-            <!--  Create/Update Button  -->
-            <Button
-                Grid.Row="8"
-                Grid.Column="2"
-                MaxWidth="105"
-                Margin="8,0,7,0"
-                Background="{DynamicResource PurpleForeground}"
-                BorderBrush="{DynamicResource PurpleBackground}"
-                Click="CreateButton_Click"
-                FontWeight="SemiBold"
-                Foreground="{DynamicResource PurpleBackground}"
-                IsVisible="{Binding AxisStored}">
-                <Button.Content>
-                    <MultiBinding Converter="{StaticResource CollectionCountToTextConverter}" ConverterParameter="Create|Update">
-                        <Binding Path="OuterDimensions" />
-                        <Binding Path="CylinderDimensions" />
-                    </MultiBinding>
-                </Button.Content>
-                <Button.IsEnabled>
-                    <MultiBinding Converter="{StaticResource ShapeValidationConverter}">
-                        <Binding Path="IsCubeSelected" />
-                        <Binding Path="IsRoundCubeSelected" />
-                        <Binding Path="IsCylinderSelected" />
-                        <Binding Path="LengthMM" />
-                        <Binding Path="WidthMM" />
-                        <Binding Path="HeightMM" />
-                        <Binding Path="RadiusMM" />
-                        <Binding Path="Radius1MM" />
-                        <Binding Path="Radius2MM" />
-                        <Binding Path="CylinderHeightMM" />
-                        <Binding Path="Name" />
-                        <Binding Path="Description" />
-                    </MultiBinding>
-                </Button.IsEnabled>
-                <ToolTip.Tip>
-                    <TextBlock Text="Create a custom object and save it to the database for use in OpenSCAD" />
-                </ToolTip.Tip>
-            </Button>
-
-            <!--  Create Union  -->
-            <Button
-                Grid.Row="8"
-                Grid.Column="3"
-                MaxWidth="105"
-                Margin="9,0,6,0"
-                Background="{DynamicResource BlueForeground}"
-                BorderBrush="{DynamicResource BlueBackground}"
-                Click="CreateUnionButton_Click"
-                Content="Union"
-                FontWeight="SemiBold"
-                Foreground="{DynamicResource BlueBackground}"
-                IsEnabled="True"
-                IsVisible="{Binding UnionButton}">
-                <ToolTip.Tip>
-                    <TextBlock Text="This action will create a union of the selected objects in the database for use in OpenSCAD." />
-                </ToolTip.Tip>
-            </Button>
-
-            <!--  Create Difference  -->
-            <Button
-                Grid.Row="8"
-                Grid.Column="4"
-                MaxWidth="105"
-                Margin="9,0,-13,0"
-                Background="{DynamicResource TealForeground}"
-                BorderBrush="{DynamicResource TealBackground}"
-                Click="CreateDifferenceButton_Click"
-                Content="Difference"
-                FontWeight="SemiBold"
-                Foreground="{DynamicResource TealBackground}"
-                IsEnabled="True"
-                IsVisible="{Binding DifferenceButton}">
-                <ToolTip.Tip>
-                    <TextBlock Text="This action will create a difference of the selected objects in the database for use in OpenSCAD." />
-                </ToolTip.Tip>
-            </Button>
-
-            <!--  Row 2  -->
-            <!--  Clear Inputs Button  -->
-            <Button
-                Grid.Row="9"
-                Grid.Column="0"
-                MaxWidth="130"
-                Margin="10"
-                Click="ClearButton_Click"
-                Content="Clear Inputs"
-                IsEnabled="True"
-                IsVisible="{Binding AxisStored}">
-                <ToolTip.Tip>
-                    <TextBlock Text="Clears all input fields" />
-                </ToolTip.Tip>
-            </Button>
-
-            <!--  Clear Object Button  -->
-            <Button
-                Grid.Row="9"
-                Grid.Column="1"
-                Margin="7,0,7,0"
-                Click="ClearObjectButton_Click"
-                Content="Clear Object"
-                IsEnabled="True"
-                IsVisible="{Binding AxisStored}">
-                <ToolTip.Tip>
-                    <TextBlock Text="Clear out the existing object from the database for new object creation in OpenSCAD" />
-                </ToolTip.Tip>
-            </Button>
-
-            <!--  Delete Selected  -->
-            <Button
-                Grid.Row="9"
-                Grid.Column="2"
-                MaxWidth="105"
-                Margin="7,0,4,0"
-                Click="DeleteButton_Click"
-                Content="Delete Row">
-                <Button.IsEnabled>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CubeDataGrid.SelectedItem" />
-                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CubeDataGridImperial.SelectedItem" />
-                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CylinderDataGrid.SelectedItem" />
-                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CylinderDataGridImperial.SelectedItem" />
-                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesUnionDataGrid.SelectedItem" />
-                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesDifferenceDataGrid.SelectedItem" />
-                    </MultiBinding>
-                </Button.IsEnabled>
-                <Button.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding
-                            Converter="{StaticResource CollectionCountToBooleanConverter}"
-                            ConverterParameter="1"
-                            Path="OuterDimensions" />
-                        <Binding
-                            Converter="{StaticResource CollectionCountToBooleanConverter}"
-                            ConverterParameter="1"
-                            Path="CylinderDimensions" />
-                        <Binding
-                            Converter="{StaticResource CollectionCountToBooleanConverter}"
-                            ConverterParameter="1"
-                            Path="ModuleDimensions" />
-                    </MultiBinding>
-                </Button.IsVisible>
-                <ToolTip.Tip>
-                    <TextBlock Text="Delete the selected item from the database" />
-                </ToolTip.Tip>
-            </Button>
-
-            <!--  View in OpenSCAD  -->
-            <Button
-                Grid.Row="9"
-                Grid.Column="3"
-                Margin="7,0,5,0"
-                Click="ObjectToScadFilesButton_Click"
-                Content="Preview File"
-                IsEnabled="True"
-                IsVisible="{Binding SaveFileButton}">
-                <ToolTip.Tip>
-                    <TextBlock Text="This action will save the current object to a .scad file for use in OpenSCAD." />
-                </ToolTip.Tip>
-            </Button>
-
-            <!--  Empty cell for alignment  -->
-            <Border />
 
             <!--  DataGrids in Column 8  -->
             <ScrollViewer
                 Grid.Row="2"
-                Grid.RowSpan="6"
+                Grid.RowSpan="7"
                 Grid.Column="8"
                 VerticalAlignment="Top"
                 VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="10,20,10,20" Spacing="15">
+                <StackPanel Spacing="15">
                     <!--  Metric OuterDimensions DataGrid  -->
                     <DataGrid
                         x:Name="CubeDataGrid"
-                        MaxHeight="200"
                         Padding="5"
                         VerticalAlignment="Stretch"
                         AutoGenerateColumns="True"
@@ -1299,7 +1328,6 @@
                     <!--  Imperial OuterDimensions DataGrid  -->
                     <DataGrid
                         x:Name="CubeDataGridImperial"
-                        MaxHeight="200"
                         Padding="5"
                         AutoGenerateColumns="True"
                         AutoGeneratingColumn="DataGrid_AutoGeneratingColumnObjectImperial"
@@ -1328,7 +1356,6 @@
                     <!--  Metric CylinderDimensions DataGrid  -->
                     <DataGrid
                         x:Name="CylinderDataGrid"
-                        MaxHeight="200"
                         Padding="5"
                         AutoGenerateColumns="True"
                         AutoGeneratingColumn="DataGrid_AutoGeneratingColumnCylinder"
@@ -1357,7 +1384,6 @@
                     <!--  Imperial CylinderDimensions DataGrid  -->
                     <DataGrid
                         x:Name="CylinderDataGridImperial"
-                        MaxHeight="200"
                         Padding="5"
                         AutoGenerateColumns="True"
                         AutoGeneratingColumn="DataGrid_AutoGeneratingColumnCylinderImperial"
@@ -1392,7 +1418,7 @@
             Grid.Column="0"
             Grid.ColumnSpan="6"
             VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="20,20,0,20" Spacing="15">
+            <StackPanel Spacing="15">
 
                 <!--  Module DataGrids  -->
                 <StackPanel Orientation="Vertical" Spacing="20">
