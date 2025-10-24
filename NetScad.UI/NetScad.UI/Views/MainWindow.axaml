@@ -93,7 +93,7 @@
         -->
         <!--  Main View - SPA  -->
         <Border
-            Margin="30"
+            Margin="25"
             BorderThickness="2"
             BoxShadow="1 1 2 0 Gray"
             Classes="card_main">

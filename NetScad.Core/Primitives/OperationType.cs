@@ -2,7 +2,8 @@
 {
     public enum OperationType
     {
-        Add,      // Union/Addition of objects
-        Subtract  // Difference/Subtraction of objects
+        Union,      // Union/Addition of objects
+        Difference,  // Difference/Subtraction of objects
+        Intersect // Intersection/Overlap of objects
     }
 }

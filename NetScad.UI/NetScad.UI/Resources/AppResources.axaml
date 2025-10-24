@@ -27,8 +27,8 @@
             <SolidColorBrush x:Key="BlueBackground" Color="#617aaa" />
             <SolidColorBrush x:Key="RedBackground" Color="#fff4f4" />
             <SolidColorBrush x:Key="RedForeground" Color="#b4676b" />
-            <SolidColorBrush x:Key="GoldBackground" Color="#ffeecb" />
-            <SolidColorBrush x:Key="GoldForeground" Color="#77623c" />
+            <SolidColorBrush x:Key="GoldForeground" Color="#ffeecb" />
+            <SolidColorBrush x:Key="GoldBackground" Color="#77623c" />
             <SolidColorBrush x:Key="MaroonForeground" Color="#f1e4f3" />
             <SolidColorBrush x:Key="MaroonBackground" Color="#7a4c5f" />
             <SolidColorBrush x:Key="DarkBlueForeground" Color="#f2ecff" />
@@ -47,8 +47,8 @@
             <SolidColorBrush x:Key="BlueForeground" Color="#617aaa" />
             <SolidColorBrush x:Key="RedForeground" Color="#fff4f4" />
             <SolidColorBrush x:Key="RedBackground" Color="#b4676b" />
-            <SolidColorBrush x:Key="GoldForeground" Color="#ffeecb" />
-            <SolidColorBrush x:Key="GoldBackground" Color="#77623c" />
+            <SolidColorBrush x:Key="GoldBackground" Color="#ffeecb" />
+            <SolidColorBrush x:Key="GoldForeground" Color="#77623c" />
             <SolidColorBrush x:Key="MaroonBackground" Color="#f1e4f3" />
             <SolidColorBrush x:Key="MaroonForeground" Color="#7a4c5f" />
             <SolidColorBrush x:Key="DarkBlueBackground" Color="#f2ecff" />

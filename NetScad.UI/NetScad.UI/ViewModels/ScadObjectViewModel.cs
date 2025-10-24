@@ -28,12 +28,11 @@ namespace NetScad.UI.ViewModels
 {
     public class ScadObjectViewModel : ValidatableBase
     {
-        private ObservableCollection<OuterDimensions> _outerDimensions;
+        private ObservableCollection<SolidDimensions> _solidDimensions;
         private ObservableCollection<GeneratedModule> _axesModulesList;
         private ObservableCollection<ModuleDimensions> _moduleDimensions;
         private ObservableCollection<ModuleDimensions> _moduleDimensionsDifferences;
         private ObservableCollection<ModuleDimensions> _moduleDimensionsUnions;
-        private ObservableCollection<CylinderDimensions> _cylinderDimensions;
         private AxisDimensions? _axisDimensions = new();
         private List<string>? _axesList = [];
         private SqliteConnection? _dbConnection;
@@ -45,22 +44,26 @@ namespace NetScad.UI.ViewModels
         private double _thicknessMM = 0;
         private FilamentType _selectedFilament = FilamentType.Other;
         private UnitSystem _selectedUnit = UnitSystem.Metric;
+        private UnitSystem _selectedAxisUnit = UnitSystem.Metric;
         private GeneratedModule? _selectedAxis = new();
         private string? _selectedAxisValue;
         private string _objectAxisDisplay = string.Empty;
+        private string _objectAxisUnitDisplay = string.Empty;
         private bool _unitHasChanged;
         private bool _isMetric = true;
         private bool _isImperial = false;
+        private bool _isAxisMetric = true;
+        private bool _isAxisImperial = false;
         private bool _axesSelectEnabled = true;
         private bool _appendObject = false;
         public int _decimalPlaces;
         public int? _axisId = null;
-        public int? _outerDimensionsId;
+        public int? _solidDimensionsId;
         private readonly string _objectFilePath;
         private List<ScrewSize>? _screwSizes;
         private ScrewSize? _selectedScrewSize;
         private string _selectedScrewProperty = "ScrewRadius";
-        private OperationType _selectedOperationType = OperationType.Add;
+        private OperationType _selectedOperationType = OperationType.Union;
         private bool _unionButton;
         private bool _differenceButton;
         private bool _saveFileButton;
@@ -98,21 +101,19 @@ namespace NetScad.UI.ViewModels
         [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>")]
         public ScadObjectViewModel()
         {
-            OuterDimensions = [];
+            SolidDimensions = [];
             ModuleDimensions = [];
-            CylinderDimensions = [];
             ModuleDimensionsUnions = [];
             ModuleDimensionsDifferences = [];
-            _outerDimensions = [];
+            _solidDimensions = [];
             _moduleDimensions = [];
-            _cylinderDimensions = [];
             _axesModulesList = [];
             _moduleDimensionsUnions = [];
             _moduleDimensionsDifferences = [];
             DbConnection = App.Host!.Services.GetRequiredService<SqliteConnection>(); // Get the DbConnection from the DI container
             ClearObjectAsync().Wait();
             GetAxesList().Wait();
-            _decimalPlaces = Designer.Repositories.OuterDimensions.OpenSCAD_DecimalPlaces;
+            _decimalPlaces = Designer.Repositories.SolidDimensions.OpenSCAD_DecimalPlaces;
             FilamentTypes = [.. Enum.GetValues<FilamentType>()];
             UnitSystemValues = [.. Enum.GetValues(typeof(UnitSystem)).Cast<UnitSystem>()];
             SelectedUnitValue = UnitSystem.Metric;
@@ -128,17 +129,17 @@ namespace NetScad.UI.ViewModels
         public async Task GetDimensionsPartAsync()
         {
             await AxisDimensionsExtensions.CreateTable(DbConnection!); // Ensure AxisDimensions table exists first
-            await OuterDimensionsExtensions.CreateTable(DbConnection!); // Ensure OuterDimensions table exists
+            await SolidDimensionsExtensions.CreateTable(DbConnection!); // Ensure SolidDimensions table exists
             await ModuleDimensionsExtensions.CreateTable(DbConnection!); // Ensure ModuleDimensions table exists
-            await CylinderDimensionsExtensions.CreateTable(DbConnection!); // Ensure CylinderDimensions table exists
+
             // Get records from database
-            var records = await new OuterDimensions().GetByNameWithAxisAsync(DbConnection!, Name); // Gets OuterDimensions with related AxisDimensions
+            var records = await new SolidDimensions().GetByNameWithAxisAsync(DbConnection!, Name); // Gets SolidDimensions with related AxisDimensions
             var moduleRecords = await new ModuleDimensions().GetByObjectNameAsync(DbConnection!, Name);
-            var cylinderRecords = await new CylinderDimensions().GetByNameWithAxisAsync(DbConnection!, Name);
+
             // Update ObservableCollections
             ModuleDimensions = new ObservableCollection<ModuleDimensions>(moduleRecords);
-            OuterDimensions = new ObservableCollection<OuterDimensions>(records);
-            CylinderDimensions = new ObservableCollection<CylinderDimensions>(cylinderRecords);
+            SolidDimensions = new ObservableCollection<SolidDimensions>(records);
+
             // Update differences and unions buttons
             IsCubeSelected = _isCubeSelected;
             IsRoundCubeSelected = _isRoundCubeSelected;
@@ -159,21 +160,21 @@ namespace NetScad.UI.ViewModels
             Radius2MM = 0;
             CylinderHeightMM = 0;
             SelectedServerRack = null;
-            SelectedShapeType = "Select Solid";
+            SelectedSolidType = "Select Solid";
             SelectedServerRackWidthType = string.Empty;
             SelectedScrewProperty = string.Empty;
             SelectedScrewSize = null;
             SelectedFilament = FilamentType.Other;
-            SelectedOperationType = OperationType.Add;
+            SelectedOperationType = OperationType.Union;
             XOffsetMM = 0;
             YOffsetMM = 0;
             ZOffsetMM = 0;
             XRotate = 0;
             YRotate = 0;
             ZRotate = 0;
-            AxisXPositionMM = _AxisXPositionMM;  // Set to whatever it was before
-            AxisYPositionMM = _AxisYPositionMM;  // Set to whatever it was before
-            AxisZPositionMM = _AxisZPositionMM;  // Set to whatever it was before
+            //AxisXPositionMM = _AxisXPositionMM;  // Set to whatever it was before
+            //AxisYPositionMM = _AxisYPositionMM;  // Set to whatever it was before
+            //AxisZPositionMM = _AxisZPositionMM;  // Set to whatever it was before
         }
 
         // Clear all object fields
@@ -182,13 +183,9 @@ namespace NetScad.UI.ViewModels
             Name = string.Empty;
             Description = string.Empty;
             await ClearInputsAsync(); // Clear input fields
-            OuterDimensions = [];
             ModuleDimensions = [];
-            CylinderDimensions = [];
-            ObjectAxisDisplay = string.Empty;
-            SelectedOperationType = OperationType.Add;
-            AxesSelectEnabled = true;
-            AxisStored = false;
+            SolidDimensions = [];
+            SelectedOperationType = OperationType.Union;
             SelectedUnitValue = UnitSystem.Metric;
             AppendObject = false;
             IsNoneOperation = true;
@@ -200,11 +197,9 @@ namespace NetScad.UI.ViewModels
             IsCubeSelected = true;
             IsRoundCubeSelected = false;
             IsCylinderSelected = false;
-            _axisId = AxesSelectEnabled ? null : _axisId;  // If the ability to select an axis is disabled, then use existing Id
-            _selectedAxis = AxesSelectEnabled ? null : _selectedAxis;
             ScrewSizes = _screwSizes;
             ServerRackSizes = _serverRackSizes;
-            await GetAxesList(); // Refresh axes list when unit changes
+            //await GetAxesList(); // Refresh axes list when unit changes
             await GetDimensionsPartAsync(); // Refresh the DataGrid
         }
 
@@ -216,82 +211,48 @@ namespace NetScad.UI.ViewModels
             if (_axisId is null) // New axis being applied
                 await CreateAxisAsync(); // Create or get AxisDimensions and return its Id
 
-            if (IsCubeSelected || IsRoundCubeSelected)
+            var newObject = new SolidDimensions  // Create new SolidDimensions instance
             {
-                var newObject = new OuterDimensions  // Create new OuterDimensions instance
-                {
-                    Name = Name,
-                    Description = Description,
-                    Material = SelectedFilament.ToString(),
-                    OperationType = SelectedOperationType.ToString(),
-                    Length_MM = LengthMM,
-                    Width_MM = WidthMM,
-                    Height_MM = HeightMM,
-                    Thickness_MM = ThicknessMM,
-                    XOffset_MM = XOffsetMM,
-                    YOffset_MM = YOffsetMM,
-                    ZOffset_MM = ZOffsetMM,
-                    XRotate = XRotate,
-                    YRotate = YRotate,
-                    ZRotate = ZRotate,
-                    CreatedAt = DateTime.UtcNow,
-                    AxisDimensionsId = _axisId
-                };
+                Name = Name,
+                Description = Description,
+                Material = SelectedFilament.ToString(),
+                OperationType = SelectedOperationType.ToString(),
+                SolidType = SelectedSolidType,
+                Length_MM = LengthMM,
+                Width_MM = WidthMM,
+                Height_MM = HeightMM,
+                Thickness_MM = ThicknessMM,
+                Radius_MM = RadiusMM,
+                Radius1_MM = Radius1MM,
+                Radius2_MM = Radius2MM,
+                CylinderHeight_MM = CylinderHeightMM,
+                XOffset_MM = XOffsetMM,
+                YOffset_MM = YOffsetMM,
+                ZOffset_MM = ZOffsetMM,
+                XRotate = XRotate,
+                YRotate = YRotate,
+                ZRotate = ZRotate,
+                CreatedAt = DateTime.UtcNow,
+                AxisDimensionsId = _axisId
+            };
 
-                newObject.OSCADMethod = await GenerateOSCADAsync(oDim: newObject); // Get the OSCAD method
+            newObject.OSCADMethod = await GenerateOSCADAsync(oDim: newObject); // Get the OSCAD method
 
-                // Determine if new row being added is appending the current object or is a new object
-                if (AppendObject) { await newObject.UpsertAsync(DbConnection!); /* Save to database, add to object */ }
-                else { await newObject.UpsertAsync(DbConnection!); /* Save to database, new object, overwrite existing object */ }
+            // Determine if new row being added is appending the current object or is a new object
+            if (AppendObject) { await newObject.UpsertAsync(DbConnection!); /* Save to database, add to object */ }
+            else { await newObject.UpsertAsync(DbConnection!); /* Save to database, new object, overwrite existing object */ }
 
-                if (AxesSelectEnabled)
-                {
-                    var axisUsed = string.Empty;
-                    if (OuterDimensions.Count > 0)
-                        axisUsed = OuterDimensions.SingleOrDefault()?.AxisOSCADMethod;
-                    else
-                        AxesSelectEnabled = false; // Disable axis selection after it has been created, to use within the same object
-                    ObjectAxisDisplay = StringFunctions.FormatAxisDisplay(axisUsed); // Format for display
-                }
-
-                id = newObject.Id;
-            }
-            else if (IsCylinderSelected)
+            if (AxesSelectEnabled)
             {
-                var newCylinder = new CylinderDimensions  // Create new OuterDimensions instance
-                {
-                    Name = Name,
-                    Description = Description,
-                    Material = SelectedFilament.ToString(),
-                    OperationType = SelectedOperationType.ToString(),
-                    Radius_MM = RadiusMM,
-                    Radius1_MM = Radius1MM,
-                    Radius2_MM = Radius2MM,
-                    Height_MM = CylinderHeightMM,
-                    XOffset_MM = XOffsetMM,
-                    YOffset_MM = YOffsetMM,
-                    ZOffset_MM = ZOffsetMM,
-                    XRotate = XRotate,
-                    YRotate = YRotate,
-                    ZRotate = ZRotate,
-                    CreatedAt = DateTime.UtcNow,
-                    AxisDimensionsId = _axisId
-                };
-
-                newCylinder.OSCADMethod = await GenerateOSCADAsync(cDim: newCylinder); // Get the OSCAD method
-
-                // Determine if new row being added is appending the current object or is a new object
-                if (AppendObject) { await newCylinder.UpsertAsync(DbConnection!); /* Save to database, add to object */ }
-                else { await newCylinder.UpsertAsync(DbConnection!); /* Save to database, new object, overwrite existing object */ }
-
-                if (AxesSelectEnabled && CylinderDimensions.Count > 0)
-                {
-                    var axisUsed = CylinderDimensions.SingleOrDefault()?.AxisOSCADMethod;
-                    AxesSelectEnabled = false; // Disable axis selection after first object is created, since axis should be reused
-                    ObjectAxisDisplay = StringFunctions.FormatAxisDisplay(axisUsed); // Format for display
-                }
-                id = newCylinder.Id;
+                var axisUsed = string.Empty;
+                if (SolidDimensions.Count > 0)
+                    axisUsed = SolidDimensions.SingleOrDefault()?.AxisOSCADMethod;
+                else
+                    AxesSelectEnabled = false; // Disable axis selection after it has been created, to use within the same object
+                ObjectAxisDisplay = StringFunctions.FormatAxisDisplay(axisUsed); // Format for display
             }
+
+            id = newObject.Id;
 
             AppendObject = true; // Set to true since after inserting new row, appending to existing set, or updating, object may be appended.
             await CreateDifferenceModuleAsync(); // Update Difference modules for real-time updates
@@ -323,7 +284,7 @@ namespace NetScad.UI.ViewModels
             _axisDimensions.OSCADMethod = $"{_axisDimensions.IncludeMethod} {_selectedAxis.CallingMethod}";
             _axisId = await _axisDimensions.UpsertAsync(DbConnection!); // Save to database
 
-            if (_selectedUnit == UnitSystem.Imperial) // Need to convert since logic is textboxes are display variables
+            if (_selectedAxisUnit == UnitSystem.Imperial) // Need to convert since logic is textboxes are display variables
             {
                 // Convert offsets to metric for OpenSCAD
                 _AxisXPositionMM = Math.Round(InchesToMillimeter(_axisXPositionMM), _decimalPlaces); // new X adjustment
@@ -364,7 +325,7 @@ namespace NetScad.UI.ViewModels
 
             if (_axisId != null)  // If successful, write to object.scad file
             {
-                if (_selectedUnit == UnitSystem.Imperial) // Need to convert since logic is based on temporary oDim variable
+                if (_selectedAxisUnit == UnitSystem.Imperial) // Need to convert since logic is based on temporary oDim variable
                 {
                     // Convert offsets to metric for OpenSCAD
                     _AxisXPositionMM = Math.Round(InchesToMillimeter(_axisXPositionMM), _decimalPlaces);
@@ -391,13 +352,15 @@ namespace NetScad.UI.ViewModels
                 AxesSelectEnabled = false;
                 await GetDimensionsPartAsync();
                 ObjectAxisDisplay = StringFunctions.FormatAxisDisplay(_axisDimensions?.OSCADMethod); // Format for display
+                ObjectAxisUnitDisplay = _axisDimensions?.Unit == "mm" ? "Metric (mm)" : "Imperial (in)";
                 AxisXPositionMM = _axisDimensions!.MinX;  // Set to axis value, Min X
                 AxisYPositionMM = _axisDimensions!.MinY;  // Set to axis value, Min Y
                 AxisZPositionMM = _axisDimensions!.MinZ;  // Set to axis value, Min Z
+                SelectedUnitValue = _axisDimensions!.Unit == "mm" ? UnitSystem.Metric : UnitSystem.Imperial; // Set object unit to axis unit as default unit system
             }
         }
 
-        public async Task<string> GenerateOSCADAsync(OuterDimensions? oDim = null, CylinderDimensions? cDim = null)
+        public async Task<string> GenerateOSCADAsync(SolidDimensions? oDim = null)
         {
             if (IsCubeSelected || IsRoundCubeSelected)
             {
@@ -415,6 +378,10 @@ namespace NetScad.UI.ViewModels
 
                 if (IsRoundCubeSelected)
                 {
+                    // Based on width and height (if applicable)
+                    oDim!.Round_r_MM = Math.Round(RoundFromWidth(oDim.Width_MM), _decimalPlaces);
+                    oDim.Round_h_MM = Math.Round(RoundEdgeHeight(oDim.Round_r_MM), _decimalPlaces);
+
                     // Generate a rounded cube with x,y offset for rounding - OpenSCAD code
                     var roundedCubeParams = new Dictionary<string, object>
                     {
@@ -423,7 +390,7 @@ namespace NetScad.UI.ViewModels
                     var roundedCube = OScad3D.RoundedCube.ToScadObject(roundedCubeParams);
                     var rotated = await GetRotateAsync(roundedCube, oDim.XRotate, oDim.YRotate, oDim.ZRotate);  // Add rotation
                     var translate = await GetTranslateAsync(rotated, oDim.XOffset_MM, oDim.YOffset_MM, oDim.ZOffset_MM);
-                    return ToModule(translate.OSCADMethod, oDim.Name, oDim.Description!, oDim.OperationType, "cube").Trim();
+                    return ToModule(translate.OSCADMethod, oDim.Name, oDim.Description!, oDim.OperationType, oDim.SolidType.ToLower()).Trim();
                 }
                 else if (IsCubeSelected)
                 {
@@ -435,7 +402,7 @@ namespace NetScad.UI.ViewModels
                     var cube = OScad3D.Cube.ToScadObject(cubeParams);
                     var rotated = await GetRotateAsync(cube, oDim.XRotate, oDim.YRotate, oDim.ZRotate);  // Add rotation
                     var translate = await GetTranslateAsync(rotated, oDim.XOffset_MM, oDim.YOffset_MM, oDim.ZOffset_MM);
-                    return ToModule(translate.OSCADMethod, oDim.Name, oDim.Description!, oDim.OperationType, "cube").Trim();
+                    return ToModule(translate.OSCADMethod, oDim.Name, oDim.Description!, oDim.OperationType, oDim.SolidType.ToLower()).Trim();
                 }
             }
             else if (IsCylinderSelected)
@@ -443,20 +410,20 @@ namespace NetScad.UI.ViewModels
                 if (_selectedUnit == UnitSystem.Imperial)
                 {
                     // Convert cylinder dimensions to metric for OpenSCAD
-                    cDim!.Radius_MM = Math.Round(InchesToMillimeter(cDim.Radius_MM), _decimalPlaces);
-                    cDim.Radius1_MM = Math.Round(InchesToMillimeter(cDim.Radius1_MM), _decimalPlaces);
-                    cDim.Radius2_MM = Math.Round(InchesToMillimeter(cDim.Radius2_MM), _decimalPlaces);
-                    cDim.Height_MM = Math.Round(InchesToMillimeter(cDim.Height_MM), _decimalPlaces);
-                    cDim.XOffset_MM = Math.Round(InchesToMillimeter(cDim.XOffset_MM), _decimalPlaces);
-                    cDim.YOffset_MM = Math.Round(InchesToMillimeter(cDim.YOffset_MM), _decimalPlaces);
-                    cDim.ZOffset_MM = Math.Round(InchesToMillimeter(cDim.ZOffset_MM), _decimalPlaces);
+                    oDim!.Radius_MM = Math.Round(InchesToMillimeter(oDim.Radius_MM), _decimalPlaces);
+                    oDim.Radius1_MM = Math.Round(InchesToMillimeter(oDim.Radius1_MM), _decimalPlaces);
+                    oDim.Radius2_MM = Math.Round(InchesToMillimeter(oDim.Radius2_MM), _decimalPlaces);
+                    oDim.CylinderHeight_MM = Math.Round(InchesToMillimeter(oDim.CylinderHeight_MM), _decimalPlaces);
+                    oDim.XOffset_MM = Math.Round(InchesToMillimeter(oDim.XOffset_MM), _decimalPlaces);
+                    oDim.YOffset_MM = Math.Round(InchesToMillimeter(oDim.YOffset_MM), _decimalPlaces);
+                    oDim.ZOffset_MM = Math.Round(InchesToMillimeter(oDim.ZOffset_MM), _decimalPlaces);
                 }
 
-                var cylParams = new Dictionary<string, object> { { "r", cDim!.Radius_MM }, { "h", cDim!.Height_MM }, { "resolution", 180 } };
+                var cylParams = new Dictionary<string, object> { { "r", oDim!.Radius_MM }, { "h", oDim!.CylinderHeight_MM }, { "resolution", 180 } };
                 var cylinder = OScad3D.Cylinder.ToScadObject(cylParams);
-                var rotated = await GetRotateAsync(cylinder, cDim.XRotate, cDim.YRotate, cDim.ZRotate);  // Add rotation
-                var translate = await GetTranslateAsync(rotated, cDim!.XOffset_MM, cDim!.YOffset_MM, cDim!.ZOffset_MM);
-                return ToModule(translate.OSCADMethod, cDim!.Name, cDim!.Description!, cDim!.OperationType, "cylinder").Trim();
+                var rotated = await GetRotateAsync(cylinder, oDim.XRotate, oDim.YRotate, oDim.ZRotate);  // Add rotation
+                var translate = await GetTranslateAsync(rotated, oDim!.XOffset_MM, oDim!.YOffset_MM, oDim!.ZOffset_MM);
+                return ToModule(translate.OSCADMethod, oDim!.Name, oDim!.Description!, oDim!.OperationType, oDim.SolidType.ToLower()).Trim();
             }
 
             return string.Empty;
@@ -469,7 +436,7 @@ namespace NetScad.UI.ViewModels
         {
             if (IsCubeSelected || IsRoundCubeSelected)
             {
-                var oDim = new OuterDimensions  // Create new OuterDimensions instance for getting RoundRadius and RoundHeight
+                var oDim = new SolidDimensions  // Create new SolidDimensions instance for getting RoundRadius and RoundHeight
                 {
                     Length_MM = LengthMM,
                     Width_MM = WidthMM,
@@ -492,14 +459,18 @@ namespace NetScad.UI.ViewModels
 
                 if (IsRoundCubeSelected)  // Adjust for Minkowski offset
                 {
+                    // Based on width and height (if applicable)
+                    oDim.Round_r_MM = Math.Round(RoundFromWidth(oDim.Width_MM), _decimalPlaces);
+                    oDim.Round_h_MM = Math.Round(RoundEdgeHeight(oDim.Round_r_MM), _decimalPlaces);
+
                     switch (SelectedOperationType)
                     {
-                        case OperationType.Add:
+                        case OperationType.Union:
                             XOffset_MM += oDim.Round_r_MM;
                             YOffset_MM += oDim.Round_r_MM;
                             ZOffset_MM += -oDim.Round_h_MM;
                             break;
-                        case OperationType.Subtract:
+                        case OperationType.Difference:
                             XOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
                             YOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
                             ZOffset_MM += -oDim.Round_h_MM + oDim.Thickness_MM;
@@ -510,7 +481,7 @@ namespace NetScad.UI.ViewModels
                 {
                     switch (SelectedOperationType)
                     {
-                        case OperationType.Subtract:
+                        case OperationType.Difference:
                             XOffset_MM += oDim.Thickness_MM;
                             YOffset_MM += oDim.Thickness_MM;
                             ZOffset_MM += oDim.Thickness_MM;
@@ -520,21 +491,21 @@ namespace NetScad.UI.ViewModels
             }
             else if (IsCylinderSelected)
             {
-                var cDim = new CylinderDimensions  // Create new CylinderDimensions instance for getting RoundRadius and RoundHeight
+                var oDim = new SolidDimensions  // Create new SolidDimensions instance for getting RoundRadius and RoundHeight
                 {
                     Radius_MM = RadiusMM,
                     Radius1_MM = Radius1MM,
                     Radius2_MM = Radius2MM,
-                    Height_MM = HeightMM,
+                    CylinderHeight_MM = CylinderHeightMM,
                 };
 
                 if (_selectedUnit == UnitSystem.Imperial) // Need to convert since logic is based on temporary oDim variable
                 {
                     // Convert dimensions to metric for OpenSCAD
-                    cDim.Radius_MM = Math.Round(InchesToMillimeter(cDim.Radius_MM), _decimalPlaces);
-                    cDim.Radius1_MM = Math.Round(InchesToMillimeter(cDim.Radius1_MM), _decimalPlaces);
-                    cDim.Radius2_MM = Math.Round(InchesToMillimeter(cDim.Radius2_MM), _decimalPlaces);
-                    cDim.Height_MM = Math.Round(InchesToMillimeter(cDim.Height_MM), _decimalPlaces);
+                    oDim.Radius_MM = Math.Round(InchesToMillimeter(oDim.Radius_MM), _decimalPlaces);
+                    oDim.Radius1_MM = Math.Round(InchesToMillimeter(oDim.Radius1_MM), _decimalPlaces);
+                    oDim.Radius2_MM = Math.Round(InchesToMillimeter(oDim.Radius2_MM), _decimalPlaces);
+                    oDim.CylinderHeight_MM = Math.Round(InchesToMillimeter(oDim.CylinderHeight_MM), _decimalPlaces);
 
                     // Convert offsets to metric for OpenSCAD
                     XOffset_MM = Math.Round(InchesToMillimeter(_xOffsetMM), _decimalPlaces);
@@ -600,17 +571,9 @@ namespace NetScad.UI.ViewModels
             sbpart.AppendLine();
 
             // Put in Scad solids file
-            foreach (OuterDimensions module in OuterDimensions) // Get child objects in difference or union modules
+            foreach (SolidDimensions module in SolidDimensions) // Get child objects in difference or union modules
             {
-                sbpart.AppendLine($"// {module.Name} - Solid Type: Cube, Description: {module.Description}, Operation Type: {module.OperationType}");
-                sbpart.AppendLine(module.OSCADMethod);
-                sbpart.AppendLine();
-            }
-
-            // Put in Scad solids file
-            foreach (CylinderDimensions module in CylinderDimensions) // Get child objects in difference or union modules
-            {
-                sbpart.AppendLine($"// {module.Name} - Solid Type: Cylinder, Description: {module.Description}, Operation Type: {module.OperationType}");
+                sbpart.AppendLine($"// {module.Name} - Solid Type: {module.SolidType}, Description: {module.Description}, Operation Type: {module.OperationType}");
                 sbpart.AppendLine(module.OSCADMethod);
                 sbpart.AppendLine();
             }
@@ -656,14 +619,9 @@ namespace NetScad.UI.ViewModels
             {
                 switch (selectedItem)
                 {
-                    case OuterDimensions cube:
-                        await cube.DeleteAsync(DbConnection!);
-                        OuterDimensions.Remove(cube);
-                        break;
-
-                    case CylinderDimensions cylinder:
-                        await cylinder.DeleteAsync(DbConnection!);
-                        CylinderDimensions.Remove(cylinder);
+                    case SolidDimensions solid:
+                        await solid.DeleteAsync(DbConnection!);
+                        SolidDimensions.Remove(solid);
                         break;
 
                     case ModuleDimensions module:
@@ -742,8 +700,8 @@ namespace NetScad.UI.ViewModels
             await Output.AppendToSCAD(content: sb.ToString(), filePath: filePath, cancellationToken: new CancellationToken());
 
             // Open the file in whatever the user has designated as the SCAD IDE associated with opening .scad files
-                // Handle the case where the file could not be opened
-                _isFileOpen = await ScadFileOperations.OpenScadFileAsync(filePath, allowDuplicates: false);
+            // Handle the case where the file could not be opened
+            _isFileOpen = await ScadFileOperations.OpenScadFileAsync(filePath, allowDuplicates: false);
         }
 
         /**** Unit Conversion ****/
@@ -775,9 +733,9 @@ namespace NetScad.UI.ViewModels
             XOffsetMM = Math.Round(MillimeterToInches(_xOffsetMM), decimalPlaces);
             YOffsetMM = Math.Round(MillimeterToInches(_yOffsetMM), decimalPlaces);
             ZOffsetMM = Math.Round(MillimeterToInches(_zOffsetMM), decimalPlaces);
-            AxisXPositionMM = Math.Round(MillimeterToInches(_axisXPositionMM), decimalPlaces);
-            AxisYPositionMM = Math.Round(MillimeterToInches(_axisYPositionMM), decimalPlaces);
-            AxisZPositionMM = Math.Round(MillimeterToInches(_axisZPositionMM), decimalPlaces);
+            //AxisXPositionMM = Math.Round(MillimeterToInches(_axisXPositionMM), decimalPlaces);
+            //AxisYPositionMM = Math.Round(MillimeterToInches(_axisYPositionMM), decimalPlaces);
+            //AxisZPositionMM = Math.Round(MillimeterToInches(_axisZPositionMM), decimalPlaces);
             UnitHasChanged = false;
         }
 
@@ -795,9 +753,9 @@ namespace NetScad.UI.ViewModels
             XOffsetMM = Math.Round(InchesToMillimeter(_xOffsetMM), decimalPlaces);
             YOffsetMM = Math.Round(InchesToMillimeter(_yOffsetMM), decimalPlaces);
             ZOffsetMM = Math.Round(InchesToMillimeter(_zOffsetMM), decimalPlaces);
-            AxisXPositionMM = Math.Round(InchesToMillimeter(_axisXPositionMM), decimalPlaces);
-            AxisYPositionMM = Math.Round(InchesToMillimeter(_axisYPositionMM), decimalPlaces);
-            AxisZPositionMM = Math.Round(InchesToMillimeter(_axisZPositionMM), decimalPlaces);
+            //AxisXPositionMM = Math.Round(InchesToMillimeter(_axisXPositionMM), decimalPlaces);
+            //AxisYPositionMM = Math.Round(InchesToMillimeter(_axisYPositionMM), decimalPlaces);
+            //AxisZPositionMM = Math.Round(InchesToMillimeter(_axisZPositionMM), decimalPlaces);
             UnitHasChanged = false;
         }
 
@@ -808,8 +766,8 @@ namespace NetScad.UI.ViewModels
             var filePath = Path.Combine("Scad", "Axes", "axes.scad");
             _axesModulesList = parser.AxesModulesList(filePath);
 
-            // Filter and select based on unit system
-            var filteredAxes = SelectedUnitValue switch
+            // Filter and select based on AXIS unit system (not general unit system)
+            var filteredAxes = SelectedAxisUnitValue switch
             {
                 UnitSystem.Metric => _axesModulesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_MM_")).Select(x => x.CallingMethod!).ToList(),
                 UnitSystem.Imperial => _axesModulesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_Inch_")).Select(x => x.CallingMethod!).ToList(),
@@ -832,7 +790,7 @@ namespace NetScad.UI.ViewModels
             }
         }
 
-        /* Create a union module from all "Add" parts. This assumes that the user will treat a collection of parts as a single part.
+        /* Create a union module from all "Union" parts. This assumes that the user will treat a collection of parts as a single part.
         The CreateDifferenceModuleAsync method will handle a single part, and then subtract multiple parts from it.
         Cubes and cylinders are handled separately but combined in unions and differences. This is because the Db properties are different.
         Manual editing within OpenSCAD is likely needed to place cylinders within cubes to the user's satisfaction.
@@ -841,39 +799,39 @@ namespace NetScad.UI.ViewModels
         Union should be called first, then Difference. OpenSCAD logic is difference() { union() { A,B,C }, D, E, F } */
         public async Task CreateUnionModuleAsync()
         {
-            // Get all objects marked as "Add"
-            var cylinders = CylinderDimensions.Where(o => o.OperationType == "Add").ToList();
-            var cubes = OuterDimensions.Where(o => o.OperationType == "Add").ToList();
+            // Get all objects marked as "Union"
+            var cylinders = SolidDimensions.Where(o => o.OperationType == "Union").ToList();
+            var cubes = SolidDimensions.Where(o => o.OperationType == "Union").ToList();
 
             var addMethods = cubes.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
             var cylinderMethods = cylinders.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
             addMethods.AddRange(cylinderMethods);  // Add cylinder add methods
 
-            if (addMethods.Any())
+            //if (addMethods.Any())
+            //{
+            var solidType = "Object";
+            var unionModule = new ModuleDimensions
             {
-                var solidType = "Object";
-                var unionModule = new ModuleDimensions
-                {
-                    ModuleType = "Union",
-                    ObjectName = Name,
-                    ObjectDescription = Description,
-                    SolidType = solidType,
-                    OSCADMethod = ToUnionModule(addMethods, Name, string.Empty, solidType).ToLower(),
-                    CreatedAt = DateTime.UtcNow
-                };
-                // Build call method and store in Db
-                unionModule.Name = ExtractModuleCallMethod(unionModule.OSCADMethod).ToLower();
-                await unionModule.UpsertAsync(DbConnection!);
-                await PartsToScadFilesAsync();  // Only update parts file
-            }
+                ModuleType = "Union",
+                ObjectName = Name,
+                ObjectDescription = Description,
+                SolidType = solidType,
+                OSCADMethod = ToUnionModule(addMethods, Name, string.Empty, solidType).ToLower(),
+                CreatedAt = DateTime.UtcNow
+            };
+            // Build call method and store in Db
+            unionModule.Name = ExtractModuleCallMethod(unionModule.OSCADMethod).ToLower();
+            await unionModule.UpsertAsync(DbConnection!);
+            await PartsToScadFilesAsync();  // Only update parts file
+            //}
         }
 
         public async Task CreateDifferenceModuleAsync()
         {
             await CreateUnionModuleAsync(); // Update Union modules since it is used in difference function
-            // Get all objects marked as "Subtract"
-            var cylinders = CylinderDimensions.Where(o => o.OperationType == "Subtract").ToList();
-            var cubes = OuterDimensions.Where(o => o.OperationType == "Subtract").ToList();
+            // Get all objects marked as "Difference"
+            var cylinders = SolidDimensions.Where(o => o.OperationType == "Difference").ToList();
+            var cubes = SolidDimensions.Where(o => o.OperationType == "Difference").ToList();
             ModuleDimensions? baseObj;
             baseObj = ModuleDimensions.FirstOrDefault(o => o.ModuleType == "Union" && o.ObjectName == Name);
 
@@ -885,26 +843,26 @@ namespace NetScad.UI.ViewModels
                 var cylinderSubtractMethods = cylinders.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
                 var subtractMethods = cubes.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
                 subtractMethods.AddRange(cylinderSubtractMethods); // Add cylinder subtract methods
- 
-                if (subtractMethods.Any())  // If there are anything subtracts to build the difference function
-                {
-                    var solidType = "Object";
-                    var differenceModule = new ModuleDimensions
-                    {
-                        ModuleType = "Difference",
-                        ObjectName = Name,
-                        ObjectDescription = Description,
-                        SolidType = solidType,
-                        OSCADMethod = ToDifferenceModule(baseCallMethod, subtractMethods, Name, string.Empty, solidType).ToLower(),
-                        CreatedAt = DateTime.UtcNow
-                    };
-                    // get calling method for differenceModule
-                    differenceModule.Name = ExtractModuleCallMethod(differenceModule.OSCADMethod).ToLower();
-                    await differenceModule.UpsertAsync(DbConnection!);
 
-                    // Refresh ModuleDimensions DataGrid
-                    await PartsToScadFilesAsync();  // Only update parts file
-                }
+                //if (subtractMethods.Any())  // If there are anything subtracts to build the difference function
+                //{
+                var solidType = "Object";
+                var differenceModule = new ModuleDimensions
+                {
+                    ModuleType = "Difference",
+                    ObjectName = Name,
+                    ObjectDescription = Description,
+                    SolidType = solidType,
+                    OSCADMethod = ToDifferenceModule(baseCallMethod, subtractMethods, Name, string.Empty, solidType).ToLower(),
+                    CreatedAt = DateTime.UtcNow
+                };
+                // get calling method for differenceModule
+                differenceModule.Name = ExtractModuleCallMethod(differenceModule.OSCADMethod).ToLower();
+                await differenceModule.UpsertAsync(DbConnection!);
+
+                // Refresh ModuleDimensions DataGrid
+                await PartsToScadFilesAsync();  // Only update parts file
+                //}
             }
         }
 
@@ -945,10 +903,10 @@ namespace NetScad.UI.ViewModels
 
             double radiusValue = SelectedScrewProperty switch
             {
-                "Thread Part" => screwData!.ScrewRadius,
+                "Screw Thread" => screwData!.ScrewRadius,
                 "Screw Head" => screwData!.ScrewHeadRadius,
-                "Thread Insert" => screwData!.ThreadedInsertRadius,
-                "Screw Hole" => screwData!.ClearanceHoleRadius,
+                "Threaded Insert" => screwData!.ThreadedInsertRadius,
+                "Clearance Hole" => screwData!.ClearanceHoleRadius,
                 _ => 0
             };
             RadiusMM = SelectedUnitValue == UnitSystem.Imperial ? Math.Round(MillimeterToInches(radiusValue), _decimalPlaces) : radiusValue;
@@ -967,10 +925,10 @@ namespace NetScad.UI.ViewModels
 
                 double widthValue = SelectedServerRackWidthType switch
                 {
-                    "Inner Width" => SelectedUnitValue == UnitSystem.Metric
+                    "Inner Mount" => SelectedUnitValue == UnitSystem.Metric
                         ? rackData.InnerWidthMm
                         : rackData.InnerWidthInches,
-                    "Outer Width" => SelectedUnitValue == UnitSystem.Metric
+                    "Outer Mount" => SelectedUnitValue == UnitSystem.Metric
                         ? rackData.OuterWidthMm
                         : rackData.OuterWidthInches,
                     _ => 0
@@ -1049,12 +1007,14 @@ namespace NetScad.UI.ViewModels
         }
 
 
-        public double AxisXPositionMM { get => _axisXPositionMM; set { this.RaiseAndSetIfChanged(ref _axisXPositionMM, value); if(AxisStored) _ = UpdateAxisTranslateAsync(); } }
+        public double AxisXPositionMM { get => _axisXPositionMM; set { this.RaiseAndSetIfChanged(ref _axisXPositionMM, value); if (AxisStored) _ = UpdateAxisTranslateAsync(); } }
         public double AxisYPositionMM { get => _axisYPositionMM; set { this.RaiseAndSetIfChanged(ref _axisYPositionMM, value); if (AxisStored) _ = UpdateAxisTranslateAsync(); } }
-        public double AxisZPositionMM { get => _axisZPositionMM; set { this.RaiseAndSetIfChanged(ref _axisZPositionMM, value); if(AxisStored) _ = UpdateAxisTranslateAsync(); } }
+        public double AxisZPositionMM { get => _axisZPositionMM; set { this.RaiseAndSetIfChanged(ref _axisZPositionMM, value); if (AxisStored) _ = UpdateAxisTranslateAsync(); } }
         public bool UnitHasChanged { get => _unitHasChanged; set => this.RaiseAndSetIfChanged(ref _unitHasChanged, value); }
         public bool IsMetric { get => _isMetric; set => this.RaiseAndSetIfChanged(ref _isMetric, value); }
         public bool IsImperial { get => _isImperial; set => this.RaiseAndSetIfChanged(ref _isImperial, value); }
+        public bool IsAxisMetric { get => _isAxisMetric; set => this.RaiseAndSetIfChanged(ref _isAxisMetric, value); }
+        public bool IsAxisImperial { get => _isAxisImperial; set => this.RaiseAndSetIfChanged(ref _isAxisImperial, value); }
         public bool AxesSelectEnabled { get => _axesSelectEnabled; set => this.RaiseAndSetIfChanged(ref _axesSelectEnabled, value); }
         public bool AxisStored { get => _axisStored; set => this.RaiseAndSetIfChanged(ref _axisStored, value); }
         public bool AppendObject { get => _appendObject; set => this.RaiseAndSetIfChanged(ref _appendObject, value); }
@@ -1068,10 +1028,11 @@ namespace NetScad.UI.ViewModels
         public OperationType SelectedOperationType { get => _selectedOperationType; set => this.RaiseAndSetIfChanged(ref _selectedOperationType, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsUnions { get => _moduleDimensionsUnions; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsUnions, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsDifferences { get => _moduleDimensionsDifferences; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsDifferences, value); }
-        public ObservableCollection<CylinderDimensions> CylinderDimensions { get => _cylinderDimensions; set => this.RaiseAndSetIfChanged(ref _cylinderDimensions, value); }
+        public ObservableCollection<SolidDimensions> SolidDimensions { get => _solidDimensions; set => this.RaiseAndSetIfChanged(ref _solidDimensions, value); }
         public SqliteConnection? DbConnection { get => _dbConnection; set => this.RaiseAndSetIfChanged(ref _dbConnection, value); }
         public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
         public string ObjectAxisDisplay { get => _objectAxisDisplay; set => this.RaiseAndSetIfChanged(ref _objectAxisDisplay, value); }
+        public string ObjectAxisUnitDisplay { get => _objectAxisUnitDisplay; set => this.RaiseAndSetIfChanged(ref _objectAxisUnitDisplay, value); }
         public string Description { get => _description; set => this.RaiseAndSetIfChanged(ref _description, value); }
         public double LengthMM { get => _lengthMM; set => this.RaiseAndSetIfChanged(ref _lengthMM, value); }
         public double WidthMM { get => _widthMM; set => this.RaiseAndSetIfChanged(ref _widthMM, value); }
@@ -1110,7 +1071,7 @@ namespace NetScad.UI.ViewModels
                             case true:
                                 SaveFileButton = true;
                                 // If there is at least one union row for a cube solid to create a difference for, along with at least one subtract item.
-                                switch (OuterDimensions.Where(o => o.OperationType == "Subtract").Any())
+                                switch (SolidDimensions.Where(o => o.OperationType == "Difference").Any())
                                 {
                                     case true:
                                         DifferenceButton = true;
@@ -1124,8 +1085,8 @@ namespace NetScad.UI.ViewModels
                                 SaveFileButton = false;
                                 break;
                         }
-                        // If there is at least one add item in the OuterDimensions table
-                        switch (OuterDimensions.Where(o => o.OperationType == "Add").Any() || CylinderDimensions.Where(o => o.OperationType == "Add").Any())
+                        // If there is at least one add item in the SolidDimensions table
+                        switch (SolidDimensions.Where(o => o.OperationType == "Union").Any() || SolidDimensions.Where(o => o.OperationType == "Union").Any())
                         {
                             case true:
                                 UnionButton = true;
@@ -1161,7 +1122,7 @@ namespace NetScad.UI.ViewModels
                             case true:
                                 SaveFileButton = true;
                                 // If there is at least one union row for a cube solid to create a difference for, along with at least one subtract item.
-                                switch (OuterDimensions.Where(o => o.OperationType == "Subtract").Any())
+                                switch (SolidDimensions.Where(o => o.OperationType == "Difference").Any())
                                 {
                                     case true:
                                         DifferenceButton = true;
@@ -1175,8 +1136,8 @@ namespace NetScad.UI.ViewModels
                                 SaveFileButton = false;
                                 break;
                         }
-                        // If there is at least one add item in the OuterDimensions table
-                        switch (OuterDimensions.Where(o => o.OperationType == "Add").Any() || CylinderDimensions.Where(o => o.OperationType == "Add").Any())
+                        // If there is at least one add item in the SolidDimensions table
+                        switch (SolidDimensions.Where(o => o.OperationType == "Union").Any() || SolidDimensions.Where(o => o.OperationType == "Union").Any())
                         {
                             case true:
                                 UnionButton = true;
@@ -1212,7 +1173,7 @@ namespace NetScad.UI.ViewModels
                             case true:
                                 SaveFileButton = true;
                                 // If there is at least one union row for a cylinder solid to create a difference for, along with at least one subtract item.
-                                switch (CylinderDimensions.Where(o => o.OperationType == "Subtract").Any())
+                                switch (SolidDimensions.Where(o => o.OperationType == "Difference").Any())
                                 {
                                     case true:
                                         DifferenceButton = true;
@@ -1226,8 +1187,8 @@ namespace NetScad.UI.ViewModels
                                 SaveFileButton = false;
                                 break;
                         }
-                        // If there is at least one add item in the CylinderDimensions table
-                        switch (OuterDimensions.Where(o => o.OperationType == "Add").Any() || CylinderDimensions.Where(o => o.OperationType == "Add").Any())
+                        // If there is at least one add item in the SolidDimensions table
+                        switch (SolidDimensions.Where(o => o.OperationType == "Union").Any() || SolidDimensions.Where(o => o.OperationType == "Union").Any())
                         {
                             case true:
                                 UnionButton = true;
@@ -1246,7 +1207,7 @@ namespace NetScad.UI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedScrewSize, value);
-                SelectedScrewProperty ??= ScrewProperties!.FirstOrDefault(s=>s == "Thread Part")!;
+                SelectedScrewProperty ??= ScrewProperties!.FirstOrDefault(s => s == "Screw Thread")!;
                 if (IsCylinderSelected)
                 {
                     _ = UpdateScrewRadiusFromSelection();
@@ -1268,10 +1229,10 @@ namespace NetScad.UI.ViewModels
         public List<ScrewSize>? ScrewSizes { get => _screwSizes; set => this.RaiseAndSetIfChanged(ref _screwSizes, value); }
         public List<string> ScrewProperties { get; } =
         [
-            "Thread Part",
+            "Screw Thread",
             "Screw Head",
-            "Thread Insert",
-            "Screw Hole",
+            "Threaded Insert",
+            "Clearance Hole",
         ];
         public ServerRack? SelectedServerRack
         {
@@ -1300,10 +1261,9 @@ namespace NetScad.UI.ViewModels
         public List<ServerRack>? ServerRackSizes { get => _serverRackSizes; set => this.RaiseAndSetIfChanged(ref _serverRackSizes, value); }
         public List<string> ServerRackWidthTypes { get; } =
         [
-            "Inner Width",
-            "Outer Width",
+            "Inner Mount",
+            "Outer Mount",
         ];
-        public ObservableCollection<OuterDimensions> OuterDimensions { get => _outerDimensions; set => this.RaiseAndSetIfChanged(ref _outerDimensions, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensions
         {
             get => _moduleDimensions;
@@ -1322,8 +1282,17 @@ namespace NetScad.UI.ViewModels
                 this.RaiseAndSetIfChanged(ref _selectedUnit, value);
                 UnitHasChanged = true;
                 _ = ConvertInputs(_decimalPlaces);
-                if (!_axisStored)
-                    _ = GetAxesList(); // Refresh axes list when unit changes and the user has specified they want to change the axis
+            }
+        }
+        public UnitSystem SelectedAxisUnitValue
+        {
+            get => _selectedAxisUnit;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedAxisUnit, value);
+                IsAxisImperial = _selectedAxisUnit != UnitSystem.Metric;
+                IsAxisMetric = _selectedAxisUnit == UnitSystem.Metric;
+                _ = GetAxesList(); // Refresh axes list when axis unit changes
             }
         }
         public string? SelectedAxisValue
@@ -1342,8 +1311,8 @@ namespace NetScad.UI.ViewModels
                     _ = CreateAxisAsync();
             }
         }
-        public List<string> ShapeTypes { get; } = ["Cube", "Round Cube", "Cylinder"];
-        public string SelectedShapeType
+        public List<string> SolidTypes { get; } = ["Cube", "Round Cube", "Cylinder"];
+        public string SelectedSolidType
         {
             get => _selectedShapeType;
             set

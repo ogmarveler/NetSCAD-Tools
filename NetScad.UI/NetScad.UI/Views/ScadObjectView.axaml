@@ -30,12 +30,7 @@
 
     <UserControl.Styles>
         <!--  DataGrid Column Header Styles  -->
-        <Style Selector="DataGrid#CubeDataGrid DataGridColumnHeader, DataGrid#CubeDataGridImperial DataGridColumnHeader">
-            <Setter Property="Background" Value="{DynamicResource PurpleForeground}" />
-            <Setter Property="Foreground" Value="{DynamicResource PurpleBackground}" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-        </Style>
-        <Style Selector="DataGrid#CylinderDataGrid DataGridColumnHeader, DataGrid#CylinderDataGridImperial DataGridColumnHeader">
+        <Style Selector="DataGrid#SolidDataGrid DataGridColumnHeader, DataGrid#SolidDataGridImperial DataGridColumnHeader">
             <Setter Property="Background" Value="{DynamicResource PurpleForeground}" />
             <Setter Property="Foreground" Value="{DynamicResource PurpleBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
@@ -55,6 +50,11 @@
         <Style Selector="Grid#MainInputGrid > :is(Control)">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
+        <Style Selector="Grid#AxisControlsGrid > :is(Control)">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
         <!--  Button Content Alignment  -->
@@ -64,17 +64,20 @@
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Height" Value="32" />
+            <Setter Property="MinWidth" Value="100" />
+            <Setter Property="Margin" Value="0" />
         </Style>
 
         <!--  Standard TextBox Style  -->
         <Style Selector="TextBox.standardInput">
-            <Setter Property="MinWidth" Value="100" />
             <Setter Property="Height" Value="32" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="SelectionBrush" Value="Yellow" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
         </Style>
 
         <!--  Standard TextBlock Label Style  -->
@@ -84,6 +87,8 @@
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
         </Style>
 
         <!--  Standard StackPanel Style  -->
@@ -91,6 +96,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="Spacing" Value="3" />
+            <Setter Property="Margin" Value="0" />
         </Style>
 
         <!--  ComboBox Height Alignment  -->
@@ -100,149 +106,93 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
         </Style>
     </UserControl.Styles>
 
     <Grid Background="{DynamicResource CardBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <!--  Title  -->
+            <!--  Custom Axis Grid  -->
+            <RowDefinition Height="Auto" />
+            <!--  Object Design Grid  -->
             <RowDefinition Height="*" />
-            <!--  Content with DataGrids  -->
+            <!--  Object Details  -->
         </Grid.RowDefinitions>
 
-        <!--  Main Input Grid  -->
+        <!--  Axis Controls Grid  -->
         <Grid
-            x:Name="MainInputGrid"
+            x:Name="AxisControlsGrid"
             Grid.Row="0"
-            MinWidth="800"
-            ColumnSpacing="10"
+            MinWidth="860"
+            Margin="0,10,0,10"
+            ColumnSpacing="15"
             RowSpacing="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130" />
+                <ColumnDefinition Width="140" />
+                <ColumnDefinition Width="222" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <!--  Row 0: Title  -->
-                <RowDefinition Height="Auto" />
-                <!--  Row 1: Separator  -->
-                <RowDefinition Height="Auto" />
-                <!--  Row 2: Axis controls  -->
-                <RowDefinition Height="Auto" />
-                <!--  Row 3: Separator  -->
-                <RowDefinition Height="Auto" />
-                <!--  Row 4: Object Name/Description/Shape  -->
-                <RowDefinition Height="Auto" />
-                <!--  Row 5: Object Name/Description/Shape  -->
-                <RowDefinition Height="Auto" />
-                <!--  Row 6: Dimensions  -->
-                <RowDefinition Height="Auto" />
-                <!--  Row 7: Rotations  -->
-                <RowDefinition Height="Auto" />
-                <!--  Row 8: Separator  -->
-                <RowDefinition Height="Auto" />
-                <!--  Row 9: Action Buttons  -->
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="2" />
             </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" MinWidth="130" />
-                <!--  Column 0  -->
-                <ColumnDefinition Width="Auto" MaxWidth="230" />
-                <!--  Column 1  -->
-                <ColumnDefinition Width="Auto" MaxWidth="100" />
-                <!--  Column 2  -->
-                <ColumnDefinition Width="Auto" MaxWidth="100" />
-                <!--  Column 3  -->
-                <ColumnDefinition Width="Auto" MaxWidth="100" />
-                <!--  Column 4  -->
-                <ColumnDefinition Width="Auto" MinWidth="120" />
-                <!--  Column 5  -->
-                <ColumnDefinition Width="Auto" MaxWidth="100" />
-                <!--  Column 6  -->
-                <ColumnDefinition Width="Auto" MinWidth="80" />
-                <!--  Column 7  -->
-                <ColumnDefinition Width="*" MinWidth="300" />
-                <!--  Column 8 - DataGrids  -->
-            </Grid.ColumnDefinitions>
-
-            <!--  Row 0: Object Designer Title  -->
-            <TextBlock
+            <!--  Row 0, Column 0: Custom Axis Title  -->
+            <StackPanel
                 Grid.Row="0"
                 Grid.Column="0"
-                Grid.ColumnSpan="7"
-                HorizontalAlignment="Stretch"
-                Classes="textbox"
-                FontSize="15"
-                FontWeight="SemiBold"
-                Opacity="0.75"
-                Text="Object Designer"
-                TextAlignment="Left" />
+                Width="130"
+                Margin="10,0,10,0"
+                Classes="inputGroup">
+                <TextBlock Classes="standardLabel" Text="" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="textbox"
+                    FontSize="15"
+                    FontWeight="SemiBold"
+                    Opacity="0.75"
+                    Text="Custom Axis" />
+            </StackPanel>
 
-            <!--  Row 0: Title  -->
-            <TextBlock
-                Grid.Row="0"
-                Grid.Column="8"
-                Grid.ColumnSpan="2"
-                HorizontalAlignment="Stretch"
-                Classes="textbox"
-                FontSize="15"
-                FontWeight="SemiBold"
-                Opacity="0.75"
-                Text="Parts Dimensions"
-                TextAlignment="Right" />
-
-            <!--  Row 1: Separator  -->
-            <Separator
-                Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="9"
-                Height="2"
-                HorizontalAlignment="Stretch"
-                Background="{DynamicResource CardForeground}"
-                Opacity="0.25" />
-
-            <!--  Row 2: Axis Controls  -->
             <!--  Unit Type ComboBox with Header  -->
             <StackPanel
-                Grid.Row="2"
-                Grid.Column="0"
+                Grid.Row="0"
+                Grid.Column="1"
+                Width="140"
                 Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}">
-                            <Binding Path="AxesSelectEnabled" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                    <TextBlock.IsVisible>
-                        <Binding Path="!AxesSelectEnabled" />
-                    </TextBlock.IsVisible>
-                    Unit Type
-                </TextBlock>
-                <TextBlock
-                    Classes="standardLabel"
-                    IsVisible="{Binding AxesSelectEnabled}"
-                    Text="Axis Type" />
+                <TextBlock Classes="standardLabel" Text="Axis Type" />
                 <ComboBox
-                    x:Name="UnitComboBox"
+                    x:Name="AxisComboBox"
                     FontWeight="SemiBold"
                     IsEnabled="True"
+                    IsVisible="{Binding AxesSelectEnabled}"
                     ItemsSource="{Binding UnitSystemValues}"
-                    SelectedItem="{Binding SelectedUnitValue, Mode=TwoWay}">
+                    SelectedItem="{Binding SelectedAxisUnitValue, Mode=TwoWay}">
                     <ComboBox.Foreground>
                         <Binding
                             Converter="{StaticResource UnitSystemToColorConverter}"
                             ConverterParameter="Foreground"
-                            Path="IsMetric" />
+                            Path="IsAxisMetric" />
                     </ComboBox.Foreground>
                     <ComboBox.Background>
                         <Binding
                             Converter="{StaticResource UnitSystemToColorConverter}"
                             ConverterParameter="Background"
-                            Path="IsMetric" />
+                            Path="IsAxisMetric" />
                     </ComboBox.Background>
                     <ComboBox.BorderBrush>
                         <Binding
                             Converter="{StaticResource UnitSystemToColorConverter}"
                             ConverterParameter="BorderBrush"
-                            Path="IsMetric" />
+                            Path="IsAxisMetric" />
                     </ComboBox.BorderBrush>
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -250,13 +200,42 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <Border
+                    Height="32"
+                    MinWidth="130"
+                    Padding="5"
+                    VerticalAlignment="Center"
+                    BorderThickness="1"
+                    CornerRadius="3"
+                    IsEnabled="False"
+                    IsVisible="{Binding !AxesSelectEnabled}">
+                    <Border.Background>
+                        <Binding
+                            Converter="{StaticResource UnitSystemToColorConverter}"
+                            ConverterParameter="Background"
+                            Path="IsAxisMetric" />
+                    </Border.Background>
+                    <Border.BorderBrush>
+                        <Binding
+                            Converter="{StaticResource UnitSystemToColorConverter}"
+                            ConverterParameter="BorderBrush"
+                            Path="IsAxisMetric" />
+                    </Border.BorderBrush>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Foreground="{Binding IsAxisMetric, Converter={StaticResource UnitSystemToColorConverter}, ConverterParameter=Foreground}"
+                        Text="{Binding ObjectAxisUnitDisplay}"
+                        TextAlignment="Center" />
+                </Border>
             </StackPanel>
 
-            <!--  Axis Selection with Header (spans 3 columns)  -->
+            <!--  Axis Selection with Header  -->
             <StackPanel
-                Grid.Row="2"
-                Grid.Column="1"
-                Grid.ColumnSpan="2"
+                Grid.Row="0"
+                Grid.Column="2"
+                Width="220"
                 Classes="inputGroup">
                 <TextBlock
                     Classes="standardLabel"
@@ -266,9 +245,6 @@
                     Classes="standardLabel"
                     IsVisible="{Binding !AxesSelectEnabled}"
                     Text="Using Axis" />
-
-
-                <!--  Axis Selection ComboBox  -->
                 <ComboBox
                     x:Name="AxesComboBox"
                     MinWidth="220"
@@ -280,19 +256,19 @@
                         <Binding
                             Converter="{StaticResource UnitSystemToColorConverter}"
                             ConverterParameter="Foreground"
-                            Path="IsMetric" />
+                            Path="IsAxisMetric" />
                     </ComboBox.Foreground>
                     <ComboBox.Background>
                         <Binding
                             Converter="{StaticResource UnitSystemToColorConverter}"
                             ConverterParameter="Background"
-                            Path="IsMetric" />
+                            Path="IsAxisMetric" />
                     </ComboBox.Background>
                     <ComboBox.BorderBrush>
                         <Binding
                             Converter="{StaticResource UnitSystemToColorConverter}"
                             ConverterParameter="BorderBrush"
-                            Path="IsMetric" />
+                            Path="IsAxisMetric" />
                     </ComboBox.BorderBrush>
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -303,8 +279,6 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-
-                <!--  Axis Display Border (when axis is stored) - Fixed Height to Match ComboBox  -->
                 <Border
                     Height="32"
                     MinWidth="220"
@@ -318,31 +292,31 @@
                         <Binding
                             Converter="{StaticResource UnitSystemToColorConverter}"
                             ConverterParameter="Background"
-                            Path="IsMetric" />
+                            Path="IsAxisMetric" />
                     </Border.Background>
                     <Border.BorderBrush>
                         <Binding
                             Converter="{StaticResource UnitSystemToColorConverter}"
                             ConverterParameter="BorderBrush"
-                            Path="IsMetric" />
+                            Path="IsAxisMetric" />
                     </Border.BorderBrush>
                     <TextBlock
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
-                        Foreground="{Binding IsMetric, Converter={StaticResource UnitSystemToColorConverter}, ConverterParameter=Foreground}"
+                        Foreground="{Binding IsAxisMetric, Converter={StaticResource UnitSystemToColorConverter}, ConverterParameter=Foreground}"
                         Text="{Binding ObjectAxisDisplay}"
                         TextAlignment="Center" />
                 </Border>
             </StackPanel>
 
-            <!--  Get Object Button  -->
+            <!--  Change Axis Button  -->
             <StackPanel
-                Grid.Row="2"
+                Grid.Row="0"
                 Grid.Column="3"
+                Width="120"
                 Classes="inputGroup"
                 IsVisible="{Binding AxisStored}">
-
                 <TextBlock Classes="standardLabel" Text="" />
                 <Button
                     Click="ChangeAxisButton_Click"
@@ -356,16 +330,16 @@
 
             <!--  Adjust X  -->
             <StackPanel
-                Grid.Row="2"
+                Grid.Row="0"
                 Grid.Column="4"
+                Width="70"
                 Classes="inputGroup"
                 IsVisible="{Binding AxisStored}">
                 <TextBlock Classes="standardLabel" Text="Adjust X" />
                 <TextBox
-                    MaxWidth="105"
                     Classes="standardInput"
                     Text="{Binding AxisXPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                    Watermark="{Binding SelectedAxisUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                     <ToolTip.Tip>
                         <TextBlock Text="Move the X-axis starting point" />
                     </ToolTip.Tip>
@@ -374,16 +348,16 @@
 
             <!--  Adjust Y  -->
             <StackPanel
-                Grid.Row="2"
+                Grid.Row="0"
                 Grid.Column="5"
+                Width="70"
                 Classes="inputGroup"
                 IsVisible="{Binding AxisStored}">
                 <TextBlock Classes="standardLabel" Text="Adjust Y" />
                 <TextBox
-                    MaxWidth="105"
                     Classes="standardInput"
                     Text="{Binding AxisYPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                    Watermark="{Binding SelectedAxisUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                     <ToolTip.Tip>
                         <TextBlock Text="Move the Y-axis starting point" />
                     </ToolTip.Tip>
@@ -392,1078 +366,1072 @@
 
             <!--  Adjust Z  -->
             <StackPanel
-                Grid.Row="2"
+                Grid.Row="0"
                 Grid.Column="6"
+                Width="70"
                 Classes="inputGroup"
                 IsVisible="{Binding AxisStored}">
                 <TextBlock Classes="standardLabel" Text="Adjust Z" />
                 <TextBox
-                    MaxWidth="105"
                     Classes="standardInput"
                     Text="{Binding AxisZPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                    Watermark="{Binding SelectedAxisUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                     <ToolTip.Tip>
                         <TextBlock Text="Move the Z-axis starting point" />
                     </ToolTip.Tip>
                 </TextBox>
             </StackPanel>
 
-            <!--  Row 3: Separator  -->
+            <!--  Row 1: Separator  -->
             <Separator
-                Grid.Row="3"
+                Grid.Row="1"
                 Grid.Column="0"
-                Grid.ColumnSpan="9"
+                Grid.ColumnSpan="7"
                 Height="2"
+                Margin="10,10,0,20"
                 HorizontalAlignment="Stretch"
                 Background="{DynamicResource CardForeground}"
                 Opacity="0.25" />
-
-            <!--  Get Object Button  -->
-            <StackPanel
-                Grid.Row="4"
-                Grid.Column="0"
-                Classes="inputGroup"
-                IsVisible="{Binding AxisStored}">
-
-                <TextBlock Classes="standardLabel" Text="" />
-                <Button Click="GetObjectButton_Click" Content="Import Object">
-                    <Button.IsEnabled>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="!UnionButton" />
-                            <Binding Path="!DifferenceButton" />
-                            <Binding Path="AxisStored" />
-                        </MultiBinding>
-                    </Button.IsEnabled>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Retrieve an existing object and load into inputs" />
-                    </ToolTip.Tip>
-                </Button>
-            </StackPanel>
-
-            <!--  Row 4: Object Name/Description/Shape  -->
-            <!--  Shape Type ComboBox  -->
-            <StackPanel
-                Grid.Row="5"
-                Grid.Column="0"
-                Classes="inputGroup">
-                <TextBlock
-                    Classes="standardLabel"
-                    IsVisible="{Binding AxisStored}"
-                    Text="Shape Type" />
-                <ComboBox
-                    MinWidth="130"
-                    Background="{DynamicResource PurpleForeground}"
-                    BorderBrush="{DynamicResource PurpleBackground}"
-                    BorderThickness="1"
-                    FontWeight="SemiBold"
-                    Foreground="{DynamicResource PurpleBackground}"
-                    IsEnabled="{Binding AxisStored}"
-                    IsVisible="{Binding AxisStored}"
-                    ItemsSource="{Binding ShapeTypes}"
-                    PlaceholderText="Select Solid"
-                    SelectedItem="{Binding SelectedShapeType, Mode=TwoWay}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Select the shape type for your object" />
-                    </ToolTip.Tip>
-                </ComboBox>
-            </StackPanel>
-
-            <!--  Object Name  -->
-            <StackPanel
-                Grid.Row="4"
-                Grid.Column="1"
-                Grid.ColumnSpan="2"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel" Text="Object Name" />
-                <TextBox
-                    MinWidth="220"
-                    Background="{DynamicResource PurpleForeground}"
-                    BorderBrush="{DynamicResource PurpleBackground}"
-                    BorderThickness="2"
-                    Classes="standardInput"
-                    FontWeight="SemiBold"
-                    Foreground="{DynamicResource PurpleBackground}"
-                    Text="{Binding Name, Mode=TwoWay}"
-                    Watermark="main object name">
-                    <TextBox.IsEnabled>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="!UnionButton" />
-                            <Binding Path="AxisStored" />
-                        </MultiBinding>
-                    </TextBox.IsEnabled>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Object Name" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Clear Object Button - Moved to Row 4, Column 3  -->
-            <StackPanel
-                Grid.Row="4"
-                Grid.Column="3"
-                Classes="inputGroup"
-                IsVisible="{Binding AxisStored}">
-
-                <TextBlock Classes="standardLabel" Text="" />
-                <Button
-                    Click="ClearObjectButton_Click"
-                    Content="Clear Object"
-                    IsEnabled="True">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Clear out the existing object from the database for new object creation in OpenSCAD" />
-                    </ToolTip.Tip>
-                </Button>
-            </StackPanel>
-
-            <!--  Row 2  -->
-            <!--  Clear Inputs Button  -->
-            <StackPanel
-                Grid.Row="4"
-                Grid.Column="4"
-                Classes="inputGroup"
-                IsVisible="{Binding AxisStored}">
-
-                <TextBlock Classes="standardLabel" Text="" />
-                <Button
-                    Click="ClearButton_Click"
-                    Content="Clear Inputs"
-                    IsEnabled="True">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Clears all part input fields" />
-                    </ToolTip.Tip>
-                </Button>
-            </StackPanel>
-
-            <StackPanel
-                Grid.Row="4"
-                Grid.Column="5"
-                MinWidth="100"
-                Classes="inputGroup"
-                IsVisible="{Binding AxisStored}">
-
-                <TextBlock Classes="standardLabel" Text="" />
-                <!--  Create Union  -->
-                <Button
-                    Background="{DynamicResource BlueForeground}"
-                    BorderBrush="{DynamicResource BlueBackground}"
-                    Click="CreateUnionButton_Click"
-                    Content="To Union"
-                    FontWeight="SemiBold"
-                    Foreground="{DynamicResource BlueBackground}"
-                    IsEnabled="True"
-                    IsVisible="{Binding UnionButton}">
-                    <ToolTip.Tip>
-                        <TextBlock Text="This action will create a union of the selected objects in the database for use in OpenSCAD." />
-                    </ToolTip.Tip>
-                </Button>
-            </StackPanel>
-
-            <StackPanel
-                Grid.Row="4"
-                Grid.Column="6"
-                Classes="inputGroup"
-                IsVisible="{Binding AxisStored}">
-
-                <TextBlock Classes="standardLabel" Text="" />
-                <!--  Create Difference  -->
-                <Button
-                    Background="{DynamicResource TealForeground}"
-                    BorderBrush="{DynamicResource TealBackground}"
-                    Click="CreateDifferenceButton_Click"
-                    Content="To Difference"
-                    FontWeight="SemiBold"
-                    Foreground="{DynamicResource TealBackground}"
-                    IsEnabled="True"
-                    IsVisible="{Binding DifferenceButton}">
-                    <ToolTip.Tip>
-                        <TextBlock Text="This action will create a difference of the selected objects in the database for use in OpenSCAD." />
-                    </ToolTip.Tip>
-                </Button>
-            </StackPanel>
-
-
-            <!--  Preview Object Button - Moved to Row 4, Column 4  -->
-            <StackPanel
-                Grid.Row="2"
-                Grid.Column="7"
-                Classes="inputGroup"
-                IsVisible="{Binding AxisStored}">
-
-                <TextBlock Classes="standardLabel" Text="" />
-                <Button
-                    Click="ObjectToScadFilesButton_Click"
-                    Content="View Output"
-                    IsEnabled="True">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Open and view the .scad file in the default application set by the OS." />
-                    </ToolTip.Tip>
-                </Button>
-            </StackPanel>
-
-
-
-
-
-            <!--  Material  -->
-            <StackPanel
-                Grid.Row="5"
-                Grid.Column="3"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel" Text="Material" />
-                <ComboBox
-                    MinWidth="100"
-                    IsEnabled="{Binding AxisStored}"
-                    ItemsSource="{Binding FilamentTypes}"
-                    PlaceholderText="Material"
-                    SelectedItem="{Binding SelectedFilament, Mode=TwoWay}">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Select filament/material type" />
-                    </ToolTip.Tip>
-                </ComboBox>
-            </StackPanel>
-
-            <!--  Operation  -->
-            <StackPanel
-                Grid.Row="5"
-                Grid.Column="4"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel" Text="Scad Function" />
-                <ComboBox
-                    MinWidth="100"
-                    FontWeight="SemiBold"
-                    IsEnabled="{Binding AxisStored}"
-                    ItemsSource="{Binding OperationTypes}"
-                    PlaceholderText="Operation"
-                    SelectedItem="{Binding SelectedOperationType, Mode=TwoWay}">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Select operation: Add (union) or Subtract (difference)" />
-                    </ToolTip.Tip>
-                </ComboBox>
-            </StackPanel>
-
-            <StackPanel
-                Grid.Row="5"
-                Grid.Column="5"
-                Classes="inputGroup"
-                IsVisible="{Binding AxisStored}">
-
-                <TextBlock Classes="standardLabel" Text="" />
-                <!--  Create/Update Button  -->
-                <Button
-                    Grid.Row="8"
-                    Grid.Column="2"
-                    MaxWidth="105"
-                    Background="{DynamicResource PurpleForeground}"
-                    BorderBrush="{DynamicResource PurpleBackground}"
-                    Click="CreateButton_Click"
-                    FontWeight="SemiBold"
-                    Foreground="{DynamicResource PurpleBackground}"
-                    IsVisible="{Binding AxisStored}">
-                    <Button.Content>
-                        <MultiBinding Converter="{StaticResource CollectionCountToTextConverter}" ConverterParameter="Create Part|Update Part">
-                            <Binding Path="OuterDimensions" />
-                            <Binding Path="CylinderDimensions" />
-                        </MultiBinding>
-                    </Button.Content>
-                    <Button.IsEnabled>
-                        <MultiBinding Converter="{StaticResource ShapeValidationConverter}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                            <Binding Path="LengthMM" />
-                            <Binding Path="WidthMM" />
-                            <Binding Path="HeightMM" />
-                            <Binding Path="RadiusMM" />
-                            <Binding Path="Radius1MM" />
-                            <Binding Path="Radius2MM" />
-                            <Binding Path="CylinderHeightMM" />
-                            <Binding Path="Name" />
-                            <Binding Path="Description" />
-                        </MultiBinding>
-                    </Button.IsEnabled>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Create a custom object and save it to the database for use in OpenSCAD" />
-                    </ToolTip.Tip>
-                </Button>
-            </StackPanel>
-
-            <!--  Delete Selected  -->
-            <StackPanel
-                Grid.Row="5"
-                Grid.Column="6"
-                Classes="inputGroup"
-                IsVisible="{Binding AxisStored}">
-
-                <TextBlock Classes="standardLabel" Text="" />
-                <Button Click="DeleteButton_Click" Content="Remove Part">
-                    <Button.IsEnabled>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CubeDataGrid.SelectedItem" />
-                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CubeDataGridImperial.SelectedItem" />
-                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CylinderDataGrid.SelectedItem" />
-                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#CylinderDataGridImperial.SelectedItem" />
-                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesUnionDataGrid.SelectedItem" />
-                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesDifferenceDataGrid.SelectedItem" />
-                        </MultiBinding>
-                    </Button.IsEnabled>
-                    <Button.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding
-                                Converter="{StaticResource CollectionCountToBooleanConverter}"
-                                ConverterParameter="1"
-                                Path="OuterDimensions" />
-                            <Binding
-                                Converter="{StaticResource CollectionCountToBooleanConverter}"
-                                ConverterParameter="1"
-                                Path="CylinderDimensions" />
-                            <Binding
-                                Converter="{StaticResource CollectionCountToBooleanConverter}"
-                                ConverterParameter="1"
-                                Path="ModuleDimensions" />
-                        </MultiBinding>
-                    </Button.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Delete the selected item from the database" />
-                    </ToolTip.Tip>
-                </Button>
-            </StackPanel>
-
-            <!--  Part Description (spans 2 columns)  -->
-            <StackPanel
-                Grid.Row="5"
-                Grid.Column="1"
-                Grid.ColumnSpan="2"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel" Text="Part Description" />
-                <TextBox
-                    MinWidth="220"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding Description, Mode=TwoWay}"
-                    Watermark="part description">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Part name being added or subtracted" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Row 5: Dimensions  -->
-            <!--  Server Rack Width / Screw Size  -->
-            <StackPanel
-                Grid.Row="6"
-                Grid.Column="0"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="AxisStored" />
-                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                <Binding Path="IsCubeSelected" />
-                                <Binding Path="IsRoundCubeSelected" />
-                            </MultiBinding>
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Rack Width</TextBlock.Text>
-                </TextBlock>
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="AxisStored" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Screw Size</TextBlock.Text>
-                </TextBlock>
-                <ComboBox
-                    MinWidth="130"
-                    ItemsSource="{Binding ServerRackWidthTypes}"
-                    PlaceholderText="Width"
-                    SelectedItem="{Binding SelectedServerRackWidthType, Mode=TwoWay}">
-                    <ComboBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="AxisStored" />
-                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                <Binding Path="IsCubeSelected" />
-                                <Binding Path="IsRoundCubeSelected" />
-                            </MultiBinding>
-                        </MultiBinding>
-                    </ComboBox.IsVisible>
-                </ComboBox>
-
-                <ComboBox
-                    MinWidth="130"
-                    DisplayMemberBinding="{Binding Name}"
-                    ItemsSource="{Binding ScrewSizes}"
-                    PlaceholderText="Size"
-                    SelectedItem="{Binding SelectedScrewSize, Mode=TwoWay}">
-                    <ComboBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="AxisStored" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </ComboBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Select screw size (M2, M3, M4, M5, M6, M8, M10)" />
-                    </ToolTip.Tip>
-                </ComboBox>
-            </StackPanel>
-
-            <!--  Length/Radius  -->
-            <StackPanel
-                Grid.Row="6"
-                Grid.Column="1"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Length</TextBlock.Text>
-                </TextBlock>
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <Binding Path="IsCylinderSelected" />
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Radius</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding LengthMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Length" />
-                    </ToolTip.Tip>
-                </TextBox>
-
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    IsVisible="{Binding IsCylinderSelected}"
-                    Text="{Binding RadiusMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Cylinder radius" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Width/Radius1  -->
-            <StackPanel
-                Grid.Row="6"
-                Grid.Column="2"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Width</TextBlock.Text>
-                </TextBlock>
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <Binding Path="IsCylinderSelected" />
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Radius 1</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding WidthMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Width" />
-                    </ToolTip.Tip>
-                </TextBox>
-
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    IsVisible="{Binding IsCylinderSelected}"
-                    Text="{Binding Radius1MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="Optional">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Optional first radius for cone" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Height/Radius2  -->
-            <StackPanel
-                Grid.Row="6"
-                Grid.Column="3"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Height</TextBlock.Text>
-                </TextBlock>
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <Binding Path="IsCylinderSelected" />
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Radius 2</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding HeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Height" />
-                    </ToolTip.Tip>
-                </TextBox>
-
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    IsVisible="{Binding IsCylinderSelected}"
-                    Text="{Binding Radius2MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="Optional">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Optional second radius for cone" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Thickness/Cylinder Height  -->
-            <StackPanel
-                Grid.Row="6"
-                Grid.Column="4"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Thickness</TextBlock.Text>
-                </TextBlock>
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <Binding Path="IsCylinderSelected" />
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Height</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding ThicknessMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Thickness" />
-                    </ToolTip.Tip>
-                </TextBox>
-
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    IsVisible="{Binding IsCylinderSelected}"
-                    Text="{Binding CylinderHeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                    <ToolTip.Tip>
-                        <TextBlock Text="Cylinder height" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Row 6: Rack Height/Screw Property and Offsets/Rotations  -->
-            <!--  Server Rack Height / Screw Property  -->
-            <StackPanel
-                Grid.Row="7"
-                Grid.Column="0"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="AxisStored" />
-                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                <Binding Path="IsCubeSelected" />
-                                <Binding Path="IsRoundCubeSelected" />
-                            </MultiBinding>
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Rack Height</TextBlock.Text>
-                </TextBlock>
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="AxisStored" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Screw Type</TextBlock.Text>
-                </TextBlock>
-                <ComboBox
-                    MinWidth="130"
-                    ItemsSource="{Binding ServerRackSizes}"
-                    PlaceholderText="Height"
-                    SelectedItem="{Binding SelectedServerRack, Mode=TwoWay}">
-                    <ComboBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="AxisStored" />
-                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                <Binding Path="IsCubeSelected" />
-                                <Binding Path="IsRoundCubeSelected" />
-                            </MultiBinding>
-                        </MultiBinding>
-                    </ComboBox.IsVisible>
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding DisplayName}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <ComboBox
-                    MinWidth="130"
-                    ItemsSource="{Binding ScrewProperties}"
-                    PlaceholderText="Type"
-                    SelectedItem="{Binding SelectedScrewProperty, Mode=TwoWay}">
-                    <ComboBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="AxisStored" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </ComboBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Select which screw dimension to use for radius" />
-                    </ToolTip.Tip>
-                </ComboBox>
-            </StackPanel>
-
-            <!--  X Offset  -->
-            <StackPanel
-                Grid.Row="7"
-                Grid.Column="1"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>X Offset</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding XOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="X-axis translation offset" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Y Offset  -->
-            <StackPanel
-                Grid.Row="7"
-                Grid.Column="2"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Y Offset</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding YOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Y-axis translation offset" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Z Offset  -->
-            <StackPanel
-                Grid.Row="7"
-                Grid.Column="3"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Z Offset</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding ZOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Z-axis translation offset" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Rotate X  -->
-            <StackPanel
-                Grid.Row="7"
-                Grid.Column="4"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Rotate X</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding XRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="deg °">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Set the 360 degree X-axis rotation" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Rotate Y  -->
-            <StackPanel
-                Grid.Row="7"
-                Grid.Column="5"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Rotate Y</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding YRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="deg °">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Set the 360 degree Y-axis rotation" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Rotate Z  -->
-            <StackPanel
-                Grid.Row="7"
-                Grid.Column="6"
-                Classes="inputGroup">
-                <TextBlock Classes="standardLabel">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
-                    <TextBlock.Text>Rotate Z</TextBlock.Text>
-                </TextBlock>
-                <TextBox
-                    MaxWidth="105"
-                    Classes="standardInput"
-                    IsEnabled="{Binding AxisStored}"
-                    Text="{Binding ZRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                    Watermark="deg °">
-                    <TextBox.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="IsCubeSelected" />
-                            <Binding Path="IsRoundCubeSelected" />
-                            <Binding Path="IsCylinderSelected" />
-                        </MultiBinding>
-                    </TextBox.IsVisible>
-                    <ToolTip.Tip>
-                        <TextBlock Text="Set the 360 degree Z-axis rotation" />
-                    </ToolTip.Tip>
-                </TextBox>
-            </StackPanel>
-
-            <!--  Row 8: Action Buttons in Uniform Grid (2 rows instead of 3)  -->
-            <!--  Row 1  -->
-
-
-
-
-            <!--  DataGrids in Column 8  -->
-            <ScrollViewer
-                Grid.Row="2"
-                Grid.RowSpan="7"
-                Grid.Column="8"
-                VerticalAlignment="Top"
-                VerticalScrollBarVisibility="Auto">
-                <StackPanel Spacing="15">
-                    <!--  Metric OuterDimensions DataGrid  -->
-                    <DataGrid
-                        x:Name="CubeDataGrid"
-                        Padding="5"
-                        VerticalAlignment="Stretch"
-                        AutoGenerateColumns="True"
-                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnObject"
-                        BorderBrush="{DynamicResource PurpleForeground}"
-                        BorderThickness="2"
-                        CanUserReorderColumns="True"
-                        CanUserResizeColumns="True"
-                        ColumnWidth="Auto"
-                        CornerRadius="6"
-                        GridLinesVisibility="All"
-                        IsReadOnly="True"
-                        ItemsSource="{Binding OuterDimensions}"
-                        SelectionChanged="CubeDataGrid_SelectionChanged"
-                        SelectionMode="Single">
-                        <DataGrid.IsVisible>
-                            <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                <Binding
-                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
-                                    ConverterParameter="1"
-                                    Path="OuterDimensions" />
-                                <Binding Path="IsMetric" />
-                            </MultiBinding>
-                        </DataGrid.IsVisible>
-                    </DataGrid>
-
-                    <!--  Imperial OuterDimensions DataGrid  -->
-                    <DataGrid
-                        x:Name="CubeDataGridImperial"
-                        Padding="5"
-                        AutoGenerateColumns="True"
-                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnObjectImperial"
-                        BorderBrush="{DynamicResource PurpleForeground}"
-                        BorderThickness="2"
-                        CanUserReorderColumns="True"
-                        CanUserResizeColumns="True"
-                        ColumnWidth="Auto"
-                        CornerRadius="6"
-                        GridLinesVisibility="All"
-                        IsReadOnly="True"
-                        ItemsSource="{Binding OuterDimensions}"
-                        SelectionChanged="CubeDataGrid_SelectionChanged"
-                        SelectionMode="Single">
-                        <DataGrid.IsVisible>
-                            <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                <Binding
-                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
-                                    ConverterParameter="1"
-                                    Path="OuterDimensions" />
-                                <Binding Path="IsImperial" />
-                            </MultiBinding>
-                        </DataGrid.IsVisible>
-                    </DataGrid>
-
-                    <!--  Metric CylinderDimensions DataGrid  -->
-                    <DataGrid
-                        x:Name="CylinderDataGrid"
-                        Padding="5"
-                        AutoGenerateColumns="True"
-                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnCylinder"
-                        BorderBrush="{DynamicResource PurpleForeground}"
-                        BorderThickness="2"
-                        CanUserReorderColumns="True"
-                        CanUserResizeColumns="True"
-                        ColumnWidth="Auto"
-                        CornerRadius="6"
-                        GridLinesVisibility="All"
-                        IsReadOnly="True"
-                        ItemsSource="{Binding CylinderDimensions}"
-                        SelectionChanged="CylinderDataGrid_SelectionChanged"
-                        SelectionMode="Single">
-                        <DataGrid.IsVisible>
-                            <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                <Binding
-                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
-                                    ConverterParameter="1"
-                                    Path="CylinderDimensions" />
-                                <Binding Path="IsMetric" />
-                            </MultiBinding>
-                        </DataGrid.IsVisible>
-                    </DataGrid>
-
-                    <!--  Imperial CylinderDimensions DataGrid  -->
-                    <DataGrid
-                        x:Name="CylinderDataGridImperial"
-                        Padding="5"
-                        AutoGenerateColumns="True"
-                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnCylinderImperial"
-                        BorderBrush="{DynamicResource PurpleForeground}"
-                        BorderThickness="2"
-                        CanUserReorderColumns="True"
-                        CanUserResizeColumns="True"
-                        ColumnWidth="Auto"
-                        CornerRadius="6"
-                        GridLinesVisibility="All"
-                        IsReadOnly="True"
-                        ItemsSource="{Binding CylinderDimensions}"
-                        SelectionChanged="CylinderDataGrid_SelectionChanged"
-                        SelectionMode="Single">
-                        <DataGrid.IsVisible>
-                            <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                <Binding
-                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
-                                    ConverterParameter="1"
-                                    Path="CylinderDimensions" />
-                                <Binding Path="IsImperial" />
-                            </MultiBinding>
-                        </DataGrid.IsVisible>
-                    </DataGrid>
-                </StackPanel>
-            </ScrollViewer>
         </Grid>
 
-        <!--  Module DataGrids Section at Bottom  -->
+        <!--  Main Input StackPanel  -->
+        <StackPanel Grid.Row="1" Spacing="10">
+            <Grid
+                x:Name="MainInputGrid"
+                MinWidth="860"
+                ColumnSpacing="15"
+                RowSpacing="30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <!--  Row 0: Title  -->
+                    <RowDefinition Height="Auto" />
+                    <!--  Row 1: Object Name/Description/Shape  -->
+                    <RowDefinition Height="Auto" />
+                    <!--  Row 2: Object Name/Description/Shape  -->
+                    <RowDefinition Height="Auto" />
+                    <!--  Row 3: Dimensions  -->
+                    <RowDefinition Height="Auto" />
+                    <!--  Row 4: Rotations  -->
+                    <RowDefinition Height="Auto" />
+                    <!--  Row 5: Action Buttons  -->
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="140" />
+                    <!--  Column 0  -->
+                    <ColumnDefinition Width="Auto" MaxWidth="230" />
+                    <!--  Column 1  -->
+                    <ColumnDefinition Width="Auto" MaxWidth="120" />
+                    <!--  Column 2  -->
+                    <ColumnDefinition Width="Auto" MaxWidth="120" />
+                    <!--  Column 3  -->
+                    <ColumnDefinition Width="Auto" MaxWidth="120" />
+                    <!--  Column 4  -->
+                    <ColumnDefinition Width="Auto" MinWidth="120" />
+                    <!--  Column 5  -->
+                    <ColumnDefinition Width="Auto" MaxWidth="100" />
+                    <!--  Column 6  -->
+                    <ColumnDefinition Width="Auto" MinWidth="80" />
+                    <!--  Column 7  -->
+                    <ColumnDefinition Width="*" MinWidth="300" />
+                    <!--  Column 8 - DataGrids  -->
+                </Grid.ColumnDefinitions>
+
+                <!--  Row 0, Column 0: Custom Axis Title  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Width="130"
+                    Classes="inputGroup">
+                    <TextBlock Classes="standardLabel" Text="" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Classes="textbox"
+                        FontSize="15"
+                        FontWeight="SemiBold"
+                        Opacity="0.75"
+                        Text="Object Design" />
+                </StackPanel>
+
+                <!--  Object Name  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Width="230"
+                    Classes="inputGroup">
+                    <TextBlock Classes="standardLabel" Text="Object Name" />
+                    <TextBox
+                        MinWidth="220"
+                        Background="{DynamicResource PurpleForeground}"
+                        BorderBrush="{DynamicResource PurpleBackground}"
+                        BorderThickness="2"
+                        Classes="standardInput"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource PurpleBackground}"
+                        Text="{Binding Name, Mode=TwoWay}"
+                        Watermark="main object name">
+                        <TextBox.IsEnabled>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="!UnionButton" />
+                                <Binding Path="AxisStored" />
+                            </MultiBinding>
+                        </TextBox.IsEnabled>
+                        <ToolTip.Tip>
+                            <TextBlock Text="Object Name" />
+                        </ToolTip.Tip>
+                    </TextBox>
+                </StackPanel>
+
+                <!--  Import Object Button  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Width="120"
+                    Classes="inputGroup">
+                    <TextBlock Classes="standardLabel" Text="" />
+                    <Button Click="GetObjectButton_Click" Content="Import Object">
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="!UnionButton" />
+                                <Binding Path="!DifferenceButton" />
+                                <Binding Path="AxisStored" />
+                            </MultiBinding>
+                        </Button.IsEnabled>
+                        <ToolTip.Tip>
+                            <TextBlock Text="Retrieve an existing object and load into inputs" />
+                        </ToolTip.Tip>
+                    </Button>
+                </StackPanel>
+
+                <!--  Clear Object Button  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Width="120"
+                    Classes="inputGroup">
+                    <TextBlock Classes="standardLabel" Text="" />
+                    <Button
+                        Click="ClearObjectButton_Click"
+                        Content="Clear Object"
+                        IsEnabled="True">
+                        <ToolTip.Tip>
+                            <TextBlock Text="Clear out the existing object from the database for new object creation in OpenSCAD" />
+                        </ToolTip.Tip>
+                    </Button>
+                </StackPanel>
+
+                <!--  Clear Inputs Button  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Width="120"
+                    Classes="inputGroup">
+                    <TextBlock Classes="standardLabel" Text="" />
+                    <Button
+                        Click="ClearButton_Click"
+                        Content="Clear Inputs"
+                        IsEnabled="True">
+                        <ToolTip.Tip>
+                            <TextBlock Text="Clears all part input fields" />
+                        </ToolTip.Tip>
+                    </Button>
+                </StackPanel>
+
+                <!--  View Output Button  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="5"
+                    Width="120"
+                    Classes="inputGroup">
+                    <TextBlock Classes="standardLabel" Text="" />
+                    <Button
+                        Click="ObjectToScadFilesButton_Click"
+                        Content="View Output"
+                        IsEnabled="True">
+                        <ToolTip.Tip>
+                            <TextBlock Text="Open and view the .scad file in the default application set by the OS." />
+                        </ToolTip.Tip>
+                    </Button>
+                </StackPanel>
+
+                <!--  Unit Type ComboBox with Header  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Width="140"
+                    Margin="10,0,0,0"
+                    Classes="inputGroup"
+                    IsVisible="{Binding AxisStored}">
+                    <TextBlock Classes="standardLabel" Text="Unit Type" />
+                    <ComboBox
+                        x:Name="UnitComboBox"
+                        FontWeight="SemiBold"
+                        IsEnabled="True"
+                        ItemsSource="{Binding UnitSystemValues}"
+                        SelectedItem="{Binding SelectedUnitValue, Mode=TwoWay}">
+                        <ComboBox.Foreground>
+                            <Binding
+                                Converter="{StaticResource UnitSystemToColorConverter}"
+                                ConverterParameter="Foreground"
+                                Path="IsMetric" />
+                        </ComboBox.Foreground>
+                        <ComboBox.Background>
+                            <Binding
+                                Converter="{StaticResource UnitSystemToColorConverter}"
+                                ConverterParameter="Background"
+                                Path="IsMetric" />
+                        </ComboBox.Background>
+                        <ComboBox.BorderBrush>
+                            <Binding
+                                Converter="{StaticResource UnitSystemToColorConverter}"
+                                ConverterParameter="BorderBrush"
+                                Path="IsMetric" />
+                        </ComboBox.BorderBrush>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <!--  Solid Type ComboBox  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Width="230"
+                    Classes="inputGroup">
+                    <TextBlock Classes="standardLabel" Text="Solid Type" />
+                    <ComboBox
+                        MinWidth="220"
+                        BorderThickness="1"
+                        FontWeight="SemiBold"
+                        ItemsSource="{Binding SolidTypes}"
+                        PlaceholderText="Select Solid"
+                        SelectedItem="{Binding SelectedSolidType, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                        <ToolTip.Tip>
+                            <TextBlock Text="Select the shape type for your object" />
+                        </ToolTip.Tip>
+                    </ComboBox>
+                </StackPanel>
+
+                <!--  Solid Description  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Grid.ColumnSpan="2"
+                    Width="255"
+                    Classes="inputGroup">
+                    <TextBlock Classes="standardLabel" Text="Solid Description" />
+                    <TextBox
+                        Classes="standardInput"
+                        IsEnabled="{Binding AxisStored}"
+                        Text="{Binding Description, Mode=TwoWay}"
+                        Watermark="enter a name for the solid">
+                        <ToolTip.Tip>
+                            <TextBlock Text="Name of solid being added or subtracted" />
+                        </ToolTip.Tip>
+                    </TextBox>
+                </StackPanel>
+
+                <!--  Operation  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="4"
+                    Width="120"
+                    Classes="inputGroup">
+                    <TextBlock Classes="standardLabel" Text="Apply To" />
+                    <ComboBox
+                        FontWeight="SemiBold"
+                        IsEnabled="{Binding AxisStored}"
+                        ItemsSource="{Binding OperationTypes}"
+                        PlaceholderText="Select"
+                        SelectedItem="{Binding SelectedOperationType, Mode=TwoWay}">
+                        <ToolTip.Tip>
+                            <TextBlock Text="Select operation: Add (union) or Subtract (difference)" />
+                        </ToolTip.Tip>
+                    </ComboBox>
+                </StackPanel>
+
+                <!--  Create/Update Button  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="5"
+                    Width="120"
+                    Classes="inputGroup"
+                    IsVisible="{Binding AxisStored}">
+                    <TextBlock Classes="standardLabel" Text="" />
+                    <Button
+                        Background="{DynamicResource PurpleForeground}"
+                        BorderBrush="{DynamicResource PurpleBackground}"
+                        Click="CreateButton_Click"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource PurpleBackground}"
+                        IsVisible="{Binding AxisStored}">
+                        <Button.Content>
+                            <MultiBinding Converter="{StaticResource CollectionCountToTextConverter}" ConverterParameter="Create Solid|Update Solid">
+                                <Binding Path="SolidDimensions" />
+                            </MultiBinding>
+                        </Button.Content>
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource ShapeValidationConverter}">
+                                <Binding Path="IsCubeSelected" />
+                                <Binding Path="IsRoundCubeSelected" />
+                                <Binding Path="IsCylinderSelected" />
+                                <Binding Path="LengthMM" />
+                                <Binding Path="WidthMM" />
+                                <Binding Path="HeightMM" />
+                                <Binding Path="RadiusMM" />
+                                <Binding Path="Radius1MM" />
+                                <Binding Path="Radius2MM" />
+                                <Binding Path="CylinderHeightMM" />
+                                <Binding Path="Name" />
+                                <Binding Path="Description" />
+                            </MultiBinding>
+                        </Button.IsEnabled>
+                        <ToolTip.Tip>
+                            <TextBlock Text="Create a custom object and save it to the database for use in OpenSCAD" />
+                        </ToolTip.Tip>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="10,10,0,0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal"
+                    Spacing="15">
+
+                    <!--  Server Rack Width / Screw Size  -->
+                    <StackPanel MinWidth="180" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="AxisStored" />
+                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                        <Binding Path="IsCubeSelected" />
+                                        <Binding Path="IsRoundCubeSelected" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Rack Width</TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="AxisStored" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Screw Size</TextBlock.Text>
+                        </TextBlock>
+                        <ComboBox
+                            ItemsSource="{Binding ServerRackWidthTypes}"
+                            PlaceholderText="Frame"
+                            SelectedItem="{Binding SelectedServerRackWidthType, Mode=TwoWay}">
+                            <ComboBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="AxisStored" />
+                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                        <Binding Path="IsCubeSelected" />
+                                        <Binding Path="IsRoundCubeSelected" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </ComboBox.IsVisible>
+                        </ComboBox>
+                        <ComboBox
+                            DisplayMemberBinding="{Binding Name}"
+                            ItemsSource="{Binding ScrewSizes}"
+                            PlaceholderText="MM Size"
+                            SelectedItem="{Binding SelectedScrewSize, Mode=TwoWay}">
+                            <ComboBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="AxisStored" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </ComboBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Select screw size (M2, M3, M4, M5, M6, M8, M10)" />
+                            </ToolTip.Tip>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!--  Server Rack Height / Screw Property  -->
+                    <StackPanel MinWidth="190" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="AxisStored" />
+                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                        <Binding Path="IsCubeSelected" />
+                                        <Binding Path="IsRoundCubeSelected" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Rack Height</TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="AxisStored" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Screw Type</TextBlock.Text>
+                        </TextBlock>
+                        <ComboBox
+                            ItemsSource="{Binding ServerRackSizes}"
+                            PlaceholderText="Units"
+                            SelectedItem="{Binding SelectedServerRack, Mode=TwoWay}">
+                            <ComboBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="AxisStored" />
+                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                        <Binding Path="IsCubeSelected" />
+                                        <Binding Path="IsRoundCubeSelected" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </ComboBox.IsVisible>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DisplayName}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <ComboBox
+                            ItemsSource="{Binding ScrewProperties}"
+                            PlaceholderText="Type"
+                            SelectedItem="{Binding SelectedScrewProperty, Mode=TwoWay}">
+                            <ComboBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="AxisStored" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </ComboBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Select which screw dimension to use for radius" />
+                            </ToolTip.Tip>
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Grid.ColumnSpan="5"
+					Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal"
+                    Spacing="15">
+
+                    <!--  Length/Radius  -->
+                    <StackPanel Width="86" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Length</TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <Binding Path="IsCylinderSelected" />
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Radius</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding LengthMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Length" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            IsVisible="{Binding IsCylinderSelected}"
+                            Text="{Binding RadiusMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Cylinder radius" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Width/Radius1  -->
+                    <StackPanel Width="86" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Width</TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <Binding Path="IsCylinderSelected" />
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Radius 1</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding WidthMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Width" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            IsVisible="{Binding IsCylinderSelected}"
+                            Text="{Binding Radius1MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="Optional">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Optional first radius for cone" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Height/Radius2  -->
+                    <StackPanel Width="86" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Height</TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <Binding Path="IsCylinderSelected" />
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Radius 2</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding HeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Height" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            IsVisible="{Binding IsCylinderSelected}"
+                            Text="{Binding Radius2MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="Optional">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Optional second radius for cone" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Thickness/Cylinder Height  -->
+                    <StackPanel Width="86" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Thickness</TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <Binding Path="IsCylinderSelected" />
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Height</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding ThicknessMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Thickness" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            IsVisible="{Binding IsCylinderSelected}"
+                            Text="{Binding CylinderHeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Cylinder height" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  Delete Selected  -->
+                <StackPanel
+                    Grid.Row="2"
+                    Grid.Column="5"
+                    Width="120"
+                    Classes="inputGroup"
+                    IsVisible="{Binding AxisStored}">
+                    <TextBlock Classes="standardLabel" Text="" />
+                    <Button Click="DeleteButton_Click" Content="Remove Solid">
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#SolidDataGrid.SelectedItem" />
+                                <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#SolidDataGridImperial.SelectedItem" />
+                                <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesUnionDataGrid.SelectedItem" />
+                                <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#ModulesDifferenceDataGrid.SelectedItem" />
+                            </MultiBinding>
+                        </Button.IsEnabled>
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                <Binding
+                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                    ConverterParameter="1"
+                                    Path="SolidDimensions" />
+                                <Binding
+                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                    ConverterParameter="1"
+                                    Path="ModuleDimensions" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                        <ToolTip.Tip>
+                            <TextBlock Text="Delete the selected item from the database" />
+                        </ToolTip.Tip>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Width="360"
+                    Margin="10,10,0,0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal"
+                    Spacing="15">
+                    <!--  To Union Button  -->
+                    <StackPanel
+                        MinWidth="115"
+                        Classes="inputGroup"
+                        IsVisible="{Binding AxisStored}">
+                        <TextBlock Classes="standardLabel" Text="" />
+                        <Button
+                            Background="{DynamicResource BlueForeground}"
+                            BorderBrush="{DynamicResource BlueBackground}"
+                            Click="CreateUnionButton_Click"
+                            Content="Union"
+                            FontWeight="SemiBold"
+                            Foreground="{DynamicResource BlueBackground}"
+                            IsEnabled="True"
+                            IsVisible="{Binding UnionButton}">
+                            <ToolTip.Tip>
+                                <TextBlock Text="This action will create a union of the selected objects in the database for use in OpenSCAD." />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+
+                    <!--  To Difference Button  -->
+                    <StackPanel
+                        MinWidth="120"
+                        HorizontalAlignment="Left"
+                        Classes="inputGroup"
+                        IsVisible="{Binding AxisStored}">
+                        <TextBlock Classes="standardLabel" Text="" />
+                        <Button
+                            Background="{DynamicResource TealForeground}"
+                            BorderBrush="{DynamicResource TealBackground}"
+                            Click="CreateDifferenceButton_Click"
+                            Content="Difference"
+                            FontWeight="SemiBold"
+                            Foreground="{DynamicResource TealBackground}"
+                            IsEnabled="True"
+                            IsVisible="{Binding DifferenceButton}">
+                            <ToolTip.Tip>
+                                <TextBlock Text="This action will create a difference of the selected objects in the database for use in OpenSCAD." />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+
+                    <!--  To Intersection Button  -->
+                    <StackPanel
+                        MinWidth="120"
+                        HorizontalAlignment="Left"
+                        Classes="inputGroup"
+                        IsVisible="{Binding AxisStored}">
+                        <TextBlock Classes="standardLabel" Text="" />
+                        <Button
+                            Background="{DynamicResource GoldForeground}"
+                            BorderBrush="{DynamicResource GoldBackground}"
+                            Click="CreateDifferenceButton_Click"
+                            Content="Intersection"
+                            FontWeight="SemiBold"
+                            Foreground="{DynamicResource GoldBackground}"
+                            IsEnabled="True"
+                            IsVisible="{Binding DifferenceButton}">
+                            <ToolTip.Tip>
+                                <TextBlock Text="This action will create a difference of the selected objects in the database for use in OpenSCAD." />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="3"
+                    Grid.Column="2"
+                    Grid.ColumnSpan="5"
+					Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal"
+                    Spacing="15">
+
+                    <!--  X Offset  -->
+                    <StackPanel Width="86" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>X Offset</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding XOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="X-axis translation offset" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Y Offset  -->
+                    <StackPanel Width="86" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Y Offset</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding YOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Y-axis translation offset" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Z Offset  -->
+                    <StackPanel Width="86" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Z Offset</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding ZOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Z-axis translation offset" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Rotate X  -->
+                    <StackPanel Width="64" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Rotate X</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding XRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="deg°">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Set the 360 degree X-axis rotation" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Rotate Y  -->
+                    <StackPanel Width="64" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Rotate Y</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding YRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="deg°">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Set the 360 degree Y-axis rotation" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Rotate Z  -->
+                    <StackPanel Width="64" Classes="inputGroup">
+                        <TextBlock Classes="standardLabel">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <TextBlock.Text>Rotate Z</TextBlock.Text>
+                        </TextBlock>
+                        <TextBox
+                            Classes="standardInput"
+                            IsEnabled="{Binding AxisStored}"
+                            Text="{Binding ZRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                            Watermark="deg°">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                    <Binding Path="IsCylinderSelected" />
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Set the 360 degree Z-axis rotation" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  Row 4: Separator  -->
+                <Separator
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="7"
+                    Height="2"
+                    Margin="10,10,10,20"
+                    HorizontalAlignment="Stretch"
+                    Background="{DynamicResource CardForeground}"
+                    Opacity="0.25" />
+
+                <!--  Module DataGrids Section at Bottom  -->
+                <ScrollViewer
+                    Grid.Row="0"
+                    Grid.RowSpan="8"
+                    Grid.Column="7"
+                    Grid.ColumnSpan="2"
+                    Margin="10,0,10,20"
+                    VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="15">
+                        <StackPanel Orientation="Vertical" Spacing="20">
+                            <DataGrid
+                                x:Name="SolidDataGrid"
+                                VerticalAlignment="Stretch"
+                                AutoGenerateColumns="True"
+                                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnObject"
+                                BorderBrush="{DynamicResource PurpleForeground}"
+                                BorderThickness="2"
+                                CanUserReorderColumns="True"
+                                CanUserResizeColumns="True"
+                                ColumnWidth="Auto"
+                                CornerRadius="6"
+                                GridLinesVisibility="All"
+                                IsReadOnly="True"
+                                ItemsSource="{Binding SolidDimensions}"
+                                SelectionChanged="SolidDataGrid_SelectionChanged"
+                                SelectionMode="Single">
+                                <DataGrid.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding
+                                            Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                            ConverterParameter="1"
+                                            Path="SolidDimensions" />
+                                        <Binding Path="IsMetric" />
+                                    </MultiBinding>
+                                </DataGrid.IsVisible>
+                            </DataGrid>
+                            <DataGrid
+                                x:Name="SolidDataGridImperial"
+                                AutoGenerateColumns="True"
+                                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnObjectImperial"
+                                BorderBrush="{DynamicResource PurpleForeground}"
+                                BorderThickness="2"
+                                CanUserReorderColumns="True"
+                                CanUserResizeColumns="True"
+                                ColumnWidth="Auto"
+                                CornerRadius="6"
+                                GridLinesVisibility="All"
+                                IsReadOnly="True"
+                                ItemsSource="{Binding SolidDimensions}"
+                                SelectionChanged="SolidDataGrid_SelectionChanged"
+                                SelectionMode="Single">
+                                <DataGrid.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding
+                                            Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                            ConverterParameter="1"
+                                            Path="SolidDimensions" />
+                                        <Binding Path="IsImperial" />
+                                    </MultiBinding>
+                                </DataGrid.IsVisible>
+                            </DataGrid>
+
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+            </Grid>
+
+        </StackPanel>
+        <!--  DataGrids in Column 8  -->
         <ScrollViewer
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="6"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
             VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="15">
-
-                <!--  Module DataGrids  -->
-                <StackPanel Orientation="Vertical" Spacing="20">
-                    <!--  DataGrid - ModuleDimensions - Unions  -->
-                    <DataGrid
-                        x:Name="ModulesUnionDataGrid"
-                        MaxWidth="860"
-                        Padding="10"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Stretch"
-                        AutoGenerateColumns="True"
-                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
-                        BorderBrush="{DynamicResource BlueForeground}"
-                        BorderThickness="2"
-                        CanUserReorderColumns="True"
-                        CanUserResizeColumns="True"
-                        ColumnWidth="Auto"
-                        CornerRadius="6"
-                        GridLinesVisibility="All"
-                        IsReadOnly="True"
-                        IsVisible="{Binding ModuleDimensionsUnions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
-                        ItemsSource="{Binding ModuleDimensionsUnions}"
-                        SelectionMode="Single" />
-
-                    <!--  DataGrid - ModuleDimensions - Differences  -->
-                    <DataGrid
-                        x:Name="ModulesDifferenceDataGrid"
-                        MaxWidth="860"
-                        Padding="10"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Stretch"
-                        AutoGenerateColumns="True"
-                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
-                        BorderBrush="{DynamicResource TealForeground}"
-                        BorderThickness="2"
-                        CanUserReorderColumns="True"
-                        CanUserResizeColumns="True"
-                        ColumnWidth="Auto"
-                        CornerRadius="6"
-                        GridLinesVisibility="All"
-                        IsReadOnly="True"
-                        IsVisible="{Binding ModuleDimensionsDifferences, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
-                        ItemsSource="{Binding ModuleDimensionsDifferences}"
-                        SelectionMode="Single" />
-                </StackPanel>
+            <StackPanel Margin="10,0,10,20" Spacing="20">
+                <DataGrid
+                    x:Name="ModulesUnionDataGrid"
+                    MaxWidth="860"
+                    VerticalAlignment="Stretch"
+                    AutoGenerateColumns="True"
+                    AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
+                    BorderBrush="{DynamicResource BlueForeground}"
+                    BorderThickness="2"
+                    CanUserReorderColumns="True"
+                    CanUserResizeColumns="True"
+                    ColumnWidth="Auto"
+                    CornerRadius="6"
+                    GridLinesVisibility="All"
+                    IsReadOnly="True"
+                    IsVisible="{Binding ModuleDimensionsUnions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+                    ItemsSource="{Binding ModuleDimensionsUnions}"
+                    SelectionMode="Single" />
+                <DataGrid
+                    x:Name="ModulesDifferenceDataGrid"
+                    MaxWidth="860"
+                    VerticalAlignment="Stretch"
+                    AutoGenerateColumns="True"
+                    AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
+                    BorderBrush="{DynamicResource TealForeground}"
+                    BorderThickness="2"
+                    CanUserReorderColumns="True"
+                    CanUserResizeColumns="True"
+                    ColumnWidth="Auto"
+                    CornerRadius="6"
+                    GridLinesVisibility="All"
+                    IsReadOnly="True"
+                    IsVisible="{Binding ModuleDimensionsDifferences, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+                    ItemsSource="{Binding ModuleDimensionsDifferences}"
+                    SelectionMode="Single" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

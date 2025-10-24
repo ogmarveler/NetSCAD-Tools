@@ -26,10 +26,8 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private async void DeleteButton_Click(object? sender, RoutedEventArgs e)
     {
         // Check each DataGrid for a selected item
-        object? selectedItem = CubeDataGrid.SelectedItem
-                            ?? CubeDataGridImperial.SelectedItem
-                            ?? CylinderDataGrid.SelectedItem
-                            ?? CylinderDataGridImperial.SelectedItem
+        object? selectedItem = SolidDataGrid.SelectedItem
+                            ?? SolidDataGridImperial.SelectedItem
                             ?? ModulesUnionDataGrid.SelectedItem
                             ?? ModulesDifferenceDataGrid.SelectedItem;
 
@@ -43,7 +41,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // List of columns to exclude from display - Hide Imperial columns for Metric view
         var excludedColumns = new[] { "Id", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN",
-            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN" };
+            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Radius1_MM", "Radius2_MM"  };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -54,13 +52,17 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Dictionary for custom headers to make them more user-friendly (Metric - abbreviated)
         var columnHeaders = new Dictionary<string, string>
         {
-            { "Length_MM", "Len (mm)" },
+            { "Length_MM", "L (mm)" },
             { "Width_MM", "W (mm)" },
-            { "Height_MM", "Ht (mm)" },
-            { "Thickness_MM", "Thk (mm)" },
-            { "XOffset_MM", "Xadj (mm)" },
-            { "YOffset_MM", "Yadj (mm)" },
-            { "ZOffset_MM", "Zadj (mm)" },
+            { "Height_MM", "H (mm)" },
+            { "Thickness_MM", "T (mm)" },
+            { "Radius_MM", "R (mm)" },
+            { "Radius1_MM", "R1 (mm)" },
+            { "Radius2_MM", "R2 (mm)" },
+            { "CylinderHeight_MM", "Cyl H (mm)" },
+            { "XOffset_MM", "X (mm)" },
+            { "YOffset_MM", "Y (mm)" },
+            { "ZOffset_MM", "Z (mm)" },
             { "XRotate", "X°" },
             { "YRotate", "Y°" },
             { "ZRotate", "Z°" },
@@ -79,7 +81,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // List of columns to exclude from display - Hide Metric columns for Imperial view
         var excludedColumns = new[] { "Id", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN",
-            "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM" };
+            "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Radius1_IN", "Radius2_IN" };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -90,13 +92,17 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Dictionary for custom headers to make them more user-friendly (Imperial - abbreviated)
         var columnHeaders = new Dictionary<string, string>
         {
-            { "Length_IN", "Len (in)" },
+            { "Length_IN", "L (in)" },
             { "Width_IN", "W (in)" },
-            { "Height_IN", "Ht (in)" },
-            { "Thickness_IN", "Thk (in)" },
-            { "XOffset_IN", "Xadj (in)" },
-            { "YOffset_IN", "Yadj (in)" },
-            { "ZOffset_IN", "Zadj (in)" },
+            { "Height_IN", "H (in)" },
+            { "Thickness_IN", "T (in)" },
+            { "Radius_IN", "R (in)" },
+            { "Radius1_IN", "R1 (in)" },
+            { "Radius2_IN", "R2 (in)" },
+            { "CylinderHeight_IN", "Cyl H (in)" },
+            { "XOffset_IN", "X (in)" },
+            { "YOffset_IN", "Y (in)" },
+            { "ZOffset_IN", "Z (in)" },
             { "XRotate", "X°" },
             { "YRotate", "Y°" },
             { "ZRotate", "Z°" },
@@ -111,23 +117,28 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void CubeDataGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    private void SolidDataGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         // Handle selection from either Metric or Imperial DataGrid
         var dataGrid = sender as DataGrid;
-        if (dataGrid?.SelectedItem is OuterDimensions selected)
+        if (dataGrid?.SelectedItem is SolidDimensions selected)
         {
             // Populate ViewModel properties
             ViewModel.LengthMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Length_MM : selected.Length_IN;
             ViewModel.WidthMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Width_MM : selected.Width_IN;
             ViewModel.HeightMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Height_MM : selected.Height_IN;
             ViewModel.ThicknessMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Thickness_MM : selected.Thickness_IN;
+            ViewModel.RadiusMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Radius_MM : selected.Radius_IN;
+            ViewModel.Radius1MM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Radius1_MM : selected.Radius1_IN;
+            ViewModel.Radius2MM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Radius2_MM : selected.Radius2_IN;
+            ViewModel.CylinderHeightMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.CylinderHeight_MM : selected.CylinderHeight_IN;
             ViewModel.XOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.XOffset_MM : selected.XOffset_IN;
             ViewModel.YOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.YOffset_MM : selected.YOffset_IN; 
             ViewModel.ZOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.ZOffset_MM : selected.ZOffset_IN;
             ViewModel.XRotate = selected.XRotate;  // Add rotation
             ViewModel.YRotate = selected.YRotate;
             ViewModel.ZRotate = selected.ZRotate;
+            ViewModel.SelectedSolidType = selected.SolidType!;
             ViewModel.SelectedFilament = Enum.Parse<FilamentType>(selected.Material!, ignoreCase: true);
             ViewModel.Name = selected.Name;
             ViewModel.Description = selected.Description ?? string.Empty;
@@ -166,102 +177,6 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
         {
             e.Column.Header = header;
-        }
-    }
-
-    private void DataGrid_AutoGeneratingColumnCylinder(object? sender, DataGridAutoGeneratingColumnEventArgs e)
-    {
-        // List of columns to exclude from display - Hide Imperial columns for Metric view
-        var excludedColumns = new[] { "Id", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod",
-            "Radius_IN", "Radius1_IN", "Radius2_IN", "Height_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN" };
-
-        if (excludedColumns.Contains(e.PropertyName))
-        {
-            e.Cancel = true;
-            return;
-        }
-
-        // Dictionary for custom headers to make them more user-friendly (Metric - abbreviated)
-        var columnHeaders = new Dictionary<string, string>
-        {
-            { "Radius_MM", "R (mm)" },
-            { "Radius1_MM", "R1 (mm)" },
-            { "Radius2_MM", "R2 (mm)" },
-            { "Height_MM", "Ht (mm)" },
-            { "XOffset_MM", "Xadj (mm)" },
-            { "YOffset_MM", "Yadj (mm)" },
-            { "ZOffset_MM", "Zadj (mm)" },
-            { "XRotate", "X°" },
-            { "YRotate", "Y°" },
-            { "ZRotate", "Z°" },
-            { "OperationType", "Action" },
-            { "Description", "Description" },
-            { "Name", "Object Name" },
-        };
-
-        if (columnHeaders.TryGetValue(e.PropertyName, out var header))
-        {
-            e.Column.Header = header;
-        }
-    }
-
-    private void DataGrid_AutoGeneratingColumnCylinderImperial(object? sender, DataGridAutoGeneratingColumnEventArgs e)
-    {
-        // List of columns to exclude from display - Hide Metric columns for Imperial view
-        var excludedColumns = new[] { "Id", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod",
-            "Radius_MM", "Radius1_MM", "Radius2_MM", "Height_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM" };
-
-        if (excludedColumns.Contains(e.PropertyName))
-        {
-            e.Cancel = true;
-            return;
-        }
-
-        // Dictionary for custom headers to make them more user-friendly (Imperial - abbreviated)
-        var columnHeaders = new Dictionary<string, string>
-        {
-            { "Radius_IN", "R (in)" },
-            { "Radius1_IN", "R1 (in)" },
-            { "Radius2_IN", "R2 (in)" },
-            { "Height_IN", "Ht (in)" },
-            { "XOffset_IN", "Xadj (in)" },
-            { "YOffset_IN", "Yadj (in)" },
-            { "ZOffset_IN", "Zadj (in)" },
-            { "XRotate", "X°" },
-            { "YRotate", "Y°" },
-            { "ZRotate", "Z°" },
-            { "OperationType", "Action" },
-            { "Description", "Description" },
-            { "Name", "Object Name" },
-        };
-
-        if (columnHeaders.TryGetValue(e.PropertyName, out var header))
-        {
-            e.Column.Header = header;
-        }
-    }
-
-    private void CylinderDataGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        // Handle selection from either Metric or Imperial DataGrid
-        var dataGrid = sender as DataGrid;
-        if (dataGrid?.SelectedItem is CylinderDimensions selected)
-        {
-            // Populate ViewModel properties
-            ViewModel.RadiusMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Radius_MM : selected.Radius_IN;
-            ViewModel.Radius1MM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Radius1_MM : selected.Radius1_IN;
-            ViewModel.Radius2MM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Radius2_MM : selected.Radius2_IN;
-            ViewModel.CylinderHeightMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Height_MM : selected.Height_IN;
-            ViewModel.XOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.XOffset_MM : selected.XOffset_IN;
-            ViewModel.YOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.YOffset_MM : selected.YOffset_IN;
-            ViewModel.ZOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.ZOffset_MM : selected.ZOffset_IN;
-            ViewModel.XRotate = selected.XRotate;  // Add rotation
-            ViewModel.YRotate = selected.YRotate;
-            ViewModel.ZRotate = selected.ZRotate;
-            ViewModel.SelectedFilament = Enum.Parse<FilamentType>(selected.Material!, ignoreCase: true);
-            ViewModel.Name = selected.Name;
-            ViewModel.Description = selected.Description ?? string.Empty;
-            ViewModel.SelectedOperationType = Enum.Parse<OperationType>(selected.OperationType, ignoreCase: true);
         }
     }
 

@@ -13,7 +13,7 @@ namespace NetScad.Designer.Repositories
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? Material { get; set; }
-        public string OperationType { get; set; } = Core.Primitives.OperationType.Add.ToString(); // Add or Subtract
+        public string OperationType { get; set; } = Core.Primitives.OperationType.Union.ToString(); // Add or Subtract
         public const int OpenSCAD_DecimalPlaces = 6; // High precision for 3D printing
         public double Radius_MM { get; set; } // Millimeters (default)
         public double Radius1_MM { get; set; } = 0; // Optional radius1 for cone
