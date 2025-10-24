@@ -19,6 +19,15 @@ namespace NetScad.UI.Converters
             return "mm";
         }
 
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is string str)
+            {
+                return str.Contains("in") || str.Contains("inches")
+                    ? UnitSystem.Imperial
+                    : UnitSystem.Metric;
+            }
+            return UnitSystem.Metric; // default fallback
+        }
     }
 }
