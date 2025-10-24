@@ -866,6 +866,10 @@ namespace NetScad.UI.ViewModels
             }
         }
 
+        public async Task CreateIntersectionModuleAsync()
+        {
+        }
+
         private static string ExtractModuleCallMethod(string moduleDefinition)
         {
             if (string.IsNullOrWhiteSpace(moduleDefinition))

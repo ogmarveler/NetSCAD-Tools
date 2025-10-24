@@ -133,7 +133,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.Radius2MM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.Radius2_MM : selected.Radius2_IN;
             ViewModel.CylinderHeightMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.CylinderHeight_MM : selected.CylinderHeight_IN;
             ViewModel.XOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.XOffset_MM : selected.XOffset_IN;
-            ViewModel.YOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.YOffset_MM : selected.YOffset_IN; 
+            ViewModel.YOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.YOffset_MM : selected.YOffset_IN;
             ViewModel.ZOffsetMM = ViewModel.SelectedUnitValue == UnitSystem.Metric ? selected.ZOffset_MM : selected.ZOffset_IN;
             ViewModel.XRotate = selected.XRotate;  // Add rotation
             ViewModel.YRotate = selected.YRotate;
@@ -152,7 +152,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         var excludedColumns = new[] { "Id", "CreatedAt", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "OSCADMethod", "ObjectDescription", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XRotate", "YRotate", "ZRotate" };
 
         if (excludedColumns.Contains(e.PropertyName))
-        {   
+        {
             e.Cancel = true;
             return;
         }
@@ -189,6 +189,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private async void CreateUnionButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateUnionModuleAsync();
 
     private async void CreateDifferenceButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateDifferenceModuleAsync();
+    private async void CreateIntersectionButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateIntersectionModuleAsync();
 
     private async void ObjectToScadFilesButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ObjectToScadFilesAsync();
 

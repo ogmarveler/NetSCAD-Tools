@@ -114,17 +114,23 @@
     <Grid Background="{DynamicResource CardBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <!--  Custom Axis Grid  -->
-            <RowDefinition Height="Auto" />
-            <!--  Object Design Grid  -->
+            <!--  Axis Controls Grid  -->
             <RowDefinition Height="*" />
-            <!--  Object Details  -->
+            <!--  Main Input StackPanel and DataGrids  -->
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="860" />
+            <!--  Main Input StackPanel  -->
+            <ColumnDefinition Width="*" MinWidth="300" />
+            <!--  Solid DataGrids  -->
+        </Grid.ColumnDefinitions>
 
         <!--  Axis Controls Grid  -->
         <Grid
             x:Name="AxisControlsGrid"
             Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
             MinWidth="860"
             Margin="0,10,0,10"
             ColumnSpacing="15"
@@ -235,7 +241,7 @@
             <StackPanel
                 Grid.Row="0"
                 Grid.Column="2"
-                Width="220"
+                Width="222"
                 Classes="inputGroup">
                 <TextBlock
                     Classes="standardLabel"
@@ -395,7 +401,12 @@
         </Grid>
 
         <!--  Main Input StackPanel  -->
-        <StackPanel Grid.Row="1" Spacing="10">
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="0"
+            MinWidth="860"
+            VerticalAlignment="Top"
+            Spacing="10">
             <Grid
                 x:Name="MainInputGrid"
                 MinWidth="860"
@@ -403,45 +414,29 @@
                 RowSpacing="30">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <!--  Row 0: Title  -->
                     <RowDefinition Height="Auto" />
-                    <!--  Row 1: Object Name/Description/Shape  -->
                     <RowDefinition Height="Auto" />
-                    <!--  Row 2: Object Name/Description/Shape  -->
                     <RowDefinition Height="Auto" />
-                    <!--  Row 3: Dimensions  -->
                     <RowDefinition Height="Auto" />
-                    <!--  Row 4: Rotations  -->
-                    <RowDefinition Height="Auto" />
-                    <!--  Row 5: Action Buttons  -->
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" MinWidth="140" />
-                    <!--  Column 0  -->
                     <ColumnDefinition Width="Auto" MaxWidth="230" />
-                    <!--  Column 1  -->
                     <ColumnDefinition Width="Auto" MaxWidth="120" />
-                    <!--  Column 2  -->
                     <ColumnDefinition Width="Auto" MaxWidth="120" />
-                    <!--  Column 3  -->
                     <ColumnDefinition Width="Auto" MaxWidth="120" />
-                    <!--  Column 4  -->
                     <ColumnDefinition Width="Auto" MinWidth="120" />
-                    <!--  Column 5  -->
                     <ColumnDefinition Width="Auto" MaxWidth="100" />
-                    <!--  Column 6  -->
                     <ColumnDefinition Width="Auto" MinWidth="80" />
-                    <!--  Column 7  -->
-                    <ColumnDefinition Width="*" MinWidth="300" />
-                    <!--  Column 8 - DataGrids  -->
                 </Grid.ColumnDefinitions>
 
-                <!--  Row 0, Column 0: Custom Axis Title  -->
+                <!--  Row 0, Column 0: Object Design Title  -->
                 <StackPanel
                     Grid.Row="0"
                     Grid.Column="0"
-                    Width="130"
+                    Width="140"
+                    Margin="10,0,0,0"
                     Classes="inputGroup">
                     <TextBlock Classes="standardLabel" Text="" />
                     <TextBlock
@@ -616,7 +611,7 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                         <ToolTip.Tip>
-                            <TextBlock Text="Select the shape type for your object" />
+                            <TextBlock Text="Select the solid type for your object" />
                         </ToolTip.Tip>
                     </ComboBox>
                 </StackPanel>
@@ -626,7 +621,7 @@
                     Grid.Row="1"
                     Grid.Column="2"
                     Grid.ColumnSpan="2"
-                    Width="255"
+                    Width="240"
                     Classes="inputGroup">
                     <TextBlock Classes="standardLabel" Text="Solid Description" />
                     <TextBox
@@ -701,17 +696,17 @@
                     </Button>
                 </StackPanel>
 
+                <!--  Server Rack Width / Screw Size  -->
                 <StackPanel
                     Grid.Row="2"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
+                    Width="370"
                     Margin="10,10,0,0"
                     HorizontalAlignment="Left"
                     Orientation="Horizontal"
                     Spacing="15">
-
-                    <!--  Server Rack Width / Screw Size  -->
-                    <StackPanel MinWidth="180" Classes="inputGroup">
+                    <StackPanel Width="180" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
                                 <MultiBinding Converter="{x:Static BoolConverters.And}">
@@ -763,9 +758,7 @@
                             </ToolTip.Tip>
                         </ComboBox>
                     </StackPanel>
-
-                    <!--  Server Rack Height / Screw Property  -->
-                    <StackPanel MinWidth="190" Classes="inputGroup">
+                    <StackPanel Width="190" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
                                 <MultiBinding Converter="{x:Static BoolConverters.And}">
@@ -823,16 +816,15 @@
                     </StackPanel>
                 </StackPanel>
 
+                <!--  Dimensions  -->
                 <StackPanel
                     Grid.Row="2"
                     Grid.Column="2"
-                    Grid.ColumnSpan="5"
+                    Grid.ColumnSpan="4"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Left"
                     Orientation="Horizontal"
                     Spacing="15">
-
-                    <!--  Length/Radius  -->
                     <StackPanel Width="86" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -875,8 +867,6 @@
                             </ToolTip.Tip>
                         </TextBox>
                     </StackPanel>
-
-                    <!--  Width/Radius1  -->
                     <StackPanel Width="86" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -919,8 +909,6 @@
                             </ToolTip.Tip>
                         </TextBox>
                     </StackPanel>
-
-                    <!--  Height/Radius2  -->
                     <StackPanel Width="86" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -963,8 +951,6 @@
                             </ToolTip.Tip>
                         </TextBox>
                     </StackPanel>
-
-                    <!--  Thickness/Cylinder Height  -->
                     <StackPanel Width="86" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -1045,6 +1031,7 @@
                     </Button>
                 </StackPanel>
 
+                <!--  Union, Difference, Intersection Buttons  -->
                 <StackPanel
                     Grid.Row="3"
                     Grid.Column="0"
@@ -1054,9 +1041,8 @@
                     HorizontalAlignment="Left"
                     Orientation="Horizontal"
                     Spacing="15">
-                    <!--  To Union Button  -->
                     <StackPanel
-                        MinWidth="115"
+                        Width="115"
                         Classes="inputGroup"
                         IsVisible="{Binding AxisStored}">
                         <TextBlock Classes="standardLabel" Text="" />
@@ -1074,10 +1060,8 @@
                             </ToolTip.Tip>
                         </Button>
                     </StackPanel>
-
-                    <!--  To Difference Button  -->
                     <StackPanel
-                        MinWidth="120"
+                        Width="120"
                         HorizontalAlignment="Left"
                         Classes="inputGroup"
                         IsVisible="{Binding AxisStored}">
@@ -1096,10 +1080,8 @@
                             </ToolTip.Tip>
                         </Button>
                     </StackPanel>
-
-                    <!--  To Intersection Button  -->
                     <StackPanel
-                        MinWidth="120"
+                        Width="120"
                         HorizontalAlignment="Left"
                         Classes="inputGroup"
                         IsVisible="{Binding AxisStored}">
@@ -1107,29 +1089,28 @@
                         <Button
                             Background="{DynamicResource GoldForeground}"
                             BorderBrush="{DynamicResource GoldBackground}"
-                            Click="CreateDifferenceButton_Click"
+                            Click="CreateIntersectionButton_Click"
                             Content="Intersection"
                             FontWeight="SemiBold"
                             Foreground="{DynamicResource GoldBackground}"
                             IsEnabled="True"
                             IsVisible="{Binding DifferenceButton}">
                             <ToolTip.Tip>
-                                <TextBlock Text="This action will create a difference of the selected objects in the database for use in OpenSCAD." />
+                                <TextBlock Text="This action will create an intersection of the selected objects in the database for use in OpenSCAD." />
                             </ToolTip.Tip>
                         </Button>
                     </StackPanel>
                 </StackPanel>
 
+                <!--  Offsets and Rotations  -->
                 <StackPanel
                     Grid.Row="3"
                     Grid.Column="2"
-                    Grid.ColumnSpan="5"
+                    Grid.ColumnSpan="4"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Left"
                     Orientation="Horizontal"
                     Spacing="15">
-
-                    <!--  X Offset  -->
                     <StackPanel Width="86" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -1158,8 +1139,6 @@
                             </ToolTip.Tip>
                         </TextBox>
                     </StackPanel>
-
-                    <!--  Y Offset  -->
                     <StackPanel Width="86" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -1188,8 +1167,6 @@
                             </ToolTip.Tip>
                         </TextBox>
                     </StackPanel>
-
-                    <!--  Z Offset  -->
                     <StackPanel Width="86" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -1218,8 +1195,6 @@
                             </ToolTip.Tip>
                         </TextBox>
                     </StackPanel>
-
-                    <!--  Rotate X  -->
                     <StackPanel Width="64" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -1248,8 +1223,6 @@
                             </ToolTip.Tip>
                         </TextBox>
                     </StackPanel>
-
-                    <!--  Rotate Y  -->
                     <StackPanel Width="64" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -1278,8 +1251,6 @@
                             </ToolTip.Tip>
                         </TextBox>
                     </StackPanel>
-
-                    <!--  Rotate Z  -->
                     <StackPanel Width="64" Classes="inputGroup">
                         <TextBlock Classes="standardLabel">
                             <TextBlock.IsVisible>
@@ -1310,7 +1281,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Row 4: Separator  -->
+                <!--  Separator  -->
                 <Separator
                     Grid.Row="4"
                     Grid.Column="0"
@@ -1320,122 +1291,118 @@
                     HorizontalAlignment="Stretch"
                     Background="{DynamicResource CardForeground}"
                     Opacity="0.25" />
-
-                <!--  Module DataGrids Section at Bottom  -->
-                <ScrollViewer
-                    Grid.Row="0"
-                    Grid.RowSpan="9"
-                    Grid.Column="7"
-                    Grid.ColumnSpan="2"
-                    Margin="10,0,10,20"
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch"
-                    VerticalScrollBarVisibility="Auto">
-                    <StackPanel Spacing="15">
-                        <StackPanel Orientation="Vertical" Spacing="20">
-                            <DataGrid
-                                x:Name="SolidDataGrid"
-                                VerticalAlignment="Top"
-                                AutoGenerateColumns="True"
-                                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnObject"
-                                BorderBrush="{DynamicResource PurpleForeground}"
-                                BorderThickness="2"
-                                CanUserReorderColumns="True"
-                                CanUserResizeColumns="True"
-                                ColumnWidth="Auto"
-                                CornerRadius="6"
-                                GridLinesVisibility="All"
-                                IsReadOnly="True"
-                                ItemsSource="{Binding SolidDimensions}"
-                                SelectionChanged="SolidDataGrid_SelectionChanged"
-                                SelectionMode="Single">
-                                <DataGrid.IsVisible>
-                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                        <Binding
-                                            Converter="{StaticResource CollectionCountToBooleanConverter}"
-                                            ConverterParameter="1"
-                                            Path="SolidDimensions" />
-                                        <Binding Path="IsMetric" />
-                                    </MultiBinding>
-                                </DataGrid.IsVisible>
-                            </DataGrid>
-                            <DataGrid
-                                x:Name="SolidDataGridImperial"
-                                VerticalAlignment="Top"
-                                AutoGenerateColumns="True"
-                                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnObjectImperial"
-                                BorderBrush="{DynamicResource PurpleForeground}"
-                                BorderThickness="2"
-                                CanUserReorderColumns="True"
-                                CanUserResizeColumns="True"
-                                ColumnWidth="Auto"
-                                CornerRadius="6"
-                                GridLinesVisibility="All"
-                                IsReadOnly="True"
-                                ItemsSource="{Binding SolidDimensions}"
-                                SelectionChanged="SolidDataGrid_SelectionChanged"
-                                SelectionMode="Single">
-                                <DataGrid.IsVisible>
-                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                        <Binding
-                                            Converter="{StaticResource CollectionCountToBooleanConverter}"
-                                            ConverterParameter="1"
-                                            Path="SolidDimensions" />
-                                        <Binding Path="IsImperial" />
-                                    </MultiBinding>
-                                </DataGrid.IsVisible>
-                            </DataGrid>
-
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-
             </Grid>
 
+            <!--  Module DataGrids Section  -->
+            <ScrollViewer
+                Margin="10,0,0,20"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="20">
+                    <DataGrid
+                        x:Name="ModulesUnionDataGrid"
+                        MaxWidth="860"
+                        VerticalAlignment="Top"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
+                        BorderBrush="{DynamicResource BlueForeground}"
+                        BorderThickness="2"
+                        CanUserReorderColumns="True"
+                        CanUserResizeColumns="True"
+                        ColumnWidth="Auto"
+                        CornerRadius="6"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        IsVisible="{Binding ModuleDimensionsUnions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+                        ItemsSource="{Binding ModuleDimensionsUnions}"
+                        SelectionMode="Single" />
+                    <DataGrid
+                        x:Name="ModulesDifferenceDataGrid"
+                        MaxWidth="860"
+                        VerticalAlignment="Top"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
+                        BorderBrush="{DynamicResource TealForeground}"
+                        BorderThickness="2"
+                        CanUserReorderColumns="True"
+                        CanUserResizeColumns="True"
+                        ColumnWidth="Auto"
+                        CornerRadius="6"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        IsVisible="{Binding ModuleDimensionsDifferences, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+                        ItemsSource="{Binding ModuleDimensionsDifferences}"
+                        SelectionMode="Single" />
+                </StackPanel>
+            </ScrollViewer>
         </StackPanel>
-        <!--  DataGrids in Column 8  -->
+
+        <!--  Solid DataGrids  -->
         <ScrollViewer
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="6"
-            HorizontalAlignment="Left"
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="-70,0,15,20"
             VerticalAlignment="Top"
             VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="10,0,10,20" Spacing="20">
-                <DataGrid
-                    x:Name="ModulesUnionDataGrid"
-                    MaxWidth="860"
-                    VerticalAlignment="Stretch"
-                    AutoGenerateColumns="True"
-                    AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
-                    BorderBrush="{DynamicResource BlueForeground}"
-                    BorderThickness="2"
-                    CanUserReorderColumns="True"
-                    CanUserResizeColumns="True"
-                    ColumnWidth="Auto"
-                    CornerRadius="6"
-                    GridLinesVisibility="All"
-                    IsReadOnly="True"
-                    IsVisible="{Binding ModuleDimensionsUnions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
-                    ItemsSource="{Binding ModuleDimensionsUnions}"
-                    SelectionMode="Single" />
-                <DataGrid
-                    x:Name="ModulesDifferenceDataGrid"
-                    MaxWidth="860"
-                    VerticalAlignment="Stretch"
-                    AutoGenerateColumns="True"
-                    AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
-                    BorderBrush="{DynamicResource TealForeground}"
-                    BorderThickness="2"
-                    CanUserReorderColumns="True"
-                    CanUserResizeColumns="True"
-                    ColumnWidth="Auto"
-                    CornerRadius="6"
-                    GridLinesVisibility="All"
-                    IsReadOnly="True"
-                    IsVisible="{Binding ModuleDimensionsDifferences, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
-                    ItemsSource="{Binding ModuleDimensionsDifferences}"
-                    SelectionMode="Single" />
+            <StackPanel Spacing="15">
+                <StackPanel Orientation="Vertical" Spacing="20">
+                    <DataGrid
+                        x:Name="SolidDataGrid"
+                        VerticalAlignment="Top"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnObject"
+                        BorderBrush="{DynamicResource PurpleForeground}"
+                        BorderThickness="2"
+                        CanUserReorderColumns="True"
+                        CanUserResizeColumns="True"
+                        ColumnWidth="Auto"
+                        CornerRadius="6"
+                        FontSize="10"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding SolidDimensions}"
+                        SelectionChanged="SolidDataGrid_SelectionChanged"
+                        SelectionMode="Single">
+                        <DataGrid.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding
+                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                    ConverterParameter="1"
+                                    Path="SolidDimensions" />
+                                <Binding Path="IsMetric" />
+                            </MultiBinding>
+                        </DataGrid.IsVisible>
+                    </DataGrid>
+                    <DataGrid
+                        x:Name="SolidDataGridImperial"
+                        VerticalAlignment="Top"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnObjectImperial"
+                        BorderBrush="{DynamicResource PurpleForeground}"
+                        BorderThickness="2"
+                        CanUserReorderColumns="True"
+                        CanUserResizeColumns="True"
+                        ColumnWidth="Auto"
+                        CornerRadius="6"
+                        FontSize="10"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding SolidDimensions}"
+                        SelectionChanged="SolidDataGrid_SelectionChanged"
+                        SelectionMode="Single">
+                        <DataGrid.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding
+                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                    ConverterParameter="1"
+                                    Path="SolidDimensions" />
+                                <Binding Path="IsImperial" />
+                            </MultiBinding>
+                        </DataGrid.IsVisible>
+                    </DataGrid>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>
