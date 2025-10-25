@@ -29,7 +29,8 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         object? selectedItem = SolidDataGrid.SelectedItem
                             ?? SolidDataGridImperial.SelectedItem
                             ?? ModulesUnionDataGrid.SelectedItem
-                            ?? ModulesDifferenceDataGrid.SelectedItem;
+                            ?? ModulesDifferenceDataGrid.SelectedItem
+                            ?? ModulesIntersectionsDataGrid.SelectedItem;
 
         if (selectedItem != null)
         {

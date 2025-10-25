@@ -33,6 +33,7 @@ namespace NetScad.UI.ViewModels
         private ObservableCollection<ModuleDimensions> _moduleDimensions;
         private ObservableCollection<ModuleDimensions> _moduleDimensionsDifferences;
         private ObservableCollection<ModuleDimensions> _moduleDimensionsUnions;
+        private ObservableCollection<ModuleDimensions> _moduleDimensionsIntersections;
         private AxisDimensions? _axisDimensions = new();
         private List<string>? _axesList = [];
         private SqliteConnection? _dbConnection;
@@ -66,6 +67,7 @@ namespace NetScad.UI.ViewModels
         private OperationType _selectedOperationType = OperationType.Union;
         private bool _unionButton;
         private bool _differenceButton;
+        private bool _intersectionButton;
         private bool _saveFileButton;
         private double _radiusMM = 0;
         private double _radius1MM = 0;
@@ -98,6 +100,7 @@ namespace NetScad.UI.ViewModels
         private bool _isFileOpen = false;
         private string _originalAxisCall = string.Empty;
 
+
         [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>")]
         public ScadObjectViewModel()
         {
@@ -105,11 +108,13 @@ namespace NetScad.UI.ViewModels
             ModuleDimensions = [];
             ModuleDimensionsUnions = [];
             ModuleDimensionsDifferences = [];
+            ModuleDimensionsIntersections = [];
             _solidDimensions = [];
             _moduleDimensions = [];
             _axesModulesList = [];
             _moduleDimensionsUnions = [];
             _moduleDimensionsDifferences = [];
+            _moduleDimensionsIntersections = [];
             DbConnection = App.Host!.Services.GetRequiredService<SqliteConnection>(); // Get the DbConnection from the DI container
             ClearObjectAsync().Wait();
             GetAxesList().Wait();
@@ -199,7 +204,6 @@ namespace NetScad.UI.ViewModels
             IsCylinderSelected = false;
             ScrewSizes = _screwSizes;
             ServerRackSizes = _serverRackSizes;
-            //await GetAxesList(); // Refresh axes list when unit changes
             await GetDimensionsPartAsync(); // Refresh the DataGrid
         }
 
@@ -475,6 +479,11 @@ namespace NetScad.UI.ViewModels
                             YOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
                             ZOffset_MM += -oDim.Round_h_MM + oDim.Thickness_MM;
                             break;
+                        case OperationType.Intersection:
+                            XOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
+                            YOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
+                            ZOffset_MM += -oDim.Round_h_MM + oDim.Thickness_MM;
+                            break;
                     }
                 }
                 else if (IsCubeSelected)  // For regular cubes, if thickness has been added, then factor this into offsets
@@ -486,6 +495,11 @@ namespace NetScad.UI.ViewModels
                             YOffset_MM += oDim.Thickness_MM;
                             ZOffset_MM += oDim.Thickness_MM;
                             break;
+                        case OperationType.Intersection:
+                            XOffset_MM += oDim.Thickness_MM;
+                            YOffset_MM += oDim.Thickness_MM;
+                            ZOffset_MM += oDim.Thickness_MM;
+                            break;                    
                     }
                 }
             }
@@ -553,6 +567,7 @@ namespace NetScad.UI.ViewModels
 
             var objUDim = ModuleDimensionsUnions.Where(x => x.SolidType == "Object");
             var objDDim = ModuleDimensionsDifferences.Where(x => x.SolidType == "Object");
+            var objIDim = ModuleDimensionsIntersections.Where(x => x.SolidType == "Object");
             fileName = $"{Name.Replace(" ", "_").Trim().ToLower()}.scad"; /*_{Description.Replace(" ", "_").Trim().ToLower()}_cube*/
             var moduleIncludeMethod = $"include <{fileName}>;";
             // Update ModuleDimensions OSCADMethod in DB
@@ -603,6 +618,15 @@ namespace NetScad.UI.ViewModels
                     sbpart.AppendLine($"// {module.Name}");
                 }
             }
+            // If no difference functions found, then call any unions as they're parent objects
+            else if (objIDim.Any())
+            {
+                foreach (ModuleDimensions module in objIDim)
+                {
+                    sbpart.AppendLine($"// Calling method to use in your object.scad file");
+                    sbpart.AppendLine($"// {module.Name}");
+                }
+            }
 
             // Write to part file with name of object
             await Output.WriteToSCAD(content: sbpart.ToString(), filePath: Path.Combine(_objectFilePath, "Solids", fileName), overWrite: true, cancellationToken: new CancellationToken());
@@ -647,7 +671,6 @@ namespace NetScad.UI.ViewModels
         {
             // Get any additional updates to parts
             await PartsToScadFilesAsync();
-            //await CreateAxisAsync(); // Create or get AxisDimensions and return its Id
 
             // Put Scad object file together
             var sb = new StringBuilder();
@@ -686,6 +709,15 @@ namespace NetScad.UI.ViewModels
             else if (ModuleDimensionsUnions.Any())
             {
                 foreach (ModuleDimensions module in ModuleDimensionsUnions)
+                {
+                    sb.Append($"        "); // Formatting
+                    sb.AppendLine(module.Name);
+                }
+            }
+            // If no difference functions found, then call any intersections as they're parent objects
+            else if (ModuleDimensionsIntersections.Any())
+            {
+                foreach (ModuleDimensions module in ModuleDimensionsIntersections)
                 {
                     sb.Append($"        "); // Formatting
                     sb.AppendLine(module.Name);
@@ -733,9 +765,6 @@ namespace NetScad.UI.ViewModels
             XOffsetMM = Math.Round(MillimeterToInches(_xOffsetMM), decimalPlaces);
             YOffsetMM = Math.Round(MillimeterToInches(_yOffsetMM), decimalPlaces);
             ZOffsetMM = Math.Round(MillimeterToInches(_zOffsetMM), decimalPlaces);
-            //AxisXPositionMM = Math.Round(MillimeterToInches(_axisXPositionMM), decimalPlaces);
-            //AxisYPositionMM = Math.Round(MillimeterToInches(_axisYPositionMM), decimalPlaces);
-            //AxisZPositionMM = Math.Round(MillimeterToInches(_axisZPositionMM), decimalPlaces);
             UnitHasChanged = false;
         }
 
@@ -753,9 +782,6 @@ namespace NetScad.UI.ViewModels
             XOffsetMM = Math.Round(InchesToMillimeter(_xOffsetMM), decimalPlaces);
             YOffsetMM = Math.Round(InchesToMillimeter(_yOffsetMM), decimalPlaces);
             ZOffsetMM = Math.Round(InchesToMillimeter(_zOffsetMM), decimalPlaces);
-            //AxisXPositionMM = Math.Round(InchesToMillimeter(_axisXPositionMM), decimalPlaces);
-            //AxisYPositionMM = Math.Round(InchesToMillimeter(_axisYPositionMM), decimalPlaces);
-            //AxisZPositionMM = Math.Round(InchesToMillimeter(_axisZPositionMM), decimalPlaces);
             UnitHasChanged = false;
         }
 
@@ -800,15 +826,9 @@ namespace NetScad.UI.ViewModels
         public async Task CreateUnionModuleAsync()
         {
             // Get all objects marked as "Union"
-            var cylinders = SolidDimensions.Where(o => o.OperationType == "Union").ToList();
-            var cubes = SolidDimensions.Where(o => o.OperationType == "Union").ToList();
+            var objects = SolidDimensions.Where(o => o.OperationType == "Union").ToList();
+            var addMethods = objects.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
 
-            var addMethods = cubes.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
-            var cylinderMethods = cylinders.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
-            addMethods.AddRange(cylinderMethods);  // Add cylinder add methods
-
-            //if (addMethods.Any())
-            //{
             var solidType = "Object";
             var unionModule = new ModuleDimensions
             {
@@ -823,29 +843,21 @@ namespace NetScad.UI.ViewModels
             unionModule.Name = ExtractModuleCallMethod(unionModule.OSCADMethod).ToLower();
             await unionModule.UpsertAsync(DbConnection!);
             await PartsToScadFilesAsync();  // Only update parts file
-            //}
         }
 
         public async Task CreateDifferenceModuleAsync()
         {
             await CreateUnionModuleAsync(); // Update Union modules since it is used in difference function
             // Get all objects marked as "Difference"
-            var cylinders = SolidDimensions.Where(o => o.OperationType == "Difference").ToList();
-            var cubes = SolidDimensions.Where(o => o.OperationType == "Difference").ToList();
+            var objects = SolidDimensions.Where(o => o.OperationType == "Difference").ToList();
             ModuleDimensions? baseObj;
             baseObj = ModuleDimensions.FirstOrDefault(o => o.ModuleType == "Union" && o.ObjectName == Name);
 
             if (baseObj != null)
             {
-                // Transform module definition to call method
-                // "module abc_name() { ... }" -> "abc_name();"
                 var baseCallMethod = ExtractModuleCallMethod(baseObj.OSCADMethod).ToLower();
-                var cylinderSubtractMethods = cylinders.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
-                var subtractMethods = cubes.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
-                subtractMethods.AddRange(cylinderSubtractMethods); // Add cylinder subtract methods
+                var subtractMethods = objects.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
 
-                //if (subtractMethods.Any())  // If there are anything subtracts to build the difference function
-                //{
                 var solidType = "Object";
                 var differenceModule = new ModuleDimensions
                 {
@@ -862,12 +874,39 @@ namespace NetScad.UI.ViewModels
 
                 // Refresh ModuleDimensions DataGrid
                 await PartsToScadFilesAsync();  // Only update parts file
-                //}
             }
         }
 
         public async Task CreateIntersectionModuleAsync()
         {
+            await CreateUnionModuleAsync(); // Update Union modules since it is used in intersection function
+            // Get all objects marked as "Intersection"
+            var objects = SolidDimensions.Where(o => o.OperationType == "Intersection").ToList();
+            ModuleDimensions? baseObj;
+            baseObj = ModuleDimensions.FirstOrDefault(o => o.ModuleType == "Union" && o.ObjectName == Name);
+
+            if (baseObj != null)
+            {
+                var baseCallMethod = ExtractModuleCallMethod(baseObj.OSCADMethod).ToLower();
+                var intersectMethods = objects.Select(o => ExtractModuleCallMethod(o.OSCADMethod)).ToList();
+
+                var solidType = "Object";
+                var intersectionModule = new ModuleDimensions
+                {
+                    ModuleType = "Intersection",
+                    ObjectName = Name,
+                    ObjectDescription = Description,
+                    SolidType = solidType,
+                    OSCADMethod = ToIntersectionModule(baseCallMethod, intersectMethods, Name, string.Empty, solidType).ToLower(),
+                    CreatedAt = DateTime.UtcNow
+                };
+                // get calling method for intersectionModule
+                intersectionModule.Name = ExtractModuleCallMethod(intersectionModule.OSCADMethod).ToLower();
+                await intersectionModule.UpsertAsync(DbConnection!);
+
+                // Refresh ModuleDimensions DataGrid
+                await PartsToScadFilesAsync();  // Only update parts file
+            }
         }
 
         private static string ExtractModuleCallMethod(string moduleDefinition)
@@ -963,8 +1002,10 @@ namespace NetScad.UI.ViewModels
                 if (value)
                 {
                     _isUnionOperation = false;
+                    _isIntersectionOperation = false;
                     _isDifferenceOperation = false;
                     this.RaisePropertyChanged(nameof(IsUnionOperation));
+                    this.RaisePropertyChanged(nameof(IsIntersectionOperation));
                     this.RaisePropertyChanged(nameof(IsDifferenceOperation));
                 }
             }
@@ -979,7 +1020,9 @@ namespace NetScad.UI.ViewModels
                 {
                     _isNoneOperation = false;
                     _isDifferenceOperation = false;
+                    _isIntersectionOperation = false;
                     this.RaisePropertyChanged(nameof(IsNoneOperation));
+                    this.RaisePropertyChanged(nameof(IsIntersectionOperation));
                     this.RaisePropertyChanged(nameof(IsDifferenceOperation));
                 }
             }
@@ -994,8 +1037,27 @@ namespace NetScad.UI.ViewModels
                 {
                     _isNoneOperation = false;
                     _isUnionOperation = false;
+                    _isIntersectionOperation = false;
                     this.RaisePropertyChanged(nameof(IsNoneOperation));
                     this.RaisePropertyChanged(nameof(IsUnionOperation));
+                    this.RaisePropertyChanged(nameof(IsIntersectionOperation));
+                }
+            }
+        }
+        public bool IsIntersectionOperation
+        {
+            get => _isIntersectionOperation;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isIntersectionOperation, value);
+                if (value)
+                {
+                    _isNoneOperation = false;
+                    _isUnionOperation = false;
+                    _isDifferenceOperation = false;
+                    this.RaisePropertyChanged(nameof(IsNoneOperation));
+                    this.RaisePropertyChanged(nameof(IsUnionOperation));
+                    this.RaisePropertyChanged(nameof(IsDifferenceOperation));
                 }
             }
         }
@@ -1006,6 +1068,7 @@ namespace NetScad.UI.ViewModels
             {
                 if (IsUnionOperation) return "Union";
                 if (IsDifferenceOperation) return "Difference";
+                if (IsIntersectionOperation) return "Intersection";
                 return "None";
             }
         }
@@ -1023,6 +1086,7 @@ namespace NetScad.UI.ViewModels
         public bool AxisStored { get => _axisStored; set => this.RaiseAndSetIfChanged(ref _axisStored, value); }
         public bool AppendObject { get => _appendObject; set => this.RaiseAndSetIfChanged(ref _appendObject, value); }
         public bool UnionButton { get => _unionButton; set => this.RaiseAndSetIfChanged(ref _unionButton, value); }
+        public bool IntersectionButton { get => _intersectionButton; set => this.RaiseAndSetIfChanged(ref _intersectionButton, value); }
         public bool DifferenceButton { get => _differenceButton; set => this.RaiseAndSetIfChanged(ref _differenceButton, value); }
         public bool SaveFileButton { get => _saveFileButton; set => this.RaiseAndSetIfChanged(ref _saveFileButton, value); }
         public List<FilamentType> FilamentTypes { get; }
@@ -1031,6 +1095,7 @@ namespace NetScad.UI.ViewModels
         public List<OperationType> OperationTypes { get; }
         public OperationType SelectedOperationType { get => _selectedOperationType; set => this.RaiseAndSetIfChanged(ref _selectedOperationType, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsUnions { get => _moduleDimensionsUnions; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsUnions, value); }
+        public ObservableCollection<ModuleDimensions> ModuleDimensionsIntersections { get => _moduleDimensionsIntersections; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsIntersections, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsDifferences { get => _moduleDimensionsDifferences; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsDifferences, value); }
         public ObservableCollection<SolidDimensions> SolidDimensions { get => _solidDimensions; set => this.RaiseAndSetIfChanged(ref _solidDimensions, value); }
         public SqliteConnection? DbConnection { get => _dbConnection; set => this.RaiseAndSetIfChanged(ref _dbConnection, value); }
@@ -1099,6 +1164,17 @@ namespace NetScad.UI.ViewModels
                                 UnionButton = false;
                                 break;
                         }
+                        // If there is at least one add item in the SolidDimensions table
+                        switch (SolidDimensions.Where(o => o.OperationType == "Intersection").Any() || SolidDimensions.Where(o => o.OperationType == "Intersection").Any())
+                        {
+                            case true:
+                                IntersectionButton = true;
+                                break;
+                            case false:
+                                IntersectionButton = false;
+                                break;
+                        }
+
                         _ = UpdateServerRackDimensionsFromSelection();
                     }
                 }
@@ -1150,6 +1226,16 @@ namespace NetScad.UI.ViewModels
                                 UnionButton = false;
                                 break;
                         }
+                        // If there is at least one add item in the SolidDimensions table
+                        switch (SolidDimensions.Where(o => o.OperationType == "Intersection").Any() || SolidDimensions.Where(o => o.OperationType == "Intersection").Any())
+                        {
+                            case true:
+                                IntersectionButton = true;
+                                break;
+                            case false:
+                                IntersectionButton = false;
+                                break;
+                        }
                         _ = UpdateServerRackDimensionsFromSelection();
                     }
                 }
@@ -1199,6 +1285,16 @@ namespace NetScad.UI.ViewModels
                                 break;
                             case false:
                                 UnionButton = false;
+                                break;
+                        }
+                        // If there is at least one add item in the SolidDimensions table
+                        switch (SolidDimensions.Where(o => o.OperationType == "Intersection").Any() || SolidDimensions.Where(o => o.OperationType == "Intersection").Any())
+                        {
+                            case true:
+                                IntersectionButton = true;
+                                break;
+                            case false:
+                                IntersectionButton = false;
                                 break;
                         }
                     }
@@ -1276,6 +1372,7 @@ namespace NetScad.UI.ViewModels
                 this.RaiseAndSetIfChanged(ref _moduleDimensions, value);
                 ModuleDimensionsUnions = new ObservableCollection<ModuleDimensions>(_moduleDimensions.Where(m => m.ModuleType == "Union"));
                 ModuleDimensionsDifferences = new ObservableCollection<ModuleDimensions>(_moduleDimensions.Where(m => m.ModuleType == "Difference"));
+                ModuleDimensionsIntersections = new ObservableCollection<ModuleDimensions>(_moduleDimensions.Where(m => m.ModuleType == "Intersection"));
             }
         }
         public UnitSystem SelectedUnitValue

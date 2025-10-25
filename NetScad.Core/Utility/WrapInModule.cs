@@ -225,6 +225,61 @@ namespace NetScad.Core.Utility
                 return $"module difference_{sanitizedName}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb} }} }}".ToLower();
         }
 
+        public static string ToIntersectionModule(string baseObject, List<string> intersectObjects, string name, string description, string solidType)
+        {
+            // Sanitize name
+            var sanitizedName = name
+                ?.Trim()
+                .Replace(" ", "_")
+                .Replace("\t", "_")
+                .Replace("\n", "_")
+                .Replace("\r", "_") ?? "unnamed_intersection";
+
+            // Sanitize solidType
+            var sanitizedSolidType = solidType
+                ?.Trim()
+                .Replace(" ", "_")
+                .Replace("\t", "_")
+                .Replace("\n", "_")
+                .Replace("\r", "_") ?? "nonsolid_intersection";
+
+            // Sanitize description
+            var sanitizedDescription = description
+                ?.Trim()
+                .Replace(" ", "_")
+                .Replace("\t", "_")
+                .Replace("\n", "_")
+                .Replace("\r", "_") ?? "nondescription_intersection";
+
+            // Sanitize base object
+            var sanitizedBase = baseObject
+                ?.Trim()
+                .TrimStart('"')
+                .TrimEnd('"')
+                .Replace("\\\"", "\"")
+                .Trim() ?? string.Empty;
+
+            var sb = new StringBuilder();
+            foreach (var obj in intersectObjects)
+            {
+                // Sanitize intersect object
+                var sanitized = obj
+                ?.Trim()
+                .TrimStart('"')
+                .TrimEnd('"')
+                .Replace("\\\"", "\"")
+                .Trim() ?? string.Empty;
+
+                sb.Append($" {sanitized}");
+            }
+
+            // Return the intersection module
+            if (!string.IsNullOrEmpty(description))
+                return $"module intersection_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ intersection() {{ {sanitizedBase} {sb} }} }}".ToLower();
+            else
+                return $"module intersection_{sanitizedName}_{sanitizedSolidType}() {{ intersection() {{ {sanitizedBase} {sb} }} }}".ToLower();
+        }
+
         /// <summary>
         /// Creates a module call string (for invoking the module)
         /// </summary>

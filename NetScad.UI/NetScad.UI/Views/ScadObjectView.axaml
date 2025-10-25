@@ -45,6 +45,11 @@
             <Setter Property="Foreground" Value="{DynamicResource TealBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
+        <Style Selector="DataGrid#ModulesIntersectionsDataGrid DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource GoldForeground}" />
+            <Setter Property="Foreground" Value="{DynamicResource GoldBackground}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
 
         <!--  Default Grid Cell Styling  -->
         <Style Selector="Grid#MainInputGrid > :is(Control)">
@@ -1334,6 +1339,23 @@
                         IsReadOnly="True"
                         IsVisible="{Binding ModuleDimensionsDifferences, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
                         ItemsSource="{Binding ModuleDimensionsDifferences}"
+                        SelectionMode="Single" />
+                    <DataGrid
+                        x:Name="ModulesIntersectionsDataGrid"
+                        MaxWidth="860"
+                        VerticalAlignment="Top"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
+                        BorderBrush="{DynamicResource GoldForeground}"
+                        BorderThickness="2"
+                        CanUserReorderColumns="True"
+                        CanUserResizeColumns="True"
+                        ColumnWidth="Auto"
+                        CornerRadius="6"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        IsVisible="{Binding ModuleDimensionsIntersections, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+                        ItemsSource="{Binding ModuleDimensionsIntersections}"
                         SelectionMode="Single" />
                 </StackPanel>
             </ScrollViewer>

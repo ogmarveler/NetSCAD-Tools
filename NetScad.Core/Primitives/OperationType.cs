@@ -4,6 +4,6 @@
     {
         Union,      // Union/Addition of objects
         Difference,  // Difference/Subtraction of objects
-        Intersect // Intersection/Overlap of objects
+        Intersection // Intersection/Overlap of objects
     }
 }
