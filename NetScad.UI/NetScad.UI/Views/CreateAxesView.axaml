@@ -33,6 +33,11 @@
             <Setter Property="Background" Value="{DynamicResource DarkBlueForeground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
+
+        <!--  Round the internal DataGrid border to match CornerRadius  -->
+        <Style Selector="DataGrid /template/ Border#DataGridBorder">
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
     </UserControl.Styles>
 
     <Border
@@ -654,13 +659,14 @@
                         Margin="7,7,20,12"
                         Padding="5"
                         HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
+                        VerticalAlignment="Center"
                         AutoGenerateColumns="True"
                         AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
                         BorderBrush="{DynamicResource MaroonForeground}"
                         BorderThickness="2"
                         CanUserReorderColumns="True"
                         CanUserResizeColumns="True"
+                        ClipToBounds="True"
                         ClipboardCopyMode="ExcludeHeader"
                         ColumnWidth="Auto"
                         CornerRadius="6"
@@ -676,13 +682,14 @@
                         Margin="7,12,20,25"
                         Padding="5"
                         HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
+                        VerticalAlignment="Center"
                         AutoGenerateColumns="True"
                         AutoGeneratingColumn="DataGrid_AutoGeneratingColumnMetric"
                         BorderBrush="{DynamicResource DarkBlueForeground}"
                         BorderThickness="2"
                         CanUserReorderColumns="True"
                         CanUserResizeColumns="True"
+                        ClipToBounds="True"
                         ClipboardCopyMode="ExcludeHeader"
                         ColumnWidth="Auto"
                         CornerRadius="6"

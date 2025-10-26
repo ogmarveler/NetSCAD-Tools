@@ -137,8 +137,8 @@ namespace NetScad.UI.ViewModels
             await SolidDimensionsExtensions.CreateTable(DbConnection!); // Ensure SolidDimensions table exists
             await ModuleDimensionsExtensions.CreateTable(DbConnection!); // Ensure ModuleDimensions table exists
 
-            // Get records from database
-            var records = await new SolidDimensions().GetByNameWithAxisAsync(DbConnection!, Name); // Gets SolidDimensions with related AxisDimensions
+            // Get records from database with both Axis and Module joins
+            var records = await new SolidDimensions().GetByNameWithAxisAndModuleAsync(DbConnection!, Name); // Gets SolidDimensions with related AxisDimensions AND ModuleDimensions
             var moduleRecords = await new ModuleDimensions().GetByObjectNameAsync(DbConnection!, Name);
 
             // Update ObservableCollections
@@ -717,7 +717,7 @@ namespace NetScad.UI.ViewModels
                     sb.AppendLine(module.Name);
                 }
             }
-            // If no difference functions found, then call any intersections as they're parent objects
+            // If no difference functions found, then call any unions as they're parent objects
             else if (ModuleDimensionsIntersections.Any())
             {
                 foreach (ModuleDimensions module in ModuleDimensionsIntersections)
@@ -737,6 +737,22 @@ namespace NetScad.UI.ViewModels
             // Open the file in whatever the user has designated as the SCAD IDE associated with opening .scad files
             // Handle the case where the file could not be opened
             _isFileOpen = await ScadFileOperations.OpenScadFileAsync(filePath, allowDuplicates: false);
+        }
+
+        // Add this property to combine all module dimensions
+        public ObservableCollection<ModuleDimensions> AllModuleDimensions
+        {
+            get
+            {
+                var combined = new ObservableCollection<ModuleDimensions>();
+                foreach (var item in ModuleDimensionsUnions)
+                    combined.Add(item);
+                foreach (var item in ModuleDimensionsDifferences)
+                    combined.Add(item);
+                foreach (var item in ModuleDimensionsIntersections)
+                    combined.Add(item);
+                return combined;
+            }
         }
 
         /**** Unit Conversion ****/
@@ -844,7 +860,11 @@ namespace NetScad.UI.ViewModels
             };
             // Build call method and store in Db
             unionModule.Name = ExtractModuleCallMethod(unionModule.OSCADMethod).ToLower();
-            await unionModule.UpsertAsync(DbConnection!);
+            var moduleId = await unionModule.UpsertAsync(DbConnection!);
+            await GetDimensionsPartAsync(); // Refresh the datagrids
+            // Update all solid objects with the new ModuleDimensionsId
+            var solidIds = objects.Select(o => o.Id);
+            await DbConnection!.UpdateModuleDimensionsIdAsync(solidIds, moduleId);
             await PartsToScadFilesAsync();  // Only update parts file
         }
 
@@ -872,9 +892,11 @@ namespace NetScad.UI.ViewModels
                 };
                 // get calling method for differenceModule
                 differenceModule.Name = ExtractModuleCallMethod(differenceModule.OSCADMethod).ToLower();
-                await differenceModule.UpsertAsync(DbConnection!);
-
-                // Refresh ModuleDimensions DataGrid
+                var moduleId = await differenceModule.UpsertAsync(DbConnection!);
+                await GetDimensionsPartAsync(); // Refresh the datagrids
+                // Update all solid objects with the new ModuleDimensionsId
+                var solidIds = objects.Select(o => o.Id);
+                await DbConnection!.UpdateModuleDimensionsIdAsync(solidIds, moduleId);
                 await PartsToScadFilesAsync();  // Only update parts file
             }
             else
@@ -905,9 +927,11 @@ namespace NetScad.UI.ViewModels
                 };
                 // get calling method for intersectionModule
                 intersectionModule.Name = ExtractModuleCallMethod(intersectionModule.OSCADMethod).ToLower();
-                await intersectionModule.UpsertAsync(DbConnection!);
-
-                // Refresh ModuleDimensions DataGrid
+                var moduleId = await intersectionModule.UpsertAsync(DbConnection!);
+                await GetDimensionsPartAsync(); // Refresh the datagrids
+                // Update all solid objects with the new ModuleDimensionsId
+                var solidIds = objects.Select(o => o.Id);
+                await DbConnection!.UpdateModuleDimensionsIdAsync(solidIds, moduleId);
                 await PartsToScadFilesAsync();  // Only update parts file
             }
             else
@@ -1389,6 +1413,7 @@ namespace NetScad.UI.ViewModels
                 ModuleDimensionsUnions = new ObservableCollection<ModuleDimensions>(_moduleDimensions.Where(m => m.ModuleType == "Union"));
                 ModuleDimensionsDifferences = new ObservableCollection<ModuleDimensions>(_moduleDimensions.Where(m => m.ModuleType == "Difference"));
                 ModuleDimensionsIntersections = new ObservableCollection<ModuleDimensions>(_moduleDimensions.Where(m => m.ModuleType == "Intersection"));
+                this.RaisePropertyChanged(nameof(AllModuleDimensions)); // Add this line
             }
         }
         public UnitSystem SelectedUnitValue

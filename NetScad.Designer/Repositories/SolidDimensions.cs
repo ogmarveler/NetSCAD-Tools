@@ -10,6 +10,7 @@ namespace NetScad.Designer.Repositories
     {
         public int Id { get; set; }
         public int? AxisDimensionsId { get; set; } // Foreign key to AxisDimensions
+        public int? ModuleDimensionsId { get; set; } // Foreign key to ModuleDimensions
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? Material { get; set; }
@@ -74,10 +75,19 @@ namespace NetScad.Designer.Repositories
             set => _axisOSCADMethod = value?.Replace("use <Axes/axes.scad>; ", "").Replace("Get_", "").Replace("_", " ");
         }
 
+        // Join property for ModuleDimensions name
+        private string? _moduleName;
+        public string? ModuleName
+        {
+            get => _moduleName ?? (ModuleDimensionsId.HasValue ? $"Module: {ModuleDimensionsId.Value}" : "No Module Assigned");
+            set => _moduleName = value;
+        }
+
         public Dictionary<string, object> ToDbDictionary() => new()
         {
             { "Id", Id },
             { "AxisDimensionsId", AxisDimensionsId ?? (object)DBNull.Value },
+            { "ModuleDimensionsId", ModuleDimensionsId ?? (object)DBNull.Value },
             { "Name", Name },
             { "Description", Description ?? (object)DBNull.Value },
             { "Material", Material ?? (object)DBNull.Value },
@@ -126,6 +136,7 @@ namespace NetScad.Designer.Repositories
         [
             (nameof(SolidDimensions.Id), typeof(int), false),
             (nameof(SolidDimensions.AxisDimensionsId), typeof(int), true),
+            (nameof(SolidDimensions.ModuleDimensionsId), typeof(int), true),
             (nameof(SolidDimensions.Name), typeof(string), true),
             (nameof(SolidDimensions.Description), typeof(string), true),
             (nameof(SolidDimensions.Material), typeof(string), true),
@@ -173,9 +184,10 @@ namespace NetScad.Designer.Repositories
                 (p.Name == "Id" ? "PRIMARY KEY AUTOINCREMENT" : p.IsNullable ? "" : "NOT NULL")
             );
 
-            // Add foreign key constraint
-            string foreignKeyConstraint = "FOREIGN KEY (AxisDimensionsId) REFERENCES AxisDimensions(Id) ON DELETE SET NULL";
-            string createTableSql = $"CREATE TABLE IF NOT EXISTS SolidDimensions ({string.Join(", ", columns)}, {foreignKeyConstraint})";
+            // Add foreign key constraints
+            string axisFK = "FOREIGN KEY (AxisDimensionsId) REFERENCES AxisDimensions(Id) ON DELETE SET NULL";
+            string moduleFK = "FOREIGN KEY (ModuleDimensionsId) REFERENCES ModuleDimensions(Id) ON DELETE SET NULL";
+            string createTableSql = $"CREATE TABLE IF NOT EXISTS SolidDimensions ({string.Join(", ", columns)}, {axisFK}, {moduleFK})";
 
             await connection.ExecuteAsync(createTableSql);
         }
@@ -227,6 +239,16 @@ namespace NetScad.Designer.Repositories
             await connection.ExecuteAsync(sql, entity);
         }
 
+        // Update ModuleDimensionsId for multiple SolidDimensions
+        public static async Task UpdateModuleDimensionsIdAsync(this SqliteConnection connection, IEnumerable<int> solidIds, int? moduleDimensionsId)
+        {
+            string sql = "UPDATE SolidDimensions SET ModuleDimensionsId = @ModuleDimensionsId WHERE Id = @Id";
+            foreach (var solidId in solidIds)
+            {
+                await connection.ExecuteAsync(sql, new { ModuleDimensionsId = moduleDimensionsId, Id = solidId });
+            }
+        }
+
         // Delete by Id
         public static async Task DeleteAsync(this SolidDimensions entity, SqliteConnection connection) =>
             await connection.ExecuteAsync("DELETE FROM SolidDimensions WHERE Id = @Id", new { entity.Id });
@@ -256,6 +278,12 @@ namespace NetScad.Designer.Repositories
             await connection.QueryAsync<SolidDimensions>(
                 "SELECT * FROM SolidDimensions WHERE AxisDimensionsId = @AxisDimensionsId ORDER BY CreatedAt DESC",
                 new { AxisDimensionsId = axisDimensionsId });
+
+        // Get by ModuleDimensionsId (Foreign Key)
+        public static async Task<IEnumerable<SolidDimensions>> GetByModuleDimensionsIdAsync(this SolidDimensions _, SqliteConnection connection, int moduleDimensionsId) =>
+            await connection.QueryAsync<SolidDimensions>(
+                "SELECT * FROM SolidDimensions WHERE ModuleDimensionsId = @ModuleDimensionsId ORDER BY CreatedAt DESC",
+                new { ModuleDimensionsId = moduleDimensionsId });
 
         // Get all with no assigned axis
         public static async Task<IEnumerable<SolidDimensions>> GetUnassignedAsync(this SolidDimensions _, SqliteConnection connection) =>
@@ -358,6 +386,35 @@ namespace NetScad.Designer.Repositories
                 },
                 new { Name = name },
                 splitOn: "AxisOSCADMethod"
+            );
+
+            return result;
+        }
+
+        // Get by Name with joined AxisDimensions OSCADMethod AND ModuleDimensions Name
+        public static async Task<IEnumerable<SolidDimensions>> GetByNameWithAxisAndModuleAsync(this SolidDimensions _, SqliteConnection connection, string name)
+        {
+            const string sql = @"
+                SELECT 
+                    sd.*,
+                    ad.OSCADMethod as AxisOSCADMethod,
+                    md.Name as ModuleName
+                FROM SolidDimensions sd
+                LEFT JOIN AxisDimensions ad ON sd.AxisDimensionsId = ad.Id
+                LEFT JOIN ModuleDimensions md ON sd.ModuleDimensionsId = md.Id
+                WHERE sd.Name = @Name
+                ORDER BY sd.OperationType ASC, sd.CreatedAt ASC";
+
+            var result = await connection.QueryAsync<SolidDimensions, string, string, SolidDimensions>(
+                sql,
+                (solidDim, axisMethod, moduleName) =>
+                {
+                    solidDim.AxisOSCADMethod = axisMethod;
+                    solidDim.ModuleName = moduleName;
+                    return solidDim;
+                },
+                new { Name = name },
+                splitOn: "AxisOSCADMethod,ModuleName"
             );
 
             return result;
