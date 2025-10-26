@@ -132,7 +132,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MaxWidth="960" />
             <!--  Main Input StackPanel  -->
-            <ColumnDefinition Width="*" MinWidth="300" />
+            <ColumnDefinition Width="*" />
             <!--  Solid DataGrids  -->
         </Grid.ColumnDefinitions>
 
@@ -144,7 +144,7 @@
             BorderThickness="2"
             BoxShadow="1 1 2 0 Gray"
             Classes="card_main">
-            <StackPanel Margin="10,20,10,20" Spacing="0">
+            <StackPanel Margin="10,15,10,15" Spacing="0">
                 <Grid
                     x:Name="AxisControlsGrid"
                     HorizontalAlignment="Stretch"

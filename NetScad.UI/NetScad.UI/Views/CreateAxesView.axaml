@@ -35,657 +35,665 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid
-        Margin="0"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Top"
-        Background="{DynamicResource CardBackground}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="160" />
-            <ColumnDefinition Width="160" />
-            <ColumnDefinition Width="80" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <!--  Unit Selection Combo Box  -->
-
-        <Separator
-            Grid.Row="1"
-            Grid.Column="3"
-            Grid.ColumnSpan="4"
-            Margin="20"
-            VerticalAlignment="Stretch"
-            Background="Transparent"
-            Opacity="0.5"
-            Visual.FlowDirection="LeftToRight" />
-
-        <TextBlock
-            Grid.Row="1"
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
-            Margin="20"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Background="{DynamicResource CardBackground}"
-            Classes="textbox"
-            FontSize="15"
-            FontWeight="SemiBold"
-            Opacity="0.75"
-            Text="Custom Axes Builder" />
-
-        <!--  Unit Selection Combo Box  -->
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="0"
-            Classes="textbox"
-            FontWeight="SemiBold"
-            Text="Unit Type" />
-
-        <!--  Unit Selection Combo Box with Direct Bindings  -->
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="0"
-            Classes="textbox"
-            FontWeight="SemiBold"
-            Text="Unit Type" />
-
-        <ComboBox
-            x:Name="UnitComboBox"
-            Grid.Row="2"
-            Grid.Column="1"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Classes="card"
-            FontWeight="SemiBold"
-            ItemsSource="{Binding UnitSystemValues}"
-            SelectedItem="{Binding SelectedUnitValue, Mode=TwoWay}">
-
-            <!--  Bind directly to IsMetric with custom converter  -->
-            <ComboBox.Foreground>
-                <Binding
-                    Converter="{StaticResource UnitSystemToColorConverter}"
-                    ConverterParameter="Foreground"
-                    Path="IsMetric" />
-            </ComboBox.Foreground>
-
-            <ComboBox.Background>
-                <Binding
-                    Converter="{StaticResource UnitSystemToColorConverter}"
-                    ConverterParameter="Background"
-                    Path="IsMetric" />
-            </ComboBox.Background>
-
-            <ComboBox.BorderBrush>
-                <Binding
-                    Converter="{StaticResource UnitSystemToColorConverter}"
-                    ConverterParameter="BorderBrush"
-                    Path="IsMetric" />
-            </ComboBox.BorderBrush>
-            <!--  Apply EnumDescriptionConverter for display text  -->
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            Background="{DynamicResource CardBackground}"
-            FontSize="18"
-            FontWeight="SemiBold"
-            Foreground="{DynamicResource CardForeground}">
-            <PathIcon Data="{StaticResource chat_help_regular}" />
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Enter X,Y,Z inputs according to the unit type." />
-                </StackPanel>
-            </ToolTip.Tip>
-        </TextBlock>
-
-        <!--  Background Type Combo Box  -->
-        <TextBlock
-            Grid.Row="3"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Classes="textbox"
-            Text="OpenSCAD" />
-        <ContentControl
-            Grid.Row="3"
-            Grid.Column="1"
-            Content="{DynamicResource BackgroundComboBox}" />
-
-        <TextBlock
-            Grid.Row="3"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            Background="{DynamicResource CardBackground}"
-            FontSize="18"
-            FontWeight="SemiBold"
-            Foreground="{DynamicResource CardForeground}">
-            <PathIcon Data="{StaticResource chat_help_regular}" />
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch" Text="This is the color scheme set in your OpenSCAD." />
-                </StackPanel>
-            </ToolTip.Tip>
-        </TextBlock>
-
-        <!--  Min and Max Input Boxes  -->
-        <!--  X  -->
-        <TextBlock
-            Grid.Row="4"
-            Grid.Column="0"
-            Classes="textbox"
-            Text="Minimum X" />
-
-        <TextBox
-            x:Name="MinXValueTextBox"
-            Grid.Row="4"
-            Grid.Column="1"
-            Classes="card"
-            SelectionBrush="Yellow"
-            Text="{Binding MinXValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
-            Watermark="{Binding MinXWatermark}">
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding MinXWatermark}" />
-                </StackPanel>
-            </ToolTip.Tip>
-        </TextBox>
-
-        <TextBlock
-            Grid.Row="4"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsMetric}"
-            Text="mm" />
-
-        <TextBlock
-            Grid.Row="4"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsImperial}"
-            Text="in." />
-
-        <TextBlock
-            Grid.Row="5"
-            Grid.Column="0"
-            Classes="textbox"
-            Text="Maximum X" />
-
-        <TextBox
-            Grid.Row="5"
-            Grid.Column="1"
-            Classes="card"
-            SelectionBrush="Yellow"
-            Text="{Binding MaxXValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
-            Watermark="{Binding MaxXWatermark}">
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding MaxXWatermark}" />
-                </StackPanel>
-            </ToolTip.Tip>
-        </TextBox>
-
-        <TextBlock
-            Grid.Row="5"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsMetric}"
-            Text="mm" />
-
-        <TextBlock
-            Grid.Row="5"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsImperial}"
-            Text="in." />
-
-        <!--  Y  -->
-        <TextBlock
-            Grid.Row="6"
-            Grid.Column="0"
-            Classes="textbox"
-            Text="Minimum Y" />
-        <TextBox
-            Grid.Row="6"
-            Grid.Column="1"
-            Classes="card"
-            SelectionBrush="Yellow"
-            Text="{Binding MinYValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
-            Watermark="{Binding MinYWatermark}">
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding MinYWatermark}" />
-                </StackPanel>
-            </ToolTip.Tip>
-        </TextBox>
-
-        <TextBlock
-            Grid.Row="6"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsMetric}"
-            Text="mm" />
-
-        <TextBlock
-            Grid.Row="6"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsImperial}"
-            Text="in." />
-
-        <TextBlock
-            Grid.Row="7"
-            Grid.Column="0"
-            Classes="textbox"
-            Text="Maximum Y" />
-        <TextBox
-            Grid.Row="7"
-            Grid.Column="1"
-            Classes="card"
-            SelectionBrush="Yellow"
-            Text="{Binding MaxYValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
-            Watermark="{Binding MaxYWatermark}">
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding MaxYWatermark}" />
-                </StackPanel>
-            </ToolTip.Tip>
-        </TextBox>
-
-        <TextBlock
-            Grid.Row="7"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsMetric}"
-            Text="mm" />
-
-        <TextBlock
-            Grid.Row="7"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsImperial}"
-            Text="in." />
-
-        <!--  Z  -->
-        <TextBlock
-            Grid.Row="8"
-            Grid.Column="0"
-            Classes="textbox"
-            Text="Minimum Z" />
-        <TextBox
-            Grid.Row="8"
-            Grid.Column="1"
-            Classes="card"
-            SelectionBrush="Yellow"
-            Text="{Binding MinZValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
-            Watermark="{Binding MinZWatermark}">
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding MinZWatermark}" />
-                </StackPanel>
-            </ToolTip.Tip>
-        </TextBox>
-
-        <TextBlock
-            Grid.Row="8"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsMetric}"
-            Text="mm" />
-
-        <TextBlock
-            Grid.Row="8"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsImperial}"
-            Text="in." />
-
-        <TextBlock
-            Grid.Row="9"
-            Grid.Column="0"
-            Classes="textbox"
-            Text="Maximum Z" />
-        <TextBox
-            Grid.Row="9"
-            Grid.Column="1"
-            Classes="card"
-            SelectionBrush="Yellow"
-            Text="{Binding MaxZValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
-            Watermark="{Binding MaxZWatermark}">
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding MaxZWatermark}" />
-                </StackPanel>
-            </ToolTip.Tip>
-        </TextBox>
-
-        <TextBlock
-            Grid.Row="9"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsMetric}"
-            Text="mm" />
-
-        <TextBlock
-            Grid.Row="9"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            IsVisible="{Binding IsImperial}"
-            Text="in." />
-
-        <!--  Clear inputs  -->
-        <Button
-            Grid.Row="11"
-            Grid.Column="0"
-            MaxWidth="90"
-            Margin="10"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            BorderBrush="{DynamicResource CardForeground}"
-            BorderThickness="1"
-            Click="ClearInputsAsync"
-            Content="Clear"
-            CornerRadius="3"
-            IsEnabled="True">
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock>
-                        Clears all X,Y,Z inputs, unit type and theme.
-                    </TextBlock>
-                </StackPanel>
-            </ToolTip.Tip>
-        </Button>
-
-        <!--  Run the Axes Generator  -->
-        <Button
-            Grid.Row="11"
-            Grid.Column="1"
-            Margin="10"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            BorderBrush="{DynamicResource CardForeground}"
-            BorderThickness="1"
-            Click="CreateCustomAxis"
-            Content="Create Axis"
-            CornerRadius="3"
-            FontWeight="SemiBold"
-            IsEnabled="{Binding CreateButtonEnabled}">
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch">
-                        This action will create a custom axis, to be<LineBreak />
-                        used in OpenSCAD, from the X,Y,Z inputs.</TextBlock>
-                </StackPanel>
-            </ToolTip.Tip>
-        </Button>
-
-        <TextBlock
-            Grid.Row="11"
-            Grid.Column="2"
-            Margin="15,0,20,0"
-            VerticalAlignment="Center"
-            Background="{DynamicResource CardBackground}"
-            FontSize="18"
-            FontWeight="SemiBold"
-            Foreground="{DynamicResource CardForeground}">
-            <PathIcon Data="{StaticResource chat_help_regular}" />
-            <ToolTip.Tip>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Stretch">
-                        Once an axis is created, you will see details<LineBreak />
-                        of it displayed here. Open the Axes folder<LineBreak />
-                        from the link on the left side to view all<LineBreak />
-                        created axes, axes.scad, and sample.scad.</TextBlock>
-                </StackPanel>
-            </ToolTip.Tip>
-        </TextBlock>
-
-        <Separator
-            Grid.Row="12"
-            Grid.ColumnSpan="3"
-            Margin="20"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Background="Transparent"
-            Opacity="0.5"
-            Visual.FlowDirection="LeftToRight" />
-
-        <TextBlock
-            Grid.Row="12"
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
-            Margin="20"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Background="{DynamicResource CardBackground}"
-            Classes="textbox"
-            FontSize="15"
-            FontWeight="SemiBold"
-            Opacity="0.75"
-            Text="SCAD Output" />
-
-        <!--  Volume Detail  -->
-
-        <!--  Inches or Centimeters  -->
-        <StackPanel
-            Grid.Row="13"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Margin="20,0,20,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            IsVisible="{Binding AxisDetailsShown}"
-            Orientation="Horizontal">
-            <SelectableTextBlock
-                xml:space="preserve"
-                FontWeight="SemiBold"
-                SelectionBrush="Yellow"
-                Text="{Binding TotalCubicVolume, StringFormat='{}{0:F2}'}" />
-
-            <TextBlock
-                FontSize="16"
-                FontWeight="SemiBold"
-                IsVisible="{Binding IsMetric}"
-                Text=" cm³" />
-            <TextBlock
-                FontSize="16"
-                FontWeight="SemiBold"
-                IsVisible="{Binding IsImperial}"
-                Text=" in³" />
-        </StackPanel>
-
-        <!--  Feet or Meters  -->
-        <StackPanel
-            Grid.Row="13"
-            Grid.Column="1"
-            Grid.ColumnSpan="2"
-            Margin="30,0,20,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            IsVisible="{Binding AxisDetailsShown}"
-            Orientation="Horizontal">
-            <SelectableTextBlock
-                xml:space="preserve"
-                FontWeight="SemiBold"
-                SelectionBrush="Yellow"
-                SelectionForegroundBrush="{DynamicResource CardForeground}"
-                Text="{Binding TotalCubicVolumeScale, StringFormat='{}{0:F2}'}" />
-
-            <TextBlock
-                FontSize="16"
-                FontWeight="SemiBold"
-                IsVisible="{Binding IsMetric}"
-                Text=" m³" />
-            <TextBlock
-                FontSize="16"
-                FontWeight="SemiBold"
-                IsVisible="{Binding IsImperial}"
-                Text=" ft³" />
-        </StackPanel>
-
-        <TextBlock
-            Grid.Row="13"
-            Grid.Column="2"
-            Margin="15,0,20,10"
-            VerticalAlignment="Center"
-            FontSize="18"
-            FontWeight="Bold"
-            Foreground="{DynamicResource CardForeground}"
-            IsVisible="True">
-            <PathIcon Data="{StaticResource cube_regular}" />
-        </TextBlock>
-
-        <!--  Display Axes Calling Method - Needs to be Selectable  -->
-
-        <TextBlock
-            Grid.Row="14"
-            Grid.Column="2"
-            Margin="15,0,20,20"
-            VerticalAlignment="Center"
-            FontSize="18"
-            FontWeight="Bold"
-            Foreground="Green"
-            IsVisible="True"
-            Text="" />
-
-        <SelectableTextBlock
-            Grid.Row="14"
-            Grid.Column="0"
-            Grid.ColumnSpan="4"
-            Margin="20,0,20,20"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            xml:space="preserve"
-            Background="{DynamicResource CardBackground}"
-            Classes="card"
-            FontWeight="SemiBold"
-            Foreground="{DynamicResource CardForeground}"
-            IsVisible="{Binding AxisDetailsShown}"
-            SelectionBrush="Yellow"
-            Text="{Binding CallingMethod}" />
-
-        <!--  Embed Axes List View  -->
-
-        <Separator
-            Grid.Row="1"
-            Grid.Column="3"
-            Grid.ColumnSpan="3"
-            Margin="20"
-            VerticalAlignment="Stretch"
-            Background="Transparent"
-            Opacity="0.75"
-            Visual.FlowDirection="LeftToRight" />
-
-        <TextBlock
-            Grid.Row="1"
-            Grid.Column="3"
-            Grid.ColumnSpan="3"
-            Margin="20"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Stretch"
-            Background="{DynamicResource CardBackground}"
-            Classes="textbox"
-            FontSize="15"
-            FontWeight="SemiBold"
-            Opacity="0.75"
-            Text="Generated Axes" />
-
-        <!--  Grid for 50/50 split  -->
-        <Grid
-            Grid.Row="2"
-            Grid.RowSpan="14"
-            Grid.Column="3">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <DataGrid
-                x:Name="AxesListImperialDataGrid"
-                Grid.Row="0"
-                Margin="7,7,20,12"
-                Padding="5"
+    <Border
+        Margin="10"
+        BorderThickness="2"
+        BoxShadow="1 1 2 0 Gray"
+        Classes="card_main">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid
+                Margin="0"
                 HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                AutoGenerateColumns="True"
-                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
-                BorderBrush="{DynamicResource MaroonForeground}"
-                BorderThickness="2"
-                CanUserReorderColumns="True"
-                CanUserResizeColumns="True"
-                ClipboardCopyMode="ExcludeHeader"
-                ColumnWidth="Auto"
-                CornerRadius="6"
-                GridLinesVisibility="All"
-                IsReadOnly="True"
-                ItemsSource="{Binding AxesListImperial}"
-                SelectionChanged="DataGridImperial_SelectionChanged"
-                SelectionMode="Single" />
+                VerticalAlignment="Top"
+                Background="{DynamicResource CardBackground}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <DataGrid
-                x:Name="AxesListMetricDataGrid"
-                Grid.Row="1"
-                Margin="7,12,20,25"
-                Padding="5"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                AutoGenerateColumns="True"
-                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnMetric"
-                BorderBrush="{DynamicResource DarkBlueForeground}"
-                BorderThickness="2"
-                CanUserReorderColumns="True"
-                CanUserResizeColumns="True"
-                ClipboardCopyMode="ExcludeHeader"
-                ColumnWidth="Auto"
-                CornerRadius="6"
-                GridLinesVisibility="All"
-                IsReadOnly="True"
-                ItemsSource="{Binding AxesListMetric}"
-                SelectionChanged="DataGridMetric_SelectionChanged"
-                SelectionMode="Single" />
-        </Grid>
+                <!--  Unit Selection Combo Box  -->
 
-    </Grid>
+                <Separator
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Grid.ColumnSpan="4"
+                    Margin="20"
+                    VerticalAlignment="Stretch"
+                    Background="Transparent"
+                    Opacity="0.5"
+                    Visual.FlowDirection="LeftToRight" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Margin="20"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource CardBackground}"
+                    Classes="textbox"
+                    FontSize="15"
+                    FontWeight="SemiBold"
+                    Opacity="0.75"
+                    Text="Custom Axes Builder" />
+
+                <!--  Unit Selection Combo Box  -->
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Classes="textbox"
+                    FontWeight="SemiBold"
+                    Text="Unit Type" />
+
+                <!--  Unit Selection Combo Box with Direct Bindings  -->
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Classes="textbox"
+                    FontWeight="SemiBold"
+                    Text="Unit Type" />
+
+                <ComboBox
+                    x:Name="UnitComboBox"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Classes="card"
+                    FontWeight="SemiBold"
+                    ItemsSource="{Binding UnitSystemValues}"
+                    SelectedItem="{Binding SelectedUnitValue, Mode=TwoWay}">
+
+                    <!--  Bind directly to IsMetric with custom converter  -->
+                    <ComboBox.Foreground>
+                        <Binding
+                            Converter="{StaticResource UnitSystemToColorConverter}"
+                            ConverterParameter="Foreground"
+                            Path="IsMetric" />
+                    </ComboBox.Foreground>
+
+                    <ComboBox.Background>
+                        <Binding
+                            Converter="{StaticResource UnitSystemToColorConverter}"
+                            ConverterParameter="Background"
+                            Path="IsMetric" />
+                    </ComboBox.Background>
+
+                    <ComboBox.BorderBrush>
+                        <Binding
+                            Converter="{StaticResource UnitSystemToColorConverter}"
+                            ConverterParameter="BorderBrush"
+                            Path="IsMetric" />
+                    </ComboBox.BorderBrush>
+                    <!--  Apply EnumDescriptionConverter for display text  -->
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource CardBackground}"
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource CardForeground}">
+                    <PathIcon Data="{StaticResource chat_help_regular}" />
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Enter X,Y,Z inputs according to the unit type." />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBlock>
+
+                <!--  Background Type Combo Box  -->
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Classes="textbox"
+                    Text="OpenSCAD" />
+                <ContentControl
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Content="{DynamicResource BackgroundComboBox}" />
+
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource CardBackground}"
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource CardForeground}">
+                    <PathIcon Data="{StaticResource chat_help_regular}" />
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="This is the color scheme set in your OpenSCAD." />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBlock>
+
+                <!--  Min and Max Input Boxes  -->
+                <!--  X  -->
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Classes="textbox"
+                    Text="Minimum X" />
+
+                <TextBox
+                    x:Name="MinXValueTextBox"
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Classes="card"
+                    SelectionBrush="Yellow"
+                    Text="{Binding MinXValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
+                    Watermark="{Binding MinXWatermark}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="{Binding MinXWatermark}" />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBox>
+
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsMetric}"
+                    Text="mm" />
+
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsImperial}"
+                    Text="in." />
+
+                <TextBlock
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    Classes="textbox"
+                    Text="Maximum X" />
+
+                <TextBox
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Classes="card"
+                    SelectionBrush="Yellow"
+                    Text="{Binding MaxXValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
+                    Watermark="{Binding MaxXWatermark}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="{Binding MaxXWatermark}" />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBox>
+
+                <TextBlock
+                    Grid.Row="5"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsMetric}"
+                    Text="mm" />
+
+                <TextBlock
+                    Grid.Row="5"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsImperial}"
+                    Text="in." />
+
+                <!--  Y  -->
+                <TextBlock
+                    Grid.Row="6"
+                    Grid.Column="0"
+                    Classes="textbox"
+                    Text="Minimum Y" />
+                <TextBox
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    Classes="card"
+                    SelectionBrush="Yellow"
+                    Text="{Binding MinYValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
+                    Watermark="{Binding MinYWatermark}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="{Binding MinYWatermark}" />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBox>
+
+                <TextBlock
+                    Grid.Row="6"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsMetric}"
+                    Text="mm" />
+
+                <TextBlock
+                    Grid.Row="6"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsImperial}"
+                    Text="in." />
+
+                <TextBlock
+                    Grid.Row="7"
+                    Grid.Column="0"
+                    Classes="textbox"
+                    Text="Maximum Y" />
+                <TextBox
+                    Grid.Row="7"
+                    Grid.Column="1"
+                    Classes="card"
+                    SelectionBrush="Yellow"
+                    Text="{Binding MaxYValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
+                    Watermark="{Binding MaxYWatermark}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="{Binding MaxYWatermark}" />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBox>
+
+                <TextBlock
+                    Grid.Row="7"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsMetric}"
+                    Text="mm" />
+
+                <TextBlock
+                    Grid.Row="7"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsImperial}"
+                    Text="in." />
+
+                <!--  Z  -->
+                <TextBlock
+                    Grid.Row="8"
+                    Grid.Column="0"
+                    Classes="textbox"
+                    Text="Minimum Z" />
+                <TextBox
+                    Grid.Row="8"
+                    Grid.Column="1"
+                    Classes="card"
+                    SelectionBrush="Yellow"
+                    Text="{Binding MinZValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
+                    Watermark="{Binding MinZWatermark}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="{Binding MinZWatermark}" />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBox>
+
+                <TextBlock
+                    Grid.Row="8"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsMetric}"
+                    Text="mm" />
+
+                <TextBlock
+                    Grid.Row="8"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsImperial}"
+                    Text="in." />
+
+                <TextBlock
+                    Grid.Row="9"
+                    Grid.Column="0"
+                    Classes="textbox"
+                    Text="Maximum Z" />
+                <TextBox
+                    Grid.Row="9"
+                    Grid.Column="1"
+                    Classes="card"
+                    SelectionBrush="Yellow"
+                    Text="{Binding MaxZValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleConverter}}"
+                    Watermark="{Binding MaxZWatermark}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch" Text="{Binding MaxZWatermark}" />
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBox>
+
+                <TextBlock
+                    Grid.Row="9"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsMetric}"
+                    Text="mm" />
+
+                <TextBlock
+                    Grid.Row="9"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsImperial}"
+                    Text="in." />
+
+                <!--  Clear inputs  -->
+                <Button
+                    Grid.Row="11"
+                    Grid.Column="0"
+                    MaxWidth="90"
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="{DynamicResource CardForeground}"
+                    BorderThickness="1"
+                    Click="ClearInputsAsync"
+                    Content="Clear"
+                    CornerRadius="3"
+                    IsEnabled="True">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock>
+                                Clears all X,Y,Z inputs, unit type and theme.
+                            </TextBlock>
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </Button>
+
+                <!--  Run the Axes Generator  -->
+                <Button
+                    Grid.Row="11"
+                    Grid.Column="1"
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="{DynamicResource CardForeground}"
+                    BorderThickness="1"
+                    Click="CreateCustomAxis"
+                    Content="Create Axis"
+                    CornerRadius="3"
+                    FontWeight="SemiBold"
+                    IsEnabled="{Binding CreateButtonEnabled}">
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch">
+                                This action will create a custom axis, to be<LineBreak />
+                                used in OpenSCAD, from the X,Y,Z inputs.</TextBlock>
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </Button>
+
+                <TextBlock
+                    Grid.Row="11"
+                    Grid.Column="2"
+                    Margin="15,0,20,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource CardBackground}"
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource CardForeground}">
+                    <PathIcon Data="{StaticResource chat_help_regular}" />
+                    <ToolTip.Tip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Stretch">
+                                Once an axis is created, you will see details<LineBreak />
+                                of it displayed here. Open the Axes folder<LineBreak />
+                                from the link on the left side to view all<LineBreak />
+                                created axes, axes.scad, and sample.scad.</TextBlock>
+                        </StackPanel>
+                    </ToolTip.Tip>
+                </TextBlock>
+
+                <Separator
+                    Grid.Row="12"
+                    Grid.ColumnSpan="3"
+                    Margin="20"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Background="Transparent"
+                    Opacity="0.5"
+                    Visual.FlowDirection="LeftToRight" />
+
+                <TextBlock
+                    Grid.Row="12"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Margin="20"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource CardBackground}"
+                    Classes="textbox"
+                    FontSize="15"
+                    FontWeight="SemiBold"
+                    Opacity="0.75"
+                    Text="SCAD Output" />
+
+                <!--  Volume Detail  -->
+
+                <!--  Inches or Centimeters  -->
+                <StackPanel
+                    Grid.Row="13"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="20,0,20,10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding AxisDetailsShown}"
+                    Orientation="Horizontal">
+                    <SelectableTextBlock
+                        xml:space="preserve"
+                        FontWeight="SemiBold"
+                        SelectionBrush="Yellow"
+                        Text="{Binding TotalCubicVolume, StringFormat='{}{0:F2}'}" />
+
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        IsVisible="{Binding IsMetric}"
+                        Text=" cm³" />
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        IsVisible="{Binding IsImperial}"
+                        Text=" in³" />
+                </StackPanel>
+
+                <!--  Feet or Meters  -->
+                <StackPanel
+                    Grid.Row="13"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    Margin="30,0,20,10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding AxisDetailsShown}"
+                    Orientation="Horizontal">
+                    <SelectableTextBlock
+                        xml:space="preserve"
+                        FontWeight="SemiBold"
+                        SelectionBrush="Yellow"
+                        SelectionForegroundBrush="{DynamicResource CardForeground}"
+                        Text="{Binding TotalCubicVolumeScale, StringFormat='{}{0:F2}'}" />
+
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        IsVisible="{Binding IsMetric}"
+                        Text=" m³" />
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        IsVisible="{Binding IsImperial}"
+                        Text=" ft³" />
+                </StackPanel>
+
+                <TextBlock
+                    Grid.Row="13"
+                    Grid.Column="2"
+                    Margin="15,0,20,10"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource CardForeground}"
+                    IsVisible="True">
+                    <PathIcon Data="{StaticResource cube_regular}" />
+                </TextBlock>
+
+                <!--  Display Axes Calling Method - Needs to be Selectable  -->
+
+                <TextBlock
+                    Grid.Row="14"
+                    Grid.Column="2"
+                    Margin="15,0,20,20"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    FontWeight="Bold"
+                    Foreground="Green"
+                    IsVisible="True"
+                    Text="" />
+
+                <SelectableTextBlock
+                    Grid.Row="14"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="4"
+                    Margin="20,0,20,20"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    xml:space="preserve"
+                    Background="{DynamicResource CardBackground}"
+                    Classes="card"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource CardForeground}"
+                    IsVisible="{Binding AxisDetailsShown}"
+                    SelectionBrush="Yellow"
+                    Text="{Binding CallingMethod}" />
+
+                <!--  Embed Axes List View  -->
+
+                <Separator
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Grid.ColumnSpan="3"
+                    Margin="20"
+                    VerticalAlignment="Stretch"
+                    Background="Transparent"
+                    Opacity="0.75"
+                    Visual.FlowDirection="LeftToRight" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Grid.ColumnSpan="3"
+                    Margin="20"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource CardBackground}"
+                    Classes="textbox"
+                    FontSize="15"
+                    FontWeight="SemiBold"
+                    Opacity="0.75"
+                    Text="Generated Axes" />
+
+                <!--  Grid for 50/50 split  -->
+                <Grid
+                    Grid.Row="2"
+                    Grid.RowSpan="14"
+                    Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DataGrid
+                        x:Name="AxesListImperialDataGrid"
+                        Grid.Row="0"
+                        Margin="7,7,20,12"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
+                        BorderBrush="{DynamicResource MaroonForeground}"
+                        BorderThickness="2"
+                        CanUserReorderColumns="True"
+                        CanUserResizeColumns="True"
+                        ClipboardCopyMode="ExcludeHeader"
+                        ColumnWidth="Auto"
+                        CornerRadius="6"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding AxesListImperial}"
+                        SelectionChanged="DataGridImperial_SelectionChanged"
+                        SelectionMode="Single" />
+
+                    <DataGrid
+                        x:Name="AxesListMetricDataGrid"
+                        Grid.Row="1"
+                        Margin="7,12,20,25"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnMetric"
+                        BorderBrush="{DynamicResource DarkBlueForeground}"
+                        BorderThickness="2"
+                        CanUserReorderColumns="True"
+                        CanUserResizeColumns="True"
+                        ClipboardCopyMode="ExcludeHeader"
+                        ColumnWidth="Auto"
+                        CornerRadius="6"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding AxesListMetric}"
+                        SelectionChanged="DataGridMetric_SelectionChanged"
+                        SelectionMode="Single" />
+                </Grid>
+
+            </Grid>
+        </ScrollViewer>
+    </Border>
 </UserControl>
