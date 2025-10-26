@@ -1,6 +1,4 @@
-﻿
-
-namespace NetScad.Core.Measurements
+﻿namespace NetScad.Core.Measurements
 {
     public static class Conversion
     {

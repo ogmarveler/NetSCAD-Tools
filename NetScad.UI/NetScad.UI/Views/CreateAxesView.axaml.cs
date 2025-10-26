@@ -1,7 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
+using NetScad.Core.Measurements;
 using NetScad.UI.ViewModels;
+using System;
 using System.ComponentModel;
 using static NetScad.Core.Measurements.Selector;
 
@@ -105,7 +107,25 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
             ViewModel.MaxYValue = selected.MaxY;
             ViewModel.MinZValue = selected.MinZ;
             ViewModel.MaxZValue = selected.MaxZ;
-
+            
+            // Parse volume safely - handle null/empty/invalid values
+            if (!string.IsNullOrWhiteSpace(selected.Volume) && 
+                double.TryParse(selected.Volume.Replace(" in³", "").Trim(), 
+                                System.Globalization.NumberStyles.Float, 
+                                System.Globalization.CultureInfo.InvariantCulture, 
+                                out double volumeIn3))
+            {
+                ViewModel.TotalCubicVolume = volumeIn3;
+                ViewModel.TotalCubicVolumeScale = VolumeConverter.ConvertIn3ToFt3(volumeIn3);
+                Console.WriteLine($"Selected Volume (in³): {ViewModel.TotalCubicVolume}, Converted Volume (ft³): {ViewModel.TotalCubicVolumeScale}");
+            }
+            else
+            {
+                ViewModel.TotalCubicVolume = 0;
+                ViewModel.TotalCubicVolumeScale = 0;
+                Console.WriteLine($"Volume parsing failed for value: '{selected.Volume}'");
+            }
+            
             // Set background type based on Theme
             ViewModel.SelectedBackgroundValue = selected.Theme?.Contains("Light") == true
                 ? BackgroundType.Light
@@ -131,6 +151,24 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
             ViewModel.MaxYValue = selected.MaxY;
             ViewModel.MinZValue = selected.MinZ;
             ViewModel.MaxZValue = selected.MaxZ;
+
+            // Parse volume safely - handle null/empty/invalid values
+            if (!string.IsNullOrWhiteSpace(selected.Volume) &&
+                 double.TryParse(selected.Volume.Replace(" cm³", "").Trim(),
+                                 System.Globalization.NumberStyles.Float,
+                                 System.Globalization.CultureInfo.InvariantCulture,
+                                 out double volumeIn3))
+            {
+                ViewModel.TotalCubicVolume = volumeIn3;
+                ViewModel.TotalCubicVolumeScale = VolumeConverter.ConvertCm3ToM3(volumeIn3);
+                Console.WriteLine($"Selected Volume (cm³): {ViewModel.TotalCubicVolume}, Converted Volume (m³): {ViewModel.TotalCubicVolumeScale}");
+            }
+            else
+            {
+                ViewModel.TotalCubicVolume = 0;
+                ViewModel.TotalCubicVolumeScale = 0;
+                Console.WriteLine($"Volume parsing failed for value: '{selected.Volume}'");
+            }
 
             // Set background type based on Theme
             ViewModel.SelectedBackgroundValue = selected.Theme?.Contains("Light") == true

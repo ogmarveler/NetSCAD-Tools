@@ -186,8 +186,6 @@ namespace NetScad.UI.ViewModels
         {
             if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged) { await ConvertInputsImperial(decimalPlaces); }
             else if (_selectedUnit == UnitSystem.Metric && UnitHasChanged) { await ConvertInputsMetric(decimalPlaces); }
-            //IsImperial = SelectedUnitValue != UnitSystem.Metric;
-            //IsMetric = SelectedUnitValue == UnitSystem.Metric;
         }
 
         public async Task CreateCustomAxisAsync()
