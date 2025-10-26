@@ -23,14 +23,24 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         DataContext = App.Host?.Services.GetRequiredService<ScadObjectViewModel>();
     }
 
-    private async void DeleteButton_Click(object? sender, RoutedEventArgs e)
+    private async void DeleteSolidButton_Click(object? sender, RoutedEventArgs e)
     {
         // Check each DataGrid for a selected item
         object? selectedItem = SolidDataGrid.SelectedItem
-                            ?? SolidDataGridImperial.SelectedItem
+                            ?? SolidDataGridImperial.SelectedItem;
+
+        if (selectedItem != null)
+        {
+            await ViewModel.DeleteSelectedItemAsync(selectedItem);
+        }
+    }
+
+    private async void DeleteModuleButton_Click(object? sender, RoutedEventArgs e)
+    {
+        // Check each DataGrid for a selected item
+        object? selectedItem = ModulesIntersectionDataGrid.SelectedItem
                             ?? ModulesUnionDataGrid.SelectedItem
-                            ?? ModulesDifferenceDataGrid.SelectedItem
-                            ?? ModulesIntersectionsDataGrid.SelectedItem;
+                            ?? ModulesDifferenceDataGrid.SelectedItem;
 
         if (selectedItem != null)
         {
@@ -64,10 +74,11 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "XOffset_MM", "X (mm)" },
             { "YOffset_MM", "Y (mm)" },
             { "ZOffset_MM", "Z (mm)" },
+            { "SolidType", "Solid Type" },
             { "XRotate", "X°" },
             { "YRotate", "Y°" },
             { "ZRotate", "Z°" },
-            { "OperationType", "Action" },
+            { "OperationType", "Apply To" },
             { "Description", "Description" },
             { "Name", "Object Name" },
         };
@@ -107,8 +118,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "XRotate", "X°" },
             { "YRotate", "Y°" },
             { "ZRotate", "Z°" },
-            { "OperationType", "Action" },
+            { "OperationType", "Apply To" },
             { "Description", "Description" },
+            { "SolidType", "Solid Type" },
             { "Name", "Object Name" },
         };
 
@@ -203,6 +215,5 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         ViewModel.AxisStored = false;
         ViewModel.AxesSelectEnabled = true;
-        ViewModel.SelectedAxisValue = "Select Axis";
     } 
 }

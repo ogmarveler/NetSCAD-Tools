@@ -177,9 +177,6 @@ namespace NetScad.UI.ViewModels
             XRotate = 0;
             YRotate = 0;
             ZRotate = 0;
-            //AxisXPositionMM = _AxisXPositionMM;  // Set to whatever it was before
-            //AxisYPositionMM = _AxisYPositionMM;  // Set to whatever it was before
-            //AxisZPositionMM = _AxisZPositionMM;  // Set to whatever it was before
         }
 
         // Clear all object fields
@@ -259,7 +256,13 @@ namespace NetScad.UI.ViewModels
             id = newObject.Id;
 
             AppendObject = true; // Set to true since after inserting new row, appending to existing set, or updating, object may be appended.
-            await CreateDifferenceModuleAsync(); // Update Difference modules for real-time updates
+            switch (SelectedOperationType)
+            {
+                case OperationType.Union: await CreateUnionModuleAsync(); break; // Update Union modules for real-time updates
+                case OperationType.Difference: await CreateDifferenceModuleAsync(); break; // Update Difference modules for real-time updates
+                case OperationType.Intersection: await CreateIntersectionModuleAsync(); break; // Update Intersection modules for real-time updates
+            }
+
             await ClearInputsAsync(); // After new part added, make sure that description is cleared out
             await GetDimensionsPartAsync(); // Refresh datagrids
             return id ?? 0;
@@ -847,7 +850,6 @@ namespace NetScad.UI.ViewModels
 
         public async Task CreateDifferenceModuleAsync()
         {
-            await CreateUnionModuleAsync(); // Update Union modules since it is used in difference function
             // Get all objects marked as "Difference"
             var objects = SolidDimensions.Where(o => o.OperationType == "Difference").ToList();
             ModuleDimensions? baseObj;
@@ -875,11 +877,12 @@ namespace NetScad.UI.ViewModels
                 // Refresh ModuleDimensions DataGrid
                 await PartsToScadFilesAsync();  // Only update parts file
             }
+            else
+                Console.WriteLine("No Unions available as base object");
         }
 
         public async Task CreateIntersectionModuleAsync()
         {
-            await CreateUnionModuleAsync(); // Update Union modules since it is used in intersection function
             // Get all objects marked as "Intersection"
             var objects = SolidDimensions.Where(o => o.OperationType == "Intersection").ToList();
             ModuleDimensions? baseObj;
@@ -907,6 +910,8 @@ namespace NetScad.UI.ViewModels
                 // Refresh ModuleDimensions DataGrid
                 await PartsToScadFilesAsync();  // Only update parts file
             }
+            else
+                Console.WriteLine("No Unions available as base object");
         }
 
         private static string ExtractModuleCallMethod(string moduleDefinition)
@@ -1073,7 +1078,6 @@ namespace NetScad.UI.ViewModels
             }
         }
 
-
         public double AxisXPositionMM { get => _axisXPositionMM; set { this.RaiseAndSetIfChanged(ref _axisXPositionMM, value); if (AxisStored) _ = UpdateAxisTranslateAsync(); } }
         public double AxisYPositionMM { get => _axisYPositionMM; set { this.RaiseAndSetIfChanged(ref _axisYPositionMM, value); if (AxisStored) _ = UpdateAxisTranslateAsync(); } }
         public double AxisZPositionMM { get => _axisZPositionMM; set { this.RaiseAndSetIfChanged(ref _axisZPositionMM, value); if (AxisStored) _ = UpdateAxisTranslateAsync(); } }
@@ -1082,7 +1086,19 @@ namespace NetScad.UI.ViewModels
         public bool IsImperial { get => _isImperial; set => this.RaiseAndSetIfChanged(ref _isImperial, value); }
         public bool IsAxisMetric { get => _isAxisMetric; set => this.RaiseAndSetIfChanged(ref _isAxisMetric, value); }
         public bool IsAxisImperial { get => _isAxisImperial; set => this.RaiseAndSetIfChanged(ref _isAxisImperial, value); }
-        public bool AxesSelectEnabled { get => _axesSelectEnabled; set => this.RaiseAndSetIfChanged(ref _axesSelectEnabled, value); }
+        public bool AxesSelectEnabled
+        {
+            get => _axesSelectEnabled;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _axesSelectEnabled, value);
+                if (value)
+                {
+                    SelectedAxisValue = "Select Axis"; // Reset selection when enabled
+                    _selectedAxis = null; // Clear selected axis
+                }
+            }
+        }
         public bool AxisStored { get => _axisStored; set => this.RaiseAndSetIfChanged(ref _axisStored, value); }
         public bool AppendObject { get => _appendObject; set => this.RaiseAndSetIfChanged(ref _appendObject, value); }
         public bool UnionButton { get => _unionButton; set => this.RaiseAndSetIfChanged(ref _unionButton, value); }

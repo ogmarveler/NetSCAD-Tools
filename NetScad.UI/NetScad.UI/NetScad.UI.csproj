@@ -64,7 +64,7 @@
 
 <ItemGroup>
 	  <None Update="Scad\Axes\axes.scad">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Scad\Solids\object.scad">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>

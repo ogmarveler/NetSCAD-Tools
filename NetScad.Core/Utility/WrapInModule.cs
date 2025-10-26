@@ -131,7 +131,7 @@ namespace NetScad.Core.Utility
                 .Replace(" ", "_")
                 .Replace("\t", "_")
                 .Replace("\n", "_")
-                .Replace("\r", "_") ?? "nonsolid_difference";
+                .Replace("\r", "_") ?? "nonsolid_union";
 
             // Sanitize description
             var sanitizedDescription = description
@@ -139,7 +139,7 @@ namespace NetScad.Core.Utility
                 .Replace(" ", "_")
                 .Replace("\t", "_")
                 .Replace("\n", "_")
-                .Replace("\r", "_") ?? "nondescription_difference";
+                .Replace("\r", "_") ?? "nondescription_union";
 
             // Sanitize and combine all OSCAD methods
             var sanitizedMethods = osCADMethods
