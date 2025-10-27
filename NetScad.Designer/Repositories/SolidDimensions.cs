@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using NetScad.Core.Interfaces;
 using static NetScad.Core.Measurements.Conversion;
+using static NetScad.Core.Measurements.VolumeConverter;
 using Dapper;
 
 namespace NetScad.Designer.Repositories
@@ -43,6 +44,10 @@ namespace NetScad.Designer.Repositories
         public double Round_h_MM { get; set; } = 0; // Rounding height (minkowski offset)
         public int Resolution { get; set; } = 180; // Default resolution for curves
 
+        // Volume properties (stored in database for data analysis)
+        public double Volume_CM3 { get; set; } = 0; // Volume in cubic centimeters
+        public double Volume_IN3 { get; set; } = 0; // Volume in cubic inches
+
         // Imperial conversions (computed) - Cube properties
         public double Length_IN => Math.Round(MillimeterToInches(Length_MM), OpenSCAD_DecimalPlaces);
         public double Width_IN => Math.Round(MillimeterToInches(Width_MM), OpenSCAD_DecimalPlaces);
@@ -81,6 +86,73 @@ namespace NetScad.Designer.Repositories
         {
             get => _moduleName ?? (ModuleDimensionsId.HasValue ? $"Module: {ModuleDimensionsId.Value}" : "No Module Assigned");
             set => _moduleName = value;
+        }
+
+        /// <summary>
+        /// Calculates and updates the Volume_CM3 and Volume_IN3 properties based on dimensions and solid type.
+        /// Call this method before Insert/Update to ensure volumes are current.
+        /// </summary>
+        public void CalculateVolume()
+        {
+            double volumeMM3 = SolidType?.ToLowerInvariant() switch
+            {
+                "cylinder" => CalculateCylinderVolume(),
+                "cube" => CalculateCubeVolume(),
+                "roundcube" => CalculateCubeVolume(),
+                _ => CalculateCubeVolume() // Default to cube calculation
+            };
+
+            Volume_CM3 = Math.Round(ConvertMm3ToCm3(volumeMM3), 2); // Convert mm³ to cm³
+            Volume_IN3 = Math.Round(ConvertMm3ToIn3(volumeMM3), 2); // Convert mm³ to in³
+        }
+
+        private double CalculateCubeVolume()
+        {
+            // Volume = Length × Width × Height (in mm³)
+            double outerVolume = Length_MM * Width_MM * Height_MM;
+
+            // If hollow (thickness > 0), subtract inner volume
+            if (Thickness_MM > 0)
+            {
+                double innerLength = Math.Max(0, Length_MM - (2 * Thickness_MM));
+                double innerWidth = Math.Max(0, Width_MM - (2 * Thickness_MM));
+                double innerHeight = Math.Max(0, Height_MM - (2 * Thickness_MM));
+                double innerVolume = innerLength * innerWidth * innerHeight;
+                return outerVolume - innerVolume;
+            }
+
+            return outerVolume;
+        }
+
+        private double CalculateCylinderVolume()
+        {
+            // Determine if it's a cone (two different radii) or regular cylinder
+            bool isCone = Radius1_MM > 0 && Radius2_MM > 0 && Math.Abs(Radius1_MM - Radius2_MM) > 0.0001;
+            double height = CylinderHeight_MM;
+
+            if (isCone)
+            {
+                // Cone/Truncated cone volume = (π × h / 3) × (r1² + r1×r2 + r2²)
+                double r1 = Radius1_MM;
+                double r2 = Radius2_MM;
+                return (Math.PI * height / 3.0) * (r1 * r1 + r1 * r2 + r2 * r2);
+            }
+            else
+            {
+                // Regular cylinder volume = π × r² × h
+                double radius = Radius_MM > 0 ? Radius_MM : (Radius1_MM > 0 ? Radius1_MM : Radius2_MM);
+                double outerVolume = Math.PI * radius * radius * height;
+
+                // If hollow (thickness > 0), subtract inner volume
+                if (Thickness_MM > 0)
+                {
+                    double innerRadius = Math.Max(0, radius - Thickness_MM);
+                    double innerVolume = Math.PI * innerRadius * innerRadius * height;
+                    return outerVolume - innerVolume;
+                }
+
+                return outerVolume;
+            }
         }
 
         public Dictionary<string, object> ToDbDictionary() => new()
@@ -123,6 +195,8 @@ namespace NetScad.Designer.Repositories
             { "Round_r_IN", Round_r_IN },
             { "Round_h_IN", Round_h_IN },
             { "Resolution", Resolution },
+            { "Volume_CM3", Volume_CM3 },
+            { "Volume_IN3", Volume_IN3 },
             { "OSCADMethod", OSCADMethod },
             { "CreatedAt", CreatedAt }
         };
@@ -172,6 +246,8 @@ namespace NetScad.Designer.Repositories
             (nameof(SolidDimensions.Round_r_IN), typeof(double), false),
             (nameof(SolidDimensions.Round_h_IN), typeof(double), false),
             (nameof(SolidDimensions.Resolution), typeof(int), false),
+            (nameof(SolidDimensions.Volume_CM3), typeof(double), false),
+            (nameof(SolidDimensions.Volume_IN3), typeof(double), false),
             (nameof(SolidDimensions.OSCADMethod), typeof(string), true),
             (nameof(SolidDimensions.CreatedAt), typeof(DateTime), false)
         ];
@@ -195,6 +271,9 @@ namespace NetScad.Designer.Repositories
         // Insert a single SolidDimensions and return the new Id
         public static async Task<int> InsertAsync(this SolidDimensions entity, SqliteConnection connection)
         {
+            // Calculate volume before insert
+            entity.CalculateVolume();
+
             IEnumerable<string> columns = Properties.Where(p => p.Name != "Id").Select(p => p.Name);
             IEnumerable<string> parameters = columns.Select(c => $"@{c}");
             string sql = $"INSERT INTO SolidDimensions ({string.Join(", ", columns)}) VALUES ({string.Join(", ", parameters)}); SELECT last_insert_rowid();";
@@ -206,6 +285,9 @@ namespace NetScad.Designer.Repositories
         // Upsert (INSERT OR REPLACE) and return the Id - Only updates if Name and Description match
         public static async Task<int> UpsertAsync(this SolidDimensions entity, SqliteConnection connection)
         {
+            // Calculate volume before upsert
+            entity.CalculateVolume();
+
             // First, try to find an existing record with matching Name and Description
             const string selectSql = "SELECT Id FROM SolidDimensions WHERE Name = @Name AND Description = @Description AND OperationType = @OperationType LIMIT 1";
             var existingId = await connection.QuerySingleOrDefaultAsync<int?>(selectSql, new { entity.Name, entity.Description, OperationType = entity.OperationType.ToString() });
@@ -234,6 +316,9 @@ namespace NetScad.Designer.Repositories
         // Update
         public static async Task UpdateAsync(this SolidDimensions entity, SqliteConnection connection)
         {
+            // Calculate volume before update
+            entity.CalculateVolume();
+
             IEnumerable<string> setClause = Properties.Where(p => p.Name != "Id").Select(p => $"{p.Name} = @{p.Name}");
             string sql = $"UPDATE SolidDimensions SET {string.Join(", ", setClause)} WHERE Id = @Id";
             await connection.ExecuteAsync(sql, entity);

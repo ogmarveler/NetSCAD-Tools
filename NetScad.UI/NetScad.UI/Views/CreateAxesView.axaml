@@ -18,19 +18,39 @@
         <conv:UnitTextConverter x:Key="UnitTextConverter" />
         <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
         <conv:CollectionCountToBooleanConverter x:Key="CollectionCountToBooleanConverter" />
+        <conv:ThemeToIconConverter x:Key="ThemeToIconConverter" />
     </UserControl.Resources>
 
     <UserControl.Styles>
-        <!--  DataGrid Column Header Styles  -->
+        <!--  Global DataGrid header centering  -->
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="MinHeight" Value="28" />
+        </Style>
+
+        <!--  Metric-specific styling (inherits centering)  -->
         <Style Selector="DataGrid#AxesListMetric DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="Background" Value="{DynamicResource BlueForeground}" />
             <Setter Property="Foreground" Value="{DynamicResource BlueBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
+
+        <!--  Imperial-specific styling (inherits centering)  -->
         <Style Selector="DataGrid#AxesListImperial DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="Background" Value="{DynamicResource TealForeground}" />
             <Setter Property="Foreground" Value="{DynamicResource TealBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <!--  Compact cell styling  -->
+        <Style Selector="DataGridCell">
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="FontSize" Value="12" />
         </Style>
 
         <!--  Round the internal DataGrid border to match CornerRadius  -->
@@ -98,10 +118,14 @@
             <!--  Input Controls  -->
             <RowDefinition Height="Auto" />
             <!--  DataGrids  -->
+            <RowDefinition Height="Auto" />
+            <!--  Overflow Row for Imperial Grids when narrow  -->
+            <RowDefinition Height="Auto" />
+            <!--  Overflow Row for Metric Grids when narrow  -->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MaxWidth="960" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" MinWidth="400" />
             <!--  Reserved for future use  -->
         </Grid.ColumnDefinitions>
 
@@ -339,18 +363,18 @@
                             <StackPanel Orientation="Horizontal" Spacing="5">
                                 <TextBlock
                                     Classes="standardLabel"
-                                    FontSize="12"
+                                    FontSize="13"
                                     Text="Volume:" />
                                 <TextBlock
-                                    FontSize="12"
+                                    FontSize="13"
                                     FontWeight="SemiBold"
                                     Text="{Binding TotalCubicVolume, StringFormat={}{0:N2}}" />
                                 <TextBlock
-                                    FontSize="12"
+                                    FontSize="13"
                                     IsVisible="{Binding IsMetric}"
                                     Text="cm³" />
                                 <TextBlock
-                                    FontSize="12"
+                                    FontSize="13"
                                     IsVisible="{Binding IsImperial}"
                                     Text="in³" />
                             </StackPanel>
@@ -358,18 +382,18 @@
                             <StackPanel Orientation="Horizontal" Spacing="5">
                                 <TextBlock
                                     Classes="standardLabel"
-                                    FontSize="12"
+                                    FontSize="13"
                                     Text="Scale Volume:" />
                                 <TextBlock
-                                    FontSize="12"
+                                    FontSize="13"
                                     FontWeight="SemiBold"
                                     Text="{Binding TotalCubicVolumeScale, StringFormat={}{0:N2}}" />
                                 <TextBlock
-                                    FontSize="12"
+                                    FontSize="13"
                                     IsVisible="{Binding IsMetric}"
                                     Text="m³" />
                                 <TextBlock
-                                    FontSize="12"
+                                    FontSize="13"
                                     IsVisible="{Binding IsImperial}"
                                     Text="ft³" />
                             </StackPanel>
@@ -380,67 +404,91 @@
         </Border>
 
         <!--  Metric Axes DataGrid  -->
-        <Border
-            Grid.Row="0"
-            Grid.Column="1"
-            Margin="10,10,10,20"
-            BorderBrush="{DynamicResource BlueForeground}"
-            BorderThickness="1"
-            BoxShadow="1 1 2 0 Gray"
-            Classes="card_main"
-            ClipToBounds="True"
-            IsVisible="{Binding AxesListMetric, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}">
-            <StackPanel Margin="0" Spacing="0">
-                <DataGrid
-                    x:Name="AxesListMetric"
-                    VerticalAlignment="Stretch"
-                    AutoGenerateColumns="True"
-                    AutoGeneratingColumn="DataGrid_AutoGeneratingColumnMetric"
-                    BorderBrush="{DynamicResource BlueForeground}"
-                    CanUserReorderColumns="True"
-                    CanUserResizeColumns="True"
-                    ClipToBounds="True"
-                    ColumnWidth="Auto"
-                    CornerRadius="6"
-                    FontSize="10"
-                    GridLinesVisibility="All"
-                    IsReadOnly="True"
-                    ItemsSource="{Binding AxesListMetric}"
-                    SelectionChanged="DataGridMetric_SelectionChanged"
-                    SelectionMode="Single" />
-            </StackPanel>
-        </Border>
+        <ScrollViewer
+            x:Name="MetricAxisGrid"
+            Grid.Row="2"
+            Grid.Column="0"
+            MaxWidth="960"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Stretch"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <Border
+                Margin="10,10,15,10"
+                BorderBrush="{DynamicResource BlueForeground}"
+                BorderThickness="1"
+                BoxShadow="1 1 2 0 Gray"
+                Classes="card_main"
+                ClipToBounds="True"
+                IsVisible="{Binding AxesListMetric, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}">
+                <StackPanel Margin="0" Spacing="0">
+                    <!--  Update both DataGrid elements to disable resizing  -->
+                    <DataGrid
+                        x:Name="AxesListMetric"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Stretch"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnMetric"
+                        BorderBrush="{DynamicResource BlueForeground}"
+                        CanUserReorderColumns="False"
+                        CanUserResizeColumns="False"
+                        ClipToBounds="True"
+                        ColumnWidth="Auto"
+                        CornerRadius="6"
+                        FontSize="12"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding AxesListMetric}"
+                        SelectionChanged="DataGridMetric_SelectionChanged"
+                        SelectionMode="Single" />
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
 
         <!--  Imperial Axes DataGrid  -->
-        <Border
-            Grid.Row="1"
-            Grid.Column="1"
-            Margin="10,0,10,10"
-            BorderBrush="{DynamicResource TealForeground}"
-            BorderThickness="1"
-            BoxShadow="1 1 2 0 Gray"
-            Classes="card_main"
-            ClipToBounds="True"
-            IsVisible="{Binding AxesListImperial, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}">
-            <StackPanel Margin="0" Spacing="0">
-                <DataGrid
-                    x:Name="AxesListImperial"
-                    VerticalAlignment="Stretch"
-                    AutoGenerateColumns="True"
-                    AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
-                    BorderBrush="{DynamicResource TealForeground}"
-                    CanUserReorderColumns="True"
-                    CanUserResizeColumns="True"
-                    ClipToBounds="True"
-                    ColumnWidth="Auto"
-                    CornerRadius="6"
-                    FontSize="10"
-                    GridLinesVisibility="All"
-                    IsReadOnly="True"
-                    ItemsSource="{Binding AxesListImperial}"
-                    SelectionChanged="DataGridImperial_SelectionChanged"
-                    SelectionMode="Single" />
-            </StackPanel>
-        </Border>
+        <ScrollViewer
+            x:Name="ImperialAxisGrid"
+            Grid.Row="3"
+            Grid.Column="0"
+            MaxWidth="960"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Stretch"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+
+            <Border
+                Margin="10,10,15,10"
+                BorderBrush="{DynamicResource TealForeground}"
+                BorderThickness="1"
+                BoxShadow="1 1 2 0 Gray"
+                Classes="card_main"
+                ClipToBounds="True"
+                IsVisible="{Binding AxesListImperial, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}">
+                <StackPanel Margin="0" Spacing="0">
+                    <DataGrid
+                        x:Name="AxesListImperial"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Stretch"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
+                        BorderBrush="{DynamicResource TealForeground}"
+                        CanUserReorderColumns="False"
+                        CanUserResizeColumns="False"
+                        ClipToBounds="True"
+                        ColumnWidth="Auto"
+                        CornerRadius="6"
+                        FontSize="12"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding AxesListImperial}"
+                        SelectionChanged="DataGridImperial_SelectionChanged"
+                        SelectionMode="Single" />
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
     </Grid>
 </UserControl>

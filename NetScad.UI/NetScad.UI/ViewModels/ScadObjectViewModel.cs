@@ -207,6 +207,21 @@ namespace NetScad.UI.ViewModels
         // Create object and save to database
         public async Task<int> CreateObjectAsync()
         {
+            // Make sure a solid type has been selected
+            /*** TO DO: Add message box for warning ***/
+            switch (SelectedSolidType)
+            {
+                case "Cube":
+                    IsCubeSelected = true;
+                    break;
+                case "Round Cube":
+                    IsRoundCubeSelected = true;
+                    break;
+                case "Cylinder":
+                    IsCylinderSelected = true;
+                    break;
+                    default: return 0;
+            }
             int? id = null;  // Object for returning the row id
 
             if (_axisId is null) // New axis being applied
@@ -240,7 +255,8 @@ namespace NetScad.UI.ViewModels
             newObject.OSCADMethod = await GenerateOSCADAsync(oDim: newObject); // Get the OSCAD method
 
             // Determine if new row being added is appending the current object or is a new object
-            if (AppendObject) { await newObject.UpsertAsync(DbConnection!); /* Save to database, add to object */ }
+            if (AppendObject) { await newObject.UpsertAsync(DbConnection!); /* Save to database, add to object */
+        }
             else { await newObject.UpsertAsync(DbConnection!); /* Save to database, new object, overwrite existing object */ }
 
             if (AxesSelectEnabled)

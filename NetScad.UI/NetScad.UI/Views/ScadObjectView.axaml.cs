@@ -21,12 +21,12 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private ScadObjectViewModel ViewModel => (ScadObjectViewModel)DataContext!;
     private Window? _parentWindow;
     private IDisposable? _clientSizeObserver;
-    
+
     // Adjust based on your needs:
     // - 1200: Wraps earlier for smaller screens
     // - 1400: Current setting (good for most laptops)
     // - 1600: Only wraps for tablet/small screens
-    private const double WRAP_THRESHOLD_WIDTH = 1440;
+    private const double WRAP_THRESHOLD_WIDTH = 1400;
 
     public ScadObjectView()
     {
@@ -41,7 +41,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // Get the parent window
         _parentWindow = this.FindAncestorOfType<Window>();
-        
+
         if (_parentWindow != null)
         {
             // Subscribe to ClientSize changes using Avalonia's property system
@@ -51,7 +51,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
                     Console.WriteLine($"Window Width: {size.Width}");
                     AdjustLayoutBasedOnWindowWidth(size.Width);
                 });
-            
+
             // Set initial layout based on current window width
             AdjustLayoutBasedOnWindowWidth(_parentWindow.ClientSize.Width);
         }
@@ -110,7 +110,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // List of columns to exclude from display - Hide Imperial columns for Metric view
         var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN",
-            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Radius1_MM", "Radius2_MM"  };
+            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Radius1_MM", "Radius2_MM", "Volume_IN3"  };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -119,11 +119,11 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         }
 
 
-            if (ShouldExcludePropertyWithAllZeros(e.PropertyName))
-            {
-                e.Cancel = true;
-                return;
-            }
+        if (ShouldExcludePropertyWithAllZeros(e.PropertyName))
+        {
+            e.Cancel = true;
+            return;
+        }
 
 
         // Dictionary for custom headers to make them more user-friendly (Metric - abbreviated)
@@ -148,6 +148,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "Description", "Description" },
             { "ModuleName", "Module Name" },
             { "Name", "Object Name" },
+            { "Volume_CM3", "V (cm³)" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -182,33 +183,33 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             "XRotate" => ViewModel.SolidDimensions.All(s => Math.Abs(s.XRotate) == 0.0),
             "YRotate" => ViewModel.SolidDimensions.All(s => Math.Abs(s.YRotate) == 0.0),
             "ZRotate" => ViewModel.SolidDimensions.All(s => Math.Abs(s.ZRotate) == 0.0),
-            
+
             // Offset properties (Metric)
             "XOffset_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.XOffset_MM) == 0.0),
             "YOffset_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.YOffset_MM) == 0.0),
             "ZOffset_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.ZOffset_MM) == 0.0),
-            
+
             // Offset properties (Imperial)
             "XOffset_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.XOffset_IN) == 0.0),
             "YOffset_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.YOffset_IN) == 0.0),
             "ZOffset_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.ZOffset_IN) == 0.0),
-            
+
             // Thickness
             "Thickness_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Thickness_MM) == 0.0),
             "Thickness_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Thickness_IN) == 0.0),
-            
+
             // Optional radius properties
             "Radius1_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius1_MM) == 0.0),
             "Radius1_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius1_IN) == 0.0),
             "Radius2_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius2_MM) == 0.0),
             "Radius2_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius2_IN) == 0.0),
-            
+
             // Rounding properties
             "Round_r_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_r_MM) == 0.0),
             "Round_h_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_h_MM) == 0.0),
             "Round_r_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_r_IN) == 0.0),
             "Round_h_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_h_IN) == 0.0),
-            
+
             // Default: don't exclude
             _ => false
         };
@@ -218,7 +219,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // List of columns to exclude from display - Hide Metric columns for Imperial view
         var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN",
-            "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Radius1_IN", "Radius2_IN" };
+            "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Radius1_IN", "Radius2_IN", "Volume_CM3",  };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -226,11 +227,11 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             return;
         }
 
-            if (ShouldExcludePropertyWithAllZeros(e.PropertyName))
-            {
-                e.Cancel = true;
-                return;
-            }
+        if (ShouldExcludePropertyWithAllZeros(e.PropertyName))
+        {
+            e.Cancel = true;
+            return;
+        }
 
         // Dictionary for custom headers to make them more user-friendly (Imperial - abbreviated)
         var columnHeaders = new Dictionary<string, string>
@@ -254,6 +255,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "SolidType", "Solid Type" },
             { "ModuleName", "Module Name" },
             { "Name", "Object Name" },
+            { "Volume_IN3", "V (in³)" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -441,7 +443,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
-        
+
         // Dispose the observable subscription
         _clientSizeObserver?.Dispose();
         _clientSizeObserver = null;

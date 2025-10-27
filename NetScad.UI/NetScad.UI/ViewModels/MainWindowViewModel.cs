@@ -3,6 +3,7 @@ using Avalonia.Styling;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.UI.Views;
 using ReactiveUI;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace NetScad.UI.ViewModels
@@ -31,16 +32,16 @@ namespace NetScad.UI.ViewModels
         }
 
         // SPA - Swap out views
-        public async void LoadCreateAxesView() => MainViewContent = App.Host?.Services.GetRequiredService<CreateAxesView>();
-        public async void LoadAxisView() => MainViewContent = App.Host?.Services.GetRequiredService<AxisView>();
-        public async void LoadDesignerView() => MainViewContent = App.Host?.Services.GetRequiredService<DesignerView>();
-        public async void LoadScadObjectView()
+        public async Task LoadCreateAxesView() => MainViewContent = App.Host?.Services.GetRequiredService<CreateAxesView>();
+        public async Task LoadAxisView() => MainViewContent = App.Host?.Services.GetRequiredService<AxisView>();
+        public async Task LoadDesignerView() => MainViewContent = App.Host?.Services.GetRequiredService<DesignerView>();
+        public async Task LoadScadObjectView()
         {
             await App.Host!.Services.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
             MainViewContent = App.Host!.Services.GetRequiredService<ScadObjectView>();
         }
 
-        public static async void ToggleTheme() => Application.Current?.RequestedThemeVariant =
+        public static async Task ToggleTheme() => Application.Current?.RequestedThemeVariant =
                 Application.Current.ActualThemeVariant == ThemeVariant.Light
                     ? ThemeVariant.Dark
                     : ThemeVariant.Light;
