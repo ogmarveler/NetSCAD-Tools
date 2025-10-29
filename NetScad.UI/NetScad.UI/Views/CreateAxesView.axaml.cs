@@ -1,14 +1,16 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Data;
 using Avalonia.Interactivity;
-using Avalonia.Styling;
 using Avalonia.VisualTree;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.Core.Measurements;
+using NetScad.UI.Converters;
 using NetScad.UI.ViewModels;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using static NetScad.Core.Measurements.Selector;
 
@@ -26,6 +28,32 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
         InitializeComponent();
         DataContext = App.Host?.Services.GetRequiredService<CreateAxesViewModel>();
         this.AttachedToVisualTree += CreateAxesView_AttachedToVisualTree;
+
+        // Set fixed DataGrid widths after XAML is initialized
+        SetDataGridWidths();
+    }
+
+    private void SetDataGridWidths()
+    {
+        // Find the DataGrids by name (from XAML)
+        var metricDataGrid = this.FindControl<DataGrid>("AxesListMetric");
+        var imperialDataGrid = this.FindControl<DataGrid>("AxesListImperial");
+
+        if (metricDataGrid != null)
+        {
+            metricDataGrid.Width = 960;  // Fixed width
+            metricDataGrid.MaxWidth = 960;
+            metricDataGrid.MinWidth = 600;
+            metricDataGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
+        }
+
+        if (imperialDataGrid != null)
+        {
+            imperialDataGrid.Width = 960;  // Fixed width
+            imperialDataGrid.MaxWidth = 960;
+            imperialDataGrid.MinWidth = 600;
+            imperialDataGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
+        }
     }
 
     private void CreateAxesView_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
@@ -53,8 +81,24 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
         }
         else
         {
-            AdjustLayoutForWideScreen();
+            //AdjustLayoutForWideScreen();
         }
+    }
+
+    // Optional: Adjust width based on window size
+    private void AdjustDataGridWidthBasedOnWindow(double windowWidth)
+    {
+        var metricDataGrid = this.FindControl<DataGrid>("AxesListMetric");
+        var imperialDataGrid = this.FindControl<DataGrid>("AxesListImperial");
+
+        // Responsive width based on window size
+        double dataGridWidth = windowWidth < 1200 ? 600 : 860;
+
+        if (metricDataGrid != null)
+            metricDataGrid.Width = dataGridWidth;
+
+        if (imperialDataGrid != null)
+            imperialDataGrid.Width = dataGridWidth;
     }
 
     private async void CreateCustomAxis(object? sender, RoutedEventArgs e) => await ViewModel.CreateCustomAxisAsync();
@@ -65,15 +109,27 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
     /// MVU-style: Simple column customization without adding custom columns
     /// Avoids stateful column tracking and duplication issues
     /// </summary>
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
     private void DataGrid_AutoGeneratingColumnImperial(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
-        // Cancel CallingMethod - we'll let AxisDisplayConverter handle it via binding
+        // Customize CallingMethod column to show formatted axis display
         if (e.PropertyName == nameof(Axis.Scad.Models.GeneratedModule.CallingMethod))
         {
-            // Don't add custom columns - just customize the auto-generated one
-            e.Column.Header = "Axis Display";
-            e.Column.Width = new DataGridLength(200);
-            e.Column.CanUserResize = false;
+            // Create a custom DataGridTextColumn with value formatting
+            var axisDisplayColumn = new DataGridTextColumn
+            {
+                Header = "Axis Display",
+                Width = new DataGridLength(200),
+                CanUserResize = false,
+                IsReadOnly = true,
+                Binding = new Binding(nameof(Axis.Scad.Models.GeneratedModule.CallingMethod))
+                {
+                    Converter = new AxisDisplayConverter() // Use the converter directly
+                }
+            };
+
+            // Replace the auto-generated column
+            e.Column = axisDisplayColumn;
             return;
         }
 
@@ -87,7 +143,7 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
                     Text = value?.ToString() ?? "",
                     HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
                     TextAlignment = Avalonia.Media.TextAlignment.Center,
-                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
+                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
                 };
             });
         }
@@ -234,26 +290,26 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void AdjustLayoutForWideScreen()
-    {
-        var imperialAxisGrid = this.FindControl<ScrollViewer>("ImperialAxisGrid");
-        if (imperialAxisGrid != null)
-        {
-            Grid.SetRow(imperialAxisGrid, 0);
-            Grid.SetColumn(imperialAxisGrid, 1);
-            Grid.SetRowSpan(imperialAxisGrid, 2);
-            Grid.SetColumnSpan(imperialAxisGrid, 1);
-        }
+    //private void AdjustLayoutForWideScreen()
+    //{
+    //    var imperialAxisGrid = this.FindControl<ScrollViewer>("ImperialAxisGrid");
+    //    if (imperialAxisGrid != null)
+    //    {
+    //        Grid.SetRow(imperialAxisGrid, 0);
+    //        Grid.SetColumn(imperialAxisGrid, 1);
+    //        Grid.SetRowSpan(imperialAxisGrid, 2);
+    //        Grid.SetColumnSpan(imperialAxisGrid, 1);
+    //    }
 
-        var metricAxisGrid = this.FindControl<ScrollViewer>("MetricAxisGrid");
-        if (metricAxisGrid != null)
-        {
-            Grid.SetRow(metricAxisGrid, 1);
-            Grid.SetColumn(metricAxisGrid, 1);
-            Grid.SetRowSpan(metricAxisGrid, 1);
-            Grid.SetColumnSpan(metricAxisGrid, 2);
-        }
-    }
+    //    var metricAxisGrid = this.FindControl<ScrollViewer>("MetricAxisGrid");
+    //    if (metricAxisGrid != null)
+    //    {
+    //        Grid.SetRow(metricAxisGrid, 1);
+    //        Grid.SetColumn(metricAxisGrid, 1);
+    //        Grid.SetRowSpan(metricAxisGrid, 1);
+    //        Grid.SetColumnSpan(metricAxisGrid, 2);
+    //    }
+    //}
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {

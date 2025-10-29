@@ -15,5 +15,6 @@
         public double MinZ { get; set; } = 0;
         public double MaxZ { get; set; } = 0;
         public string? Volume { get; set; } = "0";
+
     }
 }

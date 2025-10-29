@@ -416,7 +416,7 @@
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
             <Border
-                Margin="10,10,15,10"
+                Margin="10"
                 BorderBrush="{DynamicResource BlueForeground}"
                 BorderThickness="1"
                 BoxShadow="1 1 2 0 Gray"
@@ -435,7 +435,6 @@
                         CanUserReorderColumns="False"
                         CanUserResizeColumns="False"
                         ClipToBounds="True"
-                        ColumnWidth="Auto"
                         CornerRadius="6"
                         FontSize="12"
                         GridLinesVisibility="All"
@@ -461,7 +460,7 @@
             VerticalScrollBarVisibility="Auto">
 
             <Border
-                Margin="10,10,15,10"
+                Margin="10"
                 BorderBrush="{DynamicResource TealForeground}"
                 BorderThickness="1"
                 BoxShadow="1 1 2 0 Gray"
@@ -479,7 +478,6 @@
                         CanUserReorderColumns="False"
                         CanUserResizeColumns="False"
                         ClipToBounds="True"
-                        ColumnWidth="Auto"
                         CornerRadius="6"
                         FontSize="12"
                         GridLinesVisibility="All"
