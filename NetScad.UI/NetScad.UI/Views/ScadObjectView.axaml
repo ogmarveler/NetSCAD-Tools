@@ -460,7 +460,7 @@
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="0"
-                        Width="100"
+                        Width="105"
                         Margin="0,0,10,0"
                         HorizontalAlignment="Left"
                         Classes="inputGroup">

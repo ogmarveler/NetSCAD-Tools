@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -10,6 +10,7 @@
 	  <PublishAot>true</PublishAot>
 	  <SignAssembly>True</SignAssembly>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <PackageIcon>logo-large.png</PackageIcon>
   </PropertyGroup>
 	
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -52,8 +53,10 @@
     <PackageReference Include="Markdown.Avalonia.Svg" />
     <PackageReference Include="Markdown.Avalonia.SyntaxHigh" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
+	  <PackageReference Include="Microsoft.DotNet.ILCompiler" />
+	  <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
+	  <PackageReference Include="System.Private.Uri" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -63,8 +66,9 @@
   </ItemGroup>
 
 <ItemGroup>
+	  <None Include="Assets\Images\logo-large.png" Pack="True" PackagePath="logo-large.png" />
 	  <None Update="Scad\Axes\axes.scad">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Scad\Solids\object.scad">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>

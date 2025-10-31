@@ -55,7 +55,7 @@ namespace NetScad
                     SqliteConnection.ClearAllPools();
                     GC.Collect();
                     var connection = new SqliteConnection($"Data Source={dbPath};Mode=ReadWrite;Cache=Shared");
-                    connection.Open(); // Open connection here
+                    connection.Open(); // Open connection here    
                     return connection;
                 });
 
@@ -63,14 +63,14 @@ namespace NetScad
                 services.AddSingleton<CreateAxesViewModel>();
                 services.AddSingleton<CreateAxesView>();
                 services.AddSingleton<AxisView>();
-                services.AddSingleton<AxisViewModel>();
+                services.AddSingleton<AxisViewModel>();  
                 services.AddSingleton<DesignerView>();
                 services.AddSingleton<DesignerViewModel>();
                 services.AddSingleton<ScadObjectView>();
                 services.AddSingleton<ScadObjectViewModel>();
                 services.AddSingleton<IScrewSizeService, ScrewSizeService>();
                 services.AddSingleton<App>(); // Avalonia app
-            });
+            }); 
 
             // Build and start the host
             var host = builder.Build();

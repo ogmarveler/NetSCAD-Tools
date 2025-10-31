@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using Dapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +26,7 @@ namespace NetScad
         [STAThread]
         public static void Main(string[] args)
         {
+            Console.WriteLine("Starting NetSCAD app...");
             var builder = Host.CreateDefaultBuilder(args);
             var rid = GetRuntimeIdentifier(); // e.g., "win-x64", "linux-x64", "linux-arm64"
             builder.ConfigureServices((context, services) =>
@@ -55,7 +57,7 @@ namespace NetScad
                     SqliteConnection.ClearAllPools();
                     GC.Collect();
                     var connection = new SqliteConnection($"Data Source={dbPath};Mode=ReadWrite;Cache=Shared");
-                    connection.Open(); // Open connection here
+                    connection.Open(); // Open connection here    
                     return connection;
                 });
 
@@ -63,14 +65,14 @@ namespace NetScad
                 services.AddSingleton<CreateAxesViewModel>();
                 services.AddSingleton<CreateAxesView>();
                 services.AddSingleton<AxisView>();
-                services.AddSingleton<AxisViewModel>();
+                services.AddSingleton<AxisViewModel>();  
                 services.AddSingleton<DesignerView>();
                 services.AddSingleton<DesignerViewModel>();
                 services.AddSingleton<ScadObjectView>();
                 services.AddSingleton<ScadObjectViewModel>();
                 services.AddSingleton<IScrewSizeService, ScrewSizeService>();
                 services.AddSingleton<App>(); // Avalonia app
-            });
+            }); 
 
             // Build and start the host
             var host = builder.Build();
@@ -128,19 +130,19 @@ namespace NetScad
 
         private static string GetScadPath()
         {
-            // Use bin directory for object.scad
-            return Path.Combine(AppContext.BaseDirectory, "Scad");
+            var scadPath = Path.Combine(AppContext.BaseDirectory, "Scad");
+            Directory.CreateDirectory(scadPath);
+            return scadPath;
         }
 
         private static string GetDbPath()
         {
-            // Check server-side path first (for sync)
-            var serverPath = Environment.GetEnvironmentVariable("NETSCAD_DB_PATH");
-            if (!string.IsNullOrEmpty(serverPath) && File.Exists(serverPath))
-                return serverPath;
-
-            // Use bin directory for netscad.db
-            return Path.Combine(AppContext.BaseDirectory, "Data", "netscad.db");
+            var dbPath = Path.Combine(AppContext.BaseDirectory, "Data", "netscad.db");
+            var dataDir = Path.GetDirectoryName(dbPath)!;
+            Directory.CreateDirectory(dataDir);
+            return dbPath;
         }
     }
 }
+
+

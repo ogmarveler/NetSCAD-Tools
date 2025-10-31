@@ -6,6 +6,10 @@
   <ItemGroup>
     <!-- Avalonia packages -->
     <!-- Important: keep version in sync! -->
+    <PackageVersion Include="Ab4d.SharpEngine" Version="3.2.9386" />
+    <PackageVersion Include="Ab4d.SharpEngine.Assimp" Version="3.2.9386" />
+    <PackageVersion Include="Ab4d.SharpEngine.AvaloniaUI" Version="3.2.9386" />
+    <PackageVersion Include="Assimp" Version="3.0.0" />
     <PackageVersion Include="Avalonia" Version="11.3.8" />
     <PackageVersion Include="Avalonia.AvaloniaEdit" Version="11.3.0" />
     <PackageVersion Include="Avalonia.Controls.DataGrid" Version="11.3.8" />
@@ -22,6 +26,9 @@
     <PackageVersion Include="AvaloniaEdit.TextMate" Version="11.3.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageVersion Include="Dapper" Version="2.1.66" />
+    <PackageVersion Include="HelixToolkit" Version="2.27.3" />
+    <PackageVersion Include="HelixToolkit.SharpDX.Assimp" Version="2.27.3" />
+    <PackageVersion Include="HelixToolkit.SharpDX.Core" Version="2.27.3" />
     <PackageVersion Include="HotAvalonia" Version="3.0.0" />
     <PackageVersion Include="HotAvalonia.Extensions" Version="3.0.0" />
     <PackageVersion Include="Markdown.Avalonia" Version="11.0.2" />
@@ -30,18 +37,22 @@
     <PackageVersion Include="Markdown.Avalonia.Tight" Version="11.0.2" />
     <PackageVersion Include="MdXaml.Html" Version="1.27.0" />
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.DotNet.ILCompiler" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.10" />
     <PackageVersion Include="Microsoft.NET.ILLink.Tasks" Version="9.0.10" />
     <PackageVersion Include="Prism.Core" Version="9.0.537" />
+    <PackageVersion Include="ReactiveUI.Avalonia" Version="11.3.8" />
     <PackageVersion Include="ReactiveUI.Fody" Version="19.5.41" />
     <PackageVersion Include="ReactiveUI.SourceGenerators" Version="2.4.1" />
     <PackageVersion Include="ReactiveUI.Validation" Version="5.0.1" />
+    <PackageVersion Include="Ryujinx.Graphics.Vulkan.Dependencies.MoltenVK" Version="1.2.3" />
     <PackageVersion Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.1" />
     <PackageVersion Include="SQLite" Version="3.13.0" />
     <PackageVersion Include="System.Data.SQLite" Version="2.0.2" />
     <PackageVersion Include="System.Data.SQLite.Core" Version="1.0.119" />
+    <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.15" />
   </ItemGroup>
 </Project>

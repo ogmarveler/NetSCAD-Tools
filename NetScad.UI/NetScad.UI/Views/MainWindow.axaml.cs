@@ -12,6 +12,7 @@ namespace NetScad.UI.Views
         public MainWindow()
         {
             InitializeComponent();
+            this.WindowState = WindowState.Maximized;
             DataContext = App.Host?.Services.GetRequiredService<MainWindowViewModel>();
         }
 

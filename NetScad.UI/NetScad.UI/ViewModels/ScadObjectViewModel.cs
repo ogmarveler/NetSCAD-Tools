@@ -116,8 +116,9 @@ namespace NetScad.UI.ViewModels
             _moduleDimensionsDifferences = [];
             _moduleDimensionsIntersections = [];
             DbConnection = App.Host!.Services.GetRequiredService<SqliteConnection>(); // Get the DbConnection from the DI container
-            ClearObjectAsync().Wait();
-            GetAxesList().Wait();
+            _ = ClearObjectAsync();
+            _ = GetAxesList();
+            AxisStored = false;
             _decimalPlaces = Designer.Repositories.SolidDimensions.OpenSCAD_DecimalPlaces;
             FilamentTypes = [.. Enum.GetValues<FilamentType>()];
             UnitSystemValues = [.. Enum.GetValues(typeof(UnitSystem)).Cast<UnitSystem>()];

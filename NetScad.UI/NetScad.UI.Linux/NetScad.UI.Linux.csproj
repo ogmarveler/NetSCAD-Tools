@@ -3,7 +3,7 @@
     <OutputType>Exe</OutputType>
     <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
     One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
 	  <AssemblyName>NetSCAD</AssemblyName>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -61,8 +61,9 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
+	  <PackageReference Include="Microsoft.DotNet.ILCompiler" />
+	  <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
   </ItemGroup>
 
   <ItemGroup>

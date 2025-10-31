@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType>
     <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
     One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
 	  <AssemblyName>NetSCAD</AssemblyName>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -12,6 +12,8 @@
 	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	  <PublishTrimmed>true</PublishTrimmed>
 	  <TrimMode>copyused</TrimMode>
+    <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
+	  <CsWinRTGenerateInteropAssembly>false</CsWinRTGenerateInteropAssembly>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -21,6 +23,7 @@
     <SignAssembly>True</SignAssembly>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <StartupObject>NetScad.Program</StartupObject>
+    <RootNamespace>NetScad</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -37,7 +40,7 @@
   <PropertyGroup Label="Avalonia">
     <AvaloniaUseCompiledBindingsByDefault>True</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationIcon>logo.ico</ApplicationIcon>
-    <PackageIcon>logo.png</PackageIcon>
+    <PackageIcon>logo-large.png</PackageIcon>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
 
@@ -56,8 +59,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
+	  <PackageReference Include="Microsoft.DotNet.ILCompiler" />
+	  <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
+    <FrameworkReference Include="Microsoft.Windows.SDK.NET.Ref" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,8 +70,8 @@
     <ProjectReference Include="..\NetScad.UI\NetScad.UI.csproj" />
   </ItemGroup>
 
-  <!-- <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+ <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="$(ProjectDir)create-zip.bat" /> 
-  </Target>-->
+  </Target>
 
 </Project>
