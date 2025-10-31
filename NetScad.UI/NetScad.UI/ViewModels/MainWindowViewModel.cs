@@ -41,10 +41,13 @@ namespace NetScad.UI.ViewModels
             MainViewContent = App.Host!.Services.GetRequiredService<ScadObjectView>();
         }
 
-        public static async Task ToggleTheme() => Application.Current?.RequestedThemeVariant =
-                Application.Current.ActualThemeVariant == ThemeVariant.Light
-                    ? ThemeVariant.Dark
-                    : ThemeVariant.Light;
+        public static async Task ToggleTheme()
+        {
+            Application.Current?.RequestedThemeVariant =
+                   Application.Current.ActualThemeVariant == ThemeVariant.Light
+                       ? ThemeVariant.Dark
+                       : ThemeVariant.Light;
+        }
 
         public ICommand NewAxesCommand { get; } 
         public ICommand NewObjectCommand { get; }
