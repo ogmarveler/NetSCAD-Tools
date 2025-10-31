@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using Dapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,7 +25,6 @@ namespace NetScad
         [STAThread]
         public static void Main(string[] args)
         {
-            Console.WriteLine("Starting NetSCAD app...");
             var builder = Host.CreateDefaultBuilder(args);
             var rid = GetRuntimeIdentifier(); // e.g., "win-x64", "linux-x64", "linux-arm64"
             builder.ConfigureServices((context, services) =>
@@ -103,7 +101,6 @@ namespace NetScad
             .With(new MacOSPlatformOptions { ShowInDock = true, }) // Options on macOS
             .With(new X11PlatformOptions { RenderingMode = [X11RenderingMode.Glx, X11RenderingMode.Software], OverlayPopups = true, UseDBusMenu = true, WmClass = AppDomain.CurrentDomain.FriendlyName, }) // Enable GPU on Linux
             .WithInterFont() // Use Inter font by default
-            .LogToTrace() // Log Avalonia diagnostics to Trace
             .UseReactiveUI(); // MVVM framework
 
         private static void SilenceConsole()
@@ -130,19 +127,15 @@ namespace NetScad
 
         private static string GetScadPath()
         {
-            var scadPath = Path.Combine(AppContext.BaseDirectory, "Scad");
-            Directory.CreateDirectory(scadPath);
-            return scadPath;
+            // Use bin directory for object.scad
+            return Path.Combine(AppContext.BaseDirectory, "Scad");
         }
 
         private static string GetDbPath()
         {
-            var dbPath = Path.Combine(AppContext.BaseDirectory, "Data", "netscad.db");
-            var dataDir = Path.GetDirectoryName(dbPath)!;
-            Directory.CreateDirectory(dataDir);
-            return dbPath;
+
+            // Use bin directory for netscad.db
+            return Path.Combine(AppContext.BaseDirectory, "Data", "netscad.db");
         }
     }
 }
-
-

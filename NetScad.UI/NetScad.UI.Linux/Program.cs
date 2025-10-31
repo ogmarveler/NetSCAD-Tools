@@ -101,7 +101,6 @@ namespace NetScad
             .With(new MacOSPlatformOptions { ShowInDock = true, }) // Options on macOS
             .With(new X11PlatformOptions { RenderingMode = [X11RenderingMode.Glx, X11RenderingMode.Software], OverlayPopups = true, UseDBusMenu = true, WmClass = AppDomain.CurrentDomain.FriendlyName, }) // Enable GPU on Linux
             .WithInterFont() // Use Inter font by default
-            .LogToTrace() // Log Avalonia diagnostics to Trace
             .UseReactiveUI(); // MVVM framework
 
         private static void SilenceConsole()

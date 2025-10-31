@@ -1460,7 +1460,7 @@ namespace NetScad.UI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedAxisValue, value);
-                _selectedAxis = _axesModulesList.FirstOrDefault(x => x.CallingMethod == SelectedAxisValue);
+                _selectedAxis = _axesModulesList.FirstOrDefault(x => x.CallingMethod == _selectedAxisValue);
                 AxisXPositionMM = _selectedAxis != null ? _selectedAxis.MinX : 0;
                 AxisYPositionMM = _selectedAxis != null ? _selectedAxis.MinY : 0;
                 AxisZPositionMM = _selectedAxis != null ? _selectedAxis.MinZ : 0;

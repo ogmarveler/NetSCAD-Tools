@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
@@ -9,7 +9,7 @@
 	  <TrimMode>copyused</TrimMode>
 	  <PublishAot>true</PublishAot>
 	  <SignAssembly>True</SignAssembly>
-	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
