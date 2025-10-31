@@ -17,7 +17,7 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <PublishAot>False</PublishAot>
+    <PublishAot>True</PublishAot>
     <SignAssembly>True</SignAssembly>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <StartupObject>NetScad.Program</StartupObject>

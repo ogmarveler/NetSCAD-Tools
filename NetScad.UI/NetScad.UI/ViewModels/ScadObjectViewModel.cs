@@ -1133,7 +1133,7 @@ namespace NetScad.UI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _axesSelectEnabled, value);
-                if (value)
+                if (_axesSelectEnabled)
                 {
                     SelectedAxisValue = "Select Axis"; // Reset selection when enabled
                     _selectedAxis = null; // Clear selected axis
