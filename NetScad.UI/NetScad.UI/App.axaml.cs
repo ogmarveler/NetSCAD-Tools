@@ -13,7 +13,7 @@ namespace NetScad.UI
         // Static Host property to access DI container
         public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
-        public override async void OnFrameworkInitializationCompleted()
+        public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -30,8 +30,8 @@ namespace NetScad.UI
                 };
             }
 
-            base.OnFrameworkInitializationCompleted(); 
-        }  
+            base.OnFrameworkInitializationCompleted();
+        }
         public static IHost? Host { get; set; }
     }
 }    

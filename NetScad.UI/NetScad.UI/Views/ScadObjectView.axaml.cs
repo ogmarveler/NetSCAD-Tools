@@ -1,5 +1,11 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
+using Avalonia.Layout;  // Added for TextWrapping
+using Avalonia.Media;
+using Avalonia.Styling;
+using Avalonia.VisualTree;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.Core.Material;
 using NetScad.Core.Primitives;
@@ -10,9 +16,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using static NetScad.Core.Measurements.Selector;
-using Avalonia.Media;
-using Avalonia.VisualTree;
-using Avalonia;
 
 namespace NetScad.UI.Views;
 
@@ -35,6 +38,245 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
         // Wait for the control to be attached to the visual tree to access the parent window
         this.AttachedToVisualTree += ScadObjectView_AttachedToVisualTree;
+        // Add columns after the control is attached (application is initialized)
+        AddActionButtonColumnToModuleDataGrid();
+        AddSolidCountColumnToModuleDataGrid();
+        AddActionButtonColumnToSolidDataGrid();
+        AddActionButtonColumnToSolidDataGridImperial();
+    }
+
+    // New method to add the solid count column (now clickable)
+    private void AddSolidCountColumnToModuleDataGrid()
+    {
+        // Define the cell template with a button showing the count
+        var countTemplate = new FuncDataTemplate<object>((item, scope) =>
+        {
+            if (item is ModuleDimensions module)
+            {
+                // Count solids associated with this module
+                int count = ViewModel.SolidDimensions.Count(s => s.ModuleDimensionsId == module.Id);
+                var button = new Button
+                {
+                    Content = count.ToString(),
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,  // Align to the right
+                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                    MaxWidth=20,
+                    Background = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("DarkBlueBackground", Brushes.Gray) : GetThemeBrush("DarkBlueForeground", Brushes.Gray),  // Theme-aware dark blue for modules
+                    Foreground = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("DarkBlueForeground", Brushes.Gray) : GetThemeBrush("DarkBlueBackground", Brushes.Gray),  // White text for contrast
+                    Height = 20,  // Smaller height to reduce row height
+                    FontSize = 10,  // Smaller font
+                    Padding = new Avalonia.Thickness(2),  // Reduced padding
+                    Margin = new Avalonia.Thickness(2)  // Reduced margin
+                };
+
+                // Handle the button click to show modal
+                button.Click += async (s, e) =>
+                {
+                    var solids = ViewModel.SolidDimensions.Where(s => s.ModuleDimensionsId == module.Id).ToList();
+                    if (solids.Any() && _parentWindow != null)
+                    {
+                        var modal = new Window
+                        {
+                            Title = $"OSCAD Methods for {module.Name}",
+                            Width = 600,
+                            Height = 400,
+                            CornerRadius= new CornerRadius(6),
+                            BorderThickness=new Thickness(1),
+                            ClipToBounds =true,
+                            BorderBrush=Brushes.Transparent,
+                            Background =Brushes.Transparent,
+                            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                            Content = new Border
+                            {
+                                Margin=new Thickness(10),
+                                Padding = new Thickness(10),
+                                Classes = { "card_main" },
+                                Child = new ScrollViewer
+                                {
+                                    Content = new TextBlock
+                                    {
+                                        Text = string.Join("\n\n", solids.Select(s => s.OSCADMethod)),
+                                        FontFamily = "Courier New",  // Monospace for code-like display
+                                        TextWrapping = TextWrapping.Wrap,
+                                        Margin = new Thickness(10)
+                                    }
+                                }
+                            }
+                        };
+                        await modal.ShowDialog(_parentWindow);
+                    }
+                };
+
+                return button;
+            }
+            return new Button { Content = "0", IsEnabled = false, Height = 20, FontSize = 10, Padding = new Thickness(2), Margin = new Thickness(2) };
+        });
+
+        // Create the template column
+        var countColumn = new DataGridTemplateColumn
+        {
+            Header = "# Solids",  // Column header
+            CellTemplate = countTemplate,
+            CanUserSort = false,  // Disable sorting if not needed
+            CanUserResize = false  // Disable resizing if not needed
+        };
+
+        // Add the column to the DataGrid (after the action column)
+        ModulesDataGrid.Columns.Add(countColumn);
+    }
+
+    // New method to add the button column
+    private void AddActionButtonColumnToSolidDataGrid()
+    {
+        // Define the cell template with a button
+        var buttonTemplate = new FuncDataTemplate<object>((item, scope) =>
+        {
+            var button = new Button
+            {
+                Content = "Remove",  // Customize the button text
+                MaxWidth = 60,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,  // Align to the right
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                Background = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("PurpleBackground", Brushes.Gray) : GetThemeBrush("PurpleForeground", Brushes.Gray),  // Theme-aware
+                Foreground = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("PurpleForeground", Brushes.Gray) : GetThemeBrush("PurpleBackground", Brushes.Gray),  // White text
+                Height = 20,  // Smaller height to reduce row height
+                FontSize = 10,  // Smaller font
+                Padding = new Avalonia.Thickness(2),  // Reduced padding
+                Margin = new Avalonia.Thickness(2)  // Reduced margin
+            };
+
+            // Handle the button click (replace with your logic)
+            button.Click += async (s, e) =>
+            {
+                if (item is SolidDimensions solidItem)
+                {
+                    // Example: Call a ViewModel method or perform an action
+                    // For instance, populate fields or delete the item
+                    await ViewModel.DeleteSelectedItemAsync(solidItem);
+                    // Or open an edit dialog, etc.
+                }
+            };
+
+            return button;
+        });
+
+        // Create the template column
+        var actionColumn = new DataGridTemplateColumn
+        {
+            Header = "Actions",  // Column header
+            CellTemplate = buttonTemplate,
+            CanUserSort = false,  // Disable sorting if not needed
+            CanUserResize = false  // Disable resizing if not needed
+        };
+
+        // Add the column to the DataGrid
+        SolidDataGrid.Columns.Add(actionColumn);
+    }
+
+    // New method to add the button column
+    private void AddActionButtonColumnToSolidDataGridImperial()
+    {
+        // Define the cell template with a button
+        var buttonTemplate = new FuncDataTemplate<object>((item, scope) =>
+        {
+            var button = new Button
+            {
+                Content = "Remove",  // Customize the button text
+                MaxWidth = 60,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,  // Align to the right
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                Background = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("PurpleBackground", Brushes.Gray) : GetThemeBrush("PurpleForeground", Brushes.Gray),  // Theme-aware
+                Foreground = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("PurpleForeground", Brushes.Gray) : GetThemeBrush("PurpleBackground", Brushes.Gray),  // White text
+                Height = 20,  // Smaller height to reduce row height
+                FontSize = 10,  // Smaller font
+                Padding = new Avalonia.Thickness(2),  // Reduced padding
+                Margin = new Avalonia.Thickness(2)  // Reduced margin
+            };
+
+            // Handle the button click (replace with your logic)
+            button.Click += async (s, e) =>
+            {
+                if (item is SolidDimensions solidItem)
+                {
+                    // Example: Call a ViewModel method or perform an action
+                    // For instance, populate fields or delete the item
+                    await ViewModel.DeleteSelectedItemAsync(solidItem);
+                    // Or open an edit dialog, etc.
+                }
+            };
+
+            return button;
+        });
+
+        // Create the template column
+        var actionColumn = new DataGridTemplateColumn
+        {
+            Header = "Actions",  // Column header
+            CellTemplate = buttonTemplate,
+            CanUserSort = false,  // Disable sorting if not needed
+            CanUserResize = false  // Disable resizing if not needed
+        };
+
+        // Add the column to the DataGrid
+        SolidDataGridImperial.Columns.Add(actionColumn);
+    }
+
+    // New method to add the button column
+    private void AddActionButtonColumnToModuleDataGrid()
+    {
+        // Define the cell template with a button
+        var buttonTemplate = new FuncDataTemplate<object>((item, scope) =>
+        {
+            var button = new Button
+            {
+                Content = "Remove",  // Customize the button text
+                MaxWidth = 60,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,  // Align to the right
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                Background = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("DarkBlueBackground", Brushes.Gray) : GetThemeBrush("DarkBlueForeground", Brushes.Gray),  // Theme-aware dark blue for modules
+                Foreground = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("DarkBlueForeground", Brushes.Gray) : GetThemeBrush("DarkBlueBackground", Brushes.Gray),  // White text for contrast
+                Height = 20,  // Smaller height to reduce row height
+                FontSize = 10,  // Smaller font
+                Padding = new Avalonia.Thickness(2),  // Reduced padding
+                Margin = new Avalonia.Thickness(2)  // Reduced margin
+            };
+
+            // Handle the button click (replace with your logic)
+            button.Click += async (s, e) =>
+            {
+                if (item is ModuleDimensions moduleItem)
+                {
+                    // Example: Call a ViewModel method or perform an action
+                    // For instance, populate fields or delete the item
+                    await ViewModel.DeleteSelectedItemAsync(moduleItem);
+                    // Or open an edit dialog, etc.
+                }
+            };
+
+            return button;
+        });
+
+        // Create the template column
+        var actionColumn = new DataGridTemplateColumn
+        {
+            Header = "Action",  // Column header
+            CellTemplate = buttonTemplate,
+            CanUserSort = false,  // Disable sorting if not needed
+            CanUserResize = false  // Disable resizing if not needed
+        };
+
+        // Add the column to the DataGrid
+        ModulesDataGrid.Columns.Add(actionColumn);
+    }
+
+    // Helper method to get theme-aware brush with fallback
+    private static IBrush GetThemeBrush(string resourceKey, IBrush fallback)
+    {
+        if (Application.Current?.TryGetResource(resourceKey, Application.Current.ActualThemeVariant, out var resource) == true && resource is IBrush brush)
+        {
+            return brush;
+        }
+        return fallback;
     }
 
     private void ScadObjectView_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
@@ -96,9 +338,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private async void DeleteModuleButton_Click(object? sender, RoutedEventArgs e)
     {
         // Check each DataGrid for a selected item
-        object? selectedItem = ModulesIntersectionDataGrid.SelectedItem
-                            ?? ModulesUnionDataGrid.SelectedItem
-                            ?? ModulesDifferenceDataGrid.SelectedItem;
+        object? selectedItem = ModulesDataGrid.SelectedItem;
 
         if (selectedItem != null)
         {
@@ -359,11 +599,12 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
     private async void ClearObjectButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ClearObjectAsync();
 
-    private async void CreateUnionButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateUnionModuleAsync();
-
-    private async void CreateDifferenceButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateDifferenceModuleAsync();
-
-    private async void CreateIntersectionButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateIntersectionModuleAsync();
+    private async void CreateModulesButton_Click(object? sender, RoutedEventArgs e)
+    {
+        await ViewModel.CreateUnionModuleAsync();
+        await ViewModel.CreateDifferenceModuleAsync();
+        await ViewModel.CreateIntersectionModuleAsync();
+    }
 
     private async void ObjectToScadFilesButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ObjectToScadFilesAsync();
 
@@ -373,7 +614,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
     private async void UpdateAxisPositionButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.UpdateAxisTranslateAsync();
 
-    private async void ChangeAxisButton_Click(object? sender, RoutedEventArgs e)
+    private void ChangeAxisButton_Click(object? sender, RoutedEventArgs e)
     {
         ViewModel.AxisStored = false;
         ViewModel.AxesSelectEnabled = true;
@@ -382,32 +623,15 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private void HighlightModuleRow(string moduleName)
     {
         // Clear all previous selections first
-        ModulesUnionDataGrid.SelectedItem = null;
-        ModulesDifferenceDataGrid.SelectedItem = null;
-        ModulesIntersectionDataGrid.SelectedItem = null;
+        ModulesDataGrid.SelectedItem = null;
 
         // Find and select the matching module in the appropriate DataGrid
-        var moduleInUnion = ViewModel.ModuleDimensionsUnions?.FirstOrDefault(m => m.Name == moduleName);
-        if (moduleInUnion != null)
+        var module = ViewModel.ModuleDimensions?.FirstOrDefault(m => m.Name == moduleName);
+        if (module != null)
         {
-            ModulesUnionDataGrid.SelectedItem = moduleInUnion;
-            ModulesUnionDataGrid.ScrollIntoView(moduleInUnion, null);
+            ModulesDataGrid.SelectedItem = module;
+            ModulesDataGrid.ScrollIntoView(module, null);
             return;
-        }
-
-        var moduleInDifference = ViewModel.ModuleDimensionsDifferences?.FirstOrDefault(m => m.Name == moduleName);
-        if (moduleInDifference != null)
-        {
-            ModulesDifferenceDataGrid.SelectedItem = moduleInDifference;
-            ModulesDifferenceDataGrid.ScrollIntoView(moduleInDifference, null);
-            return;
-        }
-
-        var moduleInIntersection = ViewModel.ModuleDimensionsIntersections?.FirstOrDefault(m => m.Name == moduleName);
-        if (moduleInIntersection != null)
-        {
-            ModulesIntersectionDataGrid.SelectedItem = moduleInIntersection;
-            ModulesIntersectionDataGrid.ScrollIntoView(moduleInIntersection, null);
         }
     }
 

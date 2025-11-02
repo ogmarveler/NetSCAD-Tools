@@ -7,7 +7,7 @@
 	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	  <PublishTrimmed>true</PublishTrimmed>
 	  <TrimMode>copyused</TrimMode>
-	  <PublishAot>true</PublishAot>
+	  <PublishAot>True</PublishAot>
 	  <SignAssembly>True</SignAssembly>
 	  <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	  <PackageIcon>logo-large.png</PackageIcon>
@@ -33,10 +33,6 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   
-  <ItemGroup>
-    <AvaloniaXaml Remove="Views\ScadObjectView_backup.axaml" />
-  </ItemGroup>
-  
   <ItemGroup>  
     <PackageReference Include="Avalonia" />  
     <PackageReference Include="Avalonia.AvaloniaEdit" />
@@ -45,14 +41,14 @@
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
-    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="AvaloniaEdit.TextMate" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Markdown.Avalonia" />
     <PackageReference Include="Markdown.Avalonia.Svg" />
     <PackageReference Include="Markdown.Avalonia.SyntaxHigh" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="ReactiveUI" />
+    <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
 	  <PackageReference Include="Microsoft.DotNet.ILCompiler" />
 	  <PackageReference Include="Microsoft.NET.ILLink.Tasks" />

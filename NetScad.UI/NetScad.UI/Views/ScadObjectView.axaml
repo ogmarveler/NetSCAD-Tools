@@ -36,9 +36,9 @@
             <Setter Property="Foreground" Value="{DynamicResource PurpleBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
-        <Style Selector="DataGrid#ModulesUnionDataGrid DataGridColumnHeader">
-            <Setter Property="Background" Value="{DynamicResource BlueForeground}" />
-            <Setter Property="Foreground" Value="{DynamicResource BlueBackground}" />
+        <Style Selector="DataGrid#ModulesDataGrid DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource DarkBlueForeground}" />
+            <Setter Property="Foreground" Value="{DynamicResource DarkBlueBackground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style Selector="DataGrid#ModulesDifferenceDataGrid DataGridColumnHeader">
@@ -1068,53 +1068,21 @@
                             <TextBlock Classes="standardLabel" Text="Update" />
                             <Button
                                 HorizontalAlignment="Stretch"
-                                Background="{DynamicResource BlueForeground}"
-                                BorderBrush="{DynamicResource BlueBackground}"
-                                Click="CreateUnionButton_Click"
-                                Content="Unions"
+                                Background="{DynamicResource DarkBlueForeground}"
+                                BorderBrush="{DynamicResource DarkBlueBackground}"
+                                Click="CreateModulesButton_Click"
+                                Content="Modules"
                                 FontWeight="SemiBold"
-                                Foreground="{DynamicResource BlueBackground}"
-                                IsEnabled="{Binding UnionButton}">
+                                Foreground="{DynamicResource DarkBlueBackground}">
+                                <Button.IsEnabled>
+                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                        <Binding Path="UnionButton" />
+                                        <Binding Path="DifferenceButton" />
+                                        <Binding Path="IntersectionButton" />
+                                    </MultiBinding>
+                                </Button.IsEnabled>
                                 <ToolTip.Tip>
                                     <TextBlock Text="This action will create a union of the selected objects in the database for use in OpenSCAD." />
-                                </ToolTip.Tip>
-                            </Button>
-                        </StackPanel>
-                        <StackPanel
-                            Width="105"
-                            Classes="inputGroup"
-                            IsEnabled="{Binding AxisStored}">
-                            <TextBlock Classes="standardLabel" Text="Update" />
-                            <Button
-                                HorizontalAlignment="Stretch"
-                                Background="{DynamicResource TealForeground}"
-                                BorderBrush="{DynamicResource TealBackground}"
-                                Click="CreateDifferenceButton_Click"
-                                Content="Differences"
-                                FontWeight="SemiBold"
-                                Foreground="{DynamicResource TealBackground}"
-                                IsEnabled="{Binding DifferenceButton}">
-                                <ToolTip.Tip>
-                                    <TextBlock Text="This action will create a difference of the selected objects in the database for use in OpenSCAD." />
-                                </ToolTip.Tip>
-                            </Button>
-                        </StackPanel>
-                        <StackPanel
-                            Width="110"
-                            Classes="inputGroup"
-                            IsEnabled="{Binding AxisStored}">
-                            <TextBlock Classes="standardLabel" Text="Update" />
-                            <Button
-                                HorizontalAlignment="Stretch"
-                                Background="{DynamicResource GoldForeground}"
-                                BorderBrush="{DynamicResource GoldBackground}"
-                                Click="CreateIntersectionButton_Click"
-                                Content="Intersections"
-                                FontWeight="SemiBold"
-                                Foreground="{DynamicResource GoldBackground}"
-                                IsEnabled="{Binding IntersectionButton}">
-                                <ToolTip.Tip>
-                                    <TextBlock Text="This action will create an intersection of the selected objects in the database for use in OpenSCAD." />
                                 </ToolTip.Tip>
                             </Button>
                         </StackPanel>
@@ -1302,7 +1270,7 @@
             </StackPanel>
         </Border>
 
-        <!--  Union DataGrids Section  -->
+        <!--  Modules DataGrids Section  -->
         <ScrollViewer
             Grid.Row="2"
             Grid.Column="0"
@@ -1311,18 +1279,18 @@
             HorizontalContentAlignment="Stretch"
             VerticalContentAlignment="Top"
             HorizontalScrollBarVisibility="Disabled"
-            IsVisible="{Binding ModuleDimensionsUnions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+            IsVisible="{Binding ModuleDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
             VerticalScrollBarVisibility="Auto">
             <Border
                 Margin="10"
-                BorderBrush="{DynamicResource BlueForeground}"
+                BorderBrush="{DynamicResource DarkBlueForeground}"
                 BorderThickness="1"
                 BoxShadow="1 1 2 0 Gray"
                 Classes="card_main"
                 ClipToBounds="True">
                 <StackPanel Margin="0" Spacing="0">
                     <Grid
-                        x:Name="UnionModulesGrid"
+                        x:Name="ModulesGrid"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         ColumnSpacing="15"
@@ -1340,13 +1308,13 @@
                             Margin="0"
                             Spacing="0">
                             <DataGrid
-                                x:Name="ModulesUnionDataGrid"
+                                x:Name="ModulesDataGrid"
                                 MaxWidth="960"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 AutoGenerateColumns="True"
                                 AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
-                                BorderBrush="{DynamicResource BlueForeground}"
+                                BorderBrush="{DynamicResource DarkBlueForeground}"
                                 CanUserReorderColumns="True"
                                 CanUserResizeColumns="True"
                                 ClipToBounds="True"
@@ -1354,130 +1322,10 @@
                                 CornerRadius="6"
                                 GridLinesVisibility="All"
                                 IsReadOnly="True"
-                                ItemsSource="{Binding ModuleDimensionsUnions}"
+                                ItemsSource="{Binding ModuleDimensions}"
                                 SelectionMode="Single" />
                         </StackPanel>
 
-                    </Grid>
-                </StackPanel>
-            </Border>
-        </ScrollViewer>
-
-        <!--  Difference DataGrids Section  -->
-        <ScrollViewer
-            Grid.Row="3"
-            Grid.Column="0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            HorizontalContentAlignment="Stretch"
-            VerticalContentAlignment="Top"
-            HorizontalScrollBarVisibility="Disabled"
-            IsVisible="{Binding ModuleDimensionsDifferences, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
-            VerticalScrollBarVisibility="Auto">
-            <Border
-                Margin="10"
-                BorderBrush="{DynamicResource TealForeground}"
-                BorderThickness="1"
-                BoxShadow="1 1 2 0 Gray"
-                Classes="card_main"
-                ClipToBounds="True">
-                <StackPanel Margin="0" Spacing="0">
-                    <Grid
-                        x:Name="DifferenceModulesGrid"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        ColumnSpacing="15"
-                        RowSpacing="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <StackPanel
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            MaxWidth="960"
-                            Margin="0"
-                            Spacing="0">
-                            <DataGrid
-                                x:Name="ModulesDifferenceDataGrid"
-                                MaxWidth="960"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                AutoGenerateColumns="True"
-                                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
-                                BorderBrush="{DynamicResource TealForeground}"
-                                CanUserReorderColumns="True"
-                                CanUserResizeColumns="True"
-                                ClipToBounds="True"
-                                ColumnWidth="Auto"
-                                CornerRadius="6"
-                                GridLinesVisibility="All"
-                                IsReadOnly="True"
-                                ItemsSource="{Binding ModuleDimensionsDifferences}"
-                                SelectionMode="Single" />
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-            </Border>
-        </ScrollViewer>
-
-        <!--  Intersection DataGrids Section  -->
-        <ScrollViewer
-            Grid.Row="4"
-            Grid.Column="0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            HorizontalContentAlignment="Stretch"
-            VerticalContentAlignment="Top"
-            HorizontalScrollBarVisibility="Disabled"
-            IsVisible="{Binding ModuleDimensionsIntersections, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
-            VerticalScrollBarVisibility="Auto">
-            <Border
-                Margin="10"
-                BorderBrush="{DynamicResource GoldForeground}"
-                BorderThickness="1"
-                BoxShadow="1 1 2 0 Gray"
-                Classes="card_main"
-                ClipToBounds="True">
-                <StackPanel Margin="0" Spacing="0">
-                    <Grid
-                        x:Name="IntersectionModulesGrid"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        ColumnSpacing="15"
-                        RowSpacing="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <StackPanel
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            MaxWidth="960"
-                            Margin="0"
-                            Spacing="0">
-                            <DataGrid
-                                x:Name="ModulesIntersectionDataGrid"
-                                MaxWidth="960"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                AutoGenerateColumns="True"
-                                AutoGeneratingColumn="DataGrid_AutoGeneratingColumnModule"
-                                BorderBrush="{DynamicResource GoldForeground}"
-                                CanUserReorderColumns="True"
-                                CanUserResizeColumns="True"
-                                ClipToBounds="True"
-                                ColumnWidth="Auto"
-                                CornerRadius="6"
-                                GridLinesVisibility="All"
-                                IsReadOnly="True"
-                                ItemsSource="{Binding ModuleDimensionsIntersections}"
-                                SelectionMode="Single" />
-                        </StackPanel>
                     </Grid>
                 </StackPanel>
             </Border>

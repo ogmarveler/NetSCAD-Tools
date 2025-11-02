@@ -16,8 +16,8 @@
     mc:Ignorable="d">
 
     <StackPanel
-        MaxWidth="1440"
-        Margin="0"
+        MaxWidth="1920"
+        Margin="20"
         HorizontalAlignment="Stretch"
         Background="{DynamicResource CardBackground}">
         <md:MarkdownScrollViewer

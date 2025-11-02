@@ -9,7 +9,7 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	  <PublishSingleFile>true</PublishSingleFile>
 	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-	  <PublishTrimmed>true</PublishTrimmed>
+	  <PublishTrimmed>false</PublishTrimmed>
 	  <TrimMode>copyused</TrimMode>
 	  <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -55,12 +55,13 @@
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.LinuxFramebuffer" />
 	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
-    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Include="Dapper" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="ReactiveUI" />
+    <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
 	  <PackageReference Include="Microsoft.DotNet.ILCompiler" />
 	  <PackageReference Include="Microsoft.NET.ILLink.Tasks" />

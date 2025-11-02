@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -94,14 +94,15 @@ namespace NetScad
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
-            .UseSkia() // Skia rendering
+            //.UseSkia() // Skia rendering
             .UsePlatformDetect() // Auto-selects X11, Wayland, etc., on Linux
             .With(new SkiaOptions()) // Limit GPU memory usage
             .With(new Win32PlatformOptions { RenderingMode = [Win32RenderingMode.AngleEgl, Win32RenderingMode.Wgl, Win32RenderingMode.Software] }) // Enable GPU on Windows
             .With(new MacOSPlatformOptions { ShowInDock = true, }) // Options on macOS
             .With(new X11PlatformOptions { RenderingMode = [X11RenderingMode.Glx, X11RenderingMode.Software], OverlayPopups = true, UseDBusMenu = true, WmClass = AppDomain.CurrentDomain.FriendlyName, }) // Enable GPU on Linux
             .WithInterFont() // Use Inter font by default
-            .UseReactiveUI(); // MVVM framework
+            .UseReactiveUI()
+            .RegisterReactiveUIViewsFromEntryAssembly(); // MVVM framework
 
         private static void SilenceConsole()
         {
@@ -133,10 +134,6 @@ namespace NetScad
 
         private static string GetDbPath()
         {
-            // Check server-side path first (for sync)
-            var serverPath = Environment.GetEnvironmentVariable("NETSCAD_DB_PATH");
-            if (!string.IsNullOrEmpty(serverPath) && File.Exists(serverPath))
-                return serverPath;
 
             // Use bin directory for netscad.db
             return Path.Combine(AppContext.BaseDirectory, "Data", "netscad.db");

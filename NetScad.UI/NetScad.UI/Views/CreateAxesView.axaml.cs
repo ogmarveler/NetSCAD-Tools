@@ -213,6 +213,12 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
             ViewModel.SelectedBackgroundValue = selected.Theme?.Contains("Light") == true
                 ? BackgroundType.Light
                 : BackgroundType.Dark;
+
+            // Highlight corresponding axis row based on Calling Method
+            if (!string.IsNullOrEmpty(selected.CallingMethod))
+            {
+                HighlightAxisRow(selected, dataGrid);
+            }
         }
     }
 
@@ -246,6 +252,12 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
             ViewModel.SelectedBackgroundValue = selected.Theme?.Contains("Light") == true
                 ? BackgroundType.Light
                 : BackgroundType.Dark;
+
+            // Highlight corresponding axis row based on Calling Method
+            if (!string.IsNullOrEmpty(selected.CallingMethod))
+            {
+                HighlightAxisRow(selected, dataGrid);
+            }
         }
     }
 
@@ -267,6 +279,17 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
             "MaxZ" => ViewModel.AxesList.All(s => Math.Abs(s.MaxZ) == 0.0),
             _ => false
         };
+    }
+
+    // New method to highlight a row in a DataGrid by selecting and scrolling to the item
+    private void HighlightAxisRow(Axis.Scad.Models.GeneratedModule module, DataGrid dataGrid)
+    {
+        // Clear previous selections if needed (optional)
+        // dataGrid.SelectedItem = null;
+
+        // Select the item and scroll into view
+        dataGrid.SelectedItem = module;
+        dataGrid.ScrollIntoView(module, null);
     }
 
     private void AdjustLayoutForNarrowScreen()

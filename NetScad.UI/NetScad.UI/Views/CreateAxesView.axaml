@@ -16,6 +16,7 @@
     <UserControl.Resources>
         <conv:DoubleToNullableConverter x:Key="DoubleToNullableConverter" />
         <conv:UnitTextConverter x:Key="UnitTextConverter" />
+        <conv:UnitSystemToColorConverter x:Key="UnitSystemToColorConverter" />
         <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
         <conv:CollectionCountToBooleanConverter x:Key="CollectionCountToBooleanConverter" />
         <conv:ThemeToIconConverter x:Key="ThemeToIconConverter" />
@@ -50,7 +51,7 @@
         <Style Selector="DataGridCell">
             <Setter Property="Padding" Value="4,2" />
             <Setter Property="MinHeight" Value="24" />
-            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontSize" Value="13" />
         </Style>
 
         <!--  Round the internal DataGrid border to match CornerRadius  -->
@@ -276,6 +277,24 @@
                             ItemsSource="{Binding UnitSystemValues}"
                             PlaceholderText="Select Unit"
                             SelectedItem="{Binding SelectedUnitValue, Mode=TwoWay}">
+                            <ComboBox.Foreground>
+                                <Binding
+                                    Converter="{StaticResource UnitSystemToColorConverter}"
+                                    ConverterParameter="Foreground"
+                                    Path="IsMetric" />
+                            </ComboBox.Foreground>
+                            <ComboBox.Background>
+                                <Binding
+                                    Converter="{StaticResource UnitSystemToColorConverter}"
+                                    ConverterParameter="Background"
+                                    Path="IsMetric" />
+                            </ComboBox.Background>
+                            <ComboBox.BorderBrush>
+                                <Binding
+                                    Converter="{StaticResource UnitSystemToColorConverter}"
+                                    ConverterParameter="BorderBrush"
+                                    Path="IsMetric" />
+                            </ComboBox.BorderBrush>
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />

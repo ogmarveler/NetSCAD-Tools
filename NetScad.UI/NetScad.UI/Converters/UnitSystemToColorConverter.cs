@@ -23,10 +23,10 @@ namespace NetScad.UI.Converters
             // Determine which resource keys to use based on unit system
             var (metricKey, imperialKey) = paramStr switch
             {
-                "Foreground" => ("DarkBlueBackground", "MaroonBackground"),
-                "Background" => ("DarkBlueForeground", "MaroonForeground"),
-                "BorderBrush" => ("DarkBlueBackground", "MaroonBackground"),
-                _ => ("DarkBlueBackground", "MaroonBackground")
+                "Foreground" => ("BlueBackground", "TealBackground"),
+                "Background" => ("BlueForeground", "TealForeground"),
+                "BorderBrush" => ("BlueBackground", "TealBackground"),
+                _ => ("BlueBackground", "TealBackground")
             };
 
             // Get the appropriate brush from theme resources
@@ -46,14 +46,14 @@ namespace NetScad.UI.Converters
             if (isDark)
             {
                 return isMetric
-                    ? new SolidColorBrush(Color.Parse("#f2ecff")) // DarkBlue for dark theme
-                    : new SolidColorBrush(Color.Parse("#f1e4f3")); // Maroon for dark theme
+                    ? new SolidColorBrush(Color.Parse("#514e65")) // Blue for dark theme
+                    : new SolidColorBrush(Color.Parse("#7a4c5f")); // Teal for dark theme
             }
             else
             {
                 return isMetric
-                    ? new SolidColorBrush(Color.Parse("#514e65")) // DarkBlue for light theme
-                    : new SolidColorBrush(Color.Parse("#7a4c5f")); // Maroon for light theme
+                    ? new SolidColorBrush(Color.Parse("#617aaa")) // Blue for light theme
+                    : new SolidColorBrush(Color.Parse("#48817c")); // Teal for light theme
             }
         }
 
