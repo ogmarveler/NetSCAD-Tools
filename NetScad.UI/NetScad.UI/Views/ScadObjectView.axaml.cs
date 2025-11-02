@@ -2,9 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
-using Avalonia.Layout;  // Added for TextWrapping
 using Avalonia.Media;
-using Avalonia.Styling;
 using Avalonia.VisualTree;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.Core.Material;

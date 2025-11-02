@@ -16,9 +16,9 @@ Varying axes of different sizes, measurement types, colors, and combinations of 
 * **Convert inches to mm** - Enter inputs in Imperial (in) first, then select Metric (mm)
 ###### 
 #### Layout of Custom Axes Builder
-The Custom Axes Builder has 3 main visual sections: Custom Axes Builder, Generated Axes, and SCAD Output. The output of a newly created axis will show up below the SCAD Output. This shows the total cubic size, as well as the Calling Method to use within your OpenSCAD's project file. In the list to the right of the custom axis settings, you will see the newly created axis, along with axes that have been previously created. **Both ascending and descending sorting are possible, as well as sorting by multiple categories (shift + select).**
+The Custom Axes Builder has 2 main visual sections: Custom Axis and Generated Axes. The outputs of newly created axes will show up below the Custom Axis section. This shows the total cubic size, as well as the name to use in your project file. In the list below the custom axis settings, you will see the newly created axis, along with axes that have been previously created. There are two tables that display axes information. One is metric axes and the other is imperial axes. **Both ascending and descending sorting are possible, as well as sorting by multiple categories (shift + select).**
 ###### 
-![AxesUsageGuide](Assets/Images/axesUsageGuide.png)
+![AxisCreation](Assets/Images/axisCreation.png)
 ###### 
 #### Setting Inputs for New Axis
 | Steps                                                                         | Requirements / Options                  | Default Value |
@@ -38,7 +38,7 @@ The Custom Axes Builder has 3 main visual sections: Custom Axes Builder, Generat
 | 13. To view output files, open the **Scad/Axes folder** in the app's directory|                                         |               |
 ###### 
 #### Usage of Custom Axes in OpenSCAD
-Axes are stored in a **Scad/Axes** folder that is included with the application. A **sample.scad** file is also included to provide a few examples of how to use the custom axes within your project. **The axes.scad and individual axis SCAD files within the Axes folder are NOT designed to be edited**, as they are managed by the application itself. Please understand if editing these files, it could break functionality of use of these files within the application itself.
+Axes are stored in a **Scad/Axes** folder that is included with the application. **The axes.scad and individual axis SCAD files within the Axes folder are NOT designed to be edited**, as they are managed by the application itself. Please understand if editing these files, it could break functionality of use of these files within the application itself.
 ###### 
 * **Axes Module Name Format:** Get_ + { Theme } + { X Range } +  { Y Range } +  { Z Range } + { Unit Scale } + Origin + { Min X } + { Min Y } + { Min Z } (N = negative, i.e, N1 is -1)
 ###### 
@@ -46,4 +46,3 @@ Axes are stored in a **Scad/Axes** folder that is included with the application.
 | ------------------------------- |:-----------------------:|:-------------------:|
 | Scad/Axes/axes.scad             | use <Axes/axes.scad>;   |                     |
 | Scad/Axes/custom_axis_name.scad | Get_Custom_Axis_Name(); | colorVal, alpha     |
-| Scad/sample.scad                |                         |                     |

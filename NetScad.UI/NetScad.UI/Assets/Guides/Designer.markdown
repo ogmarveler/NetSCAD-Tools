@@ -14,12 +14,12 @@ Cubes and cylinders can be generated from the Designer module within this applic
 * **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
 * **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
 ###### 
+
 #### Layout of Custom Object Designer
 The Custom Object Designer is organized into several sections to facilitate the creation of custom objects for OpenSCAD. The main sections include:
 ###### 
-![DesignerCreateObject](Assets/Images/designerCreateObject.png)
-
-###### 
+![DesignerObject](Assets/Images/designerObject.png)
+######
 #### Apply a Custom Axis
 | Steps                                                                         | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
@@ -82,9 +82,7 @@ The Custom Object Designer is organized into several sections to facilitate the 
 | 4. **Clear Object** - clears all inputs, object tables, and object name       |                                         |               |
 | 5. **Clear Inputs** - clear out any entered solid inputs                      |                                         |               |
 | 6. **View Output** - preview the object in OpenSCAD                           |                                         |               |
-| 7. **Unions** - update/add saved solids to object's union() fn                | 1+ "Apply to Union" solids              |               |
-| 8. **Differences** - update/add saved solids to object's difference() fn      | 1+ "Apply to Difference" solids         |               |
-| 9. **Intersections** - update/add saved solids to object's intersection() fn  | 1+ "Apply to Intersection" solids       |               |
+| 7. **Modules** - update/add saved solids to object's specific modules         |                                         |               |
 
 ###### 
 #### Viewing the Object in OpenSCAD
@@ -94,5 +92,5 @@ The object, along with any solids, is stored in a **Scad/Solids** folder that is
 | Files                                   | Usage In Your SCAD File                                | Optional parameters |
 | --------------------------------------- |:------------------------------------------------------:|:-------------------:|
 | Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |
-| Scad/Solids/custom_axis_name.scad       | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |
+| Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |
 | Scad/Solids/object.scad                 |                                                        |                     |
