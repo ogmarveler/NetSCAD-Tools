@@ -7,6 +7,9 @@
 	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	  <PublishTrimmed>true</PublishTrimmed>
 	  <TrimMode>copyused</TrimMode>
+	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+	  <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+	  <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
 	  <PublishAot>True</PublishAot>
 	  <SignAssembly>True</SignAssembly>
 	  <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
@@ -19,7 +22,7 @@
     <IsTrimmable>True</IsTrimmable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>embedded</DebugType>
+    <DebugType>none</DebugType>
     <IsAotCompatible>True</IsAotCompatible>
     <IsTrimmable>True</IsTrimmable>
   </PropertyGroup>

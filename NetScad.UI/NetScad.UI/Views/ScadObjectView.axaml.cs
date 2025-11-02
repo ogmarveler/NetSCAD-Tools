@@ -58,64 +58,66 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
                 var button = new Button
                 {
                     Content = count.ToString(),
-                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,  // Align to the right
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                    MaxWidth=20,
-                    Background = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("DarkBlueBackground", Brushes.Gray) : GetThemeBrush("DarkBlueForeground", Brushes.Gray),  // Theme-aware dark blue for modules
-                    Foreground = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("DarkBlueForeground", Brushes.Gray) : GetThemeBrush("DarkBlueBackground", Brushes.Gray),  // White text for contrast
-                    Height = 20,  // Smaller height to reduce row height
-                    FontSize = 10,  // Smaller font
-                    Padding = new Avalonia.Thickness(2),  // Reduced padding
-                    Margin = new Avalonia.Thickness(2)  // Reduced margin
+                    Height = 20,
+                    Width = 20,  // Limit max width to prevent excessive stretching
+                    FontSize = 10,
+                    Padding = new Avalonia.Thickness(0),  // Reduced padding
+                    Margin = new Avalonia.Thickness(0)  // Reduced margin
                 };
 
-                // Handle the button click to show modal
-                button.Click += async (s, e) =>
-                {
-                    var solids = ViewModel.SolidDimensions.Where(s => s.ModuleDimensionsId == module.Id).ToList();
-                    if (solids.Any() && _parentWindow != null)
+
+                    // Handle the button click to show modal
+                    button.Click += async (s, e) =>
                     {
-                        var modal = new Window
+                        var solids = ViewModel.SolidDimensions.Where(s => s.ModuleDimensionsId == module.Id).ToList();
+                        if (solids.Any() && _parentWindow != null)
                         {
-                            Title = $"OSCAD Methods for {module.Name}",
-                            Width = 600,
-                            Height = 400,
-                            CornerRadius= new CornerRadius(6),
-                            BorderThickness=new Thickness(1),
-                            ClipToBounds =true,
-                            BorderBrush=Brushes.Transparent,
-                            Background =Brushes.Transparent,
-                            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                            Content = new Border
+                            var modal = new Window
                             {
-                                Margin=new Thickness(10),
-                                Padding = new Thickness(10),
-                                Classes = { "card_main" },
-                                Child = new ScrollViewer
+                                Title = $"OSCAD Methods for {module.Name}",
+                                Width = 600,
+                                Height = 400,
+                                CornerRadius = new CornerRadius(6),
+                                BorderThickness = new Thickness(1),
+                                ClipToBounds = true,
+                                BorderBrush = Brushes.Transparent,
+                                Background = Brushes.Transparent,
+                                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                                Content = new Border
                                 {
-                                    Content = new TextBlock
+                                    Margin = new Thickness(10),
+                                    Padding = new Thickness(10),
+                                    Classes = { "card_main" },
+                                    Child = new ScrollViewer
                                     {
-                                        Text = string.Join("\n\n", solids.Select(s => s.OSCADMethod)),
-                                        FontFamily = "Courier New",  // Monospace for code-like display
-                                        TextWrapping = TextWrapping.Wrap,
-                                        Margin = new Thickness(10)
+                                        Content = new TextBlock
+                                        {
+                                            Text = string.Join("\n\n", solids.Select(s => s.OSCADMethod)),
+                                            FontFamily = "Courier New",  // Monospace for code-like display
+                                            TextWrapping = TextWrapping.Wrap,
+                                            Margin = new Thickness(10)
+                                        }
                                     }
                                 }
-                            }
-                        };
-                        await modal.ShowDialog(_parentWindow);
-                    }
-                };
+                            };
+                            await modal.ShowDialog(_parentWindow);
+                        }
+                    };
 
                 return button;
             }
-            return new Button { Content = "0", IsEnabled = false, Height = 20, FontSize = 10, Padding = new Thickness(2), Margin = new Thickness(2) };
+            var disabledButton = new Button { Content = "0", IsEnabled = false, Height = 20, Width = double.NaN, FontSize = 10, Padding = new Thickness(2), Margin = new Thickness(2) };
+
+            return disabledButton;
         });
 
         // Create the template column
         var countColumn = new DataGridTemplateColumn
         {
-            Header = "# Solids",  // Column header
+            Header = "#",  // Column header
+            MaxWidth = 40,  // Limit max width to prevent excessive stretching
             CellTemplate = countTemplate,
             CanUserSort = false,  // Disable sorting if not needed
             CanUserResize = false  // Disable resizing if not needed
@@ -133,29 +135,33 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         {
             var button = new Button
             {
-                Content = "Remove",  // Customize the button text
-                MaxWidth = 60,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,  // Align to the right
+                // Replace text content with an icon
+                Content = new PathIcon
+                {
+                    Data = Geometry.Parse("M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"),  // Trash bin icon path
+                    Width = 15,  // Adjust size to fit the small button
+                    Height = 15
+                },
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                Background = Brushes.Transparent,
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                Background = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("PurpleBackground", Brushes.Gray) : GetThemeBrush("PurpleForeground", Brushes.Gray),  // Theme-aware
-                Foreground = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("PurpleForeground", Brushes.Gray) : GetThemeBrush("PurpleBackground", Brushes.Gray),  // White text
-                Height = 20,  // Smaller height to reduce row height
-                FontSize = 10,  // Smaller font
-                Padding = new Avalonia.Thickness(2),  // Reduced padding
-                Margin = new Avalonia.Thickness(2)  // Reduced margin
+                Height = 20,
+                Width = 20,  // Fixed width to prevent stretching, matching height for square shape
+                Padding = new Avalonia.Thickness(0),  // Reduced padding
+                Margin = new Avalonia.Thickness(0)  // Reduced margin
             };
 
-            // Handle the button click (replace with your logic)
-            button.Click += async (s, e) =>
-            {
-                if (item is SolidDimensions solidItem)
+                // Handle the button click (replace with your logic)
+                button.Click += async (s, e) =>
                 {
-                    // Example: Call a ViewModel method or perform an action
-                    // For instance, populate fields or delete the item
-                    await ViewModel.DeleteSelectedItemAsync(solidItem);
-                    // Or open an edit dialog, etc.
-                }
-            };
+                    if (item is SolidDimensions solidItem)
+                    {
+                        // Example: Call a ViewModel method or perform an action
+                        // For instance, populate fields or delete the item
+                        await ViewModel.DeleteSelectedItemAsync(solidItem);
+                        // Or open an edit dialog, etc.
+                    }
+                };
 
             return button;
         });
@@ -163,7 +169,8 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Create the template column
         var actionColumn = new DataGridTemplateColumn
         {
-            Header = "Actions",  // Column header
+            Header = "Action",  // Column header
+            MaxWidth = 40,  // Limit max width to prevent excessive stretching
             CellTemplate = buttonTemplate,
             CanUserSort = false,  // Disable sorting if not needed
             CanUserResize = false  // Disable resizing if not needed
@@ -181,17 +188,23 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         {
             var button = new Button
             {
-                Content = "Remove",  // Customize the button text
-                MaxWidth = 60,
+                // Replace text content with an icon
+                Content = new PathIcon
+                {
+                    Data = Geometry.Parse("M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"),  // Trash bin icon path
+                    Width = 15,  // Adjust size to fit the small button
+                    Height = 15
+                },
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,  // Align to the right
+                Background = Brushes.Transparent,
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                Background = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("PurpleBackground", Brushes.Gray) : GetThemeBrush("PurpleForeground", Brushes.Gray),  // Theme-aware
-                Foreground = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("PurpleForeground", Brushes.Gray) : GetThemeBrush("PurpleBackground", Brushes.Gray),  // White text
                 Height = 20,  // Smaller height to reduce row height
+                Width = 20,  // Fixed width to prevent stretching, matching height for square shape
                 FontSize = 10,  // Smaller font
-                Padding = new Avalonia.Thickness(2),  // Reduced padding
-                Margin = new Avalonia.Thickness(2)  // Reduced margin
+                Padding = new Avalonia.Thickness(0),  // Reduced padding
+                Margin = new Avalonia.Thickness(0)  // Reduced margin
             };
+
 
             // Handle the button click (replace with your logic)
             button.Click += async (s, e) =>
@@ -211,7 +224,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Create the template column
         var actionColumn = new DataGridTemplateColumn
         {
-            Header = "Actions",  // Column header
+            Header = "Action",  // Column header
+            
+            MaxWidth = 40,  // Limit max width to prevent excessive stretching
             CellTemplate = buttonTemplate,
             CanUserSort = false,  // Disable sorting if not needed
             CanUserResize = false  // Disable resizing if not needed
@@ -229,17 +244,23 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         {
             var button = new Button
             {
-                Content = "Remove",  // Customize the button text
-                MaxWidth = 60,
+                // Replace text content with an icon
+                Content = new PathIcon
+                {
+                    Data = Geometry.Parse("M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"),  // Trash bin icon path
+                    Width = 15,  // Adjust size to fit the small button
+                    Height = 15
+                },
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,  // Align to the right
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                Background = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("DarkBlueBackground", Brushes.Gray) : GetThemeBrush("DarkBlueForeground", Brushes.Gray),  // Theme-aware dark blue for modules
-                Foreground = Application.Current.ActualThemeVariant == ThemeVariant.Light ? GetThemeBrush("DarkBlueForeground", Brushes.Gray) : GetThemeBrush("DarkBlueBackground", Brushes.Gray),  // White text for contrast
+                Background = Brushes.Transparent,
                 Height = 20,  // Smaller height to reduce row height
+                Width = 20,  // Fixed width to prevent stretching, matching height for square shape
                 FontSize = 10,  // Smaller font
-                Padding = new Avalonia.Thickness(2),  // Reduced padding
-                Margin = new Avalonia.Thickness(2)  // Reduced margin
+                Padding = new Avalonia.Thickness(0),  // Reduced padding
+                Margin = new Avalonia.Thickness(0)  // Reduced margin
             };
+
 
             // Handle the button click (replace with your logic)
             button.Click += async (s, e) =>
@@ -260,6 +281,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         var actionColumn = new DataGridTemplateColumn
         {
             Header = "Action",  // Column header
+            MaxWidth = 40,  // Limit max width to prevent excessive stretching
             CellTemplate = buttonTemplate,
             CanUserSort = false,  // Disable sorting if not needed
             CanUserResize = false  // Disable resizing if not needed
