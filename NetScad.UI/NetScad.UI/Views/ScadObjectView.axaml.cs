@@ -62,9 +62,8 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
                     Height = 20,
                     Width = 20,  // Limit max width to prevent excessive stretching
-                    FontSize = 10,
                     Padding = new Avalonia.Thickness(0),  // Reduced padding
-                    Margin = new Avalonia.Thickness(0)  // Reduced margin
+                    Margin = new Avalonia.Thickness(20,0)  // Reduced margin
                 };
 
 
@@ -116,8 +115,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Create the template column
         var countColumn = new DataGridTemplateColumn
         {
-            Header = "#",  // Column header
-            MaxWidth = 40,  // Limit max width to prevent excessive stretching
+            Header = "Total Solids",  // Column header
             CellTemplate = countTemplate,
             CanUserSort = false,  // Disable sorting if not needed
             CanUserResize = false  // Disable resizing if not needed
@@ -372,7 +370,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // List of columns to exclude from display - Hide Imperial columns for Metric view
         var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN",
-            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Radius1_MM", "Radius2_MM", "Volume_IN3"  };
+            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Radius1_MM", "Radius2_MM", "Volume_IN3", "ModuleName"  };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -481,7 +479,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // List of columns to exclude from display - Hide Metric columns for Imperial view
         var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN",
-            "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Radius1_IN", "Radius2_IN", "Volume_CM3",  };
+            "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Radius1_IN", "Radius2_IN", "Volume_CM3", "ModuleName" };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
