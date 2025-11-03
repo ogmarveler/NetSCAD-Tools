@@ -44,11 +44,11 @@ Cubes and cylinders can be generated from the Designer module within this applic
 * **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
 ###### 
 #### Viewing the Object in OpenSCAD
-The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**.
+The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. **Rendering the axis is optional, based on your needs. But this can SIGNIFICANTLY INCREASE render time as it is primarily used for preview and development. Commenting out this part within the object.scad file will allow the object to render quickly. If building a ruler or some form of 1D or 2D measurement, then this is why the ability to render it is available, to encompass all use cases.**
 
 ###### 
-| Files                                   | Usage In Your SCAD File                                | Optional parameters |
-| --------------------------------------- |:------------------------------------------------------:|:-------------------:|
-| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |
-| Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |
-| Scad/Solids/object.scad                 |                                                        |                     |
+| Files                                   | Usage In Your SCAD File                                | Optional parameters | Include In Rendering |
+| --------------------------------------- |:------------------------------------------------------:|:-------------------:|:--------------------:|
+| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |			Yes			|
+| Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |			No			|
+| Scad/Solids/object.scad                 |                                                        |                     |			Yes			|
