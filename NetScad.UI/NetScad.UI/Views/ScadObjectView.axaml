@@ -167,7 +167,7 @@
             BoxShadow="1 1 2 0 Gray"
             Classes="card_main">
             <StackPanel Margin="10,15,10,15" Spacing="0">
-                <Grid
+                <Grid  
                     x:Name="AxisControlsGrid"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"

@@ -14,7 +14,6 @@ Cubes and cylinders can be generated from the Designer module within this applic
 * **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
 * **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
 ###### 
-
 #### Layout of Custom Object Designer
 The Custom Object Designer is organized into several sections to facilitate the creation of custom objects for OpenSCAD. The main sections include:
 ###### 
