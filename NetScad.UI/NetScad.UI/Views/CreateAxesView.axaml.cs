@@ -34,7 +34,7 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
     }
 
     private void SetDataGridWidths()
-    {
+    {   
         // Find the DataGrids by name (from XAML)
         var metricDataGrid = this.FindControl<DataGrid>("AxesListMetric");
         var imperialDataGrid = this.FindControl<DataGrid>("AxesListImperial");
@@ -45,7 +45,7 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
             metricDataGrid.MaxWidth = 960;
             metricDataGrid.MinWidth = 600;
             metricDataGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
-        }
+        }   
 
         if (imperialDataGrid != null)
         {
@@ -81,7 +81,7 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
         }
         else
         {
-            //AdjustLayoutForWideScreen();
+            AdjustLayoutForWideScreen();
         }
     }
 
@@ -96,7 +96,7 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
 
         if (metricDataGrid != null)
             metricDataGrid.Width = dataGridWidth;
-
+           
         if (imperialDataGrid != null)
             imperialDataGrid.Width = dataGridWidth;
     }
@@ -313,26 +313,26 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
         }
     }
 
-    //private void AdjustLayoutForWideScreen()
-    //{
-    //    var imperialAxisGrid = this.FindControl<ScrollViewer>("ImperialAxisGrid");
-    //    if (imperialAxisGrid != null)
-    //    {
-    //        Grid.SetRow(imperialAxisGrid, 0);
-    //        Grid.SetColumn(imperialAxisGrid, 1);
-    //        Grid.SetRowSpan(imperialAxisGrid, 2);
-    //        Grid.SetColumnSpan(imperialAxisGrid, 1);
-    //    }
+    private void AdjustLayoutForWideScreen()
+    {
+        //var imperialAxisGrid = this.FindControl<ScrollViewer>("ImperialAxisGrid");
+        //if (imperialAxisGrid != null)
+        //{
+        //    Grid.SetRow(imperialAxisGrid, 0);
+        //    Grid.SetColumn(imperialAxisGrid, 1);
+        //    Grid.SetRowSpan(imperialAxisGrid, 2);
+        //    Grid.SetColumnSpan(imperialAxisGrid, 1);
+        //}
 
-    //    var metricAxisGrid = this.FindControl<ScrollViewer>("MetricAxisGrid");
-    //    if (metricAxisGrid != null)
-    //    {
-    //        Grid.SetRow(metricAxisGrid, 1);
-    //        Grid.SetColumn(metricAxisGrid, 1);
-    //        Grid.SetRowSpan(metricAxisGrid, 1);
-    //        Grid.SetColumnSpan(metricAxisGrid, 2);
-    //    }
-    //}
+        var metricAxisGrid = this.FindControl<ScrollViewer>("MetricAxisGrid");
+        if (metricAxisGrid != null)
+        {
+            Grid.SetRow(metricAxisGrid, 0);
+            Grid.SetColumn(metricAxisGrid, 1);
+            Grid.SetRowSpan(metricAxisGrid, 1);
+            Grid.SetColumnSpan(metricAxisGrid, 2);
+        }
+    }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {

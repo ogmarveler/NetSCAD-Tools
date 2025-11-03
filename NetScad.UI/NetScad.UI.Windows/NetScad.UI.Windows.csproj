@@ -69,8 +69,8 @@
     <ProjectReference Include="..\NetScad.UI\NetScad.UI.csproj" />
   </ItemGroup>
 
-<!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+<Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="$(ProjectDir)create-zip.bat" /> 
-  </Target>-->
+  </Target>
 
 </Project>

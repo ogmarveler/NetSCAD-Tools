@@ -422,12 +422,11 @@
             </StackPanel>
         </Border>
 
-        <!--  Metric Axes DataGrid  -->
         <ScrollViewer
             x:Name="MetricAxisGrid"
             Grid.Row="2"
             Grid.Column="0"
-            MaxWidth="960"
+            MaxWidth="955"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             HorizontalContentAlignment="Center"
@@ -440,10 +439,9 @@
                 BorderThickness="1"
                 BoxShadow="1 1 2 0 Gray"
                 Classes="card_main"
-                ClipToBounds="True"
-                IsVisible="{Binding AxesListMetric, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}">
+                ClipToBounds="True">
                 <StackPanel Margin="0" Spacing="0">
-                    <!--  Update both DataGrid elements to disable resizing  -->
+                    <!--  Metric Axes DataGrid  -->
                     <DataGrid
                         x:Name="AxesListMetric"
                         HorizontalAlignment="Center"
@@ -458,14 +456,39 @@
                         FontSize="13"
                         GridLinesVisibility="All"
                         IsReadOnly="True"
+                        IsVisible="{Binding AxesListMetric, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
                         ItemsSource="{Binding AxesListMetric}"
                         SelectionChanged="DataGridMetric_SelectionChanged"
+                        SelectionMode="Single" />
+
+                    <Separator MaxWidth="955" Background="Transparent" />
+                    <Separator MaxWidth="955" Background="Transparent" />
+                    <Separator MaxWidth="955" Background="Transparent" />
+
+                    <!--  Imperial Axes DataGrid  -->
+                    <DataGrid
+                        x:Name="AxesListImperial"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Stretch"
+                        AutoGenerateColumns="True"
+                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
+                        BorderBrush="{DynamicResource TealForeground}"
+                        CanUserReorderColumns="False"
+                        CanUserResizeColumns="False"
+                        ClipToBounds="True"
+                        CornerRadius="6"
+                        FontSize="13"
+                        GridLinesVisibility="All"
+                        IsReadOnly="True"
+                        IsVisible="{Binding AxesListImperial, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+                        ItemsSource="{Binding AxesListImperial}"
+                        SelectionChanged="DataGridImperial_SelectionChanged"
                         SelectionMode="Single" />
                 </StackPanel>
             </Border>
         </ScrollViewer>
 
-        <!--  Imperial Axes DataGrid  -->
+        <!--  Imperial Axes DataGrid
         <ScrollViewer
             x:Name="ImperialAxisGrid"
             Grid.Row="3"
@@ -486,26 +509,8 @@
                 Classes="card_main"
                 ClipToBounds="True"
                 IsVisible="{Binding AxesListImperial, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}">
-                <StackPanel Margin="0" Spacing="0">
-                    <DataGrid
-                        x:Name="AxesListImperial"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Stretch"
-                        AutoGenerateColumns="True"
-                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
-                        BorderBrush="{DynamicResource TealForeground}"
-                        CanUserReorderColumns="False"
-                        CanUserResizeColumns="False"
-                        ClipToBounds="True"
-                        CornerRadius="6"
-                        FontSize="13"
-                        GridLinesVisibility="All"
-                        IsReadOnly="True"
-                        ItemsSource="{Binding AxesListImperial}"
-                        SelectionChanged="DataGridImperial_SelectionChanged"
-                        SelectionMode="Single" />
-                </StackPanel>
+                <StackPanel Margin="0" Spacing="0" />
             </Border>
-        </ScrollViewer>
+        </ScrollViewer>-->
     </Grid>
 </UserControl>
