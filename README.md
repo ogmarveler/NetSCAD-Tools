@@ -2,7 +2,7 @@
 # <img src="https://github.com/ogmarveler/NetSCAD/blob/25f80b909ac1837b3adb92b88e1d9d3ce63d0e2c/NetScad.UI/NetScad.UI/Assets/Images/logo-netscad.png" alt="NetSCAD logo" height="30" width="30"> NetSCAD Tools
 ###### 
 #### Description
-This application is a low-code / no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes creation of custom Imperial and Metric axes, as well as quick generation of objects to help speed up the modeling process. This allows for more precise modeling used in 3D printing. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
+This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes creation of custom Imperial and Metric axes, as well as quick generation of objects to help speed up the modeling process. This allows for more precise modeling used in 3D printing. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
 ###### 
 #### Prerequisites
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
@@ -20,6 +20,10 @@ The Custom Object Designer is organized into several sections to facilitate the 
 ######
 #### Output of Custom Object in OpenSCAD
 Outputs can be viewed in **real-time.** Any changes to the object within the application will automatically update the SCAD file used in OpenSCAD. This allows for quick iteration and testing of objects without needing to manually export and import files.
+
+#### Export Custom Object to STL
+Once the object is finalized, it can be exported directly to STL format for 3D printing or further processing. The STL file will be generated based on the current configuration of the object within the application.
+
 ######
 ![Object](NetScad.UI/NetScad.UI/Assets/Images/object.png)
 ######
