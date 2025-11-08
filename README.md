@@ -15,17 +15,17 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 ######
 #### Layout of Custom Object Designer
 The Custom Object Designer is organized into several sections to facilitate the creation of custom objects for OpenSCAD. There are 5 main sections: applying a custom axis, creating a new object, setting inputs for new solids (Cube, Rounded Cube, and Cylinder), the list of Solids in the object, and Modules that contain the Solids (Union, Intersection, Difference).
+
 ###### 
-![Designer Object](NetScad.UI/NetScad.UI/Assets/Images/designerObject.png)
+![Designer Object Dark](NetScad.UI/NetScad.UI/Assets/Images/designerObjectDark.png)
+![Mini PC](NetScad.UI/NetScad.UI/Assets/Images/miniPC.png)
 ######
 #### Output of Custom Object in OpenSCAD
 Outputs can be viewed in **real-time.** Any changes to the object within the application will automatically update the SCAD file used in OpenSCAD. This allows for quick iteration and testing of objects without needing to manually export and import files. **The object is pre-rendered in OpenSCAD upon opening the SCAD file.** Depending on the complexity of the object, this may take some time.
-
+######
 #### Export Custom Object to STL
 Once the object is finalized, **check the Export STL box** to convert the rendered object to STL. The axis is removed by default, but reapplied after export to the preview in OpenSCAD. The STL file will be generated based on the current configuration of the object within the application.
 
-######
-![Object](NetScad.UI/NetScad.UI/Assets/Images/object.png)
 ######
 #### Types of Solids Available
 Cubes and cylinders can be generated from the Designer module within this application. Rounded versions of cubes are also available in this iteration, in order to show how to offset Minkowski rounding to align with 0,0 axes. Future iterations will have more solid types available, but if needed, generated outputs can be modified within SCAD files directly. Solids available are as follows:
