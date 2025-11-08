@@ -81,15 +81,17 @@ The Custom Object Designer is organized into several sections to facilitate the 
 | 4. **Clear Object** - clears all inputs, object tables, and object name       |                                         |               |
 | 5. **Clear Inputs** - clear out any entered solid inputs                      |                                         |               |
 | 6. **View Output** - preview the object in OpenSCAD                           |                                         |               |
-| 7. **Modules** - update/add saved solids to object's specific modules         |                                         |               |
+| 7. **Remove/Apply Axis** - remove the axis before exporting (or reapply it)   |                                         |               |
+| 8. **Modules** - update/add saved solids to object's specific modules         |                                         |               |
 
 ###### 
 #### Viewing the Object in OpenSCAD
 The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**.
 
 ###### 
-| Files                                   | Usage In Your SCAD File                                | Optional parameters |
-| --------------------------------------- |:------------------------------------------------------:|:-------------------:|
-| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |
-| Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |
-| Scad/Solids/object.scad                 |                                                        |                     |
+| Files                                   | Usage In Your SCAD File                                | Optional parameters | Render |
+| --------------------------------------- |:------------------------------------------------------:|:-------------------:|:------:|
+| Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |	No    |
+| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |	No    |
+| Scad/Solids/object.scad                 |                                                        |                     |	Yes   |	
+| Scad/Solids/object.stl                  |                                                        |                     |  Yes   |

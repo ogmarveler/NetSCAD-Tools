@@ -3,6 +3,7 @@ using Avalonia.Styling;
 using Microsoft.Extensions.DependencyInjection;
 using NetScad.UI.Views;
 using ReactiveUI;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -11,8 +12,10 @@ namespace NetScad.UI.ViewModels
     public class MainWindowViewModel : ReactiveObject
     {
         // Set MainView as the initial content
-        private object? _mainViewContent = App.Host?.Services.GetRequiredService<ScadObjectView>();
+        private object? _mainViewContent = App.Services!.GetRequiredService<ScadObjectView>();
 
+        [RequiresUnreferencedCode("MainWindowViewModel may use code that is not referenced directly and could be trimmed by the linker.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>")]
         public MainWindowViewModel()
         {
             MainViewContent = _mainViewContent; // Start with this view
@@ -32,21 +35,37 @@ namespace NetScad.UI.ViewModels
         }
 
         // SPA - Swap out views
-        public async Task LoadCreateAxesView() => MainViewContent = App.Host?.Services.GetRequiredService<CreateAxesView>();
-        public async Task LoadAxisView() => MainViewContent = App.Host?.Services.GetRequiredService<AxisView>();
-        public async Task LoadDesignerView() => MainViewContent = App.Host?.Services.GetRequiredService<DesignerView>();
-        public async Task LoadScadObjectView()
+        public Task LoadCreateAxesView()
         {
-            await App.Host!.Services.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
-            MainViewContent = App.Host!.Services.GetRequiredService<ScadObjectView>();
+            MainViewContent = App.Services!.GetRequiredService<CreateAxesView>();
+            return Task.CompletedTask;
         }
 
-        public static async Task ToggleTheme()
+        public Task LoadAxisView()
+        {
+            MainViewContent = App.Services!.GetRequiredService<AxisView>();
+            return Task.CompletedTask;
+        }
+
+        public Task LoadDesignerView()
+        {
+            MainViewContent = App.Services!.GetRequiredService<DesignerView>();
+            return Task.CompletedTask;
+        }
+
+        public async Task LoadScadObjectView()
+        {
+            await App.Services!.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
+            MainViewContent = App.Services!.GetRequiredService<ScadObjectView>();
+        }
+
+        public static Task ToggleTheme()
         {
             Application.Current?.RequestedThemeVariant =
                    Application.Current.ActualThemeVariant == ThemeVariant.Light
                        ? ThemeVariant.Dark
                        : ThemeVariant.Light;
+            return Task.CompletedTask;
         }
 
         public ICommand NewAxesCommand { get; } 

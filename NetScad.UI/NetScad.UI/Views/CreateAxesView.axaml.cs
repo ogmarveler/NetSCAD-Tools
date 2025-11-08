@@ -26,7 +26,7 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
     public CreateAxesView()
     {
         InitializeComponent();
-        DataContext = App.Host?.Services.GetRequiredService<CreateAxesViewModel>();
+        DataContext = App.Services!.GetRequiredService<CreateAxesViewModel>();
         this.AttachedToVisualTree += CreateAxesView_AttachedToVisualTree;
 
         // Set fixed DataGrid widths after XAML is initialized

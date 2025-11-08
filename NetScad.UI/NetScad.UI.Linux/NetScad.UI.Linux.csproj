@@ -1,45 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
-    One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
-    <TargetFramework>net8.0</TargetFramework>
-	  <AssemblyName>NetSCAD</AssemblyName>
-    <Nullable>enable</Nullable>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-	  <PublishSingleFile>true</PublishSingleFile>
-	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-	  <PublishTrimmed>false</PublishTrimmed>
-	  <TrimMode>copyused</TrimMode>
-	  <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<AssemblyName>NetSCAD</AssemblyName>
+		<Nullable>enable</Nullable>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>copyused</TrimMode>
+		<Nullable>enable</Nullable>
+		<DebuggerSupport>false</DebuggerSupport>
+		<!-- Remove debugger support -->
+		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+		<EventSourceSupport>false</EventSourceSupport>
+		<!-- If not using EventSource -->
+		<HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+		<InvariantGlobalization>false</InvariantGlobalization>
+		<!-- If no localization needed, reduces size -->
+		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+		<!-- No hot reload in production -->
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <PublishAot>False</PublishAot>
-    <SignAssembly>True</SignAssembly>
-    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-    <StartupObject>NetScad.Program</StartupObject>
-  </PropertyGroup>
+	<PropertyGroup>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<PublishAot>False</PublishAot>
+		<SignAssembly>True</SignAssembly>
+		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+		<StartupObject>NetScad.Program</StartupObject>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>True</Optimize>
-    <IsPublishable>True</IsPublishable>
-    <DebugType>none</DebugType>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<Optimize>True</Optimize>
+		<IsPublishable>True</IsPublishable>
+		<DebugType>none</DebugType>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <IsPublishable>True</IsPublishable>
-    <DebugType>none</DebugType>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<IsPublishable>True</IsPublishable>
+		<DebugType>none</DebugType>
+	</PropertyGroup>
 
-  <PropertyGroup Label="Avalonia">
-    <AvaloniaUseCompiledBindingsByDefault>True</AvaloniaUseCompiledBindingsByDefault>
-    <ApplicationIcon>logo.ico</ApplicationIcon>
-    <PackageIcon>logo.png</PackageIcon>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-  </PropertyGroup>
+	<PropertyGroup Label="Avalonia">
+		<AvaloniaUseCompiledBindingsByDefault>True</AvaloniaUseCompiledBindingsByDefault>
+		<ApplicationIcon>logo.ico</ApplicationIcon>
+		<PackageIcon>logo.png</PackageIcon>
+		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 		<DebugType>none</DebugType>
@@ -47,37 +55,47 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <AvaloniaResource Include="logo-large.png" />
-	  <AvaloniaResource Include="logo.png" />
+		<AvaloniaResource Include="logo-large.png" />
+		<AvaloniaResource Include="logo.png" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.LinuxFramebuffer" />
-	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
-    <PackageReference Include="Dapper" />
-    <PackageReference Include="Microsoft.Data.Sqlite" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="ReactiveUI" />
-    <PackageReference Include="ReactiveUI.Avalonia" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
-	  <PackageReference Include="Microsoft.DotNet.ILCompiler" />
-	  <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
+		<PackageReference Include="Avalonia.LinuxFramebuffer" Version="11.3.8" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.10" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.1" />
+		<PackageReference Include="Avalonia" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.8" />
+		<PackageReference Include="Markdown.Avalonia.Tight" Version="11.0.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
+		<PackageReference Include="ReactiveUI" Version="22.2.1" />
+		<PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
+		<PackageReference Include="ReactiveUI.Avalonia.Microsoft.Extensions.DependencyInjection" Version="11.3.8" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\NetScad.Core\NetScad.Core.csproj" />
-    <ProjectReference Include="..\NetScad.UI\NetScad.UI.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\NetScad.Core\NetScad.Core.csproj" />
+	  <ProjectReference Include="..\NetScad.UI\NetScad.UI.csproj" />
+	</ItemGroup>
 
- <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(ProjectDir)create-tar-linux-arm64.bat" />
-  </Target>
+	<ItemGroup>
+		<TrimmerRootAssembly Include="NetScad.UI" />
+		<TrimmerRootAssembly Include="ReactiveUI" />
+		<TrimmerRootAssembly Include="Avalonia.LinuxFramebuffer" />
+	</ItemGroup>
+
 
 	<!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(ProjectDir)create-tar-linux-x64.bat" />
+    <Exec Command="$(ProjectDir)create-tar-linux-arm64.bat" />
   </Target>-->
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(ProjectDir)create-tar-linux-x64.bat" />
+  </Target>
 
 </Project>

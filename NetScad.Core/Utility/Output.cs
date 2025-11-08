@@ -22,6 +22,4 @@ namespace NetScad.Core.Utility
             await File.WriteAllBytesAsync(path: filePath, bytes: Encoding.UTF8.GetBytes(content), cancellationToken: cancellationToken);
         }
     }
-
-
 }

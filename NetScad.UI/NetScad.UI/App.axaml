@@ -25,7 +25,5 @@
         <FluentTheme />
         <StyleInclude Source="/Styles/CardStyles.axaml" />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
-        <!--  AvaloniaEdit styles (required!)  -->
-        <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
     </Application.Styles>
 </Application>

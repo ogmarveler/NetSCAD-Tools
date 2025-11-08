@@ -18,8 +18,8 @@ namespace NetScad.Core.Models
         {
             { "r", Math.Max(0, Radius - RoundRadius) },
             { "h", Height },
-            { "r1", Radius1 != null ? Math.Max(0, Radius1.Value - RoundRadius) : null },
-            { "r2", Radius2 != null ? Math.Max(0, Radius2.Value - RoundRadius) : null },
+            { "r1", (object?)Radius1 ?? 0.0 },
+            { "r2", (object?)Radius2 ?? 0.0 },
             { "resolution", Resolution }
         });
 
@@ -39,8 +39,8 @@ namespace NetScad.Core.Models
             { "h", Height },
             { "round_r", RoundRadius },
             { "round_h", RoundHeight },
-            { "r1", Radius1 },
-            { "r2", Radius2 },
+            { "r1", (object?)Radius1 ?? 0.0 },
+            { "r2", (object?)Radius2 ?? 0.0 },
             { "resolution", Resolution }
         };
 

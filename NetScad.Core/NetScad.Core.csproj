@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -7,10 +7,13 @@
 		<LangVersion>latest</LangVersion>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<PublishTrimmed>true</PublishTrimmed>
-		<TrimMode>copyused</TrimMode>
-		<PublishAot>true</PublishAot>
+		<TrimMode>link</TrimMode>
 		<SignAssembly>True</SignAssembly>
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>NetScad.Core</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>Paul Pieniadz</Authors>
+		<Description>Core library for NetScad</Description>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -28,30 +31,16 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 	  <DebugType>none</DebugType>
 	  <IsTrimmable>True</IsTrimmable>
+		<DebugSymbols>false</DebugSymbols>
 	  <IsAotCompatible>True</IsAotCompatible>
 	</PropertyGroup>
 
 	<ItemGroup>
-
 		<PackageReference Include="Dapper" Version="2.1.66" />
-
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.10" />
-
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
-
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
-
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.10" />
-
 		<PackageReference Include="System.Text.Json" Version="9.0.10" />
-		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="9.0.10" />
-		<PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.10" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Data\netscad.db">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 
 </Project>

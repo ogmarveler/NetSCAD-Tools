@@ -1,76 +1,73 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <LangVersion>preview</LangVersion>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-	  <PublishTrimmed>true</PublishTrimmed>
-	  <TrimMode>copyused</TrimMode>
-	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-	  <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
-	  <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
-	  <PublishAot>True</PublishAot>
-	  <SignAssembly>True</SignAssembly>
-	  <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-	  <PackageIcon>logo-large.png</PackageIcon>
-  </PropertyGroup>
-	
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>none</DebugType>
-    <IsAotCompatible>True</IsAotCompatible>
-    <IsTrimmable>True</IsTrimmable>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>none</DebugType>
-    <IsAotCompatible>True</IsAotCompatible>
-    <IsTrimmable>True</IsTrimmable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<LangVersion>preview</LangVersion>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>link</TrimMode>
+		<SignAssembly>True</SignAssembly>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>NetScad.UI</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>Paul Pieniadz</Authors>
+		<Description>UI library for NetScad</Description>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>none</DebugType>
+		<IsAotCompatible>True</IsAotCompatible>
+		<IsTrimmable>True</IsTrimmable>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+		<IsAotCompatible>True</IsAotCompatible>
+		<IsTrimmable>True</IsTrimmable>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 		<DebugType>none</DebugType>
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
-  
-  <ItemGroup>
-    <AvaloniaResource Include="Assets\**" />
-  </ItemGroup>
-  
-  <ItemGroup>  
-    <PackageReference Include="Avalonia" />  
-    <PackageReference Include="Avalonia.AvaloniaEdit" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" />
-    <PackageReference Include="Avalonia.LinuxFramebuffer" />
-    <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
-    <PackageReference Include="Avalonia.Themes.Fluent" />
-    <PackageReference Include="Avalonia.Fonts.Inter" />
-    <PackageReference Include="AvaloniaEdit.TextMate" />
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Markdown.Avalonia" />
-    <PackageReference Include="Markdown.Avalonia.Svg" />
-    <PackageReference Include="Markdown.Avalonia.SyntaxHigh" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="ReactiveUI" />
-    <PackageReference Include="ReactiveUI.Avalonia" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
-	  <PackageReference Include="Microsoft.DotNet.ILCompiler" />
-	  <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
-  </ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\..\NetScad.Axis\NetScad.Axis.csproj" />
-    <ProjectReference Include="..\..\NetScad.Core\NetScad.Core.csproj" />
-    <ProjectReference Include="..\..\NetScad.Designer\NetScad.Designer.csproj" />
-  </ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
 
-<ItemGroup>
-	  <None Include="Assets\Images\logo-large.png" Pack="True" PackagePath="logo-large.png" />
-	  <None Update="Scad\Axes\axes.scad">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Scad\Solids\object.scad">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+	<ItemGroup>
+		<AvaloniaResource Remove="Data\netscad.db" />
+		<AvaloniaResource Remove="Assets\Guides\Readme.markdown" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.8" />
+		<PackageReference Include="Markdown.Avalonia.Tight" Version="11.0.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
+		<PackageReference Include="ReactiveUI" Version="22.2.1" />
+		<PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
+		<PackageReference Include="ReactiveUI.Avalonia.Microsoft.Extensions.DependencyInjection" Version="11.3.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Assets\Images\logo-large.png" Pack="True" PackagePath="logo-large.png" />
+		<ProjectReference Include="..\..\NetScad.Axis\NetScad.Axis.csproj" />
+		<ProjectReference Include="..\..\NetScad.Core\NetScad.Core.csproj" />
+		<ProjectReference Include="..\..\NetScad.Designer\NetScad.Designer.csproj" />
+		<None Update="Data\netscad.db">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Scad\Axes\axes.scad">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Scad\Solids\object.scad">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>

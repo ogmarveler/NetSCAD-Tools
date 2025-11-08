@@ -2,7 +2,6 @@
 using Avalonia.Markup.Xaml;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NetScad.Core.Interfaces;
 using NetScad.Core.Models;
@@ -12,9 +11,8 @@ using NetScad.UI.Views;
 using ReactiveUI.Avalonia;
 using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
+using ReactiveUI.Avalonia.Splat; // Autofac, DryIoc, Ninject, Microsoft.Extensions.DependencyInjection integrations
 
 #pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace NetScad
@@ -25,10 +23,25 @@ namespace NetScad
         [STAThread]
         public static void Main(string[] args)
         {
-            var builder = Host.CreateDefaultBuilder(args);
             var rid = GetRuntimeIdentifier(); // e.g., "win-x64", "linux-x64", "linux-arm64"
-            builder.ConfigureServices((context, services) =>
+
+            BuildAvaloniaApp(rid).StartWithClassicDesktopLifetime(args, shutdownMode: Avalonia.Controls.ShutdownMode.OnMainWindowClose);
+        }
+
+        // Avalonia configuration, don't remove; also used by visual designer.
+        public static AppBuilder BuildAvaloniaApp(string rid)
+            => AppBuilder.Configure<App>()
+            .UseSkia() // Skia rendering
+            .UsePlatformDetect() // Auto-selects platform
+            .With(new SkiaOptions()) // Limit GPU memory usage
+            .With(new Win32PlatformOptions { RenderingMode = [Win32RenderingMode.AngleEgl, Win32RenderingMode.Wgl, Win32RenderingMode.Software] }) // Enable GPU on Windows
+            .With(new MacOSPlatformOptions { ShowInDock = true, }) // Options on macOS
+            .WithInterFont() // Use Inter font by default
+            .UseReactiveUIWithMicrosoftDependencyResolver(
+            services =>
             {
+                services.AddLogging(); // Add logging support
+
                 // Register dbPath as a singleton
                 services.AddSingleton(provider =>
                 {
@@ -58,7 +71,6 @@ namespace NetScad
                     connection.Open(); // Open connection here    
                     return connection;
                 });
-
                 services.AddSingleton<MainWindowViewModel>(); // Root VM for MainWindow.axaml embedding
                 services.AddSingleton<CreateAxesViewModel>();
                 services.AddSingleton<CreateAxesView>();
@@ -70,50 +82,16 @@ namespace NetScad
                 services.AddSingleton<ScadObjectViewModel>();
                 services.AddSingleton<IScrewSizeService, ScrewSizeService>();
                 services.AddSingleton<App>(); // Avalonia app
-            });
-
-            // Build and start the host
-            var host = builder.Build();
-            App.Host = host; // Set static Host property for DI access throughout app
-            host.StartAsync();
-
-            try
+            },
+            withResolver: sp =>
             {
-                if (args.Contains("--drm")) { SilenceConsole(); BuildAvaloniaApp().StartLinuxDrm(args, "/dev/dri/card1", 1D); }
-                else { BuildAvaloniaApp().StartWithClassicDesktopLifetime(args, shutdownMode: Avalonia.Controls.ShutdownMode.OnMainWindowClose); }
-            }
-            finally
+                App.Services = sp; // Set static Services property for DI access throughout app
+            },
+            withReactiveUIBuilder: rxui =>
             {
-                // Graceful shutdown: Dispose connection
-                host.StopAsync(TimeSpan.FromSeconds(5));
-                host.Dispose();
-                GC.Collect();
-            }
-        }
-
-        // Avalonia configuration, don't remove; also used by visual designer.
-        public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>()
-            //.UseSkia() // Skia rendering
-            .UsePlatformDetect() // Auto-selects X11, Wayland, etc., on Linux
-            .With(new SkiaOptions()) // Limit GPU memory usage
-            .With(new Win32PlatformOptions { RenderingMode = [Win32RenderingMode.AngleEgl, Win32RenderingMode.Wgl, Win32RenderingMode.Software] }) // Enable GPU on Windows
-            .With(new MacOSPlatformOptions { ShowInDock = true, }) // Options on macOS
-            .With(new X11PlatformOptions { RenderingMode = [X11RenderingMode.Glx, X11RenderingMode.Software], OverlayPopups = true, UseDBusMenu = true, WmClass = AppDomain.CurrentDomain.FriendlyName, }) // Enable GPU on Linux
-            .WithInterFont() // Use Inter font by default
-            .UseReactiveUI()
-            .RegisterReactiveUIViewsFromEntryAssembly(); // MVVM framework
-
-        private static void SilenceConsole()
-        {
-            new Thread(() =>
-            {
-                Console.CursorVisible = false;
-                while (true)
-                    Console.ReadKey(true);
+                // Optional ReactiveUI customizations
             })
-            { IsBackground = true }.Start();
-        }
+            .RegisterReactiveUIViewsFromEntryAssembly(); // MVVM framework
 
         private static string GetRuntimeIdentifier()
         {

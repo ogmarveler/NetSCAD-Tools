@@ -399,5 +399,102 @@ namespace NetScad.Designer.Utility
 
             return solidsPath;
         }
+
+        /// <summary>
+        /// Exports a .scad file to STL format using OpenSCAD
+        /// </summary>
+        /// <param name="scadFilePath">Full path to the .scad file</param>
+        /// <param name="stlFilePath">Full path for the output .stl file (optional, defaults to same name)</param>
+        /// <returns>True if successful, false otherwise</returns>
+        public static async Task<bool> ExportToStlAsync(string scadFilePath, string? stlFilePath = null)
+        {
+            if (string.IsNullOrWhiteSpace(scadFilePath))
+            {
+                throw new ArgumentException("SCAD file path cannot be null or empty", nameof(scadFilePath));
+            }
+
+            if (!File.Exists(scadFilePath))
+            {
+                throw new FileNotFoundException($"SCAD file not found: {scadFilePath}");
+            }
+
+            // Default STL path to same directory with .stl extension
+            stlFilePath ??= Path.ChangeExtension(scadFilePath, ".stl");
+
+            try
+            {
+                Console.WriteLine($"Exporting STL: {scadFilePath} -> {stlFilePath}");
+
+                string openScadPath = FindOpenScadExecutable();
+                
+                if (string.IsNullOrEmpty(openScadPath))
+                {
+                    Console.WriteLine("OpenSCAD executable not found. Please ensure OpenSCAD is installed.");
+                    return false;
+                }
+
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = openScadPath,
+                    Arguments = $"-o \"{stlFilePath}\" \"{scadFilePath}\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                using var process = Process.Start(startInfo);
+                if (process == null)
+                {
+                    Console.WriteLine("Failed to start OpenSCAD process");
+                    return false;
+                }
+
+                await process.WaitForExitAsync();
+
+                if (process.ExitCode == 0 && File.Exists(stlFilePath))
+                {
+                    var fileInfo = new FileInfo(stlFilePath);
+                    Console.WriteLine($"STL exported successfully: {stlFilePath} ({fileInfo.Length:N0} bytes)");
+                    return true;
+                }
+                else
+                {
+                    var error = await process.StandardError.ReadToEndAsync();
+                    Console.WriteLine($"STL export failed: {error}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error exporting to STL: {ex.Message}");
+                return false;
+            }
+        }
+
+        private static string FindOpenScadExecutable()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var paths = new[]
+                {
+                    @"C:\Program Files\OpenSCAD\openscad.exe",
+                    @"C:\Program Files (x86)\OpenSCAD\openscad.exe"
+                };
+
+                return paths.FirstOrDefault(File.Exists) ?? "openscad.exe";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                var paths = new[] { "/usr/bin/openscad", "/usr/local/bin/openscad" };
+                return paths.FirstOrDefault(File.Exists) ?? "openscad";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD";
+            }
+
+            return "openscad";
+        }
     }
 }

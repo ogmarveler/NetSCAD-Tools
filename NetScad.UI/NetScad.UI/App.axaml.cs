@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NetScad.UI.ViewModels;
 using NetScad.UI.Views;
+using System;
 
 namespace NetScad.UI
 {
@@ -12,26 +13,26 @@ namespace NetScad.UI
     {
         // Static Host property to access DI container
         public override void Initialize() => AvaloniaXamlLoader.Load(this);
-
+        public static IServiceProvider? Services { get; set; }
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = Host!.Services.GetRequiredService<MainWindowViewModel>()
+                    DataContext = Services!.GetRequiredService<MainWindowViewModel>()
                 };
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {
                 singleViewPlatform.MainView = new MainWindow
                 {
-                    DataContext = Host!.Services.GetRequiredService<MainWindowViewModel>()
+                    DataContext = Services!.GetRequiredService<MainWindowViewModel>()
                 };
             }
 
             base.OnFrameworkInitializationCompleted();
         }
-        public static IHost? Host { get; set; }
+        //public static IHost? Host { get; set; }
     }
 }    

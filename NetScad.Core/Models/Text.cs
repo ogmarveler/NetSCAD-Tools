@@ -12,13 +12,13 @@ namespace NetScad.Core.Models
             {
                 { "text", text },
                 { "size", size },
-                { "font", font },
+                { "font", (object?)font ?? string.Empty },
                 { "halign", halign },
                 { "valign", valign },
                 { "spacing", spacing },
                 { "direction", direction },
-                { "language", language },
-                { "script", script },
+                { "language", (object?)language ?? string.Empty },
+                { "script", (object?)script ?? string.Empty },
                 { "resolution", resolution }
             };
         }
@@ -41,13 +41,13 @@ namespace NetScad.Core.Models
             { "type", "Text" },
             { "text", TextValue },
             { "size", Size },
-            { "font", Font },
+            { "font", (object?)Font ?? string.Empty },
             { "halign", HAlign },
             { "valign", VAlign },
             { "spacing", Spacing },
             { "direction", Direction },
-            { "language", Language },
-            { "script", Script },
+            { "language", (object?)Language ?? string.Empty },
+            { "script", (object?)Script ?? string.Empty },
             { "resolution", Resolution }
         };
 

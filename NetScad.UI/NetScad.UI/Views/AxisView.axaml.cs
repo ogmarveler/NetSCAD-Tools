@@ -5,19 +5,23 @@ using Microsoft.Extensions.DependencyInjection;
 using NetScad.UI.ViewModels;
 using ReactiveUI;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace NetScad.UI.Views;
 
 public partial class AxisView : UserControl
 {
+    [RequiresDynamicCode("AxisView uses APIs that require dynamic code generation.")]
     public AxisView()
     {
         InitializeComponent();
-        DataContext = App.Host?.Services.GetRequiredService<AxisViewModel>();
+        DataContext = App.Services!.GetRequiredService<AxisViewModel>();
         LoadMarkdownAsync("avares://NetScad.UI/Assets/Guides/Axis.markdown");  // Relative or absolute path
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
+    [RequiresDynamicCode("Calls ReactiveUI.ReactiveCommand.Create<TParam>(Action<TParam>, IObservable<Boolean>, IScheduler)")]
     private async void LoadMarkdownAsync(string avaPath)
     {
         try

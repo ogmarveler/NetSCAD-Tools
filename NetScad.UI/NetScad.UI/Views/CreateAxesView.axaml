@@ -430,12 +430,24 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Stretch"
+            VerticalContentAlignment="Top"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
+            <ScrollViewer.IsVisible>
+                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                    <Binding
+                        Converter="{StaticResource CollectionCountToBooleanConverter}"
+                        ConverterParameter="1"
+                        Path="AxesListMetric" />
+                    <Binding
+                        Converter="{StaticResource CollectionCountToBooleanConverter}"
+                        ConverterParameter="1"
+                        Path="AxesListImperial" />
+                </MultiBinding>
+            </ScrollViewer.IsVisible>
             <Border
                 Margin="10"
-                BorderBrush="{DynamicResource BlueForeground}"
+                BorderBrush="Transparent"
                 BorderThickness="1"
                 BoxShadow="1 1 2 0 Gray"
                 Classes="card_main"
@@ -444,8 +456,9 @@
                     <!--  Metric Axes DataGrid  -->
                     <DataGrid
                         x:Name="AxesListMetric"
+                        MaxWidth="950"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Stretch"
+                        VerticalAlignment="Top"
                         AutoGenerateColumns="True"
                         AutoGeneratingColumn="DataGrid_AutoGeneratingColumnMetric"
                         BorderBrush="{DynamicResource BlueForeground}"
@@ -468,8 +481,9 @@
                     <!--  Imperial Axes DataGrid  -->
                     <DataGrid
                         x:Name="AxesListImperial"
+                        MaxWidth="950"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Stretch"
+                        VerticalAlignment="Bottom"
                         AutoGenerateColumns="True"
                         AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
                         BorderBrush="{DynamicResource TealForeground}"
@@ -487,30 +501,5 @@
                 </StackPanel>
             </Border>
         </ScrollViewer>
-
-        <!--  Imperial Axes DataGrid
-        <ScrollViewer
-            x:Name="ImperialAxisGrid"
-            Grid.Row="3"
-            Grid.Column="0"
-            MaxWidth="960"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Stretch"
-            HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto">
-
-            <Border
-                Margin="10"
-                BorderBrush="{DynamicResource TealForeground}"
-                BorderThickness="1"
-                BoxShadow="1 1 2 0 Gray"
-                Classes="card_main"
-                ClipToBounds="True"
-                IsVisible="{Binding AxesListImperial, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}">
-                <StackPanel Margin="0" Spacing="0" />
-            </Border>
-        </ScrollViewer>-->
     </Grid>
 </UserControl>

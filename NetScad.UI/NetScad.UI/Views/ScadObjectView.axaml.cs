@@ -3,15 +3,15 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.VisualTree;
 using Microsoft.Extensions.DependencyInjection;
-using NetScad.Core.Material;
-using NetScad.Core.Primitives;
-using NetScad.Designer.Repositories;
 using NetScad.UI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Avalonia.VisualTree;
+using NetScad.Core.Material;
+using NetScad.Core.Primitives;
+using NetScad.Designer.Repositories;
 using System.Linq;
 using static NetScad.Core.Measurements.Selector;
 
@@ -32,7 +32,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     public ScadObjectView()
     {
         InitializeComponent();
-        DataContext = App.Host?.Services.GetRequiredService<ScadObjectViewModel>();
+        DataContext = App.Services!.GetRequiredService<ScadObjectViewModel>();
 
         // Wait for the control to be attached to the visual tree to access the parent window
         this.AttachedToVisualTree += ScadObjectView_AttachedToVisualTree;
@@ -61,47 +61,47 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
                     Height = 20,
                     Width = 20,  // Limit max width to prevent excessive stretching
                     Padding = new Avalonia.Thickness(0),  // Reduced padding
-                    Margin = new Avalonia.Thickness(20,0)  // Reduced margin
+                    Margin = new Avalonia.Thickness(20, 0)  // Reduced margin
                 };
 
 
-                    // Handle the button click to show modal
-                    button.Click += async (s, e) =>
+                // Handle the button click to show modal
+                button.Click += async (s, e) =>
+                {
+                    var solids = ViewModel.SolidDimensions.Where(s => s.ModuleDimensionsId == module.Id).ToList();
+                    if (solids.Any() && _parentWindow != null)
                     {
-                        var solids = ViewModel.SolidDimensions.Where(s => s.ModuleDimensionsId == module.Id).ToList();
-                        if (solids.Any() && _parentWindow != null)
+                        var modal = new Window
                         {
-                            var modal = new Window
+                            Title = $"OSCAD Methods for {module.Name}",
+                            Width = 600,
+                            Height = 400,
+                            CornerRadius = new CornerRadius(6),
+                            BorderThickness = new Thickness(1),
+                            ClipToBounds = true,
+                            BorderBrush = Brushes.Transparent,
+                            Background = Brushes.Transparent,
+                            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                            Content = new Border
                             {
-                                Title = $"OSCAD Methods for {module.Name}",
-                                Width = 600,
-                                Height = 400,
-                                CornerRadius = new CornerRadius(6),
-                                BorderThickness = new Thickness(1),
-                                ClipToBounds = true,
-                                BorderBrush = Brushes.Transparent,
-                                Background = Brushes.Transparent,
-                                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                                Content = new Border
+                                Margin = new Thickness(10),
+                                Padding = new Thickness(10),
+                                Classes = { "card_main" },
+                                Child = new ScrollViewer
                                 {
-                                    Margin = new Thickness(10),
-                                    Padding = new Thickness(10),
-                                    Classes = { "card_main" },
-                                    Child = new ScrollViewer
+                                    Content = new TextBlock
                                     {
-                                        Content = new TextBlock
-                                        {
-                                            Text = string.Join("\n\n", solids.Select(s => s.OSCADMethod)),
-                                            FontFamily = "Courier New",  // Monospace for code-like display
-                                            TextWrapping = TextWrapping.Wrap,
-                                            Margin = new Thickness(10)
-                                        }
+                                        Text = string.Join("\n\n", solids.Select(s => s.OSCADMethod)),
+                                        FontFamily = "Courier New",  // Monospace for code-like display
+                                        TextWrapping = TextWrapping.Wrap,
+                                        Margin = new Thickness(10)
                                     }
                                 }
-                            };
-                            await modal.ShowDialog(_parentWindow);
-                        }
-                    };
+                            }
+                        };
+                        await modal.ShowDialog(_parentWindow);
+                    }
+                };
 
                 return button;
             }
@@ -147,17 +147,17 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
                 Margin = new Avalonia.Thickness(0)  // Reduced margin
             };
 
-                // Handle the button click (replace with your logic)
-                button.Click += async (s, e) =>
+            // Handle the button click (replace with your logic)
+            button.Click += async (s, e) =>
+            {
+                if (item is SolidDimensions solidItem)
                 {
-                    if (item is SolidDimensions solidItem)
-                    {
-                        // Example: Call a ViewModel method or perform an action
-                        // For instance, populate fields or delete the item
-                        await ViewModel.DeleteSelectedItemAsync(solidItem);
-                        // Or open an edit dialog, etc.
-                    }
-                };
+                    // Example: Call a ViewModel method or perform an action
+                    // For instance, populate fields or delete the item
+                    await ViewModel.DeleteSelectedItemAsync(solidItem);
+                    // Or open an edit dialog, etc.
+                }
+            };
 
             return button;
         });
@@ -221,7 +221,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         var actionColumn = new DataGridTemplateColumn
         {
             Header = "Action",  // Column header
-            
+
             MaxWidth = 40,  // Limit max width to prevent excessive stretching
             CellTemplate = buttonTemplate,
             CanUserSort = false,  // Disable sorting if not needed
@@ -314,16 +314,6 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
             // Set initial layout based on current window width
             AdjustLayoutBasedOnWindowWidth(_parentWindow.ClientSize.Width);
-        }
-    }
-
-    private void ParentWindow_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(Window.ClientSize) && _parentWindow != null)
-        {
-            var windowWidth = _parentWindow.ClientSize.Width;
-            Console.WriteLine($"Window Width: {windowWidth}");
-            AdjustLayoutBasedOnWindowWidth(windowWidth);
         }
     }
 
@@ -624,6 +614,12 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         await ViewModel.CreateIntersectionModuleAsync();
     }
 
+    private async void RenderObjectButton_Click(object? sender, RoutedEventArgs e)
+    {
+        ViewModel.RemoveAxis = !ViewModel.RemoveAxis;
+        await ViewModel.UpdateAxisTranslateAsync();
+    }
+
     private async void ObjectToScadFilesButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ObjectToScadFilesAsync();
 
     private async void ApplyAxisButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateAxisAsync();
@@ -649,7 +645,6 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         {
             ModulesDataGrid.SelectedItem = module;
             ModulesDataGrid.ScrollIntoView(module, null);
-            return;
         }
     }
 

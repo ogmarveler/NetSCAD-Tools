@@ -52,7 +52,8 @@ namespace NetScad.UI.ViewModels
         private ObservableCollection<GeneratedModule> _axesListMetric = [];
         private bool _createButtonEnabled;
 
-        [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>")]
+        [UnconditionalSuppressMessage("Trimming", "IL2026")]
+        [UnconditionalSuppressMessage("AOT", "IL3050")]
         public CreateAxesViewModel()
         {
             UnitSystemValues = [.. Enum.GetValues(typeof(UnitSystem)).Cast<UnitSystem>()];
@@ -263,7 +264,7 @@ namespace NetScad.UI.ViewModels
             }
         }
 
-        public async Task ClearInputs()
+        public Task ClearInputs()
         {
             ClearErrors(nameof(MaxXValue));
             ClearErrors(nameof(MaxYValue));
@@ -285,20 +286,22 @@ namespace NetScad.UI.ViewModels
             MinXValue = 0;  // Set to 0 for coordinates
             MinYValue = 0;
             MinZValue = 0;
+            return Task.CompletedTask;
         }
 
         /**** Axes List DataGrid ****/
-        private async Task GetAxesList()
+        private Task GetAxesList()
         {
             var parser = new ScadParser();
             var filePath = Path.Combine("Scad", "Axes", "axes.scad");
             _axesList = parser.AxesModulesList(filePath);
             AxesListMetric = [.. _axesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_MM_"))];
             AxesListImperial = [.. _axesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_Inch_"))];
+            return Task.CompletedTask;
         }
 
         // ViewModel helper functions for conversions - stateful
-        private async Task ConvertInputsImperial(int decimalPlaces)
+        private Task ConvertInputsImperial(int decimalPlaces)
         {
             // Convert from metric unit system to imperial
             MinXValue = Math.Round(MillimeterToInches(_minX), decimalPlaces);  // mm to inches
@@ -310,9 +313,10 @@ namespace NetScad.UI.ViewModels
             TotalCubicVolume = Math.Round(VolumeConverter.ConvertCm3ToIn3(_totalCubicVolume), decimalPlaces);  // cm3 to in3
             TotalCubicVolumeScale = Math.Round(VolumeConverter.ConvertM3ToFt3(_totalCubicVolumeScale), decimalPlaces);  // m to feet 
             UnitHasChanged = false;
+            return Task.CompletedTask;
         }
 
-        private async Task ConvertInputsMetric(int decimalPlaces)
+        private Task ConvertInputsMetric(int decimalPlaces)
         {
             // Convert from imperial unit system to metric
             MinXValue = Math.Round(InchesToMillimeter(_minX), decimalPlaces);  // inches to mm
@@ -324,9 +328,10 @@ namespace NetScad.UI.ViewModels
             TotalCubicVolume = Math.Round(VolumeConverter.ConvertIn3ToCm3(_totalCubicVolume), decimalPlaces);  // inches to cm
             TotalCubicVolumeScale = Math.Round(VolumeConverter.ConvertFt3ToM3(_totalCubicVolumeScale), decimalPlaces);  // feet to m
             UnitHasChanged = false;
+            return Task.CompletedTask;
         }
 
-        private async Task ValidateMinMax()
+        private Task ValidateMinMax()
         {
             ClearErrors(nameof(MaxXValue));
             ClearErrors(nameof(MaxYValue));
@@ -395,6 +400,7 @@ namespace NetScad.UI.ViewModels
 
             if (xValid && yValid && zValid) { CreateButtonEnabled = true; }
             else { CreateButtonEnabled = false; }
+            return Task.CompletedTask;
         }
     }
 }

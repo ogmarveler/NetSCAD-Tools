@@ -13,12 +13,12 @@ namespace NetScad.UI.Views
         {
             InitializeComponent();
             this.WindowState = WindowState.Maximized;
-            DataContext = App.Host?.Services.GetRequiredService<MainWindowViewModel>();
+            DataContext = App.Services!.GetRequiredService<MainWindowViewModel>();
         }
 
         public static async Task OpenFolderAsync()
         {
-            var scadPath = App.Host!.Services.GetRequiredService<IScadPathProvider>().ScadPath;
+            var scadPath = App.Services!.GetRequiredService<IScadPathProvider>().ScadPath;
 
             await ScadFileOperations.OpenFolderAsync(scadPath);
         }

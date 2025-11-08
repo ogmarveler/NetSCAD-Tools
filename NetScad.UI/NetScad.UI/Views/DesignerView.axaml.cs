@@ -6,19 +6,23 @@ using Microsoft.Extensions.DependencyInjection;
 using NetScad.UI.ViewModels;
 using ReactiveUI;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace NetScad.UI.Views;
 
 public partial class DesignerView : UserControl
 {
+    [RequiresUnreferencedCode("DesignerView constructor uses code that may require unreferenced code.")]
     public DesignerView()
     {
         InitializeComponent();
-        DataContext = App.Host?.Services.GetRequiredService<DesignerViewModel>();
+        DataContext = App.Services!.GetRequiredService<DesignerViewModel>();
         LoadMarkdownAsync("avares://NetScad.UI/Assets/Guides/Designer.markdown");  // Relative or absolute path
     }
 
+    [RequiresUnreferencedCode("LoadMarkdownAsync uses ReactiveUI.ReactiveCommand.Create which may require unreferenced code.")]
+    [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>")]
     private async void LoadMarkdownAsync(string avaPath)
     {
         try

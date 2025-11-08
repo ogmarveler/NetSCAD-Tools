@@ -167,7 +167,7 @@
             BoxShadow="1 1 2 0 Gray"
             Classes="card_main">
             <StackPanel Margin="10,15,10,15" Spacing="0">
-                <Grid  
+                <Grid
                     x:Name="AxisControlsGrid"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
@@ -192,7 +192,7 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Width="100"
-                        Margin="0,0,10,0"
+                        Margin="0,0,15,0"
                         HorizontalAlignment="Left"
                         Classes="inputGroup">
                         <TextBlock
@@ -565,7 +565,7 @@
                         </Button>
                     </StackPanel>
 
-                    <!--  View Output Button  -->
+                    <!--  Render Object Button  -->
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="6"
@@ -576,11 +576,22 @@
                             HorizontalAlignment="Stretch"
                             BorderBrush="{DynamicResource CardForeground}"
                             BorderThickness="1"
-                            Click="ObjectToScadFilesButton_Click"
-                            Content="View Output"
-                            IsEnabled="True">
+                            Click="RenderObjectButton_Click">
+                            <Button.Content>
+                                <Binding
+                                    Converter="{StaticResource BooleanToTextConverter}"
+                                    ConverterParameter="Add Axis|Remove Axis"
+                                    Path="RemoveAxis" />
+                            </Button.Content>
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="UnionButton" />
+                                    <Binding Path="DifferenceButton" />
+                                    <Binding Path="IntersectionButton" />
+                                </MultiBinding>
+                            </Button.IsEnabled>
                             <ToolTip.Tip>
-                                <TextBlock Text="Open and view the .scad file in the default application set by the OS." />
+                                <TextBlock Text="This action will create axes for the selected objects in the database for use in OpenSCAD." />
                             </ToolTip.Tip>
                         </Button>
                     </StackPanel>
@@ -1085,6 +1096,54 @@
                                     <TextBlock Text="This action will create a union of the selected objects in the database for use in OpenSCAD." />
                                 </ToolTip.Tip>
                             </Button>
+                        </StackPanel>
+
+                        <!--  View Output Button  -->
+                        <StackPanel
+                            Width="100"
+                            Classes="inputGroup"
+                            IsEnabled="{Binding AxisStored}">
+                            <TextBlock Classes="standardLabel" Text="View" />
+                            <Button
+                                HorizontalAlignment="Stretch"
+                                BorderBrush="{DynamicResource CardForeground}"
+                                BorderThickness="1"
+                                Click="ObjectToScadFilesButton_Click"
+                                Content="Output"
+                                IsEnabled="{Binding !ExportToStl}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Open and view the .scad file in the default application set by the OS." />
+                                </ToolTip.Tip>
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel
+                            Width="100"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            Classes="inputGroup"
+                            IsEnabled="{Binding AxisStored}">
+                            <TextBlock Classes="standardLabel" Text="Export" />
+                            <CheckBox
+                                HorizontalAlignment="Left"
+                                Content="STL"
+                                IsChecked="{Binding ExportToStl, Mode=TwoWay}">
+                                <CheckBox.IsEnabled>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding
+                                            Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                            ConverterParameter="1"
+                                            Path="SolidDimensions" />
+                                        <Binding
+                                            Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                            ConverterParameter="1"
+                                            Path="ModuleDimensions" />
+                                    </MultiBinding>
+                                </CheckBox.IsEnabled>
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Check to export the object.scad file to STL format." />
+                                </ToolTip.Tip>
+                            </CheckBox>
                         </StackPanel>
                     </StackPanel>
 
