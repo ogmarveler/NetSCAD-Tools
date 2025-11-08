@@ -86,7 +86,7 @@ The Custom Object Designer is organized into several sections to facilitate the 
 
 ###### 
 #### Viewing the Object in OpenSCAD
-The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**.
+The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. **Rendering the axis is optional, based on your use case.** However, this can SIGNIFICANTLY INCREASE render time as it is primarily used for preview and development. Commenting out this part within the object.scad file will allow the object to render quickly. If building a ruler or some form of 1D or 2D measurement, then this is would be an example of why you would include the axis in rendering before final output.
 
 ###### 
 | Files                                   | Usage In Your SCAD File                                | Optional parameters | Render |
