@@ -2,15 +2,15 @@
 # <img src="https://github.com/ogmarveler/NetSCAD/blob/25f80b909ac1837b3adb92b88e1d9d3ce63d0e2c/NetScad.UI/NetScad.UI/Assets/Images/logo-netscad.png" alt="NetSCAD logo" height="30" width="30"> NetSCAD Tools
 ###### 
 #### Description
-This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes creation of custom Imperial and Metric axes, as well as quick generation of objects to help speed up the modeling process. This allows for more precise modeling used in 3D printing. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
+This application is a low-code / no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes creation of custom Imperial and Metric axes, as well as quick generation of objects to help speed up the modeling process. This allows for more precise modeling used in 3D printing. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
 ###### 
 #### Prerequisites
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 ######
 **Get the latest release of NetSCAD Tools**
-* [NetSCAD for Windows (x64)](NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.2.1-win-x64.zip)
-* [NetSCAD for Linux (x64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.2.1-linux-x64.tar.gz)
-* [NetSCAD for Raspberry Pi (arm64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.2.1-linux-arm64.tar.gz)
+* [NetSCAD for Windows (x64)](NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.3.0-win-x64.zip)
+* [NetSCAD for Linux (x64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.0-linux-x64.tar.gz)
+* [NetSCAD for Raspberry Pi (arm64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.0-linux-arm64.tar.gz)
 
 ######
 #### Layout of Custom Object Designer
@@ -50,6 +50,7 @@ The Custom Axes Builder has 2 main visual sections: Custom Axis and Generated Ax
 ###### 
 | Files                                   | Usage In Your SCAD File                                | Optional parameters | Render |
 | --------------------------------------- |:------------------------------------------------------:|:-------------------:|:------:|
-| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |	Yes   |
 | Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |	No    |
+| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |	No    |
 | Scad/Solids/object.scad                 |                                                        |                     |	Yes   |	
+| Scad/Solids/object.stl                  |                                                        |                     |  Yes   |
