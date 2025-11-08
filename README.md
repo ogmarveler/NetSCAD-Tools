@@ -19,10 +19,10 @@ The Custom Object Designer is organized into several sections to facilitate the 
 ![Designer Object](NetScad.UI/NetScad.UI/Assets/Images/designerObject.png)
 ######
 #### Output of Custom Object in OpenSCAD
-Outputs can be viewed in **real-time.** Any changes to the object within the application will automatically update the SCAD file used in OpenSCAD. This allows for quick iteration and testing of objects without needing to manually export and import files.
+Outputs can be viewed in **real-time.** Any changes to the object within the application will automatically update the SCAD file used in OpenSCAD. This allows for quick iteration and testing of objects without needing to manually export and import files. **The object is pre-rendered in OpenSCAD upon opening the SCAD file.** Depending on the complexity of the object, this may take some time.
 
 #### Export Custom Object to STL
-Once the object is finalized, it can be exported directly to STL format for 3D printing or further processing. The STL file will be generated based on the current configuration of the object within the application.
+Once the object is finalized, **check the Export STL box** to convert the rendered object to STL. The axis is removed by default, but reapplied after export to the preview in OpenSCAD. The STL file will be generated based on the current configuration of the object within the application.
 
 ######
 ![Object](NetScad.UI/NetScad.UI/Assets/Images/object.png)
@@ -34,9 +34,6 @@ Cubes and cylinders can be generated from the Designer module within this applic
 * **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
 * **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
 ###### 
-#### Viewing the Object in OpenSCAD
-The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. **Rendering the axis is optional, based on your use case.** However, this can SIGNIFICANTLY INCREASE render time as it is primarily used for preview and development. Commenting out this part within the object.scad file will allow the object to render quickly. If building a ruler or some form of 1D or 2D measurement, then this is would be an example of why you would include the axis in rendering before final output.
-
 #### Types of Measurements
 Varying axes of different sizes, measurement types, colors, and combinations of both metric and imperial measurements can be applied within the same SCAD project. Axes are managed in an aggregate SCAD file and are called as modules within your SCAD project. The app manages updates to existing axes as well as provides the ability for multiple axis types to be used in your project. Axis increments are as follows:
 ###### 
