@@ -20,6 +20,10 @@ The Custom Object Designer is organized into several sections to facilitate the 
 ######
 #### Output of Custom Object in OpenSCAD
 Outputs can be viewed in **real-time.** Any changes to the object within the application will automatically update the SCAD file used in OpenSCAD. This allows for quick iteration and testing of objects without needing to manually export and import files.
+
+#### Export Custom Object to STL
+Once the object is finalized, it can be exported directly to STL format for 3D printing or further processing. The STL file will be generated based on the current configuration of the object within the application.
+
 ######
 ![Object](NetScad.UI/NetScad.UI/Assets/Images/object.png)
 ######
