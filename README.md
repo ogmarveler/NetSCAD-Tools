@@ -3,7 +3,11 @@
 ###### 
 #### Description
 This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes creation of custom Imperial and Metric axes, as well as quick generation of objects to help speed up the modeling process. This allows for more precise modeling used in 3D printing. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
-###### 
+######
+#### Other NetSCAD Projects
+If you're looking for only the axis tool, check out the NetSCAD-Axis repository.
+* **NetSCAD-Axis:** [Github](https://github.com/ogmarveler/NetSCAD-Axis)
+######
 #### Prerequisites
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 ######
