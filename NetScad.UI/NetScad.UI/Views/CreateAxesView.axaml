@@ -2,6 +2,7 @@
     x:Class="NetScad.UI.Views.CreateAxesView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:NetScad.UI.Views"
     xmlns:conv="using:NetScad.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -51,7 +52,7 @@
         <Style Selector="DataGridCell">
             <Setter Property="Padding" Value="4,2" />
             <Setter Property="MinHeight" Value="24" />
-            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontSize" Value="15" />
         </Style>
 
         <!--  Round the internal DataGrid border to match CornerRadius  -->
@@ -125,8 +126,8 @@
             <!--  Overflow Row for Metric Grids when narrow  -->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" MaxWidth="960" />
-            <ColumnDefinition Width="*" MinWidth="400" />
+            <ColumnDefinition Width="960" />
+            <ColumnDefinition Width="Auto" MinWidth="960" />
             <!--  Reserved for future use  -->
         </Grid.ColumnDefinitions>
 
@@ -424,12 +425,11 @@
 
         <ScrollViewer
             x:Name="MetricAxisGrid"
-            Grid.Row="2"
+            Grid.Row="0"
+            Grid.RowSpan="3"
             Grid.Column="0"
-            MaxWidth="955"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Center"
+            VerticalAlignment="Stretch"
+            HorizontalContentAlignment="Left"
             VerticalContentAlignment="Top"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
@@ -446,27 +446,26 @@
                 </MultiBinding>
             </ScrollViewer.IsVisible>
             <Border
-                Margin="10"
+                Margin="10,10,10,20"
+                Background="Transparent"
                 BorderBrush="Transparent"
-                BorderThickness="1"
+                BorderThickness="0"
                 BoxShadow="1 1 2 0 Gray"
-                Classes="card_main"
                 ClipToBounds="True">
-                <StackPanel Margin="0" Spacing="0">
+                <StackPanel Margin="0" Spacing="20">
                     <!--  Metric Axes DataGrid  -->
                     <DataGrid
                         x:Name="AxesListMetric"
-                        MaxWidth="950"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Stretch"
                         AutoGenerateColumns="True"
                         AutoGeneratingColumn="DataGrid_AutoGeneratingColumnMetric"
+                        Background="{DynamicResource CardBackground}"
                         BorderBrush="{DynamicResource BlueForeground}"
+                        BorderThickness="1"
                         CanUserReorderColumns="False"
                         CanUserResizeColumns="False"
                         ClipToBounds="True"
                         CornerRadius="6"
-                        FontSize="13"
                         GridLinesVisibility="All"
                         IsReadOnly="True"
                         IsVisible="{Binding AxesListMetric, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
@@ -474,24 +473,20 @@
                         SelectionChanged="DataGridMetric_SelectionChanged"
                         SelectionMode="Single" />
 
-                    <Separator MaxWidth="955" Background="Transparent" />
-                    <Separator MaxWidth="955" Background="Transparent" />
-                    <Separator MaxWidth="955" Background="Transparent" />
 
                     <!--  Imperial Axes DataGrid  -->
                     <DataGrid
                         x:Name="AxesListImperial"
-                        MaxWidth="950"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
+                        VerticalAlignment="Stretch"
                         AutoGenerateColumns="True"
                         AutoGeneratingColumn="DataGrid_AutoGeneratingColumnImperial"
+                        Background="{DynamicResource CardBackground}"
                         BorderBrush="{DynamicResource TealForeground}"
+                        BorderThickness="1"
                         CanUserReorderColumns="False"
                         CanUserResizeColumns="False"
                         ClipToBounds="True"
                         CornerRadius="6"
-                        FontSize="13"
                         GridLinesVisibility="All"
                         IsReadOnly="True"
                         IsVisible="{Binding AxesListImperial, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
@@ -501,5 +496,21 @@
                 </StackPanel>
             </Border>
         </ScrollViewer>
+
+        <!--  Modal Overlay (renders on top)  -->
+        <controls:ModalDialog
+            Title="{Binding ModalTitle}"
+            Grid.Row="0"
+            Grid.RowSpan="7"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            IsOpen="{Binding IsModalOpen, Mode=TwoWay}">
+            <controls:ModalDialog.Content>
+                <TextBlock
+                    FontFamily="Courier New"
+                    Text="{Binding ModalContent}"
+                    TextWrapping="Wrap" />
+            </controls:ModalDialog.Content>
+        </controls:ModalDialog>
     </Grid>
 </UserControl>

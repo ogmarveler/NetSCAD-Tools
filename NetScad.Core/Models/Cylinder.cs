@@ -19,8 +19,8 @@ namespace NetScad.Core.Models
             { "type", "Cylinder" },
             { "r", Radius },
             { "h", Height },
-            { "r1", Radius1 ?? 0 },
-            { "r2", Radius2 ?? 0 },
+            { "r1", Radius1 ?? 0.0 },
+            { "r2", Radius2 ?? 0.0 },
             { "resolution", Resolution }
         };
 

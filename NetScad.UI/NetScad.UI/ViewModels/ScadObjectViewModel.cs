@@ -63,15 +63,15 @@ namespace NetScad.UI.ViewModels
         private readonly string _objectFilePath;
         private List<ScrewSize>? _screwSizes;
         private ScrewSize? _selectedScrewSize;
-        private string _selectedScrewProperty = "ScrewRadius";
+        private string _selectedScrewProperty = "Screw Thread";
         private OperationType _selectedOperationType = OperationType.Union;
         private bool _unionButton;
         private bool _differenceButton;
         private bool _intersectionButton;
         private bool _saveFileButton;
-        private double _radiusMM = 0;
-        private double _radius1MM = 0;
-        private double _radius2MM = 0;
+        private double _radiusMM = 0.0;
+        private double _radius1MM = 0.0;
+        private double _radius2MM = 0.0;
         private double _cylinderHeightMM;
         private bool _isCubeSelected = true;
         private bool _isRoundCubeSelected = false;
@@ -98,10 +98,14 @@ namespace NetScad.UI.ViewModels
         private double _zRotate = 0;
         private string _selectedShapeType = "Cube";
         private bool _removeAxis = false;
+        private bool _isPreRendered = false;
         private bool _originalRemoveAxis = false;
         private bool _isFileOpen = false;
         private bool _exportToStl = false;
         private string _originalAxisCall = string.Empty;
+        private bool _isModalOpen;
+        private string _modalTitle = string.Empty;
+        private string _modalContent = string.Empty;
 
 
         [UnconditionalSuppressMessage("Trimming", "IL2026")]
@@ -202,9 +206,10 @@ namespace NetScad.UI.ViewModels
             DifferenceButton = false;
             UnionButton = false;
             SaveFileButton = false;
-            IsCubeSelected = true;
+            IsCubeSelected = false;
             IsRoundCubeSelected = false;
             IsCylinderSelected = false;
+            IsPreRendered = false;
             ScrewSizes = _screwSizes;
             ServerRackSizes = _serverRackSizes;
             RemoveAxis = false;
@@ -228,7 +233,7 @@ namespace NetScad.UI.ViewModels
                 case "Cylinder":
                     IsCylinderSelected = true;
                     break;
-                    default: return 0;
+                default: return 0;
             }
             int? id = null;  // Object for returning the row id
 
@@ -263,8 +268,10 @@ namespace NetScad.UI.ViewModels
             newObject.OSCADMethod = await GenerateOSCADAsync(oDim: newObject); // Get the OSCAD method
 
             // Determine if new row being added is appending the current object or is a new object
-            if (AppendObject) { await newObject.UpsertAsync(DbConnection!); /* Save to database, add to object */
-        }
+            if (AppendObject)
+            {
+                await newObject.UpsertAsync(DbConnection!); /* Save to database, add to object */
+            }
             else { await newObject.UpsertAsync(DbConnection!); /* Save to database, new object, overwrite existing object */ }
 
             if (AxesSelectEnabled)
@@ -303,18 +310,18 @@ namespace NetScad.UI.ViewModels
                 _originalAxisCall = $"translate ([{_AxisXPositionMM}, {_AxisYPositionMM}, {_AxisZPositionMM}]) {_axisDimensions?.OSCADMethod.Replace(_axisDimensions.IncludeMethod, "")}";
 
             _axisDimensions = new AxisDimensions
-                {
-                    Theme = _selectedAxis?.Theme!,
-                    OSCADMethod = _selectedAxis?.CallingMethod!,
-                    Unit = _selectedAxis?.Unit!,
-                    MinX = _selectedAxis!.MinX,
-                    MaxX = _selectedAxis!.MaxX,
-                    MinY = _selectedAxis!.MinY,
-                    MaxY = _selectedAxis!.MaxY,
-                    MinZ = _selectedAxis!.MinZ,
-                    MaxZ = _selectedAxis!.MaxZ,
-                    CreatedAt = DateTime.UtcNow,
-                };
+            {
+                Theme = _selectedAxis?.Theme!,
+                OSCADMethod = _selectedAxis?.CallingMethod!,
+                Unit = _selectedAxis?.Unit!,
+                MinX = _selectedAxis!.MinX,
+                MaxX = _selectedAxis!.MaxX,
+                MinY = _selectedAxis!.MinY,
+                MaxY = _selectedAxis!.MaxY,
+                MinZ = _selectedAxis!.MinZ,
+                MaxZ = _selectedAxis!.MaxZ,
+                CreatedAt = DateTime.UtcNow,
+            };
             _axisDimensions.OSCADMethod = $"{_axisDimensions.IncludeMethod} {_selectedAxis.CallingMethod}";
             _axisId = await _axisDimensions.UpsertAsync(DbConnection!); // Save to database
 
@@ -542,7 +549,7 @@ namespace NetScad.UI.ViewModels
                             XOffset_MM += oDim.Thickness_MM;
                             YOffset_MM += oDim.Thickness_MM;
                             ZOffset_MM += oDim.Thickness_MM;
-                            break;                    
+                            break;
                     }
                 }
             }
@@ -736,36 +743,36 @@ namespace NetScad.UI.ViewModels
             This has to do with subtractions from unions possibly subtracting the raised boss from a cylinder that was intended to be added after a previous cube difference.
             Functional programming logic is accounted for at a base level, but for user specifics, manual adjustments will be needed */
 
-            sb.AppendLine($"render() difference() {{");
-            sb.AppendLine($"   render() union() {{");
+                sb.AppendLine($"difference() {{");
+                sb.AppendLine($"   union() {{");
 
-            // If difference functions present, then call those, likely unions are child objects
-            if (ModuleDimensionsDifferences.Any())
-            {
-                foreach (ModuleDimensions module in ModuleDimensionsDifferences)
+                // If difference functions present, then call those, likely unions are child objects
+                if (ModuleDimensionsDifferences.Any())
                 {
-                    sb.Append($"        render() "); // Formatting
-                    sb.AppendLine(module.Name);
+                    foreach (ModuleDimensions module in ModuleDimensionsDifferences)
+                    {
+                        sb.Append($"        "); // Formatting
+                        sb.AppendLine(module.Name);
+                    }
                 }
-            }
-            // If no difference functions found, then call any unions as they're parent objects
-            else if (ModuleDimensionsUnions.Any())
-            {
-                foreach (ModuleDimensions module in ModuleDimensionsUnions)
+                // If no difference functions found, then call any unions as they're parent objects
+                else if (ModuleDimensionsUnions.Any())
                 {
-                    sb.Append($"        render() "); // Formatting
-                    sb.AppendLine(module.Name);
+                    foreach (ModuleDimensions module in ModuleDimensionsUnions)
+                    {
+                        sb.Append($"        "); // Formatting
+                        sb.AppendLine(module.Name);
+                    }
                 }
-            }
-            // If no difference functions found, then call any unions as they're parent objects
-            else if (ModuleDimensionsIntersections.Any())
-            {
-                foreach (ModuleDimensions module in ModuleDimensionsIntersections)
+                // If no difference functions found, then call any unions as they're parent objects
+                else if (ModuleDimensionsIntersections.Any())
                 {
-                    sb.Append($"        render() "); // Formatting
-                    sb.AppendLine(module.Name);
+                    foreach (ModuleDimensions module in ModuleDimensionsIntersections)
+                    {
+                        sb.Append($"        "); // Formatting
+                        sb.AppendLine(module.Name);
+                    }
                 }
-            }
 
             sb.AppendLine($"    }}");  // Union close bracket
             sb.AppendLine($"}}"); // Difference close bracket
@@ -929,7 +936,7 @@ namespace NetScad.UI.ViewModels
                 ObjectName = Name,
                 ObjectDescription = Description,
                 SolidType = solidType,
-                OSCADMethod = ToUnionModule(addMethods, Name, string.Empty, solidType).ToLower(),
+                OSCADMethod = ToUnionModule(addMethods, Name, string.Empty, solidType, _isPreRendered).ToLower(),
                 CreatedAt = DateTime.UtcNow
             };
             // Build call method and store in Db
@@ -965,7 +972,7 @@ namespace NetScad.UI.ViewModels
                     ObjectName = Name,
                     ObjectDescription = Description,
                     SolidType = solidType,
-                    OSCADMethod = ToDifferenceModule(baseCallMethod, subtractMethods, Name, string.Empty, solidType).ToLower(),
+                    OSCADMethod = ToDifferenceModule(baseCallMethod, subtractMethods, Name, string.Empty, solidType, _isPreRendered).ToLower(),
                     CreatedAt = DateTime.UtcNow
                 };
                 // get calling method for differenceModule
@@ -1000,7 +1007,7 @@ namespace NetScad.UI.ViewModels
                     ObjectName = Name,
                     ObjectDescription = Description,
                     SolidType = solidType,
-                    OSCADMethod = ToIntersectionModule(baseCallMethod, intersectMethods, Name, string.Empty, solidType).ToLower(),
+                    OSCADMethod = ToIntersectionModule(baseCallMethod, intersectMethods, Name, string.Empty, solidType, _isPreRendered).ToLower(),
                     CreatedAt = DateTime.UtcNow
                 };
                 // get calling method for intersectionModule
@@ -1103,6 +1110,19 @@ namespace NetScad.UI.ViewModels
             return Task.CompletedTask;
         }
 
+        // Method to show OSCAD methods
+        public Task ShowOSCADMethods(ModuleDimensions module)
+        {
+            var solids = SolidDimensions.Where(s => s.ModuleDimensionsId == module.Id).ToList();
+            if (solids.Any())
+            {
+                ModalTitle = $"OSCAD Methods for {module.Name}";
+                ModalContent = string.Join("\n\n", solids.Select(s => s.OSCADMethod));
+                IsModalOpen = true;
+            }
+            return Task.CompletedTask;
+        }
+
         /*** Public Variables ***/
         public bool IsNoneOperation
         {
@@ -1192,6 +1212,7 @@ namespace NetScad.UI.ViewModels
         public bool IsImperial { get => _isImperial; set => this.RaiseAndSetIfChanged(ref _isImperial, value); }
         public bool IsAxisMetric { get => _isAxisMetric; set => this.RaiseAndSetIfChanged(ref _isAxisMetric, value); }
         public bool IsAxisImperial { get => _isAxisImperial; set => this.RaiseAndSetIfChanged(ref _isAxisImperial, value); }
+        public bool IsPreRendered { get => _isPreRendered; set => this.RaiseAndSetIfChanged(ref _isPreRendered, value); }
         public bool RemoveAxis { get => _removeAxis; set => this.RaiseAndSetIfChanged(ref _removeAxis, value); }
         public bool ExportToStl
         {
@@ -1232,7 +1253,15 @@ namespace NetScad.UI.ViewModels
         public ObservableCollection<ModuleDimensions> ModuleDimensionsDifferences { get => _moduleDimensionsDifferences; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsDifferences, value); }
         public ObservableCollection<SolidDimensions> SolidDimensions { get => _solidDimensions; set => this.RaiseAndSetIfChanged(ref _solidDimensions, value); }
         public SqliteConnection? DbConnection { get => _dbConnection; set => this.RaiseAndSetIfChanged(ref _dbConnection, value); }
-        public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
+        public string Name 
+        { 
+            get => _name; 
+            set 
+            {
+                System.Text.RegularExpressions.Regex.Replace(value.Trim().ToLower(), @"[^a-zA-Z0-9_]", "_"); // Sanitize name to be suitable for OpenSCAD module naming
+                this.RaiseAndSetIfChanged(ref _name, value);
+            }  
+        }
         public string ObjectAxisDisplay { get => _objectAxisDisplay; set => this.RaiseAndSetIfChanged(ref _objectAxisDisplay, value); }
         public string ObjectAxisUnitDisplay { get => _objectAxisUnitDisplay; set => this.RaiseAndSetIfChanged(ref _objectAxisUnitDisplay, value); }
         public string Description { get => _description; set => this.RaiseAndSetIfChanged(ref _description, value); }
@@ -1251,6 +1280,9 @@ namespace NetScad.UI.ViewModels
         public double Radius1MM { get => _radius1MM; set => this.RaiseAndSetIfChanged(ref _radius1MM, value); }
         public double Radius2MM { get => _radius2MM; set => this.RaiseAndSetIfChanged(ref _radius2MM, value); }
         public double CylinderHeightMM { get => _cylinderHeightMM; set => this.RaiseAndSetIfChanged(ref _cylinderHeightMM, value); }
+        public bool IsModalOpen { get => _isModalOpen; set => this.RaiseAndSetIfChanged(ref _isModalOpen, value); }
+        public string ModalTitle { get => _modalTitle; set => this.RaiseAndSetIfChanged(ref _modalTitle, value); }
+        public string ModalContent { get => _modalContent; set => this.RaiseAndSetIfChanged(ref _modalContent, value); }
         public bool IsCubeSelected
         {
             get => _isCubeSelected;
@@ -1439,6 +1471,7 @@ namespace NetScad.UI.ViewModels
             get => _selectedScrewSize;
             set
             {
+                if (value == null) return;
                 this.RaiseAndSetIfChanged(ref _selectedScrewSize, value);
                 SelectedScrewProperty ??= ScrewProperties!.FirstOrDefault(s => s == "Screw Thread")!;
                 if (IsCylinderSelected)

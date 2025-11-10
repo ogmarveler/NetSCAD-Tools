@@ -1,5 +1,5 @@
 ﻿ 
-# ![Logo](Assets/Images/logo.png) NetSCAD Designer Guide
+# ![Logo](Assets/Images/logo.png) NetSCAD Object Designer Guide
 ###### 
 #### Description
 Welcome to the NetSCAD Designer Guide! This tutorial covers the basics of defining and generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This project aims to simplify the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes automating the creation of custom Imperial and Metric axes, as well as quick generation of objects to help speed up the modeling process. This allows for more precise modeling used in 3D printing.
@@ -15,19 +15,20 @@ Cubes and cylinders can be generated from the Designer module within this applic
 * **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
 ###### 
 #### Layout of Custom Object Designer
-The Custom Object Designer is organized into several sections to facilitate the creation of custom objects for OpenSCAD. The main sections include:
+There are 5 main sections: applying a custom axis, creating a new object or retrieving an existing one, setting inputs for new solids, the list of Solids in the object, and Modules that contain the Solids. Once a solid is added to the object, it will appear in the Solids table, along with its parameters. Solids can be viewed within Modules, which define how they interact with each other. To view the object in OpenSCAD, simply click the **View Output** button, which will open the corresponding SCAD file. To export the object as an STL file, click the **Export** button. When making changes, be sure to click the **Update Modules** button to refresh the object.
+
 ###### 
-![DesignerObject](Assets/Images/designerObject.png)
-######
+![DesignerObject](Assets/Images/designerObjectDark.png)
+
 #### Apply a Custom Axis
 | Steps                                                                         | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
 | 1. Open the **Create** menu and select **Create New Object**                  |                                         |               |
 | 2. Select an **Axis Type** to filter saved Imperial or Metric axes            |       Metric (mm) or Imperial (in)      |  Metric (mm)  |
 | 3. Choose from **Select Axis** to apply one of the saved axes                 |     Dark or Light X x Y x Z mm or in    |  <required>   |
-| 4. Optional: Enter numeric **Adjust X**, setting start point on **X Axis**    |     Units displayed in mm or inches     |       0       |
-| 5. Optional: Enter numeric **Adjust Y**, setting start point on **Y Axis**    |     Units displayed in mm or inches     |       0       |
-| 6. Optional: Enter numeric **Adjust Z**, setting start point on **Z Axis**    |     Units displayed in mm or inches     |       0       |
+| 4. Optional: Enter numeric **Adjust X**, moving start point on **X Axis**     |     Units displayed in mm or inches     |       0       |
+| 5. Optional: Enter numeric **Adjust Y**, moving start point on **Y Axis**     |     Units displayed in mm or inches     |       0       |
+| 6. Optional: Enter numeric **Adjust Z**, moving start point on **Z Axis**     |     Units displayed in mm or inches     |       0       |
 
 ###### 
 #### Creating A New Object
@@ -76,22 +77,36 @@ The Custom Object Designer is organized into several sections to facilitate the 
 | Steps                                                                         | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
 | 1. **Create Solid** - save the inputs with select solid type to object        | Required settings inputs for solid      |               |
-| 2. **Remove Solid** - remove a selected solid (row) from the object           | Selected row from object details        |               |
-| 3. **Import Object** - get all details and items by existing object name      | Object Name                             |               |
-| 4. **Clear Object** - clears all inputs, object tables, and object name       |                                         |               |
-| 5. **Clear Inputs** - clear out any entered solid inputs                      |                                         |               |
-| 6. **View Output** - preview the object in OpenSCAD                           |                                         |               |
-| 7. **Remove/Apply Axis** - remove the axis before exporting (or reapply it)   |                                         |               |
-| 8. **Modules** - update/add saved solids to object's specific modules         |                                         |               |
+| 2. **Import Object** - get all details and items by existing object name      | Object Name                             |               |
+| 3. **Clear Object** - clears all inputs, object tables, and object name       |                                         |               |
+| 4. **Clear Inputs** - clear out any entered solid inputs                      |                                         |               |
+| 5. **View Output** - preview the object in OpenSCAD                           |                                         |               |
+| 6. **Remove/Apply Axis** - remove the axis before exporting (or reapply it)   |                                         |               |
+| 7. **Modules** - update/add saved solids to object's specific modules         |                                         |               |
 
 ###### 
-#### Viewing the Object in OpenSCAD
-The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. **Rendering the axis is optional, based on your use case.** However, this can SIGNIFICANTLY INCREASE render time as it is primarily used for preview and development. Commenting out this part within the object.scad file will allow the object to render quickly. If building a ruler or some form of 1D or 2D measurement, then this is would be an example of why you would include the axis in rendering before final output.
+#### Optional Object Actions
+| Actions                                                                       | Requirements / Options                  | Default Value |
+| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
+| 1. **Render ?** - choose whether to pre-render the object before viewing      | Yes (Render) or No (Preview Only)       |               |
+| 2. **Export ?** - export a rendered version of the object to output file      | STL                                     |               |
+
+###### 
+#### Solids and Modules Tables Actions
+| Actions                                                                       | Requirements / Options                  | Default Value |
+| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
+| 1. **Trash Bin Icon** - remove the selected row from the object               |       Solids or Modules Table           |               |
+| 2. **Clipboard Icon** - opens a modal showing the solids used in the module   | Modules Table                           |               |
+| 3. **Sorting** - click on one or more column headers to sort (shift + click)  |       Solids or Modules Table           |               |
+
+###### 
+#### Rendering/Previewing the Object in OpenSCAD
+The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. **Rendering the axis is optional, based on your use case.** However, this can SIGNIFICANTLY INCREASE render time as it is primarily used for preview and development. Click the **Remove Axis** within the object.scad file to comment out the axis. If exporting to STL, this will be done automatically. If building a ruler or some form of 1D or 2D measurement, then this is would be an example of why you would include the axis in rendering before final output.
 
 ###### 
 | Files                                   | Usage In Your SCAD File                                | Optional parameters | Render |
 | --------------------------------------- |:------------------------------------------------------:|:-------------------:|:------:|
 | Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |	No    |
-| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |	No    |
-| Scad/Solids/object.scad                 |                                                        |                     |	Yes   |	
+| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |	Yes   |
+| Scad/Solids/object.scad                 |                                                        |                     |	No    |	
 | Scad/Solids/object.stl                  |                                                        |                     |  Yes   |

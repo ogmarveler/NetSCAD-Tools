@@ -27,6 +27,7 @@ namespace NetScad.Core.Utility
             // Sanitize name, operationType and description - replace whitespace with underscores
             var sanitizedName = name
                 ?.Trim()
+                .Replace("-","_")
                 .Replace(" ", "_")
                 .Replace("\t", "_")
                 .Replace("\n", "_")
@@ -34,6 +35,7 @@ namespace NetScad.Core.Utility
 
             var sanitizedDescription = description
                 ?.Trim()
+                .Replace("-", "_")
                 .Replace(" ", "_")
                 .Replace("\t", "_")
                 .Replace("\n", "_")
@@ -41,6 +43,7 @@ namespace NetScad.Core.Utility
 
             var sanitizedOperationType = operationType
                 ?.Trim()
+                .Replace("-", "_")
                 .Replace(" ", "_")
                 .Replace("\t", "_")
                 .Replace("\n", "_")
@@ -49,6 +52,7 @@ namespace NetScad.Core.Utility
             // Sanitize solidType
             var sanitizedSolidType = solidType
                 ?.Trim()
+                .Replace("-", "_")
                 .Replace(" ", "_")
                 .Replace("\t", "_")
                 .Replace("\n", "_")
@@ -57,7 +61,7 @@ namespace NetScad.Core.Utility
             // Build module name
             var moduleName = string.IsNullOrWhiteSpace(sanitizedDescription)
                 ? sanitizedName
-                //: $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}_{solidType}";
+            //: $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}_{solidType}";
             : $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}";
 
             // Return the module definition
@@ -115,7 +119,7 @@ namespace NetScad.Core.Utility
         /// <param name="name">Module name (whitespace will be replaced with underscores)</param>
         /// <param name="solidType">Module solid type (whitespace will be replaced with underscores)</param>
         /// <returns>A module definition with a union operation</returns>
-        public static string ToUnionModule(List<string> osCADMethods, string name, string description, string solidType)
+        public static string ToUnionModule(List<string> osCADMethods, string name, string description, string solidType, bool isPreRendered)
         {
             // Sanitize name
             var sanitizedName = name
@@ -155,11 +159,23 @@ namespace NetScad.Core.Utility
             // Join all methods with spaces
             var combinedMethods = string.Join(" ", sanitizedMethods);
 
-            // Return the union module
-            if (!string.IsNullOrEmpty(description))
-                return $"module union_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}".ToLower();
+            if (isPreRendered)
+            {
+                // Return the union module
+                if (!string.IsNullOrEmpty(description))
+                    return $"module union_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ render() {{ union() {{ {combinedMethods} }} }} }}".ToLower();
+                else
+                    return $"module union_{sanitizedName}_{sanitizedSolidType}() {{ render() {{ union() {{ {combinedMethods} }} }} }}".ToLower();
+            }
             else
-                return $"module union_{sanitizedName}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}".ToLower();
+            {
+                // Return the union module
+                if (!string.IsNullOrEmpty(description))
+                    return $"module union_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}".ToLower();
+                else
+                    return $"module union_{sanitizedName}_{sanitizedSolidType}() {{ union() {{ {combinedMethods} }} }}".ToLower();
+            }
+
         }
 
         /// <summary>
@@ -170,7 +186,7 @@ namespace NetScad.Core.Utility
         /// <param name="name">Module name (whitespace will be replaced with underscores)</param>
         /// <param name="solidType">Module solid type (whitespace will be replaced with underscores)</param>
         /// <returns>A module definition with a difference operation</returns>
-        public static string ToDifferenceModule(string baseObject, List<string> subtractObjects, string name, string description, string solidType)
+        public static string ToDifferenceModule(string baseObject, List<string> subtractObjects, string name, string description, string solidType, bool isPreRendered)
         {
             // Sanitize name
             var sanitizedName = name
@@ -218,14 +234,25 @@ namespace NetScad.Core.Utility
                 sb.Append($" {sanitizedSubtract}");
             }
 
-            // Return the difference module
-            if (!string.IsNullOrEmpty(description))
-                return $"module difference_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb} }} }}".ToLower();
+            if (isPreRendered)
+            {
+                // Return the difference module
+                if (!string.IsNullOrEmpty(description))
+                    return $"module difference_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ render() {{ difference() {{ {sanitizedBase} {sb} }} }} }}".ToLower();
+                else
+                    return $"module difference_{sanitizedName}_{sanitizedSolidType}() {{ render() {{ difference() {{ {sanitizedBase} {sb} }} }} }}".ToLower();
+            }
             else
-                return $"module difference_{sanitizedName}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb} }} }}".ToLower();
+            {
+                // Return the difference module
+                if (!string.IsNullOrEmpty(description))
+                    return $"module difference_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb} }} }}".ToLower();
+                else
+                    return $"module difference_{sanitizedName}_{sanitizedSolidType}() {{ difference() {{ {sanitizedBase} {sb} }} }}".ToLower();
+            }
         }
 
-        public static string ToIntersectionModule(string baseObject, List<string> intersectObjects, string name, string description, string solidType)
+        public static string ToIntersectionModule(string baseObject, List<string> intersectObjects, string name, string description, string solidType, bool isPreRendered)
         {
             // Sanitize name
             var sanitizedName = name
@@ -273,11 +300,22 @@ namespace NetScad.Core.Utility
                 sb.Append($" {sanitized}");
             }
 
-            // Return the intersection module
-            if (!string.IsNullOrEmpty(description))
-                return $"module intersection_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ intersection() {{ {sanitizedBase} {sb} }} }}".ToLower();
+            if (isPreRendered)
+            {
+                // Return the intersection module
+                if (!string.IsNullOrEmpty(description))
+                    return $"module intersection_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ render() {{ intersection() {{ {sanitizedBase} {sb} }} }} }}".ToLower();
+                else
+                    return $"module intersection_{sanitizedName}_{sanitizedSolidType}() {{ render() {{ intersection() {{ {sanitizedBase} {sb} }} }} }}".ToLower();
+            }
             else
-                return $"module intersection_{sanitizedName}_{sanitizedSolidType}() {{ intersection() {{ {sanitizedBase} {sb} }} }}".ToLower();
+            {
+                // Return the intersection module
+                if (!string.IsNullOrEmpty(description))
+                    return $"module intersection_{sanitizedName}_{sanitizedDescription}_{sanitizedSolidType}() {{ intersection() {{ {sanitizedBase} {sb} }} }}".ToLower();
+                else
+                    return $"module intersection_{sanitizedName}_{sanitizedSolidType}() {{ intersection() {{ {sanitizedBase} {sb} }} }}".ToLower();
+            }
         }
 
         /// <summary>

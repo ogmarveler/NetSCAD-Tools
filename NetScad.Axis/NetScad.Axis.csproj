@@ -8,11 +8,6 @@
 	  <PublishTrimmed>true</PublishTrimmed>
 	  <TrimMode>link</TrimMode>
 	  <SignAssembly>True</SignAssembly>
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <PackageId>NetScad.Axis</PackageId>
-	  <Version>1.0.0</Version>
-	  <Authors>Paul Pieniadz</Authors>
-	  <Description>Axis library for NetScad</Description>
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">

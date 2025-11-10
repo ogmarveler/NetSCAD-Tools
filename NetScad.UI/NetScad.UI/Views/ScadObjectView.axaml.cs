@@ -14,6 +14,7 @@ using NetScad.Core.Primitives;
 using NetScad.Designer.Repositories;
 using System.Linq;
 using static NetScad.Core.Measurements.Selector;
+using Avalonia.Styling;
 
 namespace NetScad.UI.Views;
 
@@ -38,89 +39,157 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         this.AttachedToVisualTree += ScadObjectView_AttachedToVisualTree;
         // Add columns after the control is attached (application is initialized)
         AddActionButtonColumnToModuleDataGrid();
+        AddViewButtonColumnToModuleDataGrid();
         AddSolidCountColumnToModuleDataGrid();
         AddActionButtonColumnToSolidDataGrid();
         AddActionButtonColumnToSolidDataGridImperial();
     }
 
-    // New method to add the solid count column (now clickable)
+    // New method to add the solid count column (non-clickable display only)
     private void AddSolidCountColumnToModuleDataGrid()
     {
-        // Define the cell template with a button showing the count
         var countTemplate = new FuncDataTemplate<object>((item, scope) =>
         {
             if (item is ModuleDimensions module)
             {
-                // Count solids associated with this module
                 int count = ViewModel.SolidDimensions.Count(s => s.ModuleDimensionsId == module.Id);
-                var button = new Button
+                var textBlock = new TextBlock
                 {
-                    Content = count.ToString(),
+                    Text = count.ToString(),
                     HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                    Height = 20,
-                    Width = 20,  // Limit max width to prevent excessive stretching
-                    Padding = new Avalonia.Thickness(0),  // Reduced padding
-                    Margin = new Avalonia.Thickness(20, 0)  // Reduced margin
+                    FontWeight = FontWeight.SemiBold,
+                    Margin = new Avalonia.Thickness(5)
                 };
 
-
-                // Handle the button click to show modal
-                button.Click += async (s, e) =>
-                {
-                    var solids = ViewModel.SolidDimensions.Where(s => s.ModuleDimensionsId == module.Id).ToList();
-                    if (solids.Any() && _parentWindow != null)
-                    {
-                        var modal = new Window
-                        {
-                            Title = $"OSCAD Methods for {module.Name}",
-                            Width = 600,
-                            Height = 400,
-                            CornerRadius = new CornerRadius(6),
-                            BorderThickness = new Thickness(1),
-                            ClipToBounds = true,
-                            BorderBrush = Brushes.Transparent,
-                            Background = Brushes.Transparent,
-                            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                            Content = new Border
-                            {
-                                Margin = new Thickness(10),
-                                Padding = new Thickness(10),
-                                Classes = { "card_main" },
-                                Child = new ScrollViewer
-                                {
-                                    Content = new TextBlock
-                                    {
-                                        Text = string.Join("\n\n", solids.Select(s => s.OSCADMethod)),
-                                        FontFamily = "Courier New",  // Monospace for code-like display
-                                        TextWrapping = TextWrapping.Wrap,
-                                        Margin = new Thickness(10)
-                                    }
-                                }
-                            }
-                        };
-                        await modal.ShowDialog(_parentWindow);
-                    }
-                };
-
-                return button;
+                return textBlock;
             }
-            var disabledButton = new Button { Content = "0", IsEnabled = false, Height = 20, Width = double.NaN, FontSize = 10, Padding = new Thickness(2), Margin = new Thickness(2) };
+            
+            return new TextBlock 
+            { 
+                Text = "0",
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                FontWeight = FontWeight.SemiBold,
+                Margin = new Avalonia.Thickness(5)
+            };
+        });
 
-            return disabledButton;
+        var countColumn = new DataGridTemplateColumn
+        {
+            Header = "Solids",
+            Width = new DataGridLength(90),
+            CellTemplate = countTemplate,
+            CanUserSort = false,
+            CanUserResize = false,
+            DisplayIndex = 2 // Place after trash bin and clipboard buttons
+        };
+
+        ModulesDataGrid.Columns.Add(countColumn);
+    }
+
+    // New method to add the view button column with clipboard icon
+    private void AddViewButtonColumnToModuleDataGrid()
+    {
+        // Define the cell template with a button
+        var buttonTemplate = new FuncDataTemplate<object>((item, scope) =>
+        {
+            var button = new Button
+            {
+                // Use PathIcon with document/clipboard geometry
+                Content = new PathIcon
+                {
+                    Data = Geometry.Parse("M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M17,11H7V9H17V11M15,15H7V13H15V15Z"),
+                    Width = 15,
+                    Height = 15
+                },
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                VerticalContentAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                Background = Brushes.Transparent,
+                Padding = new Thickness(4),
+                MinWidth = 40,
+                Height = 28
+            };
+
+            // Handle the button click
+            button.Click += (s, e) =>
+            {
+                if (item is ModuleDimensions moduleItem)
+                {
+                    ViewModel.ShowOSCADMethods(moduleItem);
+                }
+            };
+
+            return button;
         });
 
         // Create the template column
-        var countColumn = new DataGridTemplateColumn
+        var viewColumn = new DataGridTemplateColumn
         {
-            Header = "Total Solids",  // Column header
-            CellTemplate = countTemplate,
-            CanUserSort = false,  // Disable sorting if not needed
-            CanUserResize = false  // Disable resizing if not needed
+            Header = "",
+            Width = new DataGridLength(40),
+            CellTemplate = buttonTemplate,
+            CanUserSort = false,
+            CanUserResize = false,
+            DisplayIndex = 1 // Second column, after trash bin
         };
 
-        // Add the column to the DataGrid (after the action column)
-        ModulesDataGrid.Columns.Add(countColumn);
+        // Add the column to the DataGrid
+        ModulesDataGrid.Columns.Add(viewColumn);
+    }
+
+    // New method to add the trash bin button column to Module DataGrid
+    private void AddActionButtonColumnToModuleDataGrid()
+    {
+        // Define the cell template with a button
+        var buttonTemplate = new FuncDataTemplate<object>((item, scope) =>
+        {
+            var button = new Button
+            {
+                // Replace text content with an icon
+                Content = new PathIcon
+                {
+                    Data = Geometry.Parse("M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"),  // Trash bin icon path
+                    Width = 15,  // Adjust size to fit the small button
+                    Height = 15
+                },
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                Background = Brushes.Transparent,
+                Height = 20,  // Smaller height to reduce row height
+                Width = 20,  // Fixed width to prevent stretching, matching height for square shape
+                FontSize = 10,  // Smaller font
+                Padding = new Avalonia.Thickness(0),  // Reduced padding
+                Margin = new Avalonia.Thickness(0)  // Reduced margin
+            };
+
+            // Handle the button click
+            button.Click += async (s, e) =>
+            {
+                if (item is ModuleDimensions moduleItem)
+                {
+                    await ViewModel.DeleteSelectedItemAsync(moduleItem);
+                }
+            };
+
+            return button;
+        });
+
+        // Create the template column
+        var actionColumn = new DataGridTemplateColumn
+        {
+            Header = "",  // Column header
+            MaxWidth = 40,  // Limit max width to prevent excessive stretching
+            CellTemplate = buttonTemplate,
+            CanUserSort = false,  // Disable sorting if not needed
+            CanUserResize = false,  // Disable resizing if not needed
+            DisplayIndex = 0 // Always first column
+        };
+
+        // Add the column to the DataGrid
+        ModulesDataGrid.Columns.Add(actionColumn);
     }
 
     // New method to add the button column
@@ -165,11 +234,12 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Create the template column
         var actionColumn = new DataGridTemplateColumn
         {
-            Header = "Action",  // Column header
+            Header = "",  // Column header - empty for icon only
             MaxWidth = 40,  // Limit max width to prevent excessive stretching
             CellTemplate = buttonTemplate,
             CanUserSort = false,  // Disable sorting if not needed
-            CanUserResize = false  // Disable resizing if not needed
+            CanUserResize = false,  // Disable resizing if not needed
+            DisplayIndex = 0 // Always first column
         };
 
         // Add the column to the DataGrid
@@ -220,71 +290,16 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Create the template column
         var actionColumn = new DataGridTemplateColumn
         {
-            Header = "Action",  // Column header
-
+            Header = "",  // Column header - empty for icon only
             MaxWidth = 40,  // Limit max width to prevent excessive stretching
             CellTemplate = buttonTemplate,
             CanUserSort = false,  // Disable sorting if not needed
-            CanUserResize = false  // Disable resizing if not needed
+            CanUserResize = false,  // Disable resizing if not needed
+            DisplayIndex = 0 // Always first column
         };
 
         // Add the column to the DataGrid
         SolidDataGridImperial.Columns.Add(actionColumn);
-    }
-
-    // New method to add the button column
-    private void AddActionButtonColumnToModuleDataGrid()
-    {
-        // Define the cell template with a button
-        var buttonTemplate = new FuncDataTemplate<object>((item, scope) =>
-        {
-            var button = new Button
-            {
-                // Replace text content with an icon
-                Content = new PathIcon
-                {
-                    Data = Geometry.Parse("M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"),  // Trash bin icon path
-                    Width = 15,  // Adjust size to fit the small button
-                    Height = 15
-                },
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,  // Align to the right
-                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                Background = Brushes.Transparent,
-                Height = 20,  // Smaller height to reduce row height
-                Width = 20,  // Fixed width to prevent stretching, matching height for square shape
-                FontSize = 10,  // Smaller font
-                Padding = new Avalonia.Thickness(0),  // Reduced padding
-                Margin = new Avalonia.Thickness(0)  // Reduced margin
-            };
-
-
-            // Handle the button click (replace with your logic)
-            button.Click += async (s, e) =>
-            {
-                if (item is ModuleDimensions moduleItem)
-                {
-                    // Example: Call a ViewModel method or perform an action
-                    // For instance, populate fields or delete the item
-                    await ViewModel.DeleteSelectedItemAsync(moduleItem);
-                    // Or open an edit dialog, etc.
-                }
-            };
-
-            return button;
-        });
-
-        // Create the template column
-        var actionColumn = new DataGridTemplateColumn
-        {
-            Header = "Action",  // Column header
-            MaxWidth = 40,  // Limit max width to prevent excessive stretching
-            CellTemplate = buttonTemplate,
-            CanUserSort = false,  // Disable sorting if not needed
-            CanUserResize = false  // Disable resizing if not needed
-        };
-
-        // Add the column to the DataGrid
-        ModulesDataGrid.Columns.Add(actionColumn);
     }
 
     // Helper method to get theme-aware brush with fallback
@@ -404,10 +419,10 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             e.Column.Header = header;
         }
 
-        // Make SolidType the first column and set it to semibold
+        // Make SolidType column appear after the button columns
         if (e.PropertyName == "SolidType")
         {
-            e.Column.DisplayIndex = 0;
+            e.Column.DisplayIndex = 1; // After trash bin button (index 0)
             if (e.Column is DataGridTextColumn textColumn)
             {
                 textColumn.FontWeight = FontWeight.SemiBold;
@@ -511,10 +526,10 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             e.Column.Header = header;
         }
 
-        // Make SolidType the first column and set it to semibold
+        // Make SolidType column appear after the button columns
         if (e.PropertyName == "SolidType")
         {
-            e.Column.DisplayIndex = 0;
+            e.Column.DisplayIndex = 1; // After trash bin button (index 0)
             if (e.Column is DataGridTextColumn textColumn)
             {
                 textColumn.FontWeight = FontWeight.SemiBold;
@@ -590,10 +605,10 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             e.Column.Header = header;
         }
 
-        // Make ModuleType the first column and set it to semibold
+        // Make ModuleType column appear after the button columns
         if (e.PropertyName == "ModuleType")
         {
-            e.Column.DisplayIndex = 0;
+            e.Column.DisplayIndex = 3; // After trash bin (0), clipboard (1), and solids count (2)
             if (e.Column is DataGridTextColumn textColumn)
             {
                 textColumn.FontWeight = FontWeight.SemiBold;
@@ -609,12 +624,12 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
     private async void CreateModulesButton_Click(object? sender, RoutedEventArgs e)
     {
-        await ViewModel.CreateUnionModuleAsync();
-        await ViewModel.CreateDifferenceModuleAsync();
-        await ViewModel.CreateIntersectionModuleAsync();
+            await ViewModel.CreateUnionModuleAsync();
+            await ViewModel.CreateDifferenceModuleAsync();
+            await ViewModel.CreateIntersectionModuleAsync();
     }
 
-    private async void RenderObjectButton_Click(object? sender, RoutedEventArgs e)
+    private async void RemoveApplyAxisButton_Click(object? sender, RoutedEventArgs e)
     {
         ViewModel.RemoveAxis = !ViewModel.RemoveAxis;
         await ViewModel.UpdateAxisTranslateAsync();

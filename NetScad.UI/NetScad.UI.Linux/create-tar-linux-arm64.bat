@@ -9,4 +9,4 @@ echo Icon=logo.png >> bin/Release/net8.0/publish/linux-arm64/NetScad.desktop
 echo Comment=NetScad Avalonia App >> bin/Release/net8.0/publish/linux-arm64/NetScad.desktop
 echo Categories=Utility; >> bin/Release/net8.0/publish/linux-arm64/NetScad.desktop
 wsl chmod +x bin/Release/net8.0/publish/linux-arm64/NetScad.desktop
-wsl tar -czf NetSCAD-v0.3.0-linux-arm64.tar.gz -C bin/Release/net8.0/publish/linux-arm64 .
+wsl tar -czf NetSCAD-v0.3.3-linux-arm64.tar.gz -C bin/Release/net8.0/publish/linux-arm64 .

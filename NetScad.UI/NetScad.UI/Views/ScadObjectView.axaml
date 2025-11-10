@@ -2,6 +2,7 @@
     x:Class="NetScad.UI.Views.ScadObjectView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:NetScad.UI.Views"
     xmlns:conv="using:NetScad.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -33,22 +34,30 @@
         <!--  DataGrid Column Header Styles  -->
         <Style Selector="DataGrid#SolidDataGrid DataGridColumnHeader, DataGrid#SolidDataGridImperial DataGridColumnHeader">
             <Setter Property="Background" Value="{DynamicResource PurpleForeground}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource PurpleBackground}" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style Selector="DataGrid#ModulesDataGrid DataGridColumnHeader">
             <Setter Property="Background" Value="{DynamicResource DarkBlueForeground}" />
             <Setter Property="Foreground" Value="{DynamicResource DarkBlueBackground}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style Selector="DataGrid#ModulesDifferenceDataGrid DataGridColumnHeader">
             <Setter Property="Background" Value="{DynamicResource TealForeground}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource TealBackground}" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style Selector="DataGrid#ModulesIntersectionDataGrid DataGridColumnHeader">
             <Setter Property="Background" Value="{DynamicResource GoldForeground}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource GoldBackground}" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
 
@@ -565,7 +574,7 @@
                         </Button>
                     </StackPanel>
 
-                    <!--  Render Object Button  -->
+                    <!--  Remove Axis | Apply Axis Button  -->
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="6"
@@ -576,7 +585,7 @@
                             HorizontalAlignment="Stretch"
                             BorderBrush="{DynamicResource CardForeground}"
                             BorderThickness="1"
-                            Click="RenderObjectButton_Click">
+                            Click="RemoveApplyAxisButton_Click">
                             <Button.Content>
                                 <Binding
                                     Converter="{StaticResource BooleanToTextConverter}"
@@ -591,7 +600,7 @@
                                 </MultiBinding>
                             </Button.IsEnabled>
                             <ToolTip.Tip>
-                                <TextBlock Text="This action will create axes for the selected objects in the database for use in OpenSCAD." />
+                                <TextBlock Text="This action will remove or reapply axes for the selected objects in the database for use in OpenSCAD." />
                             </ToolTip.Tip>
                         </Button>
                     </StackPanel>
@@ -692,34 +701,6 @@
                         </ComboBox>
                     </StackPanel>
 
-                    <!--  Delete Solid  -->
-                    <StackPanel
-                        Grid.Row="1"
-                        Grid.Column="6"
-                        Width="120"
-                        Margin="0,5,0,0"
-                        Classes="inputGroup"
-                        IsEnabled="{Binding AxisStored}">
-                        <TextBlock Classes="standardLabel" Text="" />
-                        <Button
-                            HorizontalAlignment="Stretch"
-                            BorderBrush="{DynamicResource CardForeground}"
-                            BorderThickness="1"
-                            Click="DeleteSolidButton_Click"
-                            Content="Delete Solid"
-                            IsVisible="{Binding SolidDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}">
-                            <Button.IsEnabled>
-                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                    <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#SolidDataGrid.SelectedItem" />
-                                    <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="#SolidDataGridImperial.SelectedItem" />
-                                </MultiBinding>
-                            </Button.IsEnabled>
-                            <ToolTip.Tip>
-                                <TextBlock Text="Delete the selected item from the database" />
-                            </ToolTip.Tip>
-                        </Button>
-                    </StackPanel>
-
                     <!--  Server Rack Width / Screw Size  -->
                     <StackPanel
                         Grid.Row="2"
@@ -802,7 +783,7 @@
                                         <Binding Path="IsCylinderSelected" />
                                     </MultiBinding>
                                 </TextBlock.IsVisible>
-                                <TextBlock.Text>Screw Type</TextBlock.Text>
+                                <TextBlock.Text>Screw Radius</TextBlock.Text>
                             </TextBlock>
                             <ComboBox
                                 ItemsSource="{Binding ServerRackSizes}"
@@ -825,7 +806,7 @@
                             </ComboBox>
                             <ComboBox
                                 ItemsSource="{Binding ScrewProperties}"
-                                PlaceholderText="Portion"
+                                PlaceholderText="Screw Type"
                                 SelectedItem="{Binding SelectedScrewProperty, Mode=TwoWay}">
                                 <ComboBox.IsVisible>
                                     <MultiBinding Converter="{x:Static BoolConverters.And}">
@@ -845,7 +826,7 @@
                         Grid.Row="2"
                         Grid.Column="3"
                         Grid.ColumnSpan="4"
-                        Margin="0,5,0,0"
+                        Margin="0,10,0,0"
                         HorizontalAlignment="Left"
                         Orientation="Horizontal"
                         Spacing="15">
@@ -1024,6 +1005,7 @@
                         Grid.Row="2"
                         Grid.Column="6"
                         Width="120"
+                        Margin="0,10,0,0"
                         Classes="inputGroup"
                         IsEnabled="{Binding AxisStored}">
                         <TextBlock Classes="standardLabel" Text="" />
@@ -1066,14 +1048,14 @@
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
                         MaxWidth="310"
-                        Margin="0,5,25,0"
+                        Margin="10,5,25,0"
                         HorizontalAlignment="Stretch"
                         Orientation="Horizontal"
                         Spacing="15">
 
                         <!--  Buttons - Main Inputs Top Level Button Aligned  -->
                         <StackPanel
-                            Width="100"
+                            Width="90"
                             Classes="inputGroup"
                             IsEnabled="{Binding AxisStored}">
                             <TextBlock Classes="standardLabel" Text="Update" />
@@ -1098,9 +1080,28 @@
                             </Button>
                         </StackPanel>
 
+                        <!--  Render Option  -->
+                        <StackPanel
+                            Width="60"
+                            Classes="inputGroup"
+                            IsEnabled="{Binding AxisStored}">
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                Classes="standardLabel"
+                                Text="Render ?" />
+                            <CheckBox
+                                HorizontalAlignment="Left"
+                                Content="Yes"
+                                IsChecked="{Binding IsPreRendered, Mode=TwoWay}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Decide if wanting the object to be rendered in output" />
+                                </ToolTip.Tip>
+                            </CheckBox>
+                        </StackPanel>
+
                         <!--  View Output Button  -->
                         <StackPanel
-                            Width="100"
+                            Width="90"
                             Classes="inputGroup"
                             IsEnabled="{Binding AxisStored}">
                             <TextBlock Classes="standardLabel" Text="View" />
@@ -1117,13 +1118,19 @@
                             </Button>
                         </StackPanel>
 
+
+
+                        <!--  Export to STL  -->
                         <StackPanel
-                            Width="100"
-                            HorizontalAlignment="Stretch"
+                            Width="60"
+                            HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Classes="inputGroup"
                             IsEnabled="{Binding AxisStored}">
-                            <TextBlock Classes="standardLabel" Text="Export" />
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                Classes="standardLabel"
+                                Text="Export ?" />
                             <CheckBox
                                 HorizontalAlignment="Left"
                                 Content="STL"
@@ -1145,6 +1152,7 @@
                                 </ToolTip.Tip>
                             </CheckBox>
                         </StackPanel>
+
                     </StackPanel>
 
                     <!--  Offsets and Rotations  -->
@@ -1492,5 +1500,21 @@
                 </StackPanel>
             </Border>
         </ScrollViewer>
+
+        <!--  Modal Overlay (renders on top)  -->
+        <controls:ModalDialog
+            Title="{Binding ModalTitle}"
+            Grid.Row="0"
+            Grid.RowSpan="7"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            IsOpen="{Binding IsModalOpen, Mode=TwoWay}">
+            <controls:ModalDialog.Content>
+                <TextBlock
+                    FontFamily="Courier New"
+                    Text="{Binding ModalContent}"
+                    TextWrapping="Wrap" />
+            </controls:ModalDialog.Content>
+        </controls:ModalDialog>
     </Grid>
 </UserControl>

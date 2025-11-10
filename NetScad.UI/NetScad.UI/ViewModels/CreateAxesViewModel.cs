@@ -51,6 +51,9 @@ namespace NetScad.UI.ViewModels
         private ObservableCollection<GeneratedModule> _axesListImperial = [];
         private ObservableCollection<GeneratedModule> _axesListMetric = [];
         private bool _createButtonEnabled;
+        private string _modalTitle = string.Empty;
+        private string _modalContent = string.Empty;
+        private bool _isModalOpen;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026")]
         [UnconditionalSuppressMessage("AOT", "IL3050")]
@@ -182,6 +185,9 @@ namespace NetScad.UI.ViewModels
         public ObservableCollection<GeneratedModule> AxesListMetric { get => _axesListMetric; set => this.RaiseAndSetIfChanged(ref _axesListMetric, value); }
         public bool CreateButtonEnabled { get => _createButtonEnabled; set => this.RaiseAndSetIfChanged(ref _createButtonEnabled, value); }
         public static SqliteConnection Connection { get; set; } = new SqliteConnection();
+        public string ModalTitle { get => _modalTitle; set => this.RaiseAndSetIfChanged(ref _modalTitle, value); }
+        public string ModalContent { get => _modalContent; set => this.RaiseAndSetIfChanged(ref _modalContent, value); }
+        public bool IsModalOpen { get => _isModalOpen; set => this.RaiseAndSetIfChanged(ref _isModalOpen, value); }
 
         public async Task ConvertInputs(int decimalPlaces) // Convert from unit system to another
         {

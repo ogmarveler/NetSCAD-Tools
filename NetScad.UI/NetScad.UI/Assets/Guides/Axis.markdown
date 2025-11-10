@@ -1,5 +1,5 @@
 ﻿ 
-# ![Logo](Assets/Images/logo.png) NetSCAD Axis Guide
+# ![Logo](Assets/Images/logo.png) NetSCAD Custom Axis Guide
 ###### 
 #### Description
 Welcome to the NetSCAD Axis Guide! This tutorial covers the basics of defining and generating custom axes used in OpenSCAD, a solid 3D CAD modeler. This project aims to simplify the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes automating the creation of custom Imperial and Metric axes. This allows for more precise modeling used in 3D printing.
@@ -36,11 +36,21 @@ The Custom Axes Builder has 2 main visual sections: Custom Axis and Generated Ax
 | 11. To revert to default settings, click the **Clear** button                 |                                         |               |
 | 12. Call the new axis using the **Calling Method**                            | Optional params: (colorVal, alpha)      | Theme-based   |
 | 13. To view output files, open the **Scad/Axes folder** in the app's directory|                                         |               |
+
+###### 
+#### Imperial and Metrix Axes Tables Actions
+| Actions                                                                       | Requirements / Options                  | Default Value |
+| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
+| 1. **Clipboard Icon** - opens a modal showing the calling method to use       | Imperial or Metrix Axes Table           |               |
+| 3. **Sorting** - click on one or more column headers to sort (shift + click)  |       Imperial or Metrix Axes Table     |               |
+
 ###### 
 #### Usage of Custom Axes in OpenSCAD
 Axes are stored in a **Scad/Axes** folder that is included with the application. **The axes.scad and individual axis SCAD files within the Axes folder are NOT designed to be edited**, as they are managed by the application itself. Please understand if editing these files, it could break functionality of use of these files within the application itself.
+
 ###### 
 * **Axes Module Name Format:** Get_ + { Theme } + { X Range } +  { Y Range } +  { Z Range } + { Unit Scale } + Origin + { Min X } + { Min Y } + { Min Z } (N = negative, i.e, N1 is -1)
+
 ###### 
 | Files                           | Usage In Your SCAD File | Optional parameters |
 | ------------------------------- |:-----------------------:|:-------------------:|

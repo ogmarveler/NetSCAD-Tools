@@ -60,7 +60,7 @@
 		<ProjectReference Include="..\..\NetScad.Core\NetScad.Core.csproj" />
 		<ProjectReference Include="..\..\NetScad.Designer\NetScad.Designer.csproj" />
 		<None Update="Data\netscad.db">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Scad\Axes\axes.scad">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
