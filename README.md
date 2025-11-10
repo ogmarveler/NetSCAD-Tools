@@ -12,20 +12,20 @@ If you're looking for only the axis tool, check out the NetSCAD-Axis repository.
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 ######
 **Get the latest release of NetSCAD Tools**
-* [NetSCAD for Windows (x64)](NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.3.0-win-x64.zip)
-* [NetSCAD for Linux (x64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.0-linux-x64.tar.gz)
-* [NetSCAD for Raspberry Pi (arm64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.0-linux-arm64.tar.gz)
+* [NetSCAD for Windows (x64)](NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.3.3-win-x64.zip)
+* [NetSCAD for Linux (x64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.3-linux-x64.tar.gz)
+* [NetSCAD for Raspberry Pi (arm64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.3-linux-arm64.tar.gz)
 
 ######
 #### Layout of Custom Object Designer
-The Custom Object Designer is organized into several sections to facilitate the creation of custom objects for OpenSCAD. There are 5 main sections: applying a custom axis, creating a new object, setting inputs for new solids (Cube, Rounded Cube, and Cylinder), the list of Solids in the object, and Modules that contain the Solids (Union, Intersection, Difference).
+There are 5 main sections: applying a custom axis, creating a new object or retrieving an existing one, setting inputs for new solids, the list of Solids in the object, and Modules that contain the Solids. Once a solid is added to the object, it will appear in the Solids table, along with its parameters. Solids can be viewed within Modules, which define how they interact with each other. To view the object in OpenSCAD, simply click the **View Output** button, which will open the corresponding SCAD file. To export the object as an STL file, click the **Export** button. When making changes, be sure to click the **Update Modules** button to refresh the object.
 
 ###### 
 ![Designer Object Dark](NetScad.UI/NetScad.UI/Assets/Images/designerObjectDark.png)
 ![Mini PC](NetScad.UI/NetScad.UI/Assets/Images/miniPC.png)
 ######
-#### Output of Custom Object in OpenSCAD
-Outputs can be viewed in **real-time.** Any changes to the object within the application will automatically update the SCAD file used in OpenSCAD. This allows for quick iteration and testing of objects without needing to manually export and import files. **The object is pre-rendered in OpenSCAD upon opening the SCAD file.** Depending on the complexity of the object, this may take some time.
+#### Rendering/Previewing the Object in OpenSCAD
+The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. Click the **Remove Axis** within the object.scad file to comment out the axis. If exporting to STL, this will be done automatically. If building a ruler or some form of 1D or 2D measurement, then this is would be an example of why you would include the axis in rendering before final output.
 
 ######
 #### Types of Solids Available
@@ -47,12 +47,11 @@ Varying axes of different sizes, measurement types, colors, and combinations of 
 * **Imperial axis** - 1/4", 1/8", 1/16", and 1/32" increments
 * **Convert mm to inches** - Enter inputs in Metric (mm) first, then select Imperial (in)
 * **Convert inches to mm** - Enter inputs in Imperial (in) first, then select Metric (mm)
-###### 
 
 ###### 
 | Files                                   | Usage In Your SCAD File                                | Optional parameters | Render |
 | --------------------------------------- |:------------------------------------------------------:|:-------------------:|:------:|
 | Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |	No    |
-| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |	No    |
-| Scad/Solids/object.scad                 |                                                        |                     |	Yes   |	
+| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |	Yes   |
+| Scad/Solids/object.scad                 |                                                        |                     |	No    |	
 | Scad/Solids/object.stl                  |                                                        |                     |  Yes   |
