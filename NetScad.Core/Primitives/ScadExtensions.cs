@@ -52,8 +52,12 @@ namespace NetScad.Core.Primitives
                     ValidateKeys(parameters, ["file"], "Surface");
                     return new Surface(
                         (string)parameters["file"],
-                        parameters.ContainsKey("center") && (bool)parameters["center"],
-                        parameters.TryGetValue("convexity", out object? value1) ? (int)value1 : 1);
+                        parameters.TryGetValue("center", out object? centerValue) && (bool)centerValue,
+                        parameters.TryGetValue("invert", out object? invertValue) && (bool)invertValue,
+                        parameters.TryGetValue("convexity", out object? convexityValue) ? (int)convexityValue : 1,
+                        parameters.TryGetValue("scaleX", out object? scaleXValue) ? (double)scaleXValue : 1.0,
+                        parameters.TryGetValue("scaleY", out object? scaleYValue) ? (double)scaleYValue : 1.0,
+                        parameters.TryGetValue("scaleZ", out object? scaleZValue) ? (double)scaleZValue : 1.0);
 
                 case OScad3D.RoundedCube:
                     ValidateKeys(parameters, ["size_x", "size_y", "size_z", "round_r"], "RoundedCube");
@@ -81,9 +85,14 @@ namespace NetScad.Core.Primitives
                     return new RoundedSurface(
                         (string)parameters["file"],
                         (double)parameters["round_r"],
-                        parameters.ContainsKey("center") && (bool)parameters["center"],
-                        parameters.TryGetValue("round_h", out object? value4) ? (double)value4 : 0.001,
-                        parameters.TryGetValue("resolution", out object? value5) ? (double)value5 : 200);
+                        parameters.TryGetValue("center", out object? centerValue2) && (bool)centerValue2,
+                        parameters.TryGetValue("invert", out object? invertValue2) && (bool)invertValue2,
+                        parameters.TryGetValue("convexity", out object? convexityValue2) ? (int)convexityValue2 : 1,
+                        parameters.TryGetValue("scaleX", out object? scaleXValue2) ? (double)scaleXValue2 : 1.0,
+                        parameters.TryGetValue("scaleY", out object? scaleYValue2) ? (double)scaleYValue2 : 1.0,
+                        parameters.TryGetValue("scaleZ", out object? scaleZValue2) ? (double)scaleZValue2 : 1.0,
+                        parameters.TryGetValue("round_h", out object? roundHValue) ? (double)roundHValue : 0.001,
+                        parameters.TryGetValue("resolution", out object? resolutionValue) ? (int)resolutionValue : 180);
 
                 default:
                     throw new ArgumentException("Unknown OScad3D type");

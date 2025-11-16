@@ -54,6 +54,14 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+            <!--  View Object
+            <MenuItem Header="_View">
+                <MenuItem Command="{Binding SharpEngineSceneViewCommand}" Header="_View Scene">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource select_object_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>-->
             <!--  Change Theme  -->
             <MenuItem Header="_Appearance">
                 <MenuItem Command="{Binding ToggleCommand}" Header="_Switch Theme">
@@ -76,7 +84,6 @@
             </MenuItem>
 
         </Menu>
-
 
         <!--  Main content
         <Grid

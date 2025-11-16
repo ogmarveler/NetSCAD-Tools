@@ -112,7 +112,6 @@ namespace NetScad
 
         private static string GetDbPath()
         {
-
             // Use bin directory for netscad.db
             return Path.Combine(AppContext.BaseDirectory, "Data", "netscad.db");
         }

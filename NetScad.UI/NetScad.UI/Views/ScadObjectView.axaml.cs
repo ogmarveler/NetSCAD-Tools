@@ -3,18 +3,19 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using NetScad.Core.Material;
+using NetScad.Designer.Repositories;
 using NetScad.UI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Avalonia.VisualTree;
-using NetScad.Core.Material;
-using NetScad.Core.Primitives;
-using NetScad.Designer.Repositories;
-using System.Linq;
 using static NetScad.Core.Measurements.Selector;
-using Avalonia.Styling;
+using Avalonia.VisualTree;
+using NetScad.Core.Primitives;
+using System.Linq;
+using static NetScad.Core.Measurements.Colors;
 
 namespace NetScad.UI.Views;
 
@@ -41,8 +42,60 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         AddActionButtonColumnToModuleDataGrid();
         AddViewButtonColumnToModuleDataGrid();
         AddSolidCountColumnToModuleDataGrid();
+        AddColorSelectionColumnToModuleDataGrid();  // Add color selection column
         AddActionButtonColumnToSolidDataGrid();
         AddActionButtonColumnToSolidDataGridImperial();
+
+    }
+
+    // New method to add color selection column to ModulesDataGrid
+    private void AddColorSelectionColumnToModuleDataGrid()
+    {
+        var colorTemplate = new FuncDataTemplate<object>((item, scope) =>
+        {
+            if (item is ModuleDimensions module)
+            {
+                var comboBox = new ComboBox
+                {
+                    ItemsSource = Enum.GetValues<OpenScadColor>(),
+                    SelectedItem = string.IsNullOrEmpty(module.ModuleColor)
+                        ? OpenScadColor.Silver
+                        : Enum.Parse<OpenScadColor>(module.ModuleColor, ignoreCase: true),
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                    MinWidth = 120,
+                    Margin = new Thickness(5)
+                };
+
+                // Handle selection changed using ReactiveUI
+                comboBox.SelectionChanged += async (s, e) =>
+                {
+                    if (comboBox.SelectedItem is OpenScadColor selectedColor)
+                    {
+                        // Update the module's color property
+                        module.ModuleColor = selectedColor.ToString();
+
+                        // Call ViewModel method to update SCAD files
+                        await ViewModel.UpdateModuleColorAsync(module.Id, selectedColor);
+                    }
+                };
+
+                return comboBox;
+            }
+            return new TextBlock { Text = "N/A" };
+        });
+
+        var colorColumn = new DataGridTemplateColumn
+        {
+            Header = "Color",
+            Width = new DataGridLength(140),
+            CellTemplate = colorTemplate,  
+            CanUserSort = false,
+            CanUserResize = true,
+            DisplayIndex = 4 // After trash bin (0), clipboard (1), solids count (2), and module type (3)
+        };
+
+        ModulesDataGrid.Columns.Add(colorColumn);
     }
 
     // New method to add the solid count column (non-clickable display only)
@@ -64,9 +117,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
                 return textBlock;
             }
-            
-            return new TextBlock 
-            { 
+
+            return new TextBlock
+            {
                 Text = "0",
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
@@ -575,7 +628,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private void DataGrid_AutoGeneratingColumnModule(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         // List of columns to exclude from display for ModuleDimensions
-        var excludedColumns = new[] { "Id", "CreatedAt", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "OSCADMethod", "ObjectDescription", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XRotate", "YRotate", "ZRotate", "IncludeMethod" };
+        var excludedColumns = new[] { "Id", "CreatedAt", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "OSCADMethod", "ObjectDescription", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XRotate", "YRotate", "ZRotate", "IncludeMethod", "ModuleColor", "Name" };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -624,9 +677,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
     private async void CreateModulesButton_Click(object? sender, RoutedEventArgs e)
     {
-            await ViewModel.CreateUnionModuleAsync();
-            await ViewModel.CreateDifferenceModuleAsync();
-            await ViewModel.CreateIntersectionModuleAsync();
+        await ViewModel.CreateUnionModuleAsync();
+        await ViewModel.CreateDifferenceModuleAsync();
+        await ViewModel.CreateIntersectionModuleAsync();
     }
 
     private async void RemoveApplyAxisButton_Click(object? sender, RoutedEventArgs e)
@@ -700,5 +753,42 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         _clientSizeObserver?.Dispose();
         _clientSizeObserver = null;
         _parentWindow = null;
+    }
+
+    private async void BrowseFileButton_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not ScadObjectViewModel viewModel)
+            return;
+
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel == null)
+            return;
+
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Select Surface File",
+            AllowMultiple = false,
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType("Images")
+                {
+                    Patterns = new[] { "*.png", "*.svg", "*.bmp" }
+                },
+                new FilePickerFileType("Data Files")
+                {
+                    Patterns = new[] { "*.dat", "*.txt", "*.csv" }
+                },
+                new FilePickerFileType("All Files")
+                {
+                    Patterns = new[] { "*.*" }
+                }
+            }
+        });
+
+        if (files.Count > 0)
+        {
+            viewModel.SurfaceFilePath = files[0].Path.LocalPath;
+            await ViewModel.LoadPngDimensions(viewModel.SurfaceFilePath); // Get the original dimensions of the image
+        }
     }
 }

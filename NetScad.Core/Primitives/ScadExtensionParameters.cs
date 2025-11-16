@@ -50,15 +50,19 @@ namespace NetScad.Core.Primitives
             };
         }
 
-        public static Dictionary<string, object> SurfaceParams(this OScad3D self, string file, bool center = false, int convexity = 1)
+        public static Dictionary<string, object> SurfaceParams(this OScad3D self, string file, bool center = false, bool invert = false, int convexity = 1, double scaleX = 1, double scaleY = 1, double scaleZ = 1)
         {
             if (self != OScad3D.Surface)
-                throw new ArgumentException("SetParams with file, center, convexity is only valid for Surface");
+                throw new ArgumentException("SetParams with file, center, invert, convexity, scale is only valid for Surface");
             return new Dictionary<string, object>
             {
                 { "file", file },
                 { "center", center },
-                { "convexity", convexity }
+                { "invert", invert },
+                { "convexity", convexity },
+                { "scaleX", scaleX },
+                { "scaleY", scaleY },
+                { "scaleZ", scaleZ }
             };
         }
 
@@ -110,11 +114,21 @@ namespace NetScad.Core.Primitives
             return dict;
         }
 
-        public static Dictionary<string, object> RoundedSurfaceParams(this OScad3D self, string file, double roundR, bool center = false, double? roundH = null, double? resolution = null)
+        public static Dictionary<string, object> RoundedSurfaceParams(this OScad3D self, string file, double roundR, bool center = false, bool invert = false, int convexity = 1, double scaleX = 1, double scaleY = 1, double scaleZ = 1, double? roundH = null, double? resolution = null)
         {
             if (self != OScad3D.RoundedSurface)
-                throw new ArgumentException("SetParams with file, round_r, center, round_h, resolution is only valid for RoundedSurface");
-            var dict = new Dictionary<string, object> { { "file", file }, { "round_r", roundR }, { "center", center } };
+                throw new ArgumentException("SetParams with file, round_r, center, invert, convexity, scale, round_h, resolution is only valid for RoundedSurface");
+            var dict = new Dictionary<string, object> 
+            { 
+                { "file", file }, 
+                { "round_r", roundR }, 
+                { "center", center },
+                { "invert", invert },
+                { "convexity", convexity },
+                { "scaleX", scaleX },
+                { "scaleY", scaleY },
+                { "scaleZ", scaleZ }
+            };
             if (roundH.HasValue) dict["round_h"] = roundH.Value;
             if (resolution.HasValue) dict["resolution"] = resolution.Value;
             return dict;

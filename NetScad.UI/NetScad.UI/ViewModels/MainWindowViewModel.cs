@@ -73,6 +73,7 @@ namespace NetScad.UI.ViewModels
         public ICommand OpenFolderCommand { get; }
         public ICommand AxisViewCommand { get; }
         public ICommand DesignerViewCommand { get; }
+        public ICommand SharpEngineSceneViewCommand { get; }
         public ICommand ToggleCommand { get; }
     }
 }

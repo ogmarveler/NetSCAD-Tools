@@ -1,17 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<LangVersion>preview</LangVersion>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<PublishTrimmed>true</PublishTrimmed>
 		<TrimMode>link</TrimMode>
 		<SignAssembly>True</SignAssembly>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageId>NetScad.UI</PackageId>
-		<Version>1.0.0</Version>
-		<Authors>Paul Pieniadz</Authors>
-		<Description>UI library for NetScad</Description>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -47,8 +42,9 @@
 		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
 		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.8" />
 		<PackageReference Include="Markdown.Avalonia.Tight" Version="11.0.2" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
 		<PackageReference Include="ReactiveUI" Version="22.2.1" />
 		<PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
 		<PackageReference Include="ReactiveUI.Avalonia.Microsoft.Extensions.DependencyInjection" Version="11.3.8" />

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using static NetScad.Core.Measurements.Colors;
 
 namespace NetScad.Core.Utility
 {
@@ -348,6 +349,42 @@ namespace NetScad.Core.Utility
                 : $"{sanitizedName}_{sanitizedDescription}";
 
             return $"{moduleName}({sanitizedArgs});";
+        }
+
+        // Helper methods to wrap modules with color
+        public static string ToUnionModuleWithColor(List<string> childMethods, string objectName, string description, string solidType, bool isPreRendered, OpenScadColor color)
+        {
+            var colorName = color.ToString();
+            var baseModule = ToUnionModule(childMethods, objectName, description, solidType, isPreRendered);
+            return WrapModuleWithColor(baseModule, colorName);
+        }
+
+        public static string ToDifferenceModuleWithColor(string baseMethod, List<string> subtractMethods, string objectName, string description, string solidType, bool isPreRendered, OpenScadColor color)
+        {
+            var colorName = color.ToString();
+            var baseModule = ToDifferenceModule(baseMethod, subtractMethods, objectName, description, solidType, isPreRendered);
+            return WrapModuleWithColor(baseModule, colorName);
+        }
+
+        public static string ToIntersectionModuleWithColor(string baseMethod, List<string> intersectMethods, string objectName, string description, string solidType, bool isPreRendered, OpenScadColor color)
+        {
+            var colorName = color.ToString();
+            var baseModule = ToIntersectionModule(baseMethod, intersectMethods, objectName, description, solidType, isPreRendered);
+            return WrapModuleWithColor(baseModule, colorName);
+        }
+
+        public static string WrapModuleWithColor(string moduleDefinition, string colorName)
+        {
+            // Extract module signature and body
+            var moduleStart = moduleDefinition.IndexOf('{');
+            if (moduleStart == -1) return moduleDefinition;
+
+            var signature = moduleDefinition[..moduleStart].Trim();
+            var bodyEnd = moduleDefinition.LastIndexOf('}');
+            var body = moduleDefinition[(moduleStart + 1)..bodyEnd].Trim();
+
+            // Wrap the body content in a color() statement
+            return $"{signature} {{\n    color(\"{colorName}\") {{\n        {body}\n    }}\n}}";
         }
     }
 }

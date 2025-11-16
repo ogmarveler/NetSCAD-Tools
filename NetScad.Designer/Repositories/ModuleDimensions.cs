@@ -25,6 +25,7 @@ namespace NetScad.Designer.Repositories
         public string IncludeMethod { get; set; } = string.Empty;
         public string OSCADMethod { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string ModuleColor { get; set; } = string.Empty; // New property for module color
 
         public Dictionary<string, object> ToDbDictionary() => new()
         {
@@ -45,7 +46,8 @@ namespace NetScad.Designer.Repositories
             { "ZRotate", ZRotate },
             { "OSCADMethod", OSCADMethod },
             { "IncludeMethod", IncludeMethod },
-            { "CreatedAt", CreatedAt }
+            { "CreatedAt", CreatedAt },
+            { "ModuleColor", ModuleColor },
         };
     }
 
@@ -72,7 +74,8 @@ namespace NetScad.Designer.Repositories
             (nameof(ModuleDimensions.ZRotate), typeof(double), false),
             (nameof(ModuleDimensions.OSCADMethod), typeof(string), false),
             (nameof(ModuleDimensions.IncludeMethod), typeof(string), false),
-            (nameof(ModuleDimensions.CreatedAt), typeof(DateTime), false)
+            (nameof(ModuleDimensions.CreatedAt), typeof(DateTime), false),
+            (nameof(ModuleDimensions.ModuleColor), typeof(string), false)
         ];
 
         // Create table
@@ -177,5 +180,21 @@ namespace NetScad.Designer.Repositories
             await connection.QueryAsync<ModuleDimensions>(
                 "SELECT * FROM ModuleDimensions WHERE Name = @Name AND ModuleType = @ModuleType ORDER BY ModuleType ASC, SolidType ASC",
                 new { Name = name, ModuleType = moduleType });
+
+// Add this extension method to the ModuleDimensionsExtensions class
+public static async Task UpdateColorAsync(this ModuleDimensions module, SqliteConnection connection, string color)
+        {
+            const string sql = @"
+            UPDATE ModuleDimensions 
+            SET ModuleColor = @ModuleColor 
+            WHERE Id = @Id";
+
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.Parameters.AddWithValue("@ModuleColor", color);
+            cmd.Parameters.AddWithValue("@Id", module.Id);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
     }
 }

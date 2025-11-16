@@ -1,9 +1,9 @@
 ﻿@echo off
 cd %~dp0
 set SEVENZIP="C:\Program Files\7-Zip\7z.exe"
-set SOURCE=bin\Release\net8.0-windows10.0.26100.0\publish\win-x64
-set OUTPUT=NetSCAD-v0.3.3-win-x64.7z
-set TOPFOLDER=NetSCAD-v0.3.3-win-x64
+set SOURCE=bin\Release\net10.0-windows10.0.26100.0\publish\win-x64
+set OUTPUT=NetSCAD-v0.4.0-win-x64.7z
+set TOPFOLDER=NetSCAD-v0.4.0-win-x64
 set TEMP_DIR=%~dp0temp
 
 if not exist %SEVENZIP% (

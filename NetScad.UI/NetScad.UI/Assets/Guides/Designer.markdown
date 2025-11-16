@@ -13,9 +13,10 @@ Cubes and cylinders can be generated from the Designer module within this applic
 * **Cube** - default aligned on the 0,0,0 axes or can be offset with translate
 * **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
 * **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
+* **Surface** - import from png or dat file. Default aligned on the 0,0,0 axes or can be offset with translate.
 ###### 
 #### Layout of Custom Object Designer
-There are 5 main sections: applying a custom axis, creating a new object or retrieving an existing one, setting inputs for new solids, the list of Solids in the object, and Modules that contain the Solids. Once a solid is added to the object, it will appear in the Solids table, along with its parameters. Solids can be viewed within Modules, which define how they interact with each other. To view the object in OpenSCAD, simply click the **View Output** button, which will open the corresponding SCAD file. To export the object as an STL file, click the **Export** button. When making changes, be sure to click the **Update Modules** button to refresh the object.
+There are 5 main sections: applying a custom axis, creating a new object or retrieving an existing one, setting inputs for new solids, the list of Solids in the object, and Modules that contain the Solids. Once a solid is added to the object, it will appear in the Solids table, along with its parameters. Solids can be viewed within Modules, which define how they interact with each other. To view the object in OpenSCAD, simply click the **View Output** button, which will open the corresponding SCAD file. To export the object as an STL file, click the **STL** button. When making changes, be sure to click the **Update Modules** button to refresh the object.
 
 ###### 
 ![DesignerObject](Assets/Images/designerObjectDark.png)
@@ -27,7 +28,7 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 | 2. Select an **Axis Type** to filter saved Imperial or Metric axes            |       Metric (mm) or Imperial (in)      |  Metric (mm)  |
 | 3. Choose from **Select Axis** to apply one of the saved axes                 |     Dark or Light X x Y x Z mm or in    |  <required>   |
 | 4. Optional: Enter numeric **Adjust X**, moving start point on **X Axis**     |     Units displayed in mm or inches     |       0       |
-| 5. Optional: Enter numeric **Adjust Y**, moving start point on **Y Axis**     |     Units displayed in mm or inches     |       0       |
+| 5. Optional: Enter numeric **Adjust Y**, moving start point on **Y Axis**     |     Units displayed in mm or inches     |       0       | 
 | 6. Optional: Enter numeric **Adjust Z**, moving start point on **Z Axis**     |     Units displayed in mm or inches     |       0       |
 
 ###### 
@@ -73,6 +74,25 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 | 22. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**       |     Units displayed in degrees (°)      |       0°      |
 
 ###### 
+#### Setting Inputs for New Solid: Surface
+| Steps                                                                         | Requirements / Options                  | Default Value |
+| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
+| 12. Optional: **Invert**, when importing an image or dat file                 |     Yes | No                            |               |
+| 13. Optional: **Smooth**, will apply smoothing to an image and save as new one|     Yes | No                            |               |
+| 14. Optional: **Center**, centers image on 0,0,0 axes                         |     Yes | No                            |               |
+| 15. Button: **Import File**, browse locally for an image or dat file to import|                                         |               |
+| 16. Text Box: displays the path for the file that was imported                |          .png, .data, etc.              |  <required>   |
+| 17. **Scale X**, will scale the imported image along the X axis               |     From 0 - 1                          |       1       |
+| 18. **Scale Y**, will scale the imported image along the Y axis               |     From 0 - 1                          |       1       |
+| 19. **Scale Z**, will scale the imported image along the Z axis               |     From 0 - 1                          |       1       |
+| 20. Optional: Enter numeric **X Offset**, setting start point on **X Axis**   |     Units displayed in mm or inches     |       0       |
+| 21. Optional: Enter numeric **Y Offset**, setting start point on **Y Axis**   |     Units displayed in mm or inches     |       0       |
+| 22. Optional: Enter numeric **Z Offset**, setting start point on **Z Axis**   |     Units displayed in mm or inches     |       0       |
+| 23. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**       |     Units displayed in degrees (°)      |       0°      |
+| 24. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**       |     Units displayed in degrees (°)      |       0°      |
+| 25. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**       |     Units displayed in degrees (°)      |       0°      |
+
+###### 
 #### Object Action Buttons
 | Steps                                                                         | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
@@ -98,8 +118,9 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 | 1. **Trash Bin Icon** - remove the selected row from the object               |       Solids or Modules Table           |               |
 | 2. **Clipboard Icon** - opens a modal showing the solids used in the module   | Modules Table                           |               |
 | 3. **Sorting** - click on one or more column headers to sort (shift + click)  |       Solids or Modules Table           |               |
+| 4. **Color Dropdown** - set the color for solids in the module                |       Modules Table                     |               |
 
-###### 
+######
 #### Rendering/Previewing the Object in OpenSCAD
 The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. **Rendering the axis is optional, based on your use case.** However, this can SIGNIFICANTLY INCREASE render time as it is primarily used for preview and development. Click the **Remove Axis** within the object.scad file to comment out the axis. If exporting to STL, this will be done automatically. If building a ruler or some form of 1D or 2D measurement, then this is would be an example of why you would include the axis in rendering before final output.
 

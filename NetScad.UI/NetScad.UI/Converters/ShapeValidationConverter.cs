@@ -16,6 +16,8 @@ namespace NetScad.UI.Converters
             bool isCube = values[0] is bool cube && cube;
             bool isRoundCube = values[1] is bool roundCube && roundCube;
             bool isCylinder = values[2] is bool cylinder && cylinder;
+            bool isSurface = values[12] is bool surface && surface;
+            bool isRoundSurface = values[13] is bool roundSurface && roundSurface;
 
             // Validate Name and Description (always required)
             bool nameValid = values[10] is string name && !string.IsNullOrWhiteSpace(name);
@@ -46,8 +48,19 @@ namespace NetScad.UI.Converters
                 else
                     return radiusValid && cylHeightValid;
             }
+            else if (isSurface || isRoundSurface)
+            {
+                bool lengthValid = values[3] is double length && length > 0;
+                bool widthValid = values[4] is double width && width > 0;
+                bool heightValid = values[5] is double height && height > 0;
+                bool isSurfaceFilePath = values[14] is string surfaceFilePath && !string.IsNullOrWhiteSpace(surfaceFilePath);
+                bool surfaceScaleXValid = values[15] is double surfaceScaleX && surfaceScaleX > 0;
+                bool surfaceScaleYValid = values[16] is double surfaceScaleY && surfaceScaleY > 0;
+                bool surfaceScaleZValid = values[17] is double surfaceScaleZ && surfaceScaleZ > 0;
 
-            return false;
+                return lengthValid && widthValid && heightValid && isSurfaceFilePath && surfaceScaleXValid && surfaceScaleYValid && surfaceScaleZValid;
+            }
+                return false;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotSupportedException();

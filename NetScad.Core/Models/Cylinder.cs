@@ -8,19 +8,19 @@ namespace NetScad.Core.Models
 
         public double Radius => (double)_parameters["r"];
         public double Height => (double)_parameters["h"];
-        public double? Radius1 => _parameters.TryGetValue("r1", out object? value) ? (double)value : null;
-        public double? Radius2 => _parameters.TryGetValue("r2", out object? value) ? (double)value : null;
-        public int Resolution => _parameters.TryGetValue("resolution", out object? value) ? (int)value : 100;
+        public double Radius1 => (double)_parameters["r1"];
+        public double Radius2 => (double)_parameters["r2"];
+        public int Resolution => 180;
 
-        public string OSCADMethod => $"cylinder(h = {Height}, {(Radius1 == null && Radius2 == null ? $"r = {Radius}" : $"r1 = {Radius1 ?? Radius}, r2 = {Radius2 ?? Radius}")}, $fn = {Resolution});";
+        public string OSCADMethod => $"cylinder(h = {Height}, {(Radius1 == 0.0 && Radius2 == 0.0 ? $"r = {Radius}" : $"r1 = {(Radius1 == 0 ? Radius : Radius1)}, r2 = {(Radius2 == 0 ? Radius : Radius2)}")}, $fn = {Resolution});";
 
         public Dictionary<string, object> ToDbDictionary() => new()
         {
             { "type", "Cylinder" },
             { "r", Radius },
             { "h", Height },
-            { "r1", Radius1 ?? 0.0 },
-            { "r2", Radius2 ?? 0.0 },
+            { "r1", Radius1 },
+            { "r2", Radius2 },
             { "resolution", Resolution }
         };
 
