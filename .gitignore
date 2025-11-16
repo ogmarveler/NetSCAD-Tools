@@ -461,3 +461,9 @@ $RECYCLE.BIN/
 /NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.1.1-win-x64.zip
 /NetScad.UI/NetScad.UI/NetScad.UI.csproj
 /NetScad.UI/NetScad.UI/Assets/Guides/Readme.markdown
+/NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.3-linux-x64.tar.gz
+/NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.3.3-win-x64.7z
+/NetScad.UI/NetScad.UI.Linux/Properties/PublishProfiles/LinuxArm64.pubxml
+/NetScad.UI/NetScad.UI.Linux/Properties/PublishProfiles/LinuxX64.pubxml
+/NetScad.UI/NetScad.UI.Linux/create-tar-linux-arm64.bat
+/NetScad.UI/NetScad.UI.Linux/create-tar-linux-x64.bat
