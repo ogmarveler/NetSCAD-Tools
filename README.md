@@ -12,7 +12,7 @@ If you're looking for only the axis tool, check out the NetSCAD-Axis repository.
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 ######
 **Get the latest release of NetSCAD Tools**
-* [NetSCAD for Windows (x64)](NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.3.3-win-x64.7z)
+* [NetSCAD for Windows (x64)](NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.4.0-win-x64.7z)
 * [NetSCAD for Linux (x64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.3-linux-x64.tar.gz)
 * [NetSCAD for Raspberry Pi (arm64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.3-linux-arm64.tar.gz)
 
