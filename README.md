@@ -12,7 +12,7 @@ If you're looking for only the axis tool, check out the NetSCAD-Axis repository.
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 ######
 **Get the latest release of NetSCAD Tools**
-* [NetSCAD for Windows (x64)](NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.3.3-win-x64.7z)
+* [NetSCAD for Windows (x64)](NetScad.UI/NetScad.UI.Windows/NetSCAD-v0.4.0-win-x64.7z)
 * [NetSCAD for Linux (x64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.3-linux-x64.tar.gz)
 * [NetSCAD for Raspberry Pi (arm64)](NetScad.UI/NetScad.UI.Linux/NetSCAD-v0.3.3-linux-arm64.tar.gz)
 
@@ -22,6 +22,7 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 
 ###### 
 ![Designer Object Dark](NetScad.UI/NetScad.UI/Assets/Images/designerObjectDark.png)
+![Mini PC](NetScad.UI/NetScad.UI/Assets/Images/coin.png)
 ![Mini PC](NetScad.UI/NetScad.UI/Assets/Images/miniPC.png)
 ######
 #### Rendering/Previewing the Object in OpenSCAD
@@ -34,6 +35,7 @@ Cubes and cylinders can be generated from the Designer module within this applic
 * **Cube** - default aligned on the 0,0,0 axes or can be offset with translate
 * **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
 * **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
+* **Surface** - import from png or dat file. Default aligned on the 0,0,0 axes or can be offset with translate.
 ###### 
 #### Layout of Custom Axes Builder
 The Custom Axes Builder has 2 main visual sections: Custom Axis and Generated Axes. The outputs of newly created axes will show up in the tables next to the Custom Axis section. This shows the total cubic size, as well as the name to use in your project file. In the list below the custom axis settings, you will see the newly created axis, along with axes that have been previously created. There are two tables that display axes information. One is metric axes and the other is imperial axes. **Both ascending and descending sorting are possible, as well as sorting by multiple categories (shift + select).**
