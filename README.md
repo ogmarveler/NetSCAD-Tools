@@ -23,6 +23,7 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 ###### 
 ![Designer Object Dark](NetScad.UI/NetScad.UI/Assets/Images/designerObjectDark.png)
 ![Coin](NetScad.UI/NetScad.UI/Assets/Images/coin.png)
+![Designer Object Dark Cube](NetScad.UI/NetScad.UI/Assets/Images/designerObjectDarkCube.png)
 ![Mini PC](NetScad.UI/NetScad.UI/Assets/Images/miniPC.png)
 ######
 #### Rendering/Previewing the Object in OpenSCAD
