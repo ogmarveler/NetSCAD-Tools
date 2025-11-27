@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>link</TrimMode>
+		<SignAssembly>True</SignAssembly>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <DebugType>none</DebugType>
+	  <IsTrimmable>True</IsTrimmable>
+	  <Optimize>True</Optimize>
+	  <IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DebugType>none</DebugType>
+	  <IsTrimmable>True</IsTrimmable>
+		<DebugSymbols>false</DebugSymbols>
+	  <IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.1.66" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+	</ItemGroup>
+
+</Project>

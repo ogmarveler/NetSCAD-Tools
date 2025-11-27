@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>link</TrimMode>
+		<SignAssembly>True</SignAssembly>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>none</DebugType>
+		<IsTrimmable>True</IsTrimmable>
+		<Optimize>True</Optimize>
+		<IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+		<IsTrimmable>True</IsTrimmable>
+		<IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\NetGenCAD.Core\NetGenCAD.Core.csproj" />
+	</ItemGroup>
+
+</Project>

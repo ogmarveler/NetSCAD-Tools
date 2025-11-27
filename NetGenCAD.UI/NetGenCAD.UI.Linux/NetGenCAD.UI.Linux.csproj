@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<SelfContained>true</SelfContained>
+		<AssemblyName>NetGenCAD</AssemblyName>
+		<Nullable>enable</Nullable>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>copyused</TrimMode>
+		<Nullable>enable</Nullable>
+		<DebuggerSupport>false</DebuggerSupport>
+		<!-- Remove debugger support -->
+		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+		<EventSourceSupport>false</EventSourceSupport>
+		<!-- If not using EventSource -->
+		<HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+		<InvariantGlobalization>false</InvariantGlobalization>
+		<!-- If no localization needed, reduces size -->
+		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+		<!-- No hot reload in production -->
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<PublishAot>False</PublishAot>
+		<SignAssembly>True</SignAssembly>
+		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+		<StartupObject>NetGenCAD.Program</StartupObject>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<Optimize>True</Optimize>
+		<IsPublishable>True</IsPublishable>
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<IsPublishable>True</IsPublishable>
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Avalonia">
+		<AvaloniaUseCompiledBindingsByDefault>True</AvaloniaUseCompiledBindingsByDefault>
+		<ApplicationIcon>logo.ico</ApplicationIcon>
+		<PackageIcon>logo.png</PackageIcon>
+		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AvaloniaResource Include="logo-large.png" />
+		<AvaloniaResource Include="logo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
+		<PackageReference Include="Avalonia.LinuxFramebuffer" Version="11.3.9" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\NetGenCAD.UI\NetGenCAD.UI.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<TrimmerRootAssembly Include="NetGenCAD.UI" />
+		<TrimmerRootAssembly Include="ReactiveUI" />
+		<TrimmerRootAssembly Include="Avalonia.LinuxFramebuffer" />
+	</ItemGroup>
+
+</Project>

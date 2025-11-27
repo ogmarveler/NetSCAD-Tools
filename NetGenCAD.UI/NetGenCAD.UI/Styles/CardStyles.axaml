@@ -1,0 +1,248 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!--  Add Controls for Previewer Here  -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!--  Card Style  -->
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="BoxShadow" Value="1 1 2 0 Gray" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.card">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="StackPanel.card">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="TextBlock.card">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Border.card:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightBaseHighBrush}" />
+    </Style>
+
+    <Style Selector="Border.card2">
+        <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="BoxShadow" Value="1 1 2 0 Gray" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.card2">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="StackPanel.card2">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Border.card2:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightBaseHighBrush}" />
+    </Style>
+
+    <Style Selector="Border.card_main">
+        <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="BoxShadow" Value="1 1 2 0 Gray" />
+        <Setter Property="BorderThickness" Value="4" />
+        <Setter Property="Margin" Value="13 1" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="ComboBox.card">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="TextBox.card">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="TextBlock.textbox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement, ComboBox:pointerover /template/ Border">
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightBaseHighBrush}" />
+    </Style>
+
+    <Style Selector="ToolTip">
+        <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+        <!--  Dark gray background  -->
+        <Setter Property="Foreground" Value="{DynamicResource CardForeground}" />
+        <!--  White text  -->
+        <Setter Property="BorderBrush" Value="#4A4A4A" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="ShowDelay" Value="0" />
+    </Style>
+
+    <Style Selector="TextBlock">
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style Selector="TextBlock.markdown-paragraph">
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.markdown-heading">
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}" />
+    </Style>
+    <Style Selector="TextBlock.markdown-codeblock">
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style Selector="TextBlock.markdown-hyperlink">
+        <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}" />
+        <Setter Property="TextDecorations" Value="Underline" />
+    </Style>
+
+
+
+    <!--  RadioButton Card Style (matches ComboBox/TextBox card style)  -->
+    <Style Selector="RadioButton.card">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource CardForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardForeground}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="10,5" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    Padding="{TemplateBinding Padding}"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+                    <ContentPresenter
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="{TemplateBinding Content}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="RadioButton.card:checked">
+        <Setter Property="Background" Value="{DynamicResource PurpleForeground}" />
+        <Setter Property="Foreground" Value="{DynamicResource PurpleBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PurpleBackground}" />
+    </Style>
+
+    <Style Selector="RadioButton.card:pointerover /template/ Border">
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightBaseHighBrush}" />
+        <Setter Property="Opacity" Value="0.8" />
+    </Style>
+
+    <!--  Grid Uniform Spacing Style  -->
+    <Style Selector="Grid.input-form">
+        <Setter Property="Margin" Value="20,0,20,10" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+    </Style>
+
+    <!--  Standard Label Style  -->
+    <Style Selector="TextBlock.input-label">
+        <Setter Property="Margin" Value="0,5,0,-3" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!--  Standard Input Style (for consistent spacing)  -->
+    <Style Selector="TextBox.input-field, ComboBox.input-field">
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+</Styles>

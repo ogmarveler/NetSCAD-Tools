@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="NetGenCAD.Axis/NetGenCAD.Axis.csproj" />
+  <Project Path="NetGenCAD.Core/NetGenCAD.Core.csproj" />
+  <Project Path="NetGenCAD.Designer/NetGenCAD.Designer.csproj" />
+  <Project Path="NetGenCAD.UI/NetGenCAD.UI.Linux/NetGenCAD.UI.Linux.csproj" />
+  <Project Path="NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD.UI.Windows.csproj" />
+  <Project Path="NetGenCAD.UI/NetGenCAD.UI/NetGenCAD.UI.csproj" />
+</Solution>

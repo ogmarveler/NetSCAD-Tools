@@ -1,0 +1,67 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<LangVersion>preview</LangVersion>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>link</TrimMode>
+		<SignAssembly>True</SignAssembly>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>none</DebugType>
+		<IsAotCompatible>True</IsAotCompatible>
+		<IsTrimmable>True</IsTrimmable>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+		<IsAotCompatible>True</IsAotCompatible>
+		<IsTrimmable>True</IsTrimmable>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AvaloniaResource Remove="Data\netscad.db" />
+		<AvaloniaResource Remove="Assets\Guides\Readme.markdown" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="11.3.9" />
+		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.9" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
+		<PackageReference Include="Markdown.Avalonia.Tight" Version="11.0.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+		<PackageReference Include="ReactiveUI" Version="22.2.1" />
+		<PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
+		<PackageReference Include="ReactiveUI.Avalonia.Microsoft.Extensions.DependencyInjection" Version="11.3.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Assets\Images\logo-large.png" Pack="True" PackagePath="logo-large.png" />
+		<ProjectReference Include="..\..\NetGenCAD.Axis\NetGenCAD.Axis.csproj" />
+		<ProjectReference Include="..\..\NetGenCAD.Core\NetGenCAD.Core.csproj" />
+		<ProjectReference Include="..\..\NetGenCAD.Designer\NetGenCAD.Designer.csproj" />
+		<None Update="Data\netscad.db">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Scad\Axes\axes.scad">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Scad\Solids\object.scad">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,121 @@
+<Window
+    x:Class="NetGenCAD.UI.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:NetGenCAD.UI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:NetGenCAD.UI.Views"
+    xmlns:vm="using:NetGenCAD.UI.ViewModels"
+    Title="NetGenCAD"
+    d:DesignHeight="720"
+    d:DesignWidth="1280"
+    x:CompileBindings="True"
+    x:DataType="vm:MainWindowViewModel"
+    Background="{DynamicResource WindowBackground}"
+    Icon="/Assets/Images/logo.png"
+    mc:Ignorable="d">
+
+    <Design.DataContext>
+        <!--
+            This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+        -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Resources/CardResources.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Menu DockPanel.Dock="Top">
+            <!--  File and Folder Explorer  -->
+            <MenuItem Header="_Open">
+                <MenuItem Command="{Binding OpenFolderCommand}" Header="_SCAD Folder">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource folder_open_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <!--  Create Axes or Object  -->
+            <MenuItem Header="_Create">
+                <MenuItem Command="{Binding NewAxesCommand}" Header="_New Axes">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource arrow_expand_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding NewObjectCommand}" Header="_New Object">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource select_object_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <!--  View Object
+            <MenuItem Header="_View">
+                <MenuItem Command="{Binding SharpEngineSceneViewCommand}" Header="_View Scene">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource select_object_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>-->
+            <!--  Change Theme  -->
+            <MenuItem Header="_Appearance">
+                <MenuItem Command="{Binding ToggleCommand}" Header="_Switch Theme">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource dark_theme_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Guides">
+                <MenuItem Command="{Binding AxisViewCommand}" Header="_Custom Axis">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource book_question_mark_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding DesignerViewCommand}" Header="_Object Designer">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource book_question_mark_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+        </Menu>
+
+        <!--  Main content
+        <Grid
+            Margin="10"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+        -->
+        <!--  Main View - SPA
+        <Border
+            Margin="25"
+            BorderThickness="2"
+            BoxShadow="1 1 2 0 Gray"
+            Classes="card_main">-->
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <ContentControl
+                Margin="10"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                Content="{Binding MainViewContent}" />
+        </ScrollViewer>
+        <!--</Border>-->
+
+        <!--    </Grid> -->
+    </DockPanel>
+
+</Window>
