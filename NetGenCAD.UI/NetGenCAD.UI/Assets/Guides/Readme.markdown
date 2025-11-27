@@ -1,20 +1,19 @@
 ﻿ 
-# <img src="https://github.com/ogmarveler/IGenSCAD/blob/25f80b909ac1837b3adb92b88e1d9d3ce63d0e2c/NetGenCAD.UI/NetGenCAD.UI/Assets/Images/logo.png" alt="NetSCAD logo" height="30" width="30"> IGenSCAD Tools
+# <img src="https://github.com/ogmarveler/NetGenCAD/blob/25f80b909ac1837b3adb92b88e1d9d3ce63d0e2c/NetGenCAD.UI/NetGenCAD.UI/Assets/Images/logo.png" height="30" width="30"> NetGenCAD Tools
 ###### 
 #### Description
 This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes creation of custom Imperial and Metric axes, as well as quick generation of objects to help speed up the modeling process. This allows for more precise modeling used in 3D printing. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
 ######
-#### Other IGenSCAD Projects
-If you're looking for only the axis tool, check out the IGenSCAD-Axis repository.
-* **IGenSCAD-Axis:** [Github](https://github.com/ogmarveler/IGenSCAD-Axis)
+#### Other NetGenCAD Projects
+If you're looking for only the axis tool, check out the NetGenCAD-Axis repository.
+* **NetGenCAD-Axis:** [Github](https://github.com/ogmarveler/NetGenCAD-Axis)
 ######
 #### Prerequisites
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 ######
-**Get the latest release of IGenSCAD Tools**
-* [IGenSCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/IGenSCAD-v0.4.0-win-x64.7z)
-* [IGenSCAD for Linux (x64)](NetGenCAD.UI/NetGenCAD.UI.Linux/IGenSCAD-v0.4.0-linux-x64.tar.gz)
-* [IGenSCAD for Raspberry Pi (arm64)](NetGenCAD.UI/NetGenCAD.UI.Linux/IGenSCAD-v0.4.0-linux-arm64.tar.gz)
+**Get the latest release of NetGenCAD Tools**
+* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-v0.1.0-win-x64.7z)
+* [NetGenCAD for Linux (x64 & arm64)](NetGenCAD.UI/NetGenCAD.UI.Linux/NetGenCAD-v0.1.0-linux-x64-arm64.tar.gz)
 
 ######
 #### Layout of Custom Object Designer
