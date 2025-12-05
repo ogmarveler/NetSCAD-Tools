@@ -44,7 +44,7 @@ namespace NetGenCAD.Core.Utility
             return callMethod.Trim();
         }/// 
 
-        public static string ToModule(string OSCADMethod, string name, string description, string operationType, string solidType, string color)
+        public static string ToModule(string OSCADMethod, string name, string description, string operationType, string solidType, string color, double alpha)
         {
             // Sanitize and trim the input OSCADMethod
             var sanitizedMethod = OSCADMethod
@@ -95,7 +95,7 @@ namespace NetGenCAD.Core.Utility
             : $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}";
 
             // Return the module definition
-            return $"module {moduleName}() {{ color(\"{color}\") {sanitizedMethod} }}".ToLower();
+            return $"module {moduleName}() {{ color(\"{color}\",{alpha}) {sanitizedMethod} }}".ToLower();
         }
 
         /// <summary>

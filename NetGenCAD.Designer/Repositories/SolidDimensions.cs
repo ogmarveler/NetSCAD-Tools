@@ -71,6 +71,8 @@ namespace NetGenCAD.Designer.Repositories
         public int SurfaceInvert { get; set; } = 0; // New property for surface invert
         public int SurfaceCenter { get; set; } = 0; // New property for surface center
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int Layer { get; set; } = 0;
+        public double Alpha { get; set; } = 1;
 
         public string OSCADMethod { get; set; } = string.Empty;
 
@@ -211,6 +213,8 @@ namespace NetGenCAD.Designer.Repositories
             { "SurfaceFilePath", SurfaceFilePath },
             { "SurfaceInvert", SurfaceInvert },
             { "SurfaceCenter", SurfaceCenter },
+            { "Layer", Layer },
+            { "Alpha", Alpha },
         };
     }
 
@@ -265,7 +269,9 @@ namespace NetGenCAD.Designer.Repositories
             (nameof(SolidDimensions.ModuleColor), typeof(string), false),
             (nameof(SolidDimensions.SurfaceFilePath), typeof(string), false),
             (nameof(SolidDimensions.SurfaceInvert), typeof(int), false),
-            (nameof(SolidDimensions.SurfaceCenter), typeof(int), false)
+            (nameof(SolidDimensions.SurfaceCenter), typeof(int), false),
+            (nameof(SolidDimensions.Layer), typeof(int), false),
+            (nameof(SolidDimensions.Alpha), typeof(double), false)
         ];
 
         // Create table

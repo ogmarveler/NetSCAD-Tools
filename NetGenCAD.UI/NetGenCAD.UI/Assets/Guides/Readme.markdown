@@ -1,27 +1,25 @@
-﻿ 
-# <img src="https://github.com/ogmarveler/NetGenCAD/blob/25f80b909ac1837b3adb92b88e1d9d3ce63d0e2c/NetGenCAD.UI/NetGenCAD.UI/Assets/Images/logo.png" height="30" width="30"> NetGenCAD Tools
+﻿ # <img src="NetGenCAD.UI/NetGenCAD.UI/Assets/Images/logo.png" height="30" width="30"> NetGenCAD
 ###### 
 #### Description
-This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes creation of custom Imperial and Metric axes, as well as quick generation of objects to help speed up the modeling process. This allows for more precise modeling used in 3D printing. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
+This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
 ######
 #### Other NetGenCAD Projects
 If you're looking for only the axis tool, check out the NetGenCAD-Axis repository.
-* **NetGenCAD-Axis:** [Github](https://github.com/ogmarveler/NetGenCAD-Axis)
+* **NetGenCAD Axis:** [Github](https://github.com/ogmarveler/NetSCAD-Axis)
 ######
 #### Prerequisites
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 ######
-**Get the latest release of NetGenCAD Tools**
-* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-v0.1.0-win-x64.7z)
-* [NetGenCAD for Linux (x64 & arm64)](NetGenCAD.UI/NetGenCAD.UI.Linux/NetGenCAD-v0.1.0-linux-x64-arm64.tar.gz)
-
-######
-#### Layout of Custom Object Designer
-There are 5 main sections: applying a custom axis, creating a new object or retrieving an existing one, setting inputs for new solids, the list of Solids in the object, and Modules that contain the Solids. Once a solid is added to the object, it will appear in the Solids table, along with its parameters. Solids can be viewed within Modules, which define how they interact with each other. To view the object in OpenSCAD, simply click the **View Output** button, which will open the corresponding SCAD file. To export the object as an STL file, click the **Export** button. When making changes, be sure to click the **Update Modules** button to refresh the object.
-
+**Get the latest version of NetGenCAD**
+* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.2.0-win-x64.7z)
+* [NetGenCAD for Linux (x64 & arm64)](NetGenCAD.UI/NetGenCAD.UI.Linux/NetGenCAD-0.2.0-linux-x64-arm64.tar.gz)
 ###### 
 ![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/designerObjectDark.png)
 ![Coin](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coin.png)
+######
+#### Layout of Custom Object Designer
+There are 5 main sections: applying a custom axis, creating a new object or retrieving an existing one, setting inputs for new solids, the list of Solids in the object, and Modules that contain the Solids. Once a solid is added to the object, it will appear in the Solids table, along with its parameters. Solids can be viewed within Modules, which define how they interact with each other. To view the object in OpenSCAD, simply click the **View Output** button, which will open the corresponding SCAD file. To export the object as an STL file, click the **Export** button. When making changes, be sure to click the **Update Modules** button to refresh the object.
+######
 ![Designer Object Dark Cube](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/designerObjectDarkCube.png)
 ![Mini PC](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/miniPC.png)
 ######

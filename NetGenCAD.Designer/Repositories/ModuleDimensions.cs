@@ -25,6 +25,7 @@ namespace NetGenCAD.Designer.Repositories
         public string IncludeMethod { get; set; } = string.Empty;
         public string OSCADMethod { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int Layer { get; set; } = 0;
         public string ModuleColor { get; set; } = string.Empty; // New property for module color
 
         public Dictionary<string, object> ToDbDictionary() => new()
@@ -48,6 +49,7 @@ namespace NetGenCAD.Designer.Repositories
             { "IncludeMethod", IncludeMethod },
             { "CreatedAt", CreatedAt },
             { "ModuleColor", ModuleColor },
+            { "Layer", Layer },
         };
 
         public async Task<string> RenderToStlAsync(string outputPath)
@@ -80,7 +82,8 @@ namespace NetGenCAD.Designer.Repositories
             (nameof(ModuleDimensions.OSCADMethod), typeof(string), false),
             (nameof(ModuleDimensions.IncludeMethod), typeof(string), false),
             (nameof(ModuleDimensions.CreatedAt), typeof(DateTime), false),
-            (nameof(ModuleDimensions.ModuleColor), typeof(string), false)
+            (nameof(ModuleDimensions.ModuleColor), typeof(string), false),
+            (nameof(ModuleDimensions.Layer), typeof(int), false),
         ];
 
         // Create table

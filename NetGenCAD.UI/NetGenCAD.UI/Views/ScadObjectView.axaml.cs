@@ -43,111 +43,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         AddViewButtonColumnToModuleDataGrid();
         AddSolidCountColumnToModuleDataGrid();
         AddActionButtonColumnToSolidDataGrid();
-        AddColorSelectionColumnToSolidDataGrid();
         AddActionButtonColumnToSolidDataGridImperial();
-        AddColorSelectionColumnToSolidDataGridImperial();
-    }
-
-    // New method to add color selection column to Metric SolidDataGrid
-    private void AddColorSelectionColumnToSolidDataGrid()
-    {
-        var colorTemplate = new FuncDataTemplate<object>((item, scope) =>
-        {
-            if (item is SolidDimensions solid)
-            {
-                var comboBox = new ComboBox
-                {
-                    ItemsSource = Enum.GetValues<OpenScadColor>(),
-                    SelectedItem = string.IsNullOrEmpty(solid.ModuleColor)
-                        ? OpenScadColor.Silver
-                        : Enum.Parse<OpenScadColor>(solid.ModuleColor, ignoreCase: true),
-                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
-                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                    Margin = new Thickness(5),
-                    Padding = new Thickness(5),
-                    FontSize = 13,  // Smaller font
-                    MinWidth = 100,  // Allow combo box to shrink
-                    MaxWidth = 255,
-                };
-
-                // Handle selection changed
-                comboBox.SelectionChanged += async (s, e) =>
-                {
-                    if (comboBox.SelectedItem is OpenScadColor selectedColor)
-                    {
-                        solid.ModuleColor = selectedColor.ToString();
-                        await ViewModel.UpdateSolidColorAsync(solid.Id, selectedColor);
-                    }
-                };
-
-                return comboBox;
-            }
-            return new TextBlock { Text = "N/A" };
-        });
-
-        var colorColumn = new DataGridTemplateColumn
-        {
-            Header = "Color",
-            Width = new DataGridLength(1, DataGridLengthUnitType.Auto),  // Auto-fit to content
-            MinWidth = 100,
-            CellTemplate = colorTemplate,
-            CanUserSort = false,
-            CanUserResize = true,
-            DisplayIndex = 1 // After trash bin button
-        };
-
-        SolidDataGrid.Columns.Add(colorColumn);
-    }
-
-    // New method to add color selection column to Imperial SolidDataGrid
-    private void AddColorSelectionColumnToSolidDataGridImperial()
-    {
-        var colorTemplate = new FuncDataTemplate<object>((item, scope) =>
-        {
-            if (item is SolidDimensions solid)
-            {
-                var comboBox = new ComboBox
-                {
-                    ItemsSource = Enum.GetValues<OpenScadColor>(),
-                    SelectedItem = string.IsNullOrEmpty(solid.ModuleColor)
-                        ? OpenScadColor.Silver
-                        : Enum.Parse<OpenScadColor>(solid.ModuleColor, ignoreCase: true),
-                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
-                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                    Margin = new Thickness(5),
-                    Padding = new Thickness(5),
-                    FontSize = 13,  // Smaller font
-                    MinWidth = 100,  // Allow combo box to shrink
-                    MaxWidth = 255,
-                };
-
-                // Handle selection changed
-                comboBox.SelectionChanged += async (s, e) =>
-                {
-                    if (comboBox.SelectedItem is OpenScadColor selectedColor)
-                    {
-                        solid.ModuleColor = selectedColor.ToString();
-                        await ViewModel.UpdateSolidColorAsync(solid.Id, selectedColor);
-                    }
-                };
-
-                return comboBox;
-            }
-            return new TextBlock { Text = "N/A" };
-        });
-
-        var colorColumn = new DataGridTemplateColumn
-        {
-            Header = "Color",
-            Width = new DataGridLength(1, DataGridLengthUnitType.Auto),  // Auto-fit to content
-            MinWidth = 100,
-            CellTemplate = colorTemplate,
-            CanUserSort = false,
-            CanUserResize = true,
-            DisplayIndex = 1 // After trash bin button
-        };
-
-        SolidDataGridImperial.Columns.Add(colorColumn);
     }
 
     // New method to add the solid count column (non-clickable display only)
@@ -407,16 +303,6 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         SolidDataGridImperial.Columns.Add(actionColumn);
     }
 
-    // Helper method to get theme-aware brush with fallback
-    private static IBrush GetThemeBrush(string resourceKey, IBrush fallback)
-    {
-        if (Application.Current?.TryGetResource(resourceKey, Application.Current.ActualThemeVariant, out var resource) == true && resource is IBrush brush)
-        {
-            return brush;
-        }
-        return fallback;
-    }
-
     private void ScadObjectView_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
     {
         // Get the parent window
@@ -429,12 +315,35 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
                 .Subscribe(size =>
                 {
                     Console.WriteLine($"Window Width: {size.Width}");
+                    Console.WriteLine($"Window Height: {size.Height}");
                     AdjustLayoutBasedOnWindowWidth(size.Width);
+
+                    // Calculate DataGrid MaxHeight (use 95% of available height)
+                    double dataGridMaxHeight = size.Height * 0.93;
+                    SetDataGridMaxHeight(dataGridMaxHeight);
                 });
 
             // Set initial layout based on current window width
             AdjustLayoutBasedOnWindowWidth(_parentWindow.ClientSize.Width);
         }
+    }
+
+    private void SetDataGridMaxHeight(double maxHeight)
+    {
+        // Find the DataGrids and set their MaxHeight
+        var solidDataGrid = this.FindControl<DataGrid>("SolidDataGrid");
+        var solidDataGridImperial = this.FindControl<DataGrid>("SolidDataGridImperial");
+        var modulesDataGrid = this.FindControl<DataGrid>("ModulesDataGrid");
+
+        if (solidDataGrid != null)
+            solidDataGrid.MaxHeight = maxHeight;
+
+        if (solidDataGridImperial != null)
+            solidDataGridImperial.MaxHeight = maxHeight;
+
+        // Set ModulesDataGrid MaxHeight to 62% of SolidDataGrid (62% of window height)
+        if (modulesDataGrid != null)
+            modulesDataGrid.MaxHeight = maxHeight * 0.62;
     }
 
     private void AdjustLayoutBasedOnWindowWidth(double windowWidth)
@@ -478,7 +387,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // List of columns to exclude from display - Hide Imperial columns for Metric view
         var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN", "ModuleName",
-            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Radius1_MM", "Radius2_MM", "Volume_IN3", "Name", "Volume_IN3", "ModuleColor", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath"  };
+            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Volume_IN3", "Name", "Volume_CM3", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Alpha"  };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -486,13 +395,11 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             return;
         }
 
-
         if (ShouldExcludePropertyWithAllZeros(e.PropertyName))
         {
             e.Cancel = true;
             return;
         }
-
 
         // Dictionary for custom headers to make them more user-friendly (Metric - abbreviated)
         var columnHeaders = new Dictionary<string, string>
@@ -515,8 +422,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "OperationType", "Apply To" },
             { "Description", "Description" },
             { "ModuleName", "Module Name" },
-            { "ModuleColor", "Module Color" },
+            { "ModuleColor", "Color" },
             { "Volume_CM3", "V (cm³)" },
+            { "Layer", "L" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -524,14 +432,80 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             e.Column.Header = header;
         }
 
-        // Make SolidType column appear after the button columns
-        if (e.PropertyName == "SolidType")
+        // Set FontSize to 9 for all columns
+        if (e.Column is DataGridTextColumn textColumn)
         {
-            e.Column.DisplayIndex = 2; // After trash bin button (index 0) and color column (index 1)
-            if (e.Column is DataGridTextColumn textColumn)
-            {
-                textColumn.FontWeight = FontWeight.SemiBold;
-            }
+            textColumn.FontSize = 12;
+        }
+
+        // Define column display order: trash bin (0), SolidType (1), Layer (2), OperationType (3)
+        // Then dimensions: Length, Width, Height, Thickness, Radius, Radius1, Radius2, CylinderHeight
+        // Then rotations: XRotate, YRotate, ZRotate
+        // Then Color, and everything else
+        int displayIndex = 4; // Start after the fixed columns
+
+        switch (e.PropertyName)
+        {
+            case "SolidType":
+                e.Column.DisplayIndex = 1;
+                if (e.Column is DataGridTextColumn stColumn)
+                    stColumn.FontWeight = FontWeight.SemiBold;
+                break;
+            case "Layer":
+                e.Column.DisplayIndex = 2;
+                break;
+            case "OperationType":
+                e.Column.DisplayIndex = 3;
+                break;
+            case "Length_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Width_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Height_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Thickness_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Radius_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Radius1_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Radius2_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "CylinderHeight_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "XRotate":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "YRotate":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "ZRotate":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "XOffset_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "YOffset_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "ZOffset_MM":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "ModuleColor":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            default:
+                // All other columns get auto-incremented display index
+                e.Column.DisplayIndex = displayIndex++;
+                break;
         }
     }
 
@@ -586,7 +560,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private void DataGrid_AutoGeneratingColumnObjectImperial(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         // List of columns to exclude from display - Hide Metric columns for Imperial view
-        var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN", "ModuleColor", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Radius1_IN", "Radius2_IN", "Volume_CM3", "ModuleName", "Name", "Volume_IN3" };
+        var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Volume_CM3", "ModuleName", "Name", "Volume_IN3", "Volume_CM3", "Alpha" };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -621,8 +595,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "Description", "Description" },
             { "SolidType", "Solid Type" },
             { "ModuleName", "Module Name" },
-            { "ModuleColor", "Module Color" },
+            { "ModuleColor", "Color" },
             { "Volume_IN3", "V (in³)" },
+            { "Layer", "L" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -630,14 +605,81 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             e.Column.Header = header;
         }
 
-        // Make SolidType column appear after the button columns
-        if (e.PropertyName == "SolidType")
+        // Set FontSize to 9 for all columns
+        if (e.Column is DataGridTextColumn textColumn)
         {
-            e.Column.DisplayIndex = 2; // After trash bin button (index 0) and color column (index 1)
-            if (e.Column is DataGridTextColumn textColumn)
-            {
-                textColumn.FontWeight = FontWeight.SemiBold;
-            }
+            textColumn.FontSize = 12;
+        }
+
+        // Define column display order: trash bin (0), SolidType (1), Layer (2), OperationType (3)
+        // Then dimensions: Length, Width, Height, Thickness, Radius, Radius1, Radius2, CylinderHeight
+        // Then rotations: XRotate, YRotate, ZRotate
+        // Then offsets: XOffset, YOffset, ZOffset
+        // Then Color, and everything else
+        int displayIndex = 4; // Start after the fixed columns
+
+        switch (e.PropertyName)
+        {
+            case "SolidType":
+                e.Column.DisplayIndex = 1;
+                if (e.Column is DataGridTextColumn stColumn)
+                    stColumn.FontWeight = FontWeight.SemiBold;
+                break;
+            case "Layer":
+                e.Column.DisplayIndex = 2;
+                break;
+            case "OperationType":
+                e.Column.DisplayIndex = 3;
+                break;
+            case "Length_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Width_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Height_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Thickness_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Radius_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Radius1_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "Radius2_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "CylinderHeight_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "XRotate":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "YRotate":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "ZRotate":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "XOffset_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "YOffset_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "ZOffset_IN":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            case "ModuleColor":
+                e.Column.DisplayIndex = displayIndex++;
+                break;
+            default:
+                // All other columns get auto-incremented display index
+                e.Column.DisplayIndex = displayIndex++;
+                break;
         }
     }
 
@@ -673,6 +715,8 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.SelectedOpenSCADColor = string.IsNullOrEmpty(selected.ModuleColor)
                 ? OpenScadColor.Silver
                 : Enum.Parse<OpenScadColor>(selected.ModuleColor, ignoreCase: true);
+            ViewModel.LayerIntValue = selected.Layer;
+            ViewModel.AlphaIntValue = selected.Alpha;
 
             // Highlight corresponding module row based on ModuleName
             if (!string.IsNullOrEmpty(selected.ModuleName))
@@ -708,6 +752,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "YOffset_IN", "Y (in)" },
             { "ZOffset_IN", "Z (in)" },
             { "IncludeMethod", "Include Method" },
+            { "Layer", "Layer" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -734,14 +779,14 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
     private void CreateModulesButton_Click(object? sender, RoutedEventArgs e)
     {
-        if (ViewModel.ModuleDimensionsUnions.Any())
+        ViewModel.GetDimensionsParts(); // Refresh the datagrids first
+
+        if (ViewModel.SolidDimensions.Any())
+        {
             ViewModel.CreateUnionModule();
-
-        if (ViewModel.ModuleDimensionsDifferences.Any())
             ViewModel.CreateDifferenceModule();
-
-        if (ViewModel.ModuleDimensionsIntersections.Any())
             ViewModel.CreateIntersectionModule();
+        }
     }
 
     private void RemoveApplyAxisButton_Click(object? sender, RoutedEventArgs e)
@@ -750,7 +795,18 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         ViewModel.UpdateAxisTranslate();
     }
 
-    private async void ObjectToScadFilesButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ObjectToScadFilesAsync();
+    private async void ObjectToScadFilesButton_Click(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await ViewModel.ObjectToScadFilesAsync();
+        }
+        catch
+        {
+            Console.WriteLine("Error exporting object to SCAD files.");
+        }
+
+    }
 
     private void ApplyAxisButton_Click(object? sender, RoutedEventArgs e) => ViewModel.CreateAxis();
 

@@ -172,6 +172,7 @@
             Grid.Row="0"
             Grid.Column="0"
             Margin="10"
+            VerticalAlignment="Top"
             BorderThickness="2"
             BoxShadow="1 1 2 0 Gray"
             Classes="card_main">
@@ -437,6 +438,7 @@
             Grid.Row="1"
             Grid.Column="0"
             Margin="10"
+            VerticalAlignment="Top"
             BorderThickness="2"
             BoxShadow="1 1 2 0 Gray"
             Classes="card_main"
@@ -452,7 +454,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
@@ -776,7 +778,7 @@
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Width="170" Classes="inputGroup">
+                        <StackPanel Width="175" Classes="inputGroup">
                             <TextBlock Classes="standardLabel" Text="Rack Height">
                                 <TextBlock.IsVisible>
                                     <MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -885,6 +887,7 @@
                                     <Binding Path="IsCubeSelected" />
                                     <Binding Path="IsRoundCubeSelected" />
                                     <Binding Path="IsCylinderSelected" />
+                                    <Binding Path="IsSphereSelected" />
                                     <Binding Path="LengthMM" />
                                     <Binding Path="WidthMM" />
                                     <Binding Path="HeightMM" />
@@ -1000,15 +1003,28 @@
                         <!--  Radius / Radius 1 / Radius 2 / Cylinder Height  -->
                         <StackPanel
                             Width="88"
-                            Classes="inputGroup"
-                            IsVisible="{Binding IsCylinderSelected}">
-                            <TextBlock Classes="standardLabel" Text="Radius" />
+                            Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCylinderSelected" />
+                                    <Binding Path="IsSphereSelected" />
+                                </MultiBinding>
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel">
+                                <TextBlock.Text>
+                                    <Binding Path="IsSphereSelected" Converter="{StaticResource BooleanToTextConverter}" ConverterParameter="Radius|Radius" />
+                                </TextBlock.Text>
+                            </TextBlock>
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding RadiusMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                                 Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
-                                    <TextBlock Text="Cylinder radius" />
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <Binding Path="IsSphereSelected" Converter="{StaticResource BooleanToTextConverter}" ConverterParameter="Sphere radius|Cylinder radius" />
+                                        </TextBlock.Text>
+                                    </TextBlock>
                                 </ToolTip.Tip>
                             </TextBox>
                         </StackPanel>
@@ -1020,6 +1036,7 @@
                             <TextBlock Classes="standardLabel" Text="Radius 1" />
                             <TextBox
                                 Classes="standardInput"
+                                IsEnabled="{Binding !IsSphereSelected}"
                                 Text="{Binding Radius1MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                                 Watermark="Optional">
                                 <ToolTip.Tip>
@@ -1035,6 +1052,7 @@
                             <TextBlock Classes="standardLabel" Text="Radius 2" />
                             <TextBox
                                 Classes="standardInput"
+                                IsEnabled="{Binding !IsSphereSelected}"
                                 Text="{Binding Radius2MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                                 Watermark="Optional">
                                 <ToolTip.Tip>
@@ -1050,6 +1068,7 @@
                             <TextBlock Classes="standardLabel" Text="Cyl Height" />
                             <TextBox
                                 Classes="standardInput"
+                                IsEnabled="{Binding !IsSphereSelected}"
                                 Text="{Binding CylinderHeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                                 Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
@@ -1102,31 +1121,64 @@
                         </StackPanel>
                     </StackPanel>
 
-					<StackPanel
+                    <!--  Color Picker  -->
+                    <StackPanel
                         Grid.Row="3"
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
-                        Margin="10,0,0,0"
+                        Margin="10,5,0,0"
                         HorizontalAlignment="Left"
-                        Orientation="Horizontal">
-						<!-- New ComboBox (Grid.Row=2, Grid.Column=6) - visible only when Surface is NOT selected -->
-						<StackPanel	Classes="inputGroup">
-							<TextBlock Classes="standardLabel" Text="Color" />
-							<ComboBox
-								MinWidth="160"
-								Padding="10,5,10,5"
-								HorizontalAlignment="Stretch"
-								ItemsSource="{Binding OpenSCADColors}"
-								PlaceholderText="Select"
-								SelectedItem="{Binding SelectedOpenSCADColor, Mode=TwoWay}">
-								<ToolTip.Tip>
-									<TextBlock Text="Color selection (hidden when Surface solid type is selected)" />
-								</ToolTip.Tip>
-							</ComboBox>
-						</StackPanel>
-					</StackPanel>
+                        Classes="inputGroup">
+                        <TextBlock Classes="standardLabel" Text="Color" />
+                        <ComboBox
+                            Width="195"
+                            Padding="10,5,0,5"
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{Binding OpenSCADColors}"
+                            PlaceholderText="Select"
+                            SelectedItem="{Binding SelectedOpenSCADColor, Mode=TwoWay}">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Color selection (hidden when Surface solid type is selected)" />
+                            </ToolTip.Tip>
+                        </ComboBox>
+                    </StackPanel>
 
-						<!--  Offsets and Rotations  -->
+                    <!--  Alpha Integer Input  -->
+                    <StackPanel
+                        Grid.Row="3"
+                        Grid.Column="2"
+                        Grid.ColumnSpan="1"
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="15">
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Alpha" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding AlphaIntValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="int">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Integer value for color alpha specification" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <!--  Layer Integer Input  -->
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Layer" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding LayerIntValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="int">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Integer value for layer specification" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!--  Offsets and Rotations  -->
                     <StackPanel
                         Grid.Row="3"
                         Grid.Column="3"
@@ -1203,173 +1255,177 @@
                         </StackPanel>
                     </StackPanel>
 
-					<!--  Row 4, Column 0: Object Adjustments Title  -->
-					<StackPanel
-						Grid.Row="4"
-						Grid.Column="0"
-						Grid.ColumnSpan="2"
-						Width="140"
-						Margin="0,20,0,0"
-						HorizontalAlignment="Left"
-						Classes="inputGroup">
-						<TextBlock
-							HorizontalAlignment="Left"
-							Classes="textbox"
-							FontSize="15"
-							FontWeight="SemiBold"
-							Opacity="0.75"
-							Text="Object Output" />
-					</StackPanel>
+                    <!--  Row 4, Column 0: Object Adjustments Title  -->
+                    <StackPanel
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Width="140"
+                        Margin="0,20,0,0"
+                        HorizontalAlignment="Left"
+                        Classes="inputGroup">
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            Classes="textbox"
+                            FontSize="15"
+                            FontWeight="SemiBold"
+                            Opacity="0.75"
+                            Text="Object Output" />
+                    </StackPanel>
 
-					<!--  Adjustments and Module Updates  -->
-					<StackPanel
-						Grid.Row="4"
-						Grid.Column="1"
-						Grid.ColumnSpan="2"
-						Margin="0,5,0,0"
-						HorizontalAlignment="Right"
-						Orientation="Horizontal"
-						Spacing="15">
+                    <!--  Adjustments and Module Updates  -->
+                    <StackPanel
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="15">
 
-						<!--  Render Option  -->
-						<StackPanel Width="60" Classes="inputGroup">
-							<TextBlock
+                        <!--  Render Option  -->
+                        <StackPanel Width="60" Classes="inputGroup">
+                            <TextBlock
                                 HorizontalAlignment="Left"
                                 Classes="standardLabel"
                                 Text="Render ?" />
-							<CheckBox
+                            <CheckBox
                                 HorizontalAlignment="Left"
                                 Content="Yes"
                                 IsChecked="{Binding IsPreRendered, Mode=TwoWay}">
-								<ToolTip.Tip>
-									<TextBlock Text="Decide if wanting the object to be rendered in output" />
-								</ToolTip.Tip>
-							</CheckBox>
-						</StackPanel>
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Decide if wanting the object to be rendered in output" />
+                                </ToolTip.Tip>
+                            </CheckBox>
+                        </StackPanel>
 
-						<!--  Export to STL  -->
-						<StackPanel
+                        <!--  Export to STL  -->
+                        <StackPanel
                             Width="60"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Classes="inputGroup">
-							<TextBlock
+                            <TextBlock
                                 HorizontalAlignment="Left"
                                 Classes="standardLabel"
                                 Text="Export ?" />
-							<CheckBox
+                            <CheckBox
                                 HorizontalAlignment="Left"
                                 Content="STL"
                                 IsChecked="{Binding ExportToStl, Mode=TwoWay}">
-								<CheckBox.IsEnabled>
-									<MultiBinding Converter="{x:Static BoolConverters.And}">
-										<Binding
+                                <CheckBox.IsEnabled>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding
                                             Converter="{StaticResource CollectionCountToBooleanConverter}"
                                             ConverterParameter="1"
                                             Path="SolidDimensions" />
-										<Binding
+                                        <Binding
                                             Converter="{StaticResource CollectionCountToBooleanConverter}"
                                             ConverterParameter="1"
                                             Path="ModuleDimensions" />
-									</MultiBinding>
-								</CheckBox.IsEnabled>
-								<ToolTip.Tip>
-									<TextBlock Text="Check to export the object.scad file to STL format." />
-								</ToolTip.Tip>
-							</CheckBox>
-						</StackPanel>
-					</StackPanel>
+                                    </MultiBinding>
+                                </CheckBox.IsEnabled>
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Check to export the object.scad file to STL format." />
+                                </ToolTip.Tip>
+                            </CheckBox>
+                        </StackPanel>
+                    </StackPanel>
 
-					<!--  Buttons - Main Inputs Top Level Button Aligned  -->
-					<StackPanel Grid.Row="4" Grid.Column="3" Width="125" Margin="0,5,0,0" Classes="inputGroup">
-						<TextBlock Classes="standardLabel" Text="Update" />
-						<Button
-							HorizontalAlignment="Stretch"
-							Background="{DynamicResource DarkBlueForeground}"
-							BorderBrush="{DynamicResource DarkBlueBackground}"
-							Click="CreateModulesButton_Click"
-							Content="All Modules"
-							FontWeight="SemiBold"
-							Foreground="{DynamicResource DarkBlueBackground}">
-							<Button.IsEnabled>
-								<MultiBinding Converter="{x:Static BoolConverters.And}">
-									<Binding
-										Converter="{StaticResource CollectionCountToBooleanConverter}"
-										ConverterParameter="1"
-										Path="SolidDimensions" />
-									<Binding
-										Converter="{StaticResource CollectionCountToBooleanConverter}"
-										ConverterParameter="1"
-										Path="ModuleDimensions" />
-								</MultiBinding>
-							</Button.IsEnabled>
-							<ToolTip.Tip>
-								<TextBlock Text="This action will create a union of the selected objects in the database for use in OpenSCAD." />
-							</ToolTip.Tip>
-						</Button>
-					</StackPanel>
+                    <!--  Buttons - Main Inputs Top Level Button Aligned  -->
+                    <StackPanel
+                        Grid.Row="4"
+                        Grid.Column="3"
+                        Width="125"
+                        Margin="0,5,0,0"
+                        Classes="inputGroup">
+                        <TextBlock Classes="standardLabel" Text="Update" />
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Background="{DynamicResource DarkBlueForeground}"
+                            BorderBrush="{DynamicResource DarkBlueBackground}"
+                            Click="CreateModulesButton_Click"
+                            Content="All Modules"
+                            FontWeight="SemiBold"
+                            Foreground="{DynamicResource DarkBlueBackground}">
+                            <Button.IsEnabled>
+                                <Binding
+                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                    ConverterParameter="1"
+                                    Path="SolidDimensions" />
+                            </Button.IsEnabled>
+                            <ToolTip.Tip>
+                                <TextBlock Text="This action will create a union of the selected objects in the database for use in OpenSCAD." />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
 
 
-						<!--  View Output Button  -->
-						<StackPanel Grid.Row="4" Grid.Column="4" Width="120" Margin="0,5,0,0" Classes="inputGroup">
-							<TextBlock Classes="standardLabel" Text="Open File" />
-							<Button
-                                HorizontalAlignment="Stretch"
-                                BorderBrush="{DynamicResource CardForeground}"
-                                BorderThickness="1"
-                                Click="ObjectToScadFilesButton_Click"
-                                Content="View Output"
-                                IsEnabled="{Binding !ExportToStl}">
-								<ToolTip.Tip>
-									<TextBlock Text="Open and view the .scad file in the default application set by the OS." />
-								</ToolTip.Tip>
-							</Button>
-						</StackPanel>
-                    <!-- Mirror Object -->
-					<StackPanel
-						Grid.Row="4"
-						Grid.Column="5"
-						Grid.ColumnSpan="2"
-						Margin="0,5,0,0"
-						HorizontalAlignment="Left"
-						Orientation="Horizontal"
-						Spacing="15">
-						<StackPanel Width="18" />
+                    <!--  View Output Button  -->
+                    <StackPanel
+                        Grid.Row="4"
+                        Grid.Column="4"
+                        Width="120"
+                        Margin="0,5,0,0"
+                        Classes="inputGroup">
+                        <TextBlock Classes="standardLabel" Text="Open File" />
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            BorderBrush="{DynamicResource CardForeground}"
+                            BorderThickness="1"
+                            Click="ObjectToScadFilesButton_Click"
+                            Content="View Output"
+                            IsEnabled="{Binding !ExportToStl}">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Open and view the .scad file in the default application set by the OS." />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+                    <!--  Mirror Object  -->
+                    <StackPanel
+                        Grid.Row="4"
+                        Grid.Column="5"
+                        Grid.ColumnSpan="2"
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal"
+                        Spacing="15">
+                        <StackPanel Width="18" />
 
-						<StackPanel Width="63" Classes="inputGroup">
-							<TextBlock Classes="standardLabel" Text="Mirror X" />
-							<TextBox
-								Classes="standardInput"
-								Text="{Binding XMirror, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-								Watermark="int">
-								<ToolTip.Tip>
-									<TextBlock Text="Set the 360 degree X-axis mirror" />
-								</ToolTip.Tip>
-							</TextBox>
-						</StackPanel>
-						<StackPanel Width="63" Classes="inputGroup">
-							<TextBlock Classes="standardLabel" Text="Mirror Y" />
-							<TextBox
-								Classes="standardInput"
-								Text="{Binding YMirror, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-								Watermark="int">
-								<ToolTip.Tip>
-									<TextBlock Text="Set the 360 degree Y-axis mirror" />
-								</ToolTip.Tip>
-							</TextBox>
-						</StackPanel>
-						<StackPanel Width="63" Classes="inputGroup">
-							<TextBlock Classes="standardLabel" Text="Mirror Z" />
-							<TextBox
-								Classes="standardInput"
-								Text="{Binding ZMirror, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-								Watermark="int">
-								<ToolTip.Tip>
-									<TextBlock Text="Set the 360 degree Z-axis mirror" />
-								</ToolTip.Tip>
-							</TextBox>
-						</StackPanel>
-					</StackPanel>
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Mirror X" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding XMirror, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="int">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Set the 360 degree X-axis mirror" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Mirror Y" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding YMirror, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="int">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Set the 360 degree Y-axis mirror" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Mirror Z" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding ZMirror, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="int">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Set the 360 degree Z-axis mirror" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+                    </StackPanel>
                 </Grid>
             </StackPanel>
         </Border>
@@ -1379,7 +1435,7 @@
             Grid.Row="3"
             Grid.Column="0"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
+            VerticalAlignment="Top"
             HorizontalContentAlignment="Stretch"
             VerticalContentAlignment="Top"
             HorizontalScrollBarVisibility="Disabled"
@@ -1433,19 +1489,19 @@
                 </StackPanel>
             </Border>
         </ScrollViewer>
-		
-		
 
-        <!--  Solids DataGrids Section  -->
+
+
+        <!--  Module DataGrids Section  -->
         <ScrollViewer
             x:Name="SolidsSection"
             Grid.Row="0"
-            Grid.RowSpan="3"
+            Grid.RowSpan="4"
             Grid.Column="1"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             HorizontalContentAlignment="Stretch"
-            VerticalContentAlignment="Stretch"
+            VerticalContentAlignment="Top"
             HorizontalScrollBarVisibility="Disabled"
             IsVisible="{Binding SolidDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
             VerticalScrollBarVisibility="Auto">
