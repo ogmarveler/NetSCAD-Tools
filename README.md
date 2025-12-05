@@ -6,7 +6,7 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 #### Latest Updates to NetGenCAD
 ######
 **Version 0.2.0** 
-* New solid added: Sphere.
+* New solids added: Sphere and Rounded Cylinder.
 * Added ability to create layers within custom objects. Layers allow for grouping of solids within the object, making it easier to manage complex designs. 
 * Alpha channel support has been added for objects. 
 * Improved UI/UX for better user experience.
@@ -36,6 +36,7 @@ The object, along with any solids, is stored in a **Scad/Solids** folder that is
 * **Cube** - default aligned on the 0,0,0 axes or can be offset with translate
 * **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
 * **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
+* **Rounded Cylinder** - all rounded cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
 * **Surface** - import from png or dat file. Default aligned on the 0,0,0 axes or can be offset with translate.
 * **Sphere** - all spheres are aligned on the 0,0,0 axes, with the center point of the sphere at 0,0,0.
 ###### 
