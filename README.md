@@ -5,11 +5,12 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 ######
 #### Latest Updates to NetGenCAD
 ######
-**Version 0.2.0**
+**Version 0.2.0** 
 * New solid added: Sphere.
 * Added ability to create layers within custom objects. Layers allow for grouping of solids within the object, making it easier to manage complex designs. 
 * Alpha channel support has been added for objects. 
 * Improved UI/UX for better user experience.
+* ![Designer Complex Object](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coilofrings.png)
 ###### 
 #### Other NetGenCAD Projects
 If you're looking for only the axis tool, check out the NetGenCAD-Axis repository.
