@@ -126,6 +126,7 @@ namespace NetGenCAD.UI.ViewModels
         private int _layerIntValue = 0;
         private double _alphaIntValue = 1;
         private bool _isSphereSelected = false;
+        private bool _isRoundCylinderSelected = false;
 
 
         [UnconditionalSuppressMessage("Trimming", "IL2026")]
@@ -178,7 +179,9 @@ namespace NetGenCAD.UI.ViewModels
             IsCubeSelected = _isCubeSelected;
             IsRoundCubeSelected = _isRoundCubeSelected;
             IsCylinderSelected = _isCylinderSelected;
+            IsRoundCylinderSelected = _isRoundCylinderSelected;
             IsSphereSelected = _isSphereSelected;
+            IsSurfaceSelected = _isSurfaceSelected;
         }
 
         // Clear all input fields
@@ -240,6 +243,7 @@ namespace NetGenCAD.UI.ViewModels
             IsSurfaceSelected = false;
             IsRoundSurfaceSelected = false;
             IsSphereSelected = false;
+            IsRoundCylinderSelected = false;
             IsPreRendered = false;
             ScrewSizes = _screwSizes;
             ServerRackSizes = _serverRackSizes;
@@ -266,6 +270,9 @@ namespace NetGenCAD.UI.ViewModels
                     break;
                 case "Cylinder":
                     IsCylinderSelected = true;
+                    break;
+                case "Round Cylinder":
+                    IsRoundCylinderSelected = true;
                     break;
                 case "Sphere":
                     IsSphereSelected = true;
@@ -557,7 +564,6 @@ namespace NetGenCAD.UI.ViewModels
             {
                 if (_selectedUnit == UnitSystem.Imperial)
                 {
-                    // Convert cylinder dimensions to metric for OpenSCAD
                     oDim!.Radius_MM = Math.Round(InchesToMillimeter(oDim.Radius_MM), _decimalPlaces);
                     oDim.Radius1_MM = Math.Round(InchesToMillimeter(oDim.Radius1_MM), _decimalPlaces);
                     oDim.Radius2_MM = Math.Round(InchesToMillimeter(oDim.Radius2_MM), _decimalPlaces);
@@ -576,7 +582,41 @@ namespace NetGenCAD.UI.ViewModels
                     { "resolution", 360 }
                 };
                 var cylinder = OScad3D.Cylinder.ToScadObject(cylParams);
-                var rotated = await GetRotate(cylinder, oDim.XRotate, oDim.YRotate, oDim.ZRotate);  // Add rotation
+                var rotated = await GetRotate(cylinder, oDim.XRotate, oDim.YRotate, oDim.ZRotate);
+                var translate = GetTranslate(rotated, oDim!.XOffset_MM, oDim!.YOffset_MM, oDim!.ZOffset_MM).Result;
+                return ToModule(translate.OSCADMethod, oDim!.Name, oDim!.Description!, oDim!.OperationType, oDim.SolidType.ToLower(), oDim.ModuleColor.ToLower(), oDim.Alpha).Trim();
+            }
+            else if (IsRoundCylinderSelected)
+            {
+                if (_selectedUnit == UnitSystem.Imperial)
+                {
+                    oDim!.Radius_MM = Math.Round(InchesToMillimeter(oDim.Radius_MM), _decimalPlaces);
+                    oDim.Radius1_MM = Math.Round(InchesToMillimeter(oDim.Radius1_MM), _decimalPlaces);
+                    oDim.Radius2_MM = Math.Round(InchesToMillimeter(oDim.Radius2_MM), _decimalPlaces);
+                    oDim.CylinderHeight_MM = Math.Round(InchesToMillimeter(oDim.CylinderHeight_MM), _decimalPlaces);
+                    oDim.Round_r_MM = Math.Round(InchesToMillimeter(oDim.Round_r_MM), _decimalPlaces);
+                    oDim.Round_h_MM = Math.Round(InchesToMillimeter(oDim.Round_h_MM), _decimalPlaces);
+                    oDim.XOffset_MM = Math.Round(InchesToMillimeter(oDim.XOffset_MM), _decimalPlaces);
+                    oDim.YOffset_MM = Math.Round(InchesToMillimeter(oDim.YOffset_MM), _decimalPlaces);
+                    oDim.ZOffset_MM = Math.Round(InchesToMillimeter(oDim.ZOffset_MM), _decimalPlaces);
+                }
+
+                // Based on radius (if applicable)
+                oDim!.Round_r_MM = Math.Round(oDim.Round_r_MM > 0 ? oDim.Round_r_MM : RoundFromWidth(oDim.CylinderHeight_MM), _decimalPlaces);
+                oDim.Round_h_MM = Math.Round(RoundEdgeHeight(oDim.Round_r_MM), _decimalPlaces);
+
+                var roundedCylParams = new Dictionary<string, object>
+                {
+                    { "r", oDim!.Radius_MM },
+                    { "r1", oDim!.Radius1_MM },
+                    { "r2", oDim!.Radius2_MM },
+                    { "h", oDim!.CylinderHeight_MM },
+                    { "round_r", oDim.Round_r_MM },
+                    { "round_h", oDim.Round_h_MM },
+                    { "resolution", oDim.Resolution }
+                };
+                var roundedCylinder = OScad3D.RoundedCylinder.ToScadObject(roundedCylParams);
+                var rotated = await GetRotate(roundedCylinder, oDim.XRotate, oDim.YRotate, oDim.ZRotate);
                 var translate = GetTranslate(rotated, oDim!.XOffset_MM, oDim!.YOffset_MM, oDim!.ZOffset_MM).Result;
                 return ToModule(translate.OSCADMethod, oDim!.Name, oDim!.Description!, oDim!.OperationType, oDim.SolidType.ToLower(), oDim.ModuleColor.ToLower(), oDim.Alpha).Trim();
             }
@@ -594,7 +634,7 @@ namespace NetGenCAD.UI.ViewModels
                 var sphereParams = new Dictionary<string, object>
                 {
                     { "r", oDim!.Radius_MM },
-                    { "resolution", 360.0 }
+                    { "resolution", 360 }
                 };
                 var sphere = OScad3D.Sphere.ToScadObject(sphereParams);
                 var rotated = await GetRotate(sphere, oDim.XRotate, oDim.YRotate, oDim.ZRotate);  // Add rotation
@@ -643,7 +683,7 @@ namespace NetGenCAD.UI.ViewModels
                         case OperationType.Union:
                             XOffset_MM += oDim.Round_r_MM;
                             YOffset_MM += oDim.Round_r_MM;
-                            ZOffset_MM += -oDim.Round_h_MM;
+                            ZOffset_MM += oDim.Round_h_MM;
                             break;
                         case OperationType.Difference:
                             XOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
@@ -653,7 +693,7 @@ namespace NetGenCAD.UI.ViewModels
                         case OperationType.Intersection:
                             XOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
                             YOffset_MM += oDim.Round_r_MM + oDim.Thickness_MM;
-                            ZOffset_MM += -oDim.Round_h_MM + oDim.Thickness_MM;
+                            ZOffset_MM += oDim.Round_h_MM + oDim.Thickness_MM;
                             break;
                     }
                 }
@@ -674,7 +714,7 @@ namespace NetGenCAD.UI.ViewModels
                     }
                 }
             }
-            else if (IsCylinderSelected || IsSphereSelected)
+            else if (IsCylinderSelected || IsSphereSelected || IsRoundCylinderSelected)
             {
                 var oDim = new SolidDimensions
                 {
@@ -694,6 +734,15 @@ namespace NetGenCAD.UI.ViewModels
                     XOffset_MM = Math.Round(InchesToMillimeter(_xOffsetMM), _decimalPlaces);
                     YOffset_MM = Math.Round(InchesToMillimeter(_yOffsetMM), _decimalPlaces);
                     ZOffset_MM = Math.Round(InchesToMillimeter(_zOffsetMM), _decimalPlaces);
+                }
+
+                if (IsRoundCylinderSelected)  // Adjust for Minkowski offset
+                {
+                    // Based on width and height (if applicable)
+                    oDim.Round_r_MM = Math.Round(RoundFromWidth(oDim.CylinderHeight_MM), _decimalPlaces);
+                    oDim.Round_h_MM = Math.Round(RoundEdgeHeight(oDim.Round_r_MM), _decimalPlaces);
+                    // The added inflation from minkowski on a cylinder is added based on height, before rotation.
+                    ZOffset_MM += oDim.Round_r_MM;
                 }
             }
 
@@ -1075,16 +1124,17 @@ namespace NetGenCAD.UI.ViewModels
 
         public async void CreateUnionModule()
         {
-            var objects = SolidDimensions
+            var objects = SolidDimensions               // Minkowski objects rendered last, simpler shapes first
                 .Where(o => o.OperationType == "Union")
-                .OrderBy(c => c.SolidType.ToLower() == "cube" ? 0 
-                          : c.SolidType.ToLower() == "cylinder" ? 1 
-                          : c.SolidType.ToLower() == "sphere" ? 2      // ADD THIS LINE
-                          : c.SolidType.ToLower() == "surface" ? 3 
-                          : 4)
+                .OrderBy(c => c.SolidType.ToLower() == "cube" ? 0
+                          : c.SolidType.ToLower() == "cylinder" ? 1
+                          : c.SolidType.ToLower() == "sphere" ? 2
+                          : c.SolidType.ToLower() == "roundcube" ? 3
+                          : c.SolidType.ToLower() == "roundcylinder" ? 4
+                          : 5)
                 .ThenBy(c => c.Volume_IN3)
                 .ToList();
-            
+
 
             if (!objects.Any())
                 return; // No objects to process
@@ -1125,13 +1175,16 @@ namespace NetGenCAD.UI.ViewModels
 
         public async void CreateDifferenceModule()
         {
-            CreateUnionModule(); // Update union module before applying differences
-
-            // Get all objects marked as "Difference"
-            var objects = SolidDimensions
+            CreateUnionModule();
+            var objects = SolidDimensions           // Minkowski objects rendered last, simpler shapes first
                 .Where(o => o.OperationType == "Difference")
-                .OrderBy(c => c.SolidType.ToLower() == "cube" ? 0 : c.SolidType.ToLower() == "cylinder" ? 1 : c.SolidType.ToLower() == "surface" ? 2 : 3)  // Cube (0), Cylinder (1), Surface (2), Minkowski (3)
-                .ThenBy(c => c.Volume_IN3)  // Ascending volume within each type
+                .OrderBy(c => c.SolidType.ToLower() == "cube" ? 0
+                          : c.SolidType.ToLower() == "cylinder" ? 1
+                          : c.SolidType.ToLower() == "sphere" ? 2
+                          : c.SolidType.ToLower() == "roundcube" ? 3
+                          : c.SolidType.ToLower() == "roundcylinder" ? 4
+                          : 5)
+                .ThenBy(c => c.Volume_IN3)
                 .ToList();
 
             if (!objects.Any())
@@ -1201,11 +1254,11 @@ namespace NetGenCAD.UI.ViewModels
             {
                 // Get objects for this specific layer
                 var layerObjects = objects.Where(o => o.Layer == layer).ToList();
-                
+
                 // Find the base union module for this layer
-                ModuleDimensions? baseObj = ModuleDimensions.FirstOrDefault(o => 
-                    o.ModuleType == "Union" && 
-                    o.ObjectName == Name && 
+                ModuleDimensions? baseObj = ModuleDimensions.FirstOrDefault(o =>
+                    o.ModuleType == "Union" &&
+                    o.ObjectName == Name &&
                     o.Layer == layer);
 
                 if (baseObj != null)
@@ -1224,11 +1277,11 @@ namespace NetGenCAD.UI.ViewModels
                         CreatedAt = DateTime.UtcNow,
                         Layer = layer, // Set the layer for this module
                     };
-                    
+
                     // Get calling method for intersectionModule
                     intersectionModule.Name = ExtractModuleCallMethod(intersectionModule.OSCADMethod).ToLower();
                     var moduleId = await intersectionModule.UpsertAsync(DbConnection!);
-                    
+
                     // Update all solid objects for this layer with the new ModuleDimensionsId
                     var solidIds = layerObjects.Select(o => o.Id);
                     await DbConnection!.UpdateModuleDimensionsIdAsync(solidIds, moduleId);
@@ -1245,21 +1298,21 @@ namespace NetGenCAD.UI.ViewModels
 
         private void UpdateScrewRadiusFromSelection()
         {
-            if (!IsCylinderSelected)
-                return;
-
-            var screwData = SelectedScrewSize;
-            double radiusValue = SelectedScrewProperty switch
+            if (IsCylinderSelected || IsRoundCylinderSelected)
             {
-                "Screw Thread" => screwData!.ScrewRadius,
-                "Screw Head" => screwData!.ScrewHeadRadius,
-                "Threaded Insert" => screwData!.ThreadedInsertRadius,
-                "Clearance Hole" => screwData!.ClearanceHoleRadius,
-                _ => 0
-            };
-            RadiusMM = SelectedUnitValue == UnitSystem.Imperial
-                ? Math.Round(MillimeterToInches(radiusValue), _decimalPlaces)
-                : radiusValue;
+                var screwData = SelectedScrewSize;
+                double radiusValue = SelectedScrewProperty switch
+                {
+                    "Screw Thread" => screwData!.ScrewRadius,
+                    "Screw Head" => screwData!.ScrewHeadRadius,
+                    "Threaded Insert" => screwData!.ThreadedInsertRadius,
+                    "Clearance Hole" => screwData!.ClearanceHoleRadius,
+                    _ => 0
+                };
+                RadiusMM = SelectedUnitValue == UnitSystem.Imperial
+                    ? Math.Round(MillimeterToInches(radiusValue), _decimalPlaces)
+                    : radiusValue;
+            }
         }
 
         // Add this method to update dimensions when server rack is selected
@@ -1376,7 +1429,7 @@ namespace NetGenCAD.UI.ViewModels
             if (solids.Any())
             {
                 ModalTitle = $"OSCAD Methods for {module.Name}";
-                
+
                 // Build modal content with Module Name (call method) at the top
                 var sb = new StringBuilder();
                 sb.AppendLine($"Module Name (Call Method): {module.Name}");
@@ -1384,7 +1437,7 @@ namespace NetGenCAD.UI.ViewModels
                 sb.AppendLine("Solids:");
                 sb.AppendLine(new string('-', 50));
                 sb.Append(string.Join("\n\n", solids.Select(s => s.OSCADMethod)));
-                
+
                 ModalContent = sb.ToString();
                 IsModalOpen = true;
             }
@@ -1692,6 +1745,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isSurfaceSelected = false;
                     _isRoundSurfaceSelected = false;
                     _isSphereSelected = false;
+                    _isRoundCylinderSelected = false;
+                    this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsSphereSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
                     this.RaisePropertyChanged(nameof(IsRoundSurfaceSelected));
@@ -1715,6 +1770,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isSurfaceSelected = false;
                     _isRoundSurfaceSelected = false;
                     _isSphereSelected = false;
+                    _isRoundCylinderSelected = false;
+                    this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsSphereSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
                     this.RaisePropertyChanged(nameof(IsRoundSurfaceSelected));
@@ -1737,6 +1794,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isSurfaceSelected = false;
                     _isRoundSurfaceSelected = false;
                     _isSphereSelected = false;
+                    _isRoundCylinderSelected = false;
+                    this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsSphereSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
                     this.RaisePropertyChanged(nameof(IsRoundSurfaceSelected));
@@ -1759,6 +1818,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isCylinderSelected = false;
                     _isRoundSurfaceSelected = false;
                     _isSphereSelected = false;
+                    _isRoundCylinderSelected = false;
+                    this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsCubeSelected));
                     this.RaisePropertyChanged(nameof(IsRoundSurfaceSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCubeSelected));
@@ -1781,6 +1842,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isCylinderSelected = false;
                     _isSurfaceSelected = false;
                     _isSphereSelected = false;
+                    _isRoundCylinderSelected = false;
+                    this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsCubeSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCubeSelected));
@@ -1804,12 +1867,39 @@ namespace NetGenCAD.UI.ViewModels
                     _isCylinderSelected = false;
                     _isSurfaceSelected = false;
                     _isRoundSurfaceSelected = false;
+                    _isRoundCylinderSelected = false;
+                    this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsCubeSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCubeSelected));
                     this.RaisePropertyChanged(nameof(IsCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
                     this.RaisePropertyChanged(nameof(IsRoundSurfaceSelected));
                     UpdateViewButtons(); // Generic update of view buttons based on selection
+                }
+            }
+        }
+
+        public bool IsRoundCylinderSelected
+        {
+            get => _isRoundCylinderSelected;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isRoundCylinderSelected, value);
+                if (_isRoundCylinderSelected)
+                {
+                    _isCubeSelected = false;
+                    _isRoundCubeSelected = false;
+                    _isCylinderSelected = false;
+                    _isSurfaceSelected = false;
+                    _isRoundSurfaceSelected = false;
+                    _isSphereSelected = false;
+                    this.RaisePropertyChanged(nameof(IsCylinderSelected));
+                    this.RaisePropertyChanged(nameof(IsSphereSelected));
+                    this.RaisePropertyChanged(nameof(IsSurfaceSelected));
+                    this.RaisePropertyChanged(nameof(IsRoundSurfaceSelected));
+                    this.RaisePropertyChanged(nameof(IsCubeSelected));
+                    this.RaisePropertyChanged(nameof(IsRoundCubeSelected));
+                    UpdateViewButtons();
                 }
             }
         }
@@ -1822,7 +1912,7 @@ namespace NetGenCAD.UI.ViewModels
                 if (value == null) return;
                 this.RaiseAndSetIfChanged(ref _selectedScrewSize, value);
                 SelectedScrewProperty ??= ScrewProperties!.FirstOrDefault(s => s == "Screw Thread")!;
-                if (_isCylinderSelected)
+                if (_isCylinderSelected || _isRoundCylinderSelected)
                 {
                     UpdateScrewRadiusFromSelection();  // ← No await needed
                 }
@@ -1835,7 +1925,7 @@ namespace NetGenCAD.UI.ViewModels
             {
                 if (string.IsNullOrEmpty(value)) return;
                 this.RaiseAndSetIfChanged(ref _selectedScrewProperty, value);
-                if (_isCylinderSelected)
+                if (_isCylinderSelected || _isRoundCylinderSelected)
                 {
                     UpdateScrewRadiusFromSelection();
                 }
@@ -1930,15 +2020,13 @@ namespace NetGenCAD.UI.ViewModels
                     CreateAxis();
             }
         }
-        public List<string> SolidTypes { get; } = ["Cube", "Round Cube", "Cylinder", "Sphere", "Surface"];
+        public List<string> SolidTypes { get; } = ["Cube", "Round Cube", "Cylinder", "Round Cylinder", "Sphere", "Surface"];
         public string SelectedSolidType
         {
             get => _selectedShapeType;
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedShapeType, value);
-
-                // Update the individual shape selection properties based on the combo box selection
                 switch (value)
                 {
                     case "Cube":
@@ -1950,11 +2038,14 @@ namespace NetGenCAD.UI.ViewModels
                     case "Cylinder":
                         IsCylinderSelected = true;
                         break;
-                    case "Surface":
-                        IsSurfaceSelected = true;
+                    case "Round Cylinder":
+                        IsRoundCylinderSelected = true;
                         break;
                     case "Sphere":
                         IsSphereSelected = true;
+                        break;
+                    case "Surface":
+                        IsSurfaceSelected = true;
                         break;
                 }
             }

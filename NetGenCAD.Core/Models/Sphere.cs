@@ -7,7 +7,7 @@ namespace NetGenCAD.Core.Models
         private readonly Dictionary<string, object> _parameters = parameters;
 
         public double Radius => (double)_parameters["r"];
-        public double Resolution => _parameters.TryGetValue("resolution", out object? value) ? (double)value : 100;
+        public int Resolution => _parameters.TryGetValue("resolution", out object? value) ? (int)value : 360;
 
         public string OSCADMethod => $"sphere(r = {Radius}, $fn = {Resolution});";
 

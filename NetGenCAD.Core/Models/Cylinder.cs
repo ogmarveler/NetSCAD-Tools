@@ -6,7 +6,7 @@ namespace NetGenCAD.Core.Models
     {
         private readonly Dictionary<string, object> _parameters = parameters;
 
-        public double Radius => (double)_parameters["r"];
+        public double Radius => _parameters.ContainsKey("r") ? Convert.ToDouble(_parameters["r"]) : 0;
         public double Height => (double)_parameters["h"];
         public double Radius1 => _parameters.ContainsKey("r1") ? Convert.ToDouble(_parameters["r1"]) : 0;
         public double Radius2 => _parameters.ContainsKey("r2") ? Convert.ToDouble(_parameters["r2"]) : 0;
