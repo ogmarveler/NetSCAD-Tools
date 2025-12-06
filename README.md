@@ -11,6 +11,7 @@ If you're looking for only the axis tool, check out the NetGenCAD-Axis repositor
 ######
 #### Prerequisites
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
+######
 **Version 0.2.0** 
 * New solids added: Sphere and Rounded Cylinder.
 * Added ability to create layers within custom objects. Layers allow for grouping of solids within the object, making it easier to manage complex designs. 
@@ -22,9 +23,6 @@ If you're looking for only the axis tool, check out the NetGenCAD-Axis repositor
 ######
 ![Coin](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/redAlertTeslaCoil.png)
 ![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coilCreateDark.png)
-######
-![Mini PC](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/miniPC.png)
-![Designer Object Dark Cube](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/designerObjectDarkCube.png)
 ######
 #### Rendering/Previewing the Object in OpenSCAD
 The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. Click the **Remove Axis** within the object.scad file to comment out the axis. If exporting to STL, this will be done automatically. If building a ruler or some form of 1D or 2D measurement, then this is would be an example of why you would include the axis in rendering before final output.
