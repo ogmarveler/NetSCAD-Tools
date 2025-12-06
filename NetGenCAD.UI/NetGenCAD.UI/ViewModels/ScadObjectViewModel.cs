@@ -7,10 +7,8 @@ using NetGenCAD.Core.Material;
 using NetGenCAD.Core.Measurements;
 using NetGenCAD.Core.Models;
 using NetGenCAD.Core.Primitives;
-using NetGenCAD.Core.Utility;
 using NetGenCAD.Designer.Functions;
 using NetGenCAD.Designer.Repositories;
-using NetGenCAD.Designer.Utility;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -18,13 +16,10 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using static NetGenCAD.Core.Measurements.Colors;
 using static NetGenCAD.Core.Measurements.Conversion;
 using static NetGenCAD.Core.Measurements.Selector;
-using static NetGenCAD.Core.Utility.WrapInModule;
 using static NetGenCAD.Designer.Functions.ObjectScadFunctions;
 
 namespace NetGenCAD.UI.ViewModels

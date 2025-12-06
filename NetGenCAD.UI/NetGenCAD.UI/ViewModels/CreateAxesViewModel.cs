@@ -1,8 +1,9 @@
+using Microsoft.Data.Sqlite;
 using NetGenCAD.Axis.Scad.Models;
 using NetGenCAD.Axis.Scad.Utility;
 using NetGenCAD.Axis.SCAD.Modules;
 using NetGenCAD.Core.Measurements;
-using Microsoft.Data.Sqlite;
+using NetGenCAD.Designer.Functions;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -94,58 +95,13 @@ namespace NetGenCAD.UI.ViewModels
             _ = GetAxesList();  // Get existing list of axes generated
         }
 
-        public void RaisePropertyChanged(string propertyName)
-        {
-            this.RaisePropertyChanged(propertyName);
-        }
-        public double MinXValue
-        {
-            get => _minX; set
-            {
-                this.RaiseAndSetIfChanged(ref _minX, value);
-                _ = ValidateMinMax();
-            }
-        }
-        public double MaxXValue
-        {
-            get => _maxX; set
-            {
-                this.RaiseAndSetIfChanged(ref _maxX, value);
-                _ = ValidateMinMax();
-            }
-        }
-        public double MinYValue
-        {
-            get => _minY; set
-            {
-                this.RaiseAndSetIfChanged(ref _minY, value);
-                _ = ValidateMinMax();
-            }
-        }
-        public double MaxYValue
-        {
-            get => _maxY; set
-            {
-                this.RaiseAndSetIfChanged(ref _maxY, value);
-                _ = ValidateMinMax();
-            }
-        }
-        public double MinZValue
-        {
-            get => _minZ; set
-            {
-                this.RaiseAndSetIfChanged(ref _minZ, value);
-                _ = ValidateMinMax();
-            }
-        }
-        public double MaxZValue
-        {
-            get => _maxZ; set
-            {
-                this.RaiseAndSetIfChanged(ref _maxZ, value);
-                _ = ValidateMinMax();
-            }
-        }
+        public void RaisePropertyChanged(string propertyName) { this.RaisePropertyChanged(propertyName); }
+        public double MinXValue { get => _minX; set { this.RaiseAndSetIfChanged(ref _minX, value); _ = ValidateMinMax(); } }
+        public double MaxXValue { get => _maxX; set { this.RaiseAndSetIfChanged(ref _maxX, value); _ = ValidateMinMax(); } }
+        public double MinYValue { get => _minY; set { this.RaiseAndSetIfChanged(ref _minY, value); _ = ValidateMinMax(); } }
+        public double MaxYValue { get => _maxY; set { this.RaiseAndSetIfChanged(ref _maxY, value); _ = ValidateMinMax(); } }
+        public double MinZValue { get => _minZ; set { this.RaiseAndSetIfChanged(ref _minZ, value); _ = ValidateMinMax(); } }
+        public double MaxZValue { get => _maxZ; set { this.RaiseAndSetIfChanged(ref _maxZ, value); _ = ValidateMinMax(); } }
         public string MinXWatermark { get => _inputMinX; set => this.RaiseAndSetIfChanged(ref _inputMinX, value); }
         public string MaxXWatermark { get => _inputMaxX; set => this.RaiseAndSetIfChanged(ref _inputMaxX, value); }
         public string MinYWatermark { get => _inputMinY; set => this.RaiseAndSetIfChanged(ref _inputMinY, value); }
@@ -189,81 +145,61 @@ namespace NetGenCAD.UI.ViewModels
         public string ModalContent { get => _modalContent; set => this.RaiseAndSetIfChanged(ref _modalContent, value); }
         public bool IsModalOpen { get => _isModalOpen; set => this.RaiseAndSetIfChanged(ref _isModalOpen, value); }
 
-        public async Task ConvertInputs(int decimalPlaces) // Convert from unit system to another
-        {
-            if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged) { await ConvertInputsImperial(decimalPlaces); }
-            else if (_selectedUnit == UnitSystem.Metric && UnitHasChanged) { await ConvertInputsMetric(decimalPlaces); }
-        }
-
         public async Task CreateCustomAxisAsync()
         {
-            AxisDetailsShown = false;      // Disables display of previous generated output details
-            if (!double.IsNaN(_minX) && !double.IsNaN(_maxX) &&   // Check inputs to ensure they're doubles
-                !double.IsNaN(_minY) && !double.IsNaN(_maxY) &&
-                !double.IsNaN(_minZ) && !double.IsNaN(_maxZ))
+            AxisDetailsShown = false; // Disables display of previous generated output details
+
+            // Define the callback to update ViewModel properties
+            CreateAxesFunctions.CreateCustomAxisCallbackAsync onAxisCreated = async (
+                customAxis,
+                displayMinX,
+                displayMaxX,
+                displayMinY,
+                displayMaxY,
+                displayMinZ,
+                displayMaxZ,
+                callingMethodLength,
+                newUnitHasChanged) =>
             {
-                if (_selectedUnit == UnitSystem.Imperial && !UnitHasChanged)
-                {
-                    // Convert if inputs are inches but function is mm
-                    _minX = Math.Round(InchesToMillimeter(_minX), _decimalPlaces);
-                    _maxX = Math.Round(InchesToMillimeter(_maxX), _decimalPlaces);
-                    _minY = Math.Round(InchesToMillimeter(_minY), _decimalPlaces);
-                    _maxY = Math.Round(InchesToMillimeter(_maxY), _decimalPlaces);
-                    _minZ = Math.Round(InchesToMillimeter(_minZ), _decimalPlaces);
-                    _maxZ = Math.Round(InchesToMillimeter(_maxZ), _decimalPlaces);
-                    UnitHasChanged = true; // To prevent converting inches to mm twice
-                }
-                var axisSettings = new AxisSettings(
-                 //outputDirectory: PathHelper.GetProjectRoot(), // ..NetGenCAD.UI.<Platform>/Scad/Axes
-                 outputDirectory: "", // ..NetGenCAD.UI.<Platform>/Scad/Axes
-                 backgroundType: _selectedBackground,
-                 measureType: _selectedUnit,
-                 minX: _minX,
-                 maxX: _maxX,
-                 minY: _minY,
-                 maxY: _maxY,
-                 minZ: _minZ,
-                 maxZ: _maxZ
-                );
+                // Update axis range display values
+                MinXValue = displayMinX;
+                MaxXValue = displayMaxX;
+                MinYValue = displayMinY;
+                MaxYValue = displayMaxY;
+                MinZValue = displayMinZ;
+                MaxZValue = displayMaxZ;
 
-                /**** SetAxis Generation function ****/
-                _customAxis = new CustomAxis();             //Clear out previous custom axis data
-                _customAxis = await GUI.SetAxis(axisSettings);
-
-                // Convert values back to inches since backend function uses mm
-                if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged)  // Update frontend with adjusted imperial values
-                {
-                    MinXValue = Math.Round(MillimeterToInches(_customAxis.Settings.MinX), (int)(_decimalPlaces));
-                    MaxXValue = Math.Round(MillimeterToInches(_customAxis.Settings.MaxX), (int)(_decimalPlaces));
-                    MinYValue = Math.Round(MillimeterToInches(_customAxis.Settings.MinY), (int)(_decimalPlaces));
-                    MaxYValue = Math.Round(MillimeterToInches(_customAxis.Settings.MaxY), (int)(_decimalPlaces));
-                    MinZValue = Math.Round(MillimeterToInches(_customAxis.Settings.MinZ), (int)(_decimalPlaces));
-                    MaxZValue = Math.Round(MillimeterToInches(_customAxis.Settings.MaxZ), (int)(_decimalPlaces));
-                    UnitHasChanged = false;
-                }
-                else   // Update frontend with adjusted metric values, no conversion needed
-                {
-                    MinXValue = Math.Round(_customAxis.Settings.MinX, (int)(_decimalPlaces));
-                    MaxXValue = Math.Round(_customAxis.Settings.MaxX, (int)(_decimalPlaces));
-                    MinYValue = Math.Round(_customAxis.Settings.MinY, (int)(_decimalPlaces));
-                    MaxYValue = Math.Round(_customAxis.Settings.MaxY, (int)(_decimalPlaces));
-                    MinZValue = Math.Round(_customAxis.Settings.MinZ, (int)(_decimalPlaces));
-                    MaxZValue = Math.Round(_customAxis.Settings.MaxZ, (int)(_decimalPlaces));
-                }
+                // Update unit changed flag
+                UnitHasChanged = newUnitHasChanged;
 
                 // Set Post-Axis Generation Details
                 IsImperial = SelectedUnitValue != UnitSystem.Metric;
                 IsMetric = SelectedUnitValue == UnitSystem.Metric;
-                TotalCubicVolume = _customAxis.TotalCubicVolume; // Provides the total volume of the axes
-                TotalCubicVolumeScale = _customAxis.TotalCubicVolumeScale; // Provides the total volume of the axes
-                ModuleName = _customAxis.ModuleName;          // Update new axis details
-                CallingMethod = _customAxis.CallingMethod; // To call the axis module
-                CallingMethodLength = _customAxis.CallingMethod.Length - 1; // For copy and paste into main file
-                IncludeFile = $"include <{_customAxis.CallingMethod.ToLower().Replace("();", "")}.scad>";
+                TotalCubicVolume = customAxis.TotalCubicVolume;
+                TotalCubicVolumeScale = customAxis.TotalCubicVolumeScale;
+                ModuleName = customAxis.ModuleName;
+                CallingMethod = customAxis.CallingMethod;
+                CallingMethodLength = callingMethodLength;
+                IncludeFile = $"include <{customAxis.CallingMethod.ToLower().Replace("();", "")}.scad>";
                 AxisDetailsShown = true;
-                await GetAxesList();  // Get updated AxesList
-            }
-            else
+
+                // Refresh the axes list
+                await GetAxesList();
+            };
+
+            // Call the static function with callback
+            await CreateAxesFunctions.CreateCustomAxisWithCallbackAsync(
+                _minX, _maxX,
+                _minY, _maxY,
+                _minZ, _maxZ,
+                _selectedUnit,
+                _selectedBackground,
+                _decimalPlaces,
+                UnitHasChanged,
+                onAxisCreated);
+
+            // Handle invalid input case
+            if (!AxisDetailsShown)
             {
                 CallingMethod = "Please enter only numeric coordinates";
                 AxisDetailsShown = true;
@@ -298,47 +234,62 @@ namespace NetGenCAD.UI.ViewModels
         /**** Axes List DataGrid ****/
         private Task GetAxesList()
         {
-            var parser = new ScadParser();
-            var filePath = Path.Combine("Scad", "Axes", "axes.scad");
-            _axesList = parser.AxesModulesList(filePath);
-            AxesListMetric = [.. _axesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_MM_"))];
-            AxesListImperial = [.. _axesList.Where(x => x.CallingMethod != null && x.CallingMethod.Contains("_Inch_"))];
+            // Call the static function
+            var (allAxes, metricAxes, imperialAxes) = CreateAxesFunctions.GetAxesList();
+
+            // Update ViewModel properties
+            _axesList = allAxes;
+            AxesListMetric = metricAxes;
+            AxesListImperial = imperialAxes;
+
             return Task.CompletedTask;
         }
 
-        // ViewModel helper functions for conversions - stateful
-        private Task ConvertInputsImperial(int decimalPlaces)
+        public async Task ConvertInputs(int decimalPlaces)
         {
-            // Convert from metric unit system to imperial
-            MinXValue = Math.Round(MillimeterToInches(_minX), decimalPlaces);  // mm to inches
-            MaxXValue = Math.Round(MillimeterToInches(_maxX), decimalPlaces);
-            MinYValue = Math.Round(MillimeterToInches(_minY), decimalPlaces);
-            MaxYValue = Math.Round(MillimeterToInches(_maxY), decimalPlaces);
-            MinZValue = Math.Round(MillimeterToInches(_minZ), decimalPlaces);
-            MaxZValue = Math.Round(MillimeterToInches(_maxZ), decimalPlaces);
-            TotalCubicVolume = Math.Round(VolumeConverter.ConvertCm3ToIn3(_totalCubicVolume), decimalPlaces);  // cm3 to in3
-            TotalCubicVolumeScale = Math.Round(VolumeConverter.ConvertM3ToFt3(_totalCubicVolumeScale), decimalPlaces);  // m to feet 
-            UnitHasChanged = false;
-            return Task.CompletedTask;
-        }
+            if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged)
+            {
+                var result = CreateAxesFunctions.ConvertInputToImperial(
+                    _minX, _maxX, _minY, _maxY, _minZ, _maxZ, _totalCubicVolume, _totalCubicVolumeScale, decimalPlaces);
 
-        private Task ConvertInputsMetric(int decimalPlaces)
-        {
-            // Convert from imperial unit system to metric
-            MinXValue = Math.Round(InchesToMillimeter(_minX), decimalPlaces);  // inches to mm
-            MaxXValue = Math.Round(InchesToMillimeter(_maxX), decimalPlaces);
-            MinYValue = Math.Round(InchesToMillimeter(_minY), decimalPlaces);
-            MaxYValue = Math.Round(InchesToMillimeter(_maxY), decimalPlaces);
-            MinZValue = Math.Round(InchesToMillimeter(_minZ), decimalPlaces);
-            MaxZValue = Math.Round(InchesToMillimeter(_maxZ), decimalPlaces);
-            TotalCubicVolume = Math.Round(VolumeConverter.ConvertIn3ToCm3(_totalCubicVolume), decimalPlaces);  // inches to cm
-            TotalCubicVolumeScale = Math.Round(VolumeConverter.ConvertFt3ToM3(_totalCubicVolumeScale), decimalPlaces);  // feet to m
-            UnitHasChanged = false;
-            return Task.CompletedTask;
+                MinXValue = result.MinX;
+                MaxXValue = result.MaxX;
+                MinYValue = result.MinY;
+                MaxYValue = result.MaxY;
+                MinZValue = result.MinZ;
+                MaxZValue = result.MaxZ;
+                TotalCubicVolume = result.Volume;
+                TotalCubicVolumeScale = result.VolumeScale;
+                UnitHasChanged = false;
+            }
+            else if (_selectedUnit == UnitSystem.Metric && UnitHasChanged)
+            {
+                var result = CreateAxesFunctions.ConvertInputToMetric(
+                    _minX, _maxX, _minY, _maxY, _minZ, _maxZ, _totalCubicVolume, _totalCubicVolumeScale, decimalPlaces);
+
+                MinXValue = result.MinX;
+                MaxXValue = result.MaxX;
+                MinYValue = result.MinY;
+                MaxYValue = result.MaxY;
+                MinZValue = result.MinZ;
+                MaxZValue = result.MaxZ;
+                TotalCubicVolume = result.Volume;
+                TotalCubicVolumeScale = result.VolumeScale;
+                UnitHasChanged = false;
+            }
+
+            await Task.CompletedTask;
         }
 
         private Task ValidateMinMax()
         {
+            // Call the static validation function
+            var validationResult = CreateAxesFunctions.ValidateAxisRanges(
+                _minX, _maxX,
+                _minY, _maxY,
+                _minZ, _maxZ);
+
+            // Clear all previous errors
             ClearErrors(nameof(MaxXValue));
             ClearErrors(nameof(MaxYValue));
             ClearErrors(nameof(MaxZValue));
@@ -346,66 +297,25 @@ namespace NetGenCAD.UI.ViewModels
             ClearErrors(nameof(MinYValue));
             ClearErrors(nameof(MinZValue));
 
-            var xValid = true;
-            var yValid = true;
-            var zValid = true;
+            // Apply errors from validation result
+            foreach (var errorEntry in validationResult.ErrorMessages)
+            {
+                string propertyName = errorEntry.Key switch
+                {
+                    nameof(_minX) or $"{nameof(_minX)}_range" => nameof(MinXValue),
+                    nameof(_maxX) or $"{nameof(_maxX)}_range" => nameof(MaxXValue),
+                    nameof(_minY) or $"{nameof(_minY)}_range" => nameof(MinYValue),
+                    nameof(_maxY) or $"{nameof(_maxY)}_range" => nameof(MaxYValue),
+                    nameof(_minZ) or $"{nameof(_minZ)}_range" => nameof(MinZValue),
+                    nameof(_maxZ) or $"{nameof(_maxZ)}_range" => nameof(MaxZValue),
+                    _ => errorEntry.Key
+                };
 
-            // X
-            if (MinXValue > 0)
-            {
-                AddError(nameof(MinXValue), "Min X <= 0");
-                xValid = false;
-            }
-            if (MaxXValue < 0)
-            {
-                AddError(nameof(MaxXValue), "Max X >= 0");
-                xValid = false;
-            }
-            if (MinXValue >= MaxXValue)
-            {
-                AddError(nameof(MinXValue), "Min X < Max X");
-                AddError(nameof(MaxXValue), "Max X > Min X");
-                xValid = false;
+                AddError(propertyName, errorEntry.Value);
             }
 
-            // Y
-            if (MinYValue > 0)
-            {
-                AddError(nameof(MinYValue), "Min Y <= 0");
-                yValid = false;
-            }
-            if (MaxYValue < 0)
-            {
-                AddError(nameof(MaxYValue), "Max Y >= 0");
-                yValid = false;
-            }
-            if (MinYValue >= MaxYValue)
-            {
-                AddError(nameof(MinYValue), "Min Y < Max Y");
-                AddError(nameof(MaxYValue), "Max Y > Min Y");
-                yValid = false;
-            }
-
-            // Z
-            if (MinZValue > 0)
-            {
-                AddError(nameof(MinZValue), "Min Z <= 0");
-                zValid = false;
-            }
-            if (MaxZValue < 0)
-            {
-                AddError(nameof(MaxZValue), "Max Z >= 0");
-                zValid = false;
-            }
-            if (MinZValue >= MaxZValue)
-            {
-                AddError(nameof(MinZValue), "Min Z < Max Z");
-                AddError(nameof(MaxZValue), "Max Z > Min Z");
-                zValid = false;
-            }
-
-            if (xValid && yValid && zValid) { CreateButtonEnabled = true; }
-            else { CreateButtonEnabled = false; }
+            // Update button enabled state based on validation
+            CreateButtonEnabled = validationResult.IsValid;
             return Task.CompletedTask;
         }
     }

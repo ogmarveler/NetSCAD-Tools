@@ -7,7 +7,6 @@ using NetGenCAD.UI.ViewModels;
 using NetGenCAD.UI.Views;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using ReactiveUI.Avalonia;
 using ReactiveUI.Avalonia.Splat; // Autofac, DryIoc, Ninject, Microsoft.Extensions.DependencyInjection integrations
 using System;
@@ -41,23 +40,23 @@ namespace NetGenCAD
             .UseReactiveUIWithMicrosoftDependencyResolver(
             services =>
             {
-                services.AddLogging(); // Add logging support
+                //services.AddLogging(); // Add logging support
 
                 // Register dbPath as a singleton
                 services.AddSingleton(provider =>
                 {
-                    var logger = provider.GetRequiredService<ILogger<Program>>();
+                    //var logger = provider.GetRequiredService<ILogger<Program>>();
                     var dbPath = GetDbPath();
-                    logger.LogInformation("Using DB path: {DbPath}, RID: {Rid}", dbPath, rid);
+                    //logger.LogInformation("Using DB path: {DbPath}, RID: {Rid}", dbPath, rid);
                     return dbPath;
                 });
 
                 // Register in Program.cs
                 services.AddSingleton<IScadPathProvider>(provider =>
                 {
-                    var logger = provider.GetRequiredService<ILogger<Program>>();
+                    //var logger = provider.GetRequiredService<ILogger<Program>>();
                     var scadPath = GetScadPath(); // Your method to get the path
-                    logger.LogInformation("Using SCAD path: {ScadPath}, RID: {Rid}", scadPath, rid);
+                    //logger.LogInformation("Using SCAD path: {ScadPath}, RID: {Rid}", scadPath, rid);
                     return new ScadPathProvider(scadPath);
                 });
 
