@@ -8,12 +8,12 @@ Welcome to the NetGenCAD Designer Guide! This tutorial covers the basics of defi
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 ###### 
 #### Types of Solids Available
-Cubes and cylinders can be generated from the Designer module within this application. Rounded versions of cubes are also available in this iteration, in order to show how to offset Minkowski rounding to align with 0,0 axes. Future iterations will have more solid types available, but if needed, generated outputs can be modified within SCAD files directly. Solids available are as follows:
-###### 
 * **Cube** - default aligned on the 0,0,0 axes or can be offset with translate
 * **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
 * **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
+* **Rounded Cylinder** - all rounded cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
 * **Surface** - import from png or dat file. Default aligned on the 0,0,0 axes or can be offset with translate.
+* **Sphere** - all spheres are aligned on the 0,0,0 axes, with the center point of the sphere at 0,0,0.
 ###### 
 #### Object Adjustments Available
 * **Mirror** - mirror along X, Y, and/or Z axis when exporting or viewing the object
@@ -60,10 +60,12 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 | 20. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**       |     Units displayed in degrees (°)      |       0°      |
 | 21. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**       |     Units displayed in degrees (°)      |       0°      |
 | 22. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 23. Optional: Select **Color**, set the color for the solid                   |       Solids Table                      |     Silver    |
-
+| 23. Optional: Select **Color**, set the color for the solid                   |       OpenSCAD Colors                   |     Silver    |
+| 24. Optional: Enter numeric **Alpha**, set the color opacity for the solid    |       0 - 1                             |       1       |
+| 25. Optional: Enter numeric **Layer**, set which module to apply the solid to |                                         |       0       |
+	
 ###### 
-#### Setting Inputs for New Solid: Cylinder
+#### Setting Inputs for New Solid: Cylinder and Rounded Cylinder
 | Steps                                                                         | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
 | 12. Optional: Select from presets to apply cylinder radius or cylinder height |     Screw Size or Screw Type            |               |
@@ -77,7 +79,25 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 | 20. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**       |     Units displayed in degrees (°)      |       0°      |
 | 21. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**       |     Units displayed in degrees (°)      |       0°      |
 | 22. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 23. Optional: Select **Color**, set the color for the solid                   |       Solids Table                      |     Silver    |
+| 23. Optional: Select **Color**, set the color for the solid                   |       OpenSCAD Colors                   |     Silver    |
+| 24. Optional: Enter numeric **Alpha**, set the color opacity for the solid    |       0 - 1                             |       1       |
+| 25. Optional: Enter numeric **Layer**, set which module to apply the solid to |                                         |       0       |
+
+###### 
+#### Setting Inputs for New Solid: Sphere
+| Steps                                                                         | Requirements / Options                  | Default Value |
+| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
+| 12. Optional: Select from presets to apply sphere radius                      |     Screw Size or Screw Type            |               |
+| 13. Enter numeric **Radius**, based on center to outer edge                   |     Units displayed in mm or inches     |  <required>   |
+| 14. Optional: Enter numeric **X Offset**, setting start point on **X Axis**   |     Units displayed in mm or inches     |       0       |
+| 15. Optional: Enter numeric **Y Offset**, setting start point on **Y Axis**   |     Units displayed in mm or inches     |       0       |
+| 16. Optional: Enter numeric **Z Offset**, setting start point on **Z Axis**   |     Units displayed in mm or inches     |       0       |
+| 17. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**       |     Units displayed in degrees (°)      |       0°      |
+| 18. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**       |     Units displayed in degrees (°)      |       0°      |
+| 19. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**       |     Units displayed in degrees (°)      |       0°      |
+| 20. Optional: Select **Color**, set the color for the solid                   |       OpenSCAD Colors                   |     Silver    |
+| 21. Optional: Enter numeric **Alpha**, set the color opacity for the solid    |       0 - 1                             |       1       |
+| 22. Optional: Enter numeric **Layer**, set which module to apply the solid to |                                         |       0       |
 
 ###### 
 #### Setting Inputs for New Solid: Surface
@@ -97,7 +117,9 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 | 23. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**        |     Units displayed in degrees (°)      |       0°      |
 | 24. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**        |     Units displayed in degrees (°)      |       0°      |
 | 25. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**        |     Units displayed in degrees (°)      |       0°      |
-| 26. Optional: Select **Color**, set the color for the solid                    |     Solids Table                        |     Silver    |
+| 26. Optional: Select **Color**, set the color for the solid                    |     OpenSCAD Colors                     |     Silver    |
+| 27. Optional: Enter numeric **Alpha**, set the color opacity for the solid     |       0 - 1                             |       1       |
+| 28. Optional: Enter numeric **Layer**, set which module to apply the solid to  |                                         |       0       |
 
 ###### 
 #### Object Action Buttons
@@ -133,7 +155,6 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 | 1. **Trash Bin Icon** - remove the selected row from the object               |       Solids or Modules Table           |               |
 | 2. **Clipboard Icon** - opens a modal showing the solids used in the module   | Modules Table                           |               |
 | 3. **Sorting** - click on one or more column headers to sort (shift + click)  |       Solids or Modules Table           |               |
-| 4. **Color Dropdown** - set the color for the solid                           |       Solids Table                      |               |
 
 ######
 #### Rendering/Previewing the Object in OpenSCAD
