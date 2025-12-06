@@ -6,6 +6,7 @@
     xmlns:conv="using:NetGenCAD.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sel="using:NetGenCAD.Core.Measurements"
     xmlns:vm="using:NetGenCAD.UI.ViewModels"
     d:DesignHeight="720"
     d:DesignWidth="1280"
@@ -14,21 +15,6 @@
     Background="{DynamicResource WindowBackground}"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <conv:DoubleToNullableConverter x:Key="DoubleToNullableConverter" />
-        <conv:UnitTextConverter x:Key="UnitTextConverter" />
-        <conv:BooleanToTextConverter x:Key="BooleanToTextConverter" />
-        <conv:BooleanOrConverter x:Key="BooleanOrConverter" />
-        <conv:CollectionCountToBooleanConverter x:Key="CollectionCountToBooleanConverter" />
-        <conv:CollectionCountToTextConverter x:Key="CollectionCountToTextConverter" />
-        <conv:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter" />
-        <conv:MultiStringNotNullOrEmptyConverter x:Key="MultiStringNotNullOrEmptyConverter" />
-        <conv:ShapeValidationConverter x:Key="ShapeValidationConverter" />
-        <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
-        <conv:UnitSystemToColorConverter x:Key="UnitSystemToColorConverter" />
-        <conv:AxisDisplayConverter x:Key="AxisDisplayConverter" />
-        <conv:ModuleTypeToColorConverter x:Key="ModuleTypeToColorConverter" />
-    </UserControl.Resources>
 
     <UserControl.Styles>
         <!--  DataGrid Column Header Styles  -->
@@ -46,25 +32,6 @@
             <Setter Property="FontSize" Value="13" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
-        <Style Selector="DataGrid#ModulesDifferenceDataGrid DataGridColumnHeader">
-            <Setter Property="Background" Value="{DynamicResource TealForeground}" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="Foreground" Value="{DynamicResource TealBackground}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-        </Style>
-        <Style Selector="DataGrid#ModulesIntersectionDataGrid DataGridColumnHeader">
-            <Setter Property="Background" Value="{DynamicResource GoldForeground}" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="Foreground" Value="{DynamicResource GoldBackground}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-        </Style>
-
-        <!--  Round the internal DataGrid border to match CornerRadius  -->
-        <Style Selector="DataGrid /template/ Border#DataGridBorder">
-            <Setter Property="CornerRadius" Value="6" />
-        </Style>
 
         <!--  Default Grid Cell Styling  -->
         <Style Selector="Grid#MainInputGrid > :is(Control)">
@@ -75,75 +42,6 @@
         <Style Selector="Grid#AxisControlsGrid > :is(Control)">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-
-        <!--  Button Content Alignment  -->
-        <Style Selector="Button">
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Height" Value="32" />
-            <Setter Property="MinWidth" Value="100" />
-            <Setter Property="Margin" Value="0" />
-        </Style>
-
-        <!--  Standard TextBox Style  -->
-        <Style Selector="TextBox.standardInput">
-            <Setter Property="Height" Value="32" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="SelectionBrush" Value="Yellow" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="0" />
-        </Style>
-
-        <!--  Disabled TextBox Style - Transparent Background with Normal Text  -->
-        <Style Selector="TextBox.standardInput:disabled">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="Foreground" Value="{DynamicResource CardForeground}" />
-        </Style>
-
-        <!--  Keep text fully visible when disabled  -->
-        <Style Selector="TextBox.standardInput:disabled /template/ TextBlock#PART_Watermark">
-            <Setter Property="Opacity" Value="1.0" />
-        </Style>
-
-        <Style Selector="TextBox.standardInput:disabled /template/ TextPresenter#PART_TextPresenter">
-            <Setter Property="Opacity" Value="1.0" />
-        </Style>
-
-        <!--  Standard TextBlock Label Style  -->
-        <Style Selector="TextBlock.standardLabel">
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="TextAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="0" />
-        </Style>
-
-        <!--  Standard StackPanel Style  -->
-        <Style Selector="StackPanel.inputGroup">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Spacing" Value="3" />
-            <Setter Property="Margin" Value="0" />
-        </Style>
-
-        <!--  ComboBox Height Alignment  -->
-        <Style Selector="ComboBox">
-            <Setter Property="Height" Value="32" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="0" />
         </Style>
     </UserControl.Styles>
 
@@ -631,7 +529,7 @@
                             BorderBrush="{DynamicResource PurpleBackground}"
                             BorderThickness="1"
                             Foreground="{DynamicResource PurpleBackground}"
-                            ItemsSource="{Binding SolidTypes}"
+                            ItemsSource="{Binding Source={x:Static sel:Selector.SolidTypes}}"
                             PlaceholderText="Select Solid"
                             SelectedItem="{Binding SelectedSolidType, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
@@ -711,7 +609,7 @@
                                 </TextBlock.IsVisible>
                             </TextBlock>
                             <ComboBox
-                                ItemsSource="{Binding ServerRackWidthTypes}"
+                                ItemsSource="{Binding Source={x:Static sel:Selector.ServerRackWidthTypes}}"
                                 PlaceholderText="Frame"
                                 SelectedItem="{Binding SelectedServerRackWidthType, Mode=TwoWay}">
                                 <ComboBox.IsVisible>
@@ -822,7 +720,7 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                             <ComboBox
-                                ItemsSource="{Binding ScrewProperties}"
+                                ItemsSource="{Binding Source={x:Static sel:Selector.ScrewProperties}}"
                                 PlaceholderText="Screw Type"
                                 SelectedItem="{Binding SelectedScrewProperty, Mode=TwoWay}">
                                 <ToolTip.Tip>

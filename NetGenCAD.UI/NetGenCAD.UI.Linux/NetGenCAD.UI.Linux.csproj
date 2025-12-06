@@ -20,6 +20,7 @@
 		<InvariantGlobalization>false</InvariantGlobalization>
 		<!-- If no localization needed, reduces size -->
 		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+		<Platforms>AnyCPU;x64;ARM64</Platforms>
 		<!-- No hot reload in production -->
 	</PropertyGroup>
 
@@ -37,9 +38,31 @@
 		<DebugType>none</DebugType>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+	  <Optimize>True</Optimize>
+	  <IsPublishable>True</IsPublishable>
+	  <DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	  <Optimize>True</Optimize>
+	  <IsPublishable>True</IsPublishable>
+	  <DebugType>none</DebugType>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<IsPublishable>True</IsPublishable>
 		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+	  <IsPublishable>True</IsPublishable>
+	  <DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	  <IsPublishable>True</IsPublishable>
+	  <DebugType>none</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Avalonia">

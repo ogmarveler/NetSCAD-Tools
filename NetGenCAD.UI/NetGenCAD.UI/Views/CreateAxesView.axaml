@@ -14,24 +14,7 @@
     Background="{DynamicResource WindowBackground}"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <conv:DoubleToNullableConverter x:Key="DoubleToNullableConverter" />
-        <conv:UnitTextConverter x:Key="UnitTextConverter" />
-        <conv:UnitSystemToColorConverter x:Key="UnitSystemToColorConverter" />
-        <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
-        <conv:CollectionCountToBooleanConverter x:Key="CollectionCountToBooleanConverter" />
-        <conv:ThemeToIconConverter x:Key="ThemeToIconConverter" />
-    </UserControl.Resources>
-
     <UserControl.Styles>
-        <!--  Global DataGrid header centering  -->
-        <Style Selector="DataGridColumnHeader">
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="Padding" Value="4,2" />
-            <Setter Property="MinHeight" Value="28" />
-        </Style>
-
         <!--  Metric-specific styling (inherits centering)  -->
         <Style Selector="DataGrid#AxesListMetric DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -53,64 +36,6 @@
             <Setter Property="Padding" Value="4,2" />
             <Setter Property="MinHeight" Value="24" />
             <Setter Property="FontSize" Value="15" />
-        </Style>
-
-        <!--  Round the internal DataGrid border to match CornerRadius  -->
-        <Style Selector="DataGrid /template/ Border#DataGridBorder">
-            <Setter Property="CornerRadius" Value="6" />
-        </Style>
-
-        <!--  Standard TextBox Style  -->
-        <Style Selector="TextBox.standardInput">
-            <Setter Property="Height" Value="32" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="SelectionBrush" Value="Yellow" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="0" />
-        </Style>
-
-        <!--  Standard TextBlock Label Style  -->
-        <Style Selector="TextBlock.standardLabel">
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="TextAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="0" />
-        </Style>
-
-        <!--  Standard StackPanel Style  -->
-        <Style Selector="StackPanel.inputGroup">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Spacing" Value="3" />
-            <Setter Property="Margin" Value="0" />
-        </Style>
-
-        <!--  ComboBox Height Alignment  -->
-        <Style Selector="ComboBox">
-            <Setter Property="Height" Value="32" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="0" />
-        </Style>
-
-        <!--  Button Styles  -->
-        <Style Selector="Button">
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Height" Value="32" />
-            <Setter Property="MinWidth" Value="100" />
-            <Setter Property="Margin" Value="0" />
         </Style>
     </UserControl.Styles>
 

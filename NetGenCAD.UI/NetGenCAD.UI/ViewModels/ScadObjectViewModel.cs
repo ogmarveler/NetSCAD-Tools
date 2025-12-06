@@ -592,47 +592,49 @@ namespace NetGenCAD.UI.ViewModels
         {
             if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged)
             {
-                ConvertInputsImperial(decimalPlaces);
+                var (length, width, height, thickness, radius, radius1, radius2, cylinderHeight, xOffset, yOffset, zOffset) =
+                    ConvertInputsToImperial(
+                        _lengthMM, _widthMM, _heightMM, _thicknessMM,
+                        _radiusMM, _radius1MM, _radius2MM, _cylinderHeightMM,
+                        _xOffsetMM, _yOffsetMM, _zOffsetMM,
+                        decimalPlaces);
+
+                LengthMM = length;
+                WidthMM = width;
+                HeightMM = height;
+                ThicknessMM = thickness;
+                RadiusMM = radius;
+                Radius1MM = radius1;
+                Radius2MM = radius2;
+                CylinderHeightMM = cylinderHeight;
+                XOffsetMM = xOffset;
+                YOffsetMM = yOffset;
+                ZOffsetMM = zOffset;
             }
             else if (_selectedUnit == UnitSystem.Metric && UnitHasChanged)
             {
-                ConvertInputsMetric(decimalPlaces);
+                var (length, width, height, thickness, radius, radius1, radius2, cylinderHeight, xOffset, yOffset, zOffset) =
+                    ConvertInputsToMetric(
+                        _lengthMM, _widthMM, _heightMM, _thicknessMM,
+                        _radiusMM, _radius1MM, _radius2MM, _cylinderHeightMM,
+                        _xOffsetMM, _yOffsetMM, _zOffsetMM,
+                        decimalPlaces);
+
+                LengthMM = length;
+                WidthMM = width;
+                HeightMM = height;
+                ThicknessMM = thickness;
+                RadiusMM = radius;
+                Radius1MM = radius1;
+                Radius2MM = radius2;
+                CylinderHeightMM = cylinderHeight;
+                XOffsetMM = xOffset;
+                YOffsetMM = yOffset;
+                ZOffsetMM = zOffset;
             }
+            
             IsImperial = SelectedUnitValue != UnitSystem.Metric;
             IsMetric = SelectedUnitValue == UnitSystem.Metric;
-        }
-
-        private void ConvertInputsImperial(int decimalPlaces)
-        {
-            // Convert from metric unit system to imperial (mm to inches)
-            LengthMM = Math.Round(MillimeterToInches(_lengthMM), decimalPlaces);
-            WidthMM = Math.Round(MillimeterToInches(_widthMM), decimalPlaces);
-            HeightMM = Math.Round(MillimeterToInches(_heightMM), decimalPlaces);
-            ThicknessMM = Math.Round(MillimeterToInches(_thicknessMM), decimalPlaces);
-            RadiusMM = Math.Round(MillimeterToInches(_radiusMM), decimalPlaces);
-            Radius1MM = Math.Round(MillimeterToInches(_radius1MM), decimalPlaces);
-            Radius2MM = Math.Round(MillimeterToInches(_radius2MM), decimalPlaces);
-            CylinderHeightMM = Math.Round(MillimeterToInches(_cylinderHeightMM), decimalPlaces);
-            XOffsetMM = Math.Round(MillimeterToInches(_xOffsetMM), decimalPlaces);
-            YOffsetMM = Math.Round(MillimeterToInches(_yOffsetMM), decimalPlaces);
-            ZOffsetMM = Math.Round(MillimeterToInches(_zOffsetMM), decimalPlaces);
-            UnitHasChanged = false;
-        }
-
-        private void ConvertInputsMetric(int decimalPlaces)
-        {
-            // Convert from imperial unit system to metric (inches to mm)
-            LengthMM = Math.Round(InchesToMillimeter(_lengthMM), decimalPlaces);
-            WidthMM = Math.Round(InchesToMillimeter(_widthMM), decimalPlaces);
-            HeightMM = Math.Round(InchesToMillimeter(_heightMM), decimalPlaces);
-            ThicknessMM = Math.Round(InchesToMillimeter(_thicknessMM), decimalPlaces);
-            RadiusMM = Math.Round(InchesToMillimeter(_radiusMM), decimalPlaces);
-            Radius1MM = Math.Round(InchesToMillimeter(_radius1MM), decimalPlaces);
-            Radius2MM = Math.Round(InchesToMillimeter(_radius2MM), decimalPlaces);
-            CylinderHeightMM = Math.Round(InchesToMillimeter(_cylinderHeightMM), decimalPlaces);
-            XOffsetMM = Math.Round(InchesToMillimeter(_xOffsetMM), decimalPlaces);
-            YOffsetMM = Math.Round(InchesToMillimeter(_yOffsetMM), decimalPlaces);
-            ZOffsetMM = Math.Round(InchesToMillimeter(_zOffsetMM), decimalPlaces);
             UnitHasChanged = false;
         }
 
@@ -644,7 +646,7 @@ namespace NetGenCAD.UI.ViewModels
             _axesModulesList = parser.AxesModulesList(filePath);
 
             // Call the static function to get filtered axes and updated values
-            var (filteredAxes, updatedAxisValue, updatedAxis) = ObjectScadFunctions.GetFilteredAxesList(
+            var (filteredAxes, updatedAxisValue, updatedAxis) = GetFilteredAxesList(
                 SelectedAxisUnitValue,
                 _axesModulesList,
                 AxisStored,
@@ -780,7 +782,7 @@ namespace NetGenCAD.UI.ViewModels
 
             if (solids.Any())
             {
-                var (title, content) = ObjectScadFunctions.BuildOscadMethodsModal(module, solids);
+                var (title, content) = BuildOscadMethodsModal(module, solids);
 
                 ModalTitle = title;
                 ModalContent = content;
@@ -1181,13 +1183,7 @@ namespace NetGenCAD.UI.ViewModels
             }
         }
         public List<ScrewSize>? ScrewSizes { get => _screwSizes; set => this.RaiseAndSetIfChanged(ref _screwSizes, value); }
-        public List<string> ScrewProperties { get; } =
-        [
-            "Screw Thread",
-            "Screw Head",
-            "Threaded Insert",
-            "Clearance Hole",
-        ];
+       
         public ServerRack? SelectedServerRack
         {
             get => _selectedServerRack;
@@ -1213,11 +1209,7 @@ namespace NetGenCAD.UI.ViewModels
             }
         }
         public List<ServerRack>? ServerRackSizes { get => _serverRackSizes; set => this.RaiseAndSetIfChanged(ref _serverRackSizes, value); }
-        public List<string> ServerRackWidthTypes { get; } =
-        [
-            "Inner Mount",
-            "Outer Mount",
-        ];
+
         public ObservableCollection<ModuleDimensions> ModuleDimensions
         {
             get => _moduleDimensions;
@@ -1269,7 +1261,7 @@ namespace NetGenCAD.UI.ViewModels
                     _ = CreateAxis();
             }
         }
-        public List<string> SolidTypes { get; } = ["Cube", "Round Cube", "Cylinder", "Round Cylinder", "Sphere", "Surface"];
+
         public string SelectedSolidType
         {
             get => _selectedShapeType;

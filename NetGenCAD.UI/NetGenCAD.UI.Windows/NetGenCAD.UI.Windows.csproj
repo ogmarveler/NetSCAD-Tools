@@ -16,6 +16,7 @@
 		<TrimmerSingleWarn>false</TrimmerSingleWarn>
 		<ILLinkTreatWarningsAsErrors>false</ILLinkTreatWarningsAsErrors>
 		<WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
+		<Platforms>x64;ARM64</Platforms>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -35,9 +36,21 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	  <Optimize>True</Optimize>
+	  <IsPublishable>True</IsPublishable>
+	  <DebugType>none</DebugType>
+	  <DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<IsPublishable>True</IsPublishable>
 		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	  <IsPublishable>True</IsPublishable>
+	  <DebugType>none</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Avalonia">

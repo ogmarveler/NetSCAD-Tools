@@ -1,7 +1,0 @@
-<ResourceDictionary
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:NetGenCAD.UI.Views;"
-    xmlns:views="using:NetGenCAD.UI.Views"
-    xmlns:vm="using:NetGenCAD.UI.ViewModels"
-    x:CompileBindings="True" />

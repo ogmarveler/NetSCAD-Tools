@@ -8,6 +8,22 @@
     xmlns:vm="clr-namespace:NetGenCAD.UI.ViewModels;assembly=NetGenCAD.UI"
     x:CompileBindings="True">
 
+    <!--  Converters  -->
+    <conv:DoubleToNullableConverter x:Key="DoubleToNullableConverter" />
+    <conv:UnitTextConverter x:Key="UnitTextConverter" />
+    <conv:BooleanToTextConverter x:Key="BooleanToTextConverter" />
+    <conv:BooleanOrConverter x:Key="BooleanOrConverter" />
+    <conv:CollectionCountToBooleanConverter x:Key="CollectionCountToBooleanConverter" />
+    <conv:CollectionCountToTextConverter x:Key="CollectionCountToTextConverter" />
+    <conv:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter" />
+    <conv:MultiStringNotNullOrEmptyConverter x:Key="MultiStringNotNullOrEmptyConverter" />
+    <conv:ShapeValidationConverter x:Key="ShapeValidationConverter" />
+    <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+    <conv:UnitSystemToColorConverter x:Key="UnitSystemToColorConverter" />
+    <conv:AxisDisplayConverter x:Key="AxisDisplayConverter" />
+    <conv:ModuleTypeToColorConverter x:Key="ModuleTypeToColorConverter" />
+    <conv:ThemeToIconConverter x:Key="ThemeToIconConverter" />
+
     <Design.PreviewWith>
         <Border Padding="20">
             <!--  Add Controls for Previewer Here  -->
@@ -57,9 +73,6 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
-    <!--  Convert for Enum descriptions  -->
-    <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
-
     <!--  Axes Combo Box  -->
     <StackPanel x:Key="AxesComboBox" x:DataType="vm:ScadObjectViewModel">
         <ComboBox
@@ -88,5 +101,4 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
     </StackPanel>
-
 </ResourceDictionary>

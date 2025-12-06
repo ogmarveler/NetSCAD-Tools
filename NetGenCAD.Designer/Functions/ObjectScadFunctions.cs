@@ -1555,5 +1555,97 @@ namespace NetGenCAD.Designer.Functions
 
             return (title, sb.ToString());
         }
+
+        /// <summary>
+        /// Converts input dimensions from metric (mm) to imperial (inches).
+        /// </summary>
+        /// <param name="lengthMM">Length in millimeters</param>
+        /// <param name="widthMM">Width in millimeters</param>
+        /// <param name="heightMM">Height in millimeters</param>
+        /// <param name="thicknessMM">Thickness in millimeters</param>
+        /// <param name="radiusMM">Radius in millimeters</param>
+        /// <param name="radius1MM">First radius in millimeters</param>
+        /// <param name="radius2MM">Second radius in millimeters</param>
+        /// <param name="cylinderHeightMM">Cylinder height in millimeters</param>
+        /// <param name="xOffsetMM">X offset in millimeters</param>
+        /// <param name="yOffsetMM">Y offset in millimeters</param>
+        /// <param name="zOffsetMM">Z offset in millimeters</param>
+        /// <param name="decimalPlaces">Number of decimal places for rounding</param>
+        /// <returns>Tuple containing converted imperial values in the same order</returns>
+        public static (double Length, double Width, double Height, double Thickness, double Radius, double Radius1, double Radius2, double CylinderHeight, double XOffset, double YOffset, double ZOffset) ConvertInputsToImperial(
+            double lengthMM,
+            double widthMM,
+            double heightMM,
+            double thicknessMM,
+            double radiusMM,
+            double radius1MM,
+            double radius2MM,
+            double cylinderHeightMM,
+            double xOffsetMM,
+            double yOffsetMM,
+            double zOffsetMM,
+            int decimalPlaces)
+        {
+            // Convert from metric unit system to imperial (mm to inches)
+            var convertedLength = Math.Round(MillimeterToInches(lengthMM), decimalPlaces);
+            var convertedWidth = Math.Round(MillimeterToInches(widthMM), decimalPlaces);
+            var convertedHeight = Math.Round(MillimeterToInches(heightMM), decimalPlaces);
+            var convertedThickness = Math.Round(MillimeterToInches(thicknessMM), decimalPlaces);
+            var convertedRadius = Math.Round(MillimeterToInches(radiusMM), decimalPlaces);
+            var convertedRadius1 = Math.Round(MillimeterToInches(radius1MM), decimalPlaces);
+            var convertedRadius2 = Math.Round(MillimeterToInches(radius2MM), decimalPlaces);
+            var convertedCylinderHeight = Math.Round(MillimeterToInches(cylinderHeightMM), decimalPlaces);
+            var convertedXOffset = Math.Round(MillimeterToInches(xOffsetMM), decimalPlaces);
+            var convertedYOffset = Math.Round(MillimeterToInches(yOffsetMM), decimalPlaces);
+            var convertedZOffset = Math.Round(MillimeterToInches(zOffsetMM), decimalPlaces);
+
+            return (convertedLength, convertedWidth, convertedHeight, convertedThickness, convertedRadius, convertedRadius1, convertedRadius2, convertedCylinderHeight, convertedXOffset, convertedYOffset, convertedZOffset);
+        }
+
+        /// <summary>
+        /// Converts input dimensions from imperial (inches) to metric (mm).
+        /// </summary>
+        /// <param name="lengthInches">Length in inches</param>
+        /// <param name="widthInches">Width in inches</param>
+        /// <param name="heightInches">Height in inches</param>
+        /// <param name="thicknessInches">Thickness in inches</param>
+        /// <param name="radiusInches">Radius in inches</param>
+        /// <param name="radius1Inches">First radius in inches</param>
+        /// <param name="radius2Inches">Second radius in inches</param>
+        /// <param name="cylinderHeightInches">Cylinder height in inches</param>
+        /// <param name="xOffsetInches">X offset in inches</param>
+        /// <param name="yOffsetInches">Y offset in inches</param>
+        /// <param name="zOffsetInches">Z offset in inches</param>
+        /// <param name="decimalPlaces">Number of decimal places for rounding</param>
+        /// <returns>Tuple containing converted metric values in the same order</returns>
+        public static (double Length, double Width, double Height, double Thickness, double Radius, double Radius1, double Radius2, double CylinderHeight, double XOffset, double YOffset, double ZOffset) ConvertInputsToMetric(
+            double lengthInches,
+            double widthInches,
+            double heightInches,
+            double thicknessInches,
+            double radiusInches,
+            double radius1Inches,
+            double radius2Inches,
+            double cylinderHeightInches,
+            double xOffsetInches,
+            double yOffsetInches,
+            double zOffsetInches,
+            int decimalPlaces)
+        {
+            // Convert from imperial unit system to metric (inches to mm)
+            var convertedLength = Math.Round(InchesToMillimeter(lengthInches), decimalPlaces);
+            var convertedWidth = Math.Round(InchesToMillimeter(widthInches), decimalPlaces);
+            var convertedHeight = Math.Round(InchesToMillimeter(heightInches), decimalPlaces);
+            var convertedThickness = Math.Round(InchesToMillimeter(thicknessInches), decimalPlaces);
+            var convertedRadius = Math.Round(InchesToMillimeter(radiusInches), decimalPlaces);
+            var convertedRadius1 = Math.Round(InchesToMillimeter(radius1Inches), decimalPlaces);
+            var convertedRadius2 = Math.Round(InchesToMillimeter(radius2Inches), decimalPlaces);
+            var convertedCylinderHeight = Math.Round(InchesToMillimeter(cylinderHeightInches), decimalPlaces);
+            var convertedXOffset = Math.Round(InchesToMillimeter(xOffsetInches), decimalPlaces);
+            var convertedYOffset = Math.Round(InchesToMillimeter(yOffsetInches), decimalPlaces);
+            var convertedZOffset = Math.Round(InchesToMillimeter(zOffsetInches), decimalPlaces);
+
+            return (convertedLength, convertedWidth, convertedHeight, convertedThickness, convertedRadius, convertedRadius1, convertedRadius2, convertedCylinderHeight, convertedXOffset, convertedYOffset, convertedZOffset);
+        }
     }
 }

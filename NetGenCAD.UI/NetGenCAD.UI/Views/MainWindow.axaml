@@ -23,13 +23,6 @@
         -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Resources/CardResources.axaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
 
     <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Menu DockPanel.Dock="Top">
