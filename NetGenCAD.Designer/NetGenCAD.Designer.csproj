@@ -29,6 +29,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\NetGenCAD.Axis\NetGenCAD.Axis.csproj" />
 	  <ProjectReference Include="..\NetGenCAD.Core\NetGenCAD.Core.csproj" />
 	</ItemGroup>
 

@@ -50,7 +50,6 @@
 
 	<ItemGroup>
 		<None Include="Assets\Images\logo-large.png" Pack="True" PackagePath="logo-large.png" />
-		<ProjectReference Include="..\..\NetGenCAD.Axis\NetGenCAD.Axis.csproj" />
 		<ProjectReference Include="..\..\NetGenCAD.Core\NetGenCAD.Core.csproj" />
 		<ProjectReference Include="..\..\NetGenCAD.Designer\NetGenCAD.Designer.csproj" />
 		<None Update="Data\netscad.db">
