@@ -10,7 +10,8 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 * Added ability to create layers within custom objects. Layers allow for grouping of solids within the object, making it easier to manage complex designs. 
 * Alpha channel support has been added for objects. 
 * Improved UI/UX for better user experience.
-![Designer Complex Object](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coilofrings.png)
+![Designer Complex Object](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/redAlertTeslaCoil.png)
+![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/designerObjectDark.png)
 ###### 
 #### Other NetGenCAD Projects
 If you're looking for only the axis tool, check out the NetGenCAD-Axis repository.
