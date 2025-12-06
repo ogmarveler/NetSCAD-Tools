@@ -5,6 +5,12 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 ######
 #### Latest Updates to NetGenCAD
 ######
+#### Other NetGenCAD Projects
+If you're looking for only the axis tool, check out the NetGenCAD-Axis repository.
+* **NetGenCAD Axis:** [Github](https://github.com/ogmarveler/NetSCAD-Axis)
+######
+#### Prerequisites
+* **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 **Version 0.2.0** 
 * New solids added: Sphere and Rounded Cylinder.
 * Added ability to create layers within custom objects. Layers allow for grouping of solids within the object, making it easier to manage complex designs. 
@@ -12,19 +18,10 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 * Improved UI/UX for better user experience.
 ![Designer Complex Object](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coin.png)
 ![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/designerObjectDark.png)
-###### 
-#### Other NetGenCAD Projects
-If you're looking for only the axis tool, check out the NetGenCAD-Axis repository.
-* **NetGenCAD Axis:** [Github](https://github.com/ogmarveler/NetSCAD-Axis)
-######
-#### Prerequisites
-* **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
+
 ######
 ![Coin](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/redAlertTeslaCoil.png)
 ![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coilCreateDark.png)
-######
-#### Layout of Custom Object Designer
-There are 5 main sections: applying a custom axis, creating a new object or retrieving an existing one, setting inputs for new solids, the list of Solids in the object, and Modules that contain the Solids. Once a solid is added to the object, it will appear in the Solids table, along with its parameters. Solids can be viewed within Modules, which define how they interact with each other. To view the object in OpenSCAD, simply click the **View Output** button, which will open the corresponding SCAD file. To export the object as an STL file, click the **Export** button. When making changes, be sure to click the **Update Modules** button to refresh the object.
 ######
 ![Mini PC](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/miniPC.png)
 ![Designer Object Dark Cube](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/designerObjectDarkCube.png)
