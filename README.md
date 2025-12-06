@@ -3,29 +3,22 @@
 #### Description
 This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
 ######
-#### Latest Updates to NetGenCAD
-######
-#### Other NetGenCAD Projects
 If you're looking for only the axis tool, check out the NetGenCAD-Axis repository.
 * **NetGenCAD Axis:** [Github](https://github.com/ogmarveler/NetSCAD-Axis)
 ######
 #### Prerequisites
 * **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
 ######
-**Version 0.2.0** 
-* New solids added: Sphere and Rounded Cylinder.
-* Added ability to create layers within custom objects. Layers allow for grouping of solids within the object, making it easier to manage complex designs. 
-* Alpha channel support has been added for objects. 
-* Improved UI/UX for better user experience.
+**Get the latest version of NetGenCAD**
+######
+* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.2.0-win-x64.7z)
+* [NetGenCAD for Linux (x64 & arm64)](NetGenCAD.UI/NetGenCAD.UI.Linux/NetGenCAD-0.2.0-linux-x64-arm64.tar.gz)
 ![Designer Complex Object](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coin.png)
 ![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/designerObjectDark.png)
 
 ######
 ![Coin](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/redAlertTeslaCoil.png)
 ![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coilCreateDark.png)
-######
-#### Rendering/Previewing the Object in OpenSCAD
-The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. Click the **Remove Axis** within the object.scad file to comment out the axis. If exporting to STL, this will be done automatically. If building a ruler or some form of 1D or 2D measurement, then this is would be an example of why you would include the axis in rendering before final output.
 
 ######
 #### Types of Solids Available
