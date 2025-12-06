@@ -31,8 +31,8 @@ The object, along with any solids, is stored in a **Scad/Solids** folder that is
 #### Types of Solids Available
 * **Cube** - default aligned on the 0,0,0 axes or can be offset with translate
 * **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
-* **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
-* **Rounded Cylinder** - all rounded cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
+* **Cylinder** - aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
+* **Rounded Cylinder** - using Minkowski with offsets to align with 0,0,0 axes, center at top of cylinder
 * **Surface** - import from png or dat file. Default aligned on the 0,0,0 axes or can be offset with translate.
 * **Sphere** - all spheres are aligned on the 0,0,0 axes, with the center point of the sphere at 0,0,0.
 ###### 
