@@ -418,7 +418,7 @@ namespace NetGenCAD.Designer.Functions
                         case OperationType.Union:
                             xOffsetMM += oDim.Round_r_MM;
                             yOffsetMM += oDim.Round_r_MM;
-                            zOffsetMM += oDim.Round_h_MM;
+                            zOffsetMM += -oDim.Round_h_MM;
                             break;
                         case OperationType.Difference:
                             xOffsetMM += oDim.Round_r_MM + oDim.Thickness_MM;
@@ -428,7 +428,7 @@ namespace NetGenCAD.Designer.Functions
                         case OperationType.Intersection:
                             xOffsetMM += oDim.Round_r_MM + oDim.Thickness_MM;
                             yOffsetMM += oDim.Round_r_MM + oDim.Thickness_MM;
-                            zOffsetMM += oDim.Round_h_MM + oDim.Thickness_MM;
+                            zOffsetMM += -oDim.Round_h_MM + oDim.Thickness_MM;
                             break;
                     }
                 }

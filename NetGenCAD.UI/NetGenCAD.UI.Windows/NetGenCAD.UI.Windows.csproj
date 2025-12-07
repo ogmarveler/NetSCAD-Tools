@@ -16,7 +16,7 @@
 		<TrimmerSingleWarn>false</TrimmerSingleWarn>
 		<ILLinkTreatWarningsAsErrors>false</ILLinkTreatWarningsAsErrors>
 		<WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
-		<Platforms>x64;ARM64</Platforms>
+		<Platforms>x64</Platforms>
 	</PropertyGroup>
 
 	<PropertyGroup>
