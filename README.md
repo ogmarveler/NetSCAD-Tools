@@ -12,7 +12,6 @@ If you're looking for only the axis tool, check out the NetGenCAD-Axis repositor
 **Get the latest version of NetGenCAD**
 ######
 * [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.2.0-winx64.7z)
-* [NetGenCAD for Linux (x64 & arm64)](NetGenCAD.UI/NetGenCAD.UI.Linux/NetGenCAD-0.2.0-linux-x64-arm64.tar.gz)
 ![Designer Complex Object](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coin.png)
 ![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/designerObjectDark.png)
 
