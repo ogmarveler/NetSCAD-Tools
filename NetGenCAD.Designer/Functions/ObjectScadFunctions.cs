@@ -15,6 +15,7 @@ using NetGenCAD.Core.Material;
 using NetGenCAD.Designer.Utility;
 using NetGenCAD.Core.Measurements;
 using NetGenCAD.Core.Models;
+using Dapper;
 
 namespace NetGenCAD.Designer.Functions
 {
@@ -63,7 +64,7 @@ namespace NetGenCAD.Designer.Functions
                 MaxZ = selectedAxis.MaxZ,
                 CreatedAt = DateTime.UtcNow,
             };
-            
+
             axisDimensions.OSCADMethod = $"{axisDimensions.IncludeMethod} {selectedAxis.CallingMethod}";
             var axisId = await axisDimensions.UpsertAsync(dbConnection);
 
@@ -79,14 +80,14 @@ namespace NetGenCAD.Designer.Functions
 
                 // Build the wrapped axis call
                 var wrappedAxisCall = $"translate ([{axisXPositionMM}, {axisYPositionMM}, {axisZPositionMM}]) {axisDimensions?.OSCADMethod.Replace(axisDimensions.IncludeMethod, "")}";
-                
+
                 // Build SCAD content
                 var sb = new StringBuilder();
                 sb.AppendLine("// Custom axis");
                 sb.AppendLine(axisDimensions?.IncludeMethod);
                 sb.AppendLine(wrappedAxisCall);
                 sb.AppendLine();
-                
+
                 // Write to file
                 await Output.WriteToSCAD(
                     content: sb.ToString(),
@@ -311,7 +312,7 @@ namespace NetGenCAD.Designer.Functions
 
                 // Get current solid dimensions for axis display
                 var allSolids = await new SolidDimensions().GetByNameWithAxisAndModuleAsync(dbConnection, name);
-                
+
                 // Use the provided currentAxisDisplay if axis exists, otherwise query from database
                 var objectAxisDisplay = string.Empty;
                 if (axesSelectEnabled && allSolids.Count() > 0)
@@ -693,7 +694,7 @@ namespace NetGenCAD.Designer.Functions
 
                 // Build the old mirror call using original values
                 var originalMirrorCall = $"mirror([{originalXMirror}, {originalYMirror}, {originalZMirror}]) ";
-                
+
                 // Build the new mirror call with updated values
                 var wrappedMirrorCall = $"mirror([{xMirror}, {yMirror}, {zMirror}]) ";
 
@@ -822,7 +823,7 @@ namespace NetGenCAD.Designer.Functions
             // Put Scad object file together
             var sb = new StringBuilder();
             sb.AppendLine("// Solid components used in main object");
-            
+
             if (moduleDimensions.Any())
             {
                 foreach (string includeMethod in moduleDimensions.Select(y => y.IncludeMethod).Distinct().ToList())
@@ -830,7 +831,7 @@ namespace NetGenCAD.Designer.Functions
                     sb.AppendLine(includeMethod);  // Include parts
                 }
             }
-            
+
             sb.AppendLine(); // Calling methods below
             sb.AppendLine($"difference() {{");
             sb.AppendLine($"    mirror([{xMirror}, {yMirror}, {zMirror}]) ");
@@ -840,7 +841,7 @@ namespace NetGenCAD.Designer.Functions
             if (moduleDimensions.Any())
             {
                 int maxLayer = moduleDimensions.Max(m => m.Layer);
-                
+
                 // Iterate through each layer from 0 to maxLayer
                 for (int currentLayer = 0; currentLayer <= maxLayer; currentLayer++)
                 {
@@ -1127,7 +1128,7 @@ namespace NetGenCAD.Designer.Functions
             {
                 var scadFile = Path.Combine(objectFilePath, "Solids", "object.scad");
                 var stlFile = Path.Combine(objectFilePath, "Solids", "object.stl");
-                
+
                 await ScadFileOperations.ExportToStlAsync(scadFile, stlFile);
             }
             catch (Exception ex)
@@ -1646,6 +1647,34 @@ namespace NetGenCAD.Designer.Functions
             var convertedZOffset = Math.Round(InchesToMillimeter(zOffsetInches), decimalPlaces);
 
             return (convertedLength, convertedWidth, convertedHeight, convertedThickness, convertedRadius, convertedRadius1, convertedRadius2, convertedCylinderHeight, convertedXOffset, convertedYOffset, convertedZOffset);
+        }
+
+        /// <summary>
+        /// Copies all object data (solids and modules) from source to new object with callback.
+        /// Performs database copy operation off the UI thread, retrieves dimensions, then invokes callback.
+        /// </summary>
+        public static async Task<(ObservableCollection<SolidDimensions>, ObservableCollection<ModuleDimensions>)> CopyObjectWithCallbackAsync(string sourceObjectName, SqliteConnection dbConnection)
+        {
+            try
+            {
+                // Perform database copy operation off UI thread
+                await Task.Run(async () =>
+                {
+                    var sourceSolid = new SolidDimensions { Name = sourceObjectName };
+                    await sourceSolid.CopyObjectAsync(dbConnection);
+                });
+
+                // Refresh dimensions from database
+                var (updatedSolidDimensions, updatedModuleDimensions) = await GetDimensionsPartsAsync(dbConnection, $"{sourceObjectName}_copy");
+
+                // Invoke callback with all updated data
+                return (updatedSolidDimensions, updatedModuleDimensions);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error copying object: {ex.Message}");
+                return (new ObservableCollection<SolidDimensions>(), new ObservableCollection<ModuleDimensions>());
+            }
         }
     }
 }

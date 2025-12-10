@@ -95,7 +95,7 @@
 
 	<ItemGroup>
 	  <TrimmerRootAssembly Include="NetGenCAD.UI" />
-		<TrimmerRootAssembly Include="ReactiveUI" />
+	  <TrimmerRootAssembly Include="ReactiveUI" />
 	</ItemGroup>
 
 </Project>

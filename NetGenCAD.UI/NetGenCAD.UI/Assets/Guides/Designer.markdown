@@ -137,8 +137,9 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 #### Optional Object Actions
 | Actions                                                                       | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 1. **Render ?** - choose whether to pre-render the object before viewing      | Yes (Render) or No (Preview Only)       |               |
-| 2. **Export ?** - export a rendered version of the object to output file      | STL                                     |               |
+| 1. **Copy ?** - copy the current object's solids and import into view         | Yes (Copy Object) or No (Keep Current)  |       No      |
+| 2. **Render ?** - choose whether to pre-render the object before viewing      | Yes (Render) or No (Preview Only)       |       No      |
+| 3. **Export ?** - export a rendered version of the object to output file      | STL                                     |       No      |
 
 ###### 
 #### Optional Object Output

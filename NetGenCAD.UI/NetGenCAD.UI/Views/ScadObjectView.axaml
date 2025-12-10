@@ -1202,6 +1202,34 @@
                         Orientation="Horizontal"
                         Spacing="15">
 
+                        <!--  Copy Object  -->
+                        <StackPanel Width="60" Classes="inputGroup">
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                Classes="standardLabel"
+                                Text="Copy ?" />
+                            <CheckBox
+                                HorizontalAlignment="Left"
+                                Content="Yes"
+                                IsChecked="{Binding CopyObject, Mode=TwoWay}">
+                                <CheckBox.IsEnabled>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding
+                                            Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                            ConverterParameter="1"
+                                            Path="SolidDimensions" />
+                                        <Binding
+                                            Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                            ConverterParameter="1"
+                                            Path="ModuleDimensions" />
+                                    </MultiBinding>
+                                </CheckBox.IsEnabled>
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Copies the current object and imports it into the project" />
+                                </ToolTip.Tip>
+                            </CheckBox>
+                        </StackPanel>
+
                         <!--  Render Option  -->
                         <StackPanel Width="60" Classes="inputGroup">
                             <TextBlock

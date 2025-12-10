@@ -1,6 +1,8 @@
 ﻿using Dapper;
-using NetGenCAD.Core.Interfaces;
 using Microsoft.Data.Sqlite;
+using NetGenCAD.Core.Interfaces;
+using NetGenCAD.Core.Models;
+using System.Collections.Generic;
 using static NetGenCAD.Core.Measurements.Conversion;
 using static NetGenCAD.Core.Measurements.VolumeConverter;
 
@@ -599,6 +601,66 @@ namespace NetGenCAD.Designer.Repositories
             cmd.Parameters.AddWithValue("@ModuleColor", color);
             cmd.Parameters.AddWithValue("@Id", module.Id);
 
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        public static async Task CopyObjectAsync(this SolidDimensions source, SqliteConnection connection)
+        {
+            const string sql = @"
+            INSERT INTO SolidDimensions
+            SELECT NULL,
+                   AxisDimensionsId,
+                   ModuleDimensionsId,
+                   Name || '_' || 'copy' AS Name,
+                   Description,
+                   Material,
+                   OperationType,
+                   SolidType,
+                   Length_MM,
+                   Width_MM,
+                   Height_MM,
+                   Thickness_MM,
+                   Radius_MM,
+                   Radius1_MM,
+                   Radius2_MM,
+                   CylinderHeight_MM,
+                   XOffset_MM,
+                   YOffset_MM,
+                   ZOffset_MM,
+                   XRotate,
+                   YRotate,
+                   ZRotate,
+                   Length_IN,
+                   Width_IN,
+                   Height_IN,
+                   Thickness_IN,
+                   Radius_IN,
+                   Radius1_IN,
+                   Radius2_IN,
+                   CylinderHeight_IN,
+                   XOffset_IN,
+                   YOffset_IN,
+                   ZOffset_IN,
+                   Round_r_MM,
+                   Round_h_MM,
+                   Round_r_IN,
+                   Round_h_IN,
+                   Resolution,
+                   Volume_CM3,
+                   Volume_IN3,
+                   OSCADMethod,
+                   CreatedAt,
+                   ModuleColor,
+                   SurfaceFilePath,
+                   SurfaceInvert,
+                   SurfaceCenter,
+                   Layer,
+                   Alpha
+                   FROM SolidDimensions
+                   WHERE Name = @Name";
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.Parameters.AddWithValue("@Name", source.Name);
             await cmd.ExecuteNonQueryAsync();
         }
     }

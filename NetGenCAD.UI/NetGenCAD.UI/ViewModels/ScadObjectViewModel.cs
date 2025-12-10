@@ -18,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static NetGenCAD.Core.Measurements.Colors;
-using static NetGenCAD.Core.Measurements.Conversion;
 using static NetGenCAD.Core.Measurements.Selector;
 using static NetGenCAD.Designer.Functions.ObjectScadFunctions;
 
@@ -124,6 +123,7 @@ namespace NetGenCAD.UI.ViewModels
         private double _alphaIntValue = 1;
         private bool _isSphereSelected = false;
         private bool _isRoundCylinderSelected = false;
+        private bool _copyObject = false;
         private ObservableCollection<ModuleDimensions>? _cachedAllModuleDimensions;
 
 
@@ -240,6 +240,7 @@ namespace NetGenCAD.UI.ViewModels
             IsSphereSelected = false;
             IsRoundCylinderSelected = false;
             IsPreRendered = false;
+            CopyObject = false;
             ScrewSizes = _screwSizes;
             ServerRackSizes = _serverRackSizes;
             RemoveAxis = false;
@@ -302,7 +303,6 @@ namespace NetGenCAD.UI.ViewModels
                 // Update all ViewModel properties via the callback
                 AppendObject = newAppendObject;
                 SolidDimensions = updatedSolidDimensions;
-                ObjectAxisDisplay = objectAxisDisplay;
 
                 // Handle module creation based on operation type
                 switch (SelectedOperationType)
@@ -320,7 +320,6 @@ namespace NetGenCAD.UI.ViewModels
 
                 // Clear inputs for next object
                 ClearInputs();
-
                 // Final refresh
                 GetDimensionsParts();
             };
@@ -478,6 +477,37 @@ namespace NetGenCAD.UI.ViewModels
 
             // Refresh the DataGrid
             GetDimensionsParts();
+        }
+
+        /// <summary>
+        /// Copies all object data (solids, modules, axis) from a source object to a new object.
+        /// Uses the ObjectScadFunctions wrapper which performs database copy off the UI thread,
+        /// retrieves dimensions from the database, and updates the ViewModel via callback.
+        /// </summary>
+        public async Task CopyObjectAsync()
+        {
+            try
+            {
+                var currentObjectName = _solidDimensions.FirstOrDefault()?.Name ?? string.Empty;
+                if (string.IsNullOrEmpty(currentObjectName))
+                    return;
+
+                // Call the wrapper function in ObjectScadFunctions
+                var (sDim, mDim) = await CopyObjectWithCallbackAsync(currentObjectName, DbConnection!);
+
+                    ClearObject(); // Clear out old object
+                    // Update ViewModel collections with refreshed data
+                    SolidDimensions = sDim;
+                    ModuleDimensions = mDim;
+                    // Update the Name property to the new object name
+                    Name = _solidDimensions.FirstOrDefault()?.Name ?? string.Empty;
+                CopyObject = false; // Reset the CopyObject flag
+                
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error copying object: {ex.Message}");
+            }
         }
 
         // Deletes the selected item from any DataGrid (Cube, Cylinder, or Module)
@@ -914,6 +944,16 @@ namespace NetGenCAD.UI.ViewModels
                 this.RaiseAndSetIfChanged(ref _exportToStl, value);
                 if (_exportToStl)
                     _ = ObjectToScadFilesAsync();
+            }
+        }
+        public bool CopyObject
+        {
+            get => _copyObject;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _copyObject, value);
+                if (_copyObject)
+                    _ = CopyObjectAsync();
             }
         }
         public bool AxesSelectEnabled
