@@ -22,6 +22,7 @@ namespace NetGenCAD.UI.ViewModels
             // Initialize menu commands
             NewAxesCommand = ReactiveCommand.Create(LoadCreateAxesView);
             NewObjectCommand = ReactiveCommand.Create(LoadScadObjectView);
+            NewShapeCommand = ReactiveCommand.Create(LoadScadShapeView);
             OpenFolderCommand = ReactiveCommand.CreateFromTask(MainWindow.OpenFolderAsync);
             ToggleCommand = ReactiveCommand.Create(ToggleTheme);
             AxisViewCommand = ReactiveCommand.Create(LoadAxisView);
@@ -50,6 +51,11 @@ namespace NetGenCAD.UI.ViewModels
             MainViewContent = App.Services!.GetRequiredService<DesignerView>();
         }
 
+        public void LoadScadShapeView()
+        {
+            MainViewContent = App.Services!.GetRequiredService<ScadShapeView>();
+        }
+
         public void LoadScadObjectView()
         {
             App.Services!.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
@@ -66,6 +72,7 @@ namespace NetGenCAD.UI.ViewModels
 
         public ICommand NewAxesCommand { get; }
         public ICommand NewObjectCommand { get; }
+        public ICommand NewShapeCommand { get; }
         public ICommand OpenFolderCommand { get; }
         public ICommand AxisViewCommand { get; }
         public ICommand DesignerViewCommand { get; }

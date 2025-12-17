@@ -1,0 +1,578 @@
+<UserControl
+    x:Class="NetGenCAD.UI.Views.ScadShapeView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:NetGenCAD.UI.Views"
+    xmlns:conv="using:NetGenCAD.UI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sel="using:NetGenCAD.Core.Measurements"
+    xmlns:vm="using:NetGenCAD.UI.ViewModels"
+    d:DesignHeight="720"
+    d:DesignWidth="1280"
+    x:CompileBindings="True"
+    x:DataType="vm:ScadShapeViewModel"
+    Background="{DynamicResource WindowBackground}"
+    mc:Ignorable="d">
+
+
+    <UserControl.Styles>
+        <!--  DataGrid Column Header Styles  -->
+        <Style Selector="DataGrid#PointsDataGrid DataGridColumnHeader, DataGrid#PointsDataGridImperial DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource GoldForeground}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource GoldBackground}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <!--  DataGrid Column Header Styles  -->
+        <Style Selector="DataGrid#FacesDataGrid DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource SilverForeground}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource SilverBackground}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid x:Name="MainLayoutGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!--  Main Input StackPanel  -->
+            <RowDefinition Height="Auto" />
+            <!--  Polyhedron DataGrids  -->
+            <RowDefinition Height="Auto" />
+            <!--  Overflow Row for Polyhedron when narrow  -->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MaxWidth="960" />
+            <ColumnDefinition Width="*" MinWidth="400" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Main Input StackPanel  -->
+        <Border
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="10"
+            VerticalAlignment="Top"
+            BorderThickness="2"
+            BoxShadow="1 1 2 0 Gray"
+            Classes="card_main">
+            <StackPanel Margin="10,20,10,20" Spacing="0">
+                <Grid
+                    x:Name="MainInputGrid"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    ColumnSpacing="15"
+                    RowSpacing="35">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="100" />
+                        <ColumnDefinition Width="Auto" MinWidth="40" />
+                        <ColumnDefinition Width="Auto" MaxWidth="170" />
+                        <ColumnDefinition Width="Auto" MaxWidth="120" />
+                        <ColumnDefinition Width="Auto" MaxWidth="120" />
+                        <ColumnDefinition Width="Auto" MaxWidth="120" />
+                        <ColumnDefinition Width="Auto" MinWidth="120" />
+                        <ColumnDefinition Width="0" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Row 0, Column 0: Polyhedron Design Title  -->
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Width="105"
+                        Margin="0,0,10,0"
+                        HorizontalAlignment="Left"
+                        Classes="inputGroup">
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            Classes="textbox"
+                            FontSize="15"
+                            FontWeight="SemiBold"
+                            Opacity="0.75"
+                            Text="New Shape" />
+                    </StackPanel>
+
+                    <!--  Part Name  -->
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        Width="230"
+                        HorizontalAlignment="Left"
+                        Classes="inputGroup">
+                        <TextBox
+                            MinWidth="230"
+                            BorderThickness="1"
+                            Classes="standardInput"
+                            FontWeight="SemiBold"
+                            IsEnabled="{Binding !PolyhedronDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+                            Text="{Binding Name, Mode=TwoWay}"
+                            Watermark="Set Polyhedron Name">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Object Name" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Import Shape Button  -->
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="3"
+                        Width="120"
+                        Margin="0"
+                        Classes="inputGroup">
+                        <Button
+                            BorderBrush="{DynamicResource CardForeground}"
+                            BorderThickness="1"
+                            Click="ImportShapeButton_Click"
+                            Content="Import Shape">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Import polyhedron dimensions from a JSON file" />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+
+                    <!--  Clear Shape Button  -->
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="4"
+                        Width="120"
+                        Classes="inputGroup">
+                        <Button
+                            BorderBrush="{DynamicResource CardForeground}"
+                            BorderThickness="1"
+                            Click="ClearShapeButton_Click"
+                            Content="Clear Shape">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Clears the current shape and inputs" />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+
+                    <!--  Clear Inputs Button  -->
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="5"
+                        Width="120"
+                        Classes="inputGroup">
+                        <Button
+                            BorderBrush="{DynamicResource CardForeground}"
+                            BorderThickness="1"
+                            Click="ClearButton_Click"
+                            Content="Clear Inputs">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Clears all part input fields" />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+
+                    <!--  Unit Type ComboBox with Header  -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Width="140"
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        Classes="inputGroup">
+                        <TextBlock Classes="standardLabel" Text="Unit Type" />
+                        <ComboBox
+                            x:Name="UnitComboBox"
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{Binding UnitSystemValues}"
+                            PlaceholderText="Select Unit"
+                            SelectedItem="{Binding SelectedUnitValue, Mode=TwoWay}">
+                            <ComboBox.Foreground>
+                                <Binding
+                                    Converter="{StaticResource UnitSystemToColorConverter}"
+                                    ConverterParameter="Foreground"
+                                    Path="IsMetric" />
+                            </ComboBox.Foreground>
+                            <ComboBox.Background>
+                                <Binding
+                                    Converter="{StaticResource UnitSystemToColorConverter}"
+                                    ConverterParameter="Background"
+                                    Path="IsMetric" />
+                            </ComboBox.Background>
+                            <ComboBox.BorderBrush>
+                                <Binding
+                                    Converter="{StaticResource UnitSystemToColorConverter}"
+                                    ConverterParameter="BorderBrush"
+                                    Path="IsMetric" />
+                            </ComboBox.BorderBrush>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!--  Points or Face Description  -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Grid.ColumnSpan="2"
+                        Width="332"
+                        Margin="-25,0,0,0"
+                        HorizontalAlignment="Left"
+                        Classes="inputGroup">
+                        <TextBlock Classes="standardLabel" Text="Description" />
+                        <TextBox
+                            BorderThickness="1"
+                            Classes="standardInput"
+                            FontWeight="SemiBold"
+                            Text="{Binding Description, Mode=TwoWay}"
+                            Watermark="Set Points or Face Name">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Name of the point set or face within the polyhedron" />
+                            </ToolTip.Tip>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!--  Operation / Apply To  -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="4"
+                        Width="120"
+                        Classes="inputGroup">
+                        <TextBlock Classes="standardLabel" Text="Apply To" />
+                        <!--  Polyhedron Operation Types  -->
+                        <ComboBox
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{Binding PolyhedronOperationTypes}"
+                            PlaceholderText="Select"
+                            SelectedItem="{Binding SelectedPolyhedronOperationType, Mode=TwoWay}">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Select polyhedron operation: Points or Faces" />
+                            </ToolTip.Tip>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!--  Create Polyhedron Point or Face Button  -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="5"
+                        Width="120"
+                        Margin="0"
+                        Classes="inputGroup">
+                        <TextBlock Classes="standardLabel" Text="" />
+                        <Button
+                            Name="CreatePolyhedronButton"
+                            HorizontalAlignment="Stretch"
+                            Click="CreatePolyhedronButton_Click"
+                            FontWeight="SemiBold">
+                            <Button.Background>
+                                <Binding
+                                    Converter="{StaticResource PolyhedronOperationTypeToColorConverter}"
+                                    ConverterParameter="Background"
+                                    Path="SelectedPolyhedronOperationType" />
+                            </Button.Background>
+                            <Button.Foreground>
+                                <Binding
+                                    Converter="{StaticResource PolyhedronOperationTypeToColorConverter}"
+                                    ConverterParameter="Foreground"
+                                    Path="SelectedPolyhedronOperationType" />
+                            </Button.Foreground>
+                            <Button.BorderBrush>
+                                <Binding
+                                    Converter="{StaticResource PolyhedronOperationTypeToColorConverter}"
+                                    ConverterParameter="BorderBrush"
+                                    Path="SelectedPolyhedronOperationType" />
+                            </Button.BorderBrush>
+                            <Button.Content>
+                                <Binding Converter="{StaticResource PolyhedronOperationTypeConverter}" Path="SelectedPolyhedronOperationType" />
+                            </Button.Content>
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{StaticResource PolyhedronValidationConverter}">
+                                    <Binding Path="SelectedPolyhedronOperationType" />
+                                    <Binding Path="Name" />
+                                    <Binding Path="Description" />
+                                    <Binding Path="PointsId" />
+                                    <Binding Path="PointXMM" />
+                                    <Binding Path="PointYMM" />
+                                    <Binding Path="PointZMM" />
+                                    <Binding Path="FacePoints" />
+                                    <Binding Path="FaceId" />
+                                </MultiBinding>
+                            </Button.IsEnabled>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Creates a new polyhedron point or face and saves it to the database for use in OpenSCAD" />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+
+                    <!--  Polyhedron Points and Face Inputs  -->
+                    <StackPanel
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="8"
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal"
+                        Spacing="15">
+                        <StackPanel.IsVisible>
+                            <Binding
+                                Converter="{StaticResource StringEqualityConverter}"
+                                ConverterParameter="Points"
+                                Path="SelectedPolyhedronOperationType" />
+                        </StackPanel.IsVisible>
+                        <!--  Point X  -->
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Point X" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding PointXMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="X coordinate of polyhedron point" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <!--  Point Y  -->
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Point Y" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding PointYMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Y coordinate of polyhedron point" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <!--  Point Z  -->
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Point Z" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding PointZMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Z coordinate of polyhedron point" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <!--  Points ID  -->
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Points ID" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding PointsId, Mode=TwoWay, Converter={StaticResource IntToNullableConverter}}"
+                                Watermark="int">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="ID of the polyhedron points" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="8"
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal"
+                        Spacing="15">
+                        <StackPanel.IsVisible>
+                            <Binding
+                                Converter="{StaticResource StringEqualityConverter}"
+                                ConverterParameter="Faces"
+                                Path="SelectedPolyhedronOperationType" />
+                        </StackPanel.IsVisible>
+                        <!--  Face Points (spans 7 columns)  -->
+                        <StackPanel Width="410" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Enter all Face Points" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding FacePoints, Mode=TwoWay}"
+                                Watermark="[0,1,2],[1,2,3],[4,5,6],[7,8,4]...">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Face definition: indices of points that form each face" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <!--  Face ID  -->
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Face ID" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding FaceId, Mode=TwoWay, Converter={StaticResource IntToNullableConverter}}"
+                                Watermark="int">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="ID of the polyhedron face" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!--  Points DataGrids Section (Metric and Imperial)  -->
+        <ScrollViewer
+            x:Name="PointsSection"
+            Grid.Row="0"
+            Grid.RowSpan="4"
+            Grid.Column="7"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Top"
+            HorizontalScrollBarVisibility="Disabled"
+            IsVisible="{Binding PolyhedronDimensionsPoints, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+            VerticalScrollBarVisibility="Auto">
+            <Border
+                Width="940"
+                Margin="10"
+                BorderBrush="{DynamicResource GoldForeground}"
+                BorderThickness="1"
+                BoxShadow="1 1 2 0 Gray"
+                Classes="card_main"
+                ClipToBounds="True">
+                <StackPanel Margin="0" Spacing="0">
+                    <StackPanel Orientation="Vertical" Spacing="0">
+                        <DataGrid
+                            x:Name="PointsDataGrid"
+                            Width="940"
+                            VerticalAlignment="Top"
+                            AutoGenerateColumns="True"
+                            AutoGeneratingColumn="DataGrid_AutoGeneratingColumnPoints"
+                            BorderBrush="{DynamicResource GoldForeground}"
+                            CanUserReorderColumns="True"
+                            CanUserResizeColumns="True"
+                            ClipToBounds="True"
+                            ColumnWidth="Auto"
+                            CornerRadius="6"
+                            FontSize="10"
+                            GridLinesVisibility="All"
+                            IsReadOnly="True"
+                            ItemsSource="{Binding PolyhedronDimensionsPoints}"
+                            SelectionChanged="PointsDataGrid_SelectionChanged"
+                            SelectionMode="Single">
+                            <DataGrid.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding
+                                        Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                        ConverterParameter="1"
+                                        Path="PolyhedronDimensionsPoints" />
+                                    <Binding Path="IsMetric" />
+                                </MultiBinding>
+                            </DataGrid.IsVisible>
+                        </DataGrid>
+                        <DataGrid
+                            x:Name="PointsDataGridImperial"
+                            Width="940"
+                            VerticalAlignment="Top"
+                            AutoGenerateColumns="True"
+                            AutoGeneratingColumn="DataGrid_AutoGeneratingColumnPointsImperial"
+                            BorderBrush="{DynamicResource GoldForeground}"
+                            CanUserReorderColumns="True"
+                            CanUserResizeColumns="True"
+                            ClipToBounds="True"
+                            ColumnWidth="Auto"
+                            CornerRadius="6"
+                            FontSize="10"
+                            GridLinesVisibility="All"
+                            IsReadOnly="True"
+                            ItemsSource="{Binding PolyhedronDimensionsPoints}"
+                            SelectionChanged="PointsDataGrid_SelectionChanged"
+                            SelectionMode="Single">
+                            <DataGrid.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding
+                                        Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                        ConverterParameter="1"
+                                        Path="PolyhedronDimensionsPoints" />
+                                    <Binding Path="IsImperial" />
+                                </MultiBinding>
+                            </DataGrid.IsVisible>
+                        </DataGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+
+        <!--  Faces DataGrid Section  -->
+        <ScrollViewer
+            x:Name="FacesSection"
+            Grid.Row="3"
+            Grid.Column="0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Top"
+            HorizontalScrollBarVisibility="Disabled"
+            IsVisible="{Binding PolyhedronDimensionsFaces, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+            VerticalScrollBarVisibility="Auto">
+            <Border
+                Width="940"
+                Margin="10"
+                BorderBrush="{DynamicResource SilverForeground}"
+                BorderThickness="1"
+                BoxShadow="1 1 2 0 Gray"
+                Classes="card_main"
+                ClipToBounds="True">
+                <StackPanel Margin="0" Spacing="0">
+                    <StackPanel Orientation="Vertical" Spacing="0">
+                        <DataGrid
+                            x:Name="FacesDataGrid"
+                            Width="940"
+                            VerticalAlignment="Top"
+                            AutoGenerateColumns="True"
+                            AutoGeneratingColumn="DataGrid_AutoGeneratingColumnFaces"
+                            BorderBrush="{DynamicResource SilverForeground}"
+                            CanUserReorderColumns="True"
+                            CanUserResizeColumns="True"
+                            ClipToBounds="True"
+                            ColumnWidth="Auto"
+                            CornerRadius="6"
+                            FontSize="10"
+                            GridLinesVisibility="All"
+                            IsReadOnly="True"
+                            ItemsSource="{Binding PolyhedronDimensionsFaces}"
+                            SelectionChanged="FacesDataGrid_SelectionChanged"
+                            SelectionMode="Single">
+                            <DataGrid.IsVisible>
+                                <Binding
+                                    Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                    ConverterParameter="1"
+                                    Path="PolyhedronDimensionsFaces" />
+                            </DataGrid.IsVisible>
+                        </DataGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+
+        <!--  Modal Overlay (renders on top)  -->
+        <controls:ModalDialog
+            Title="{Binding ModalTitle}"
+            Grid.Row="0"
+            Grid.RowSpan="7"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            IsOpen="{Binding IsModalOpen, Mode=TwoWay}">
+            <controls:ModalDialog.Content>
+                <TextBlock
+                    FontFamily="Courier New"
+                    Text="{Binding ModalContent}"
+                    TextWrapping="Wrap" />
+            </controls:ModalDialog.Content>
+        </controls:ModalDialog>
+    </Grid>
+</UserControl>

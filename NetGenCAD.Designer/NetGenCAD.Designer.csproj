@@ -16,7 +16,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DebugType>none</DebugType>
+		<DebugType>full</DebugType>
 		<IsTrimmable>True</IsTrimmable>
 		<Optimize>True</Optimize>
 		<IsAotCompatible>True</IsAotCompatible>
@@ -30,7 +30,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-	  <DebugType>none</DebugType>
+	  <DebugType>full</DebugType>
+		<DebugSymbols>true</DebugSymbols>
 	  <IsTrimmable>True</IsTrimmable>
 	  <Optimize>True</Optimize>
 	  <IsAotCompatible>True</IsAotCompatible>

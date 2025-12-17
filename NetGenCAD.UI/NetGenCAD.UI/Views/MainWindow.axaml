@@ -34,7 +34,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <!--  Create Axes or Object  -->
+            <!--  Create Axes, Object, or Shape  -->
             <MenuItem Header="_Create">
                 <MenuItem Command="{Binding NewAxesCommand}" Header="_New Axes">
                     <MenuItem.Icon>
@@ -43,18 +43,15 @@
                 </MenuItem>
                 <MenuItem Command="{Binding NewObjectCommand}" Header="_New Object">
                     <MenuItem.Icon>
-                        <PathIcon Data="{StaticResource select_object_regular}" />
+                        <PathIcon Data="{StaticResource cube_regular}" />
                     </MenuItem.Icon>
                 </MenuItem>
-            </MenuItem>
-            <!--  View Object
-            <MenuItem Header="_View">
-                <MenuItem Command="{Binding SharpEngineSceneViewCommand}" Header="_View Scene">
+                <MenuItem Command="{Binding NewShapeCommand}" Header="_New Shape">
                     <MenuItem.Icon>
                         <PathIcon Data="{StaticResource select_object_regular}" />
                     </MenuItem.Icon>
                 </MenuItem>
-            </MenuItem>-->
+            </MenuItem>
             <!--  Change Theme  -->
             <MenuItem Header="_Appearance">
                 <MenuItem Command="{Binding ToggleCommand}" Header="_Switch Theme">
@@ -78,25 +75,6 @@
 
         </Menu>
 
-        <!--  Main content
-        <Grid
-            Margin="10"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-        -->
-        <!--  Main View - SPA
-        <Border
-            Margin="25"
-            BorderThickness="2"
-            BoxShadow="1 1 2 0 Gray"
-            Classes="card_main">-->
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <ContentControl
                 Margin="10"
@@ -106,9 +84,6 @@
                 VerticalContentAlignment="Stretch"
                 Content="{Binding MainViewContent}" />
         </ScrollViewer>
-        <!--</Border>-->
 
-        <!--    </Grid> -->
     </DockPanel>
-
 </Window>

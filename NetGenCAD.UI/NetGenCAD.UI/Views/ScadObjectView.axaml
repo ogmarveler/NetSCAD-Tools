@@ -506,6 +506,24 @@
                             ItemsSource="{Binding UnitSystemValues}"
                             PlaceholderText="Select Unit"
                             SelectedItem="{Binding SelectedUnitValue, Mode=TwoWay}">
+                            <ComboBox.Foreground>
+                                <Binding
+                                    Converter="{StaticResource UnitSystemToColorConverter}"
+                                    ConverterParameter="Foreground"
+                                    Path="IsMetric" />
+                            </ComboBox.Foreground>
+                            <ComboBox.Background>
+                                <Binding
+                                    Converter="{StaticResource UnitSystemToColorConverter}"
+                                    ConverterParameter="Background"
+                                    Path="IsMetric" />
+                            </ComboBox.Background>
+                            <ComboBox.BorderBrush>
+                                <Binding
+                                    Converter="{StaticResource UnitSystemToColorConverter}"
+                                    ConverterParameter="BorderBrush"
+                                    Path="IsMetric" />
+                            </ComboBox.BorderBrush>
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />

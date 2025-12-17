@@ -6,4 +6,6 @@
         Difference,  // Difference/Subtraction of objects
         Intersection // Intersection/Overlap of objects
     }
+
+    public enum PolyhedronOperationType { Points, Faces };
 }

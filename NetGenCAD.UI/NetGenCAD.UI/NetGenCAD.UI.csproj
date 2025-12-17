@@ -23,7 +23,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-	  <DebugType>none</DebugType>
+	  <DebugType>full</DebugType>
+		<DebugSymbols>true</DebugSymbols>
 	  <IsAotCompatible>True</IsAotCompatible>
 	  <IsTrimmable>True</IsTrimmable>
 	</PropertyGroup>

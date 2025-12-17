@@ -15,7 +15,6 @@ using NetGenCAD.Core.Material;
 using NetGenCAD.Designer.Utility;
 using NetGenCAD.Core.Measurements;
 using NetGenCAD.Core.Models;
-using Dapper;
 
 namespace NetGenCAD.Designer.Functions
 {

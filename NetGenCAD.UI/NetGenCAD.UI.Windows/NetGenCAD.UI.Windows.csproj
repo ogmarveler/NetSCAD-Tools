@@ -39,8 +39,8 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 	  <Optimize>True</Optimize>
 	  <IsPublishable>True</IsPublishable>
-	  <DebugType>none</DebugType>
-	  <DebugSymbols>false</DebugSymbols>
+	  <DebugType>full</DebugType>
+	  <DebugSymbols>True</DebugSymbols>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
