@@ -340,6 +340,19 @@
                                 </ToolTip.Tip>
                             </TextBox>
                         </StackPanel>
+
+                        <!--  Convexity  -->
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Convexity" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding PolyhedronConvexity, Mode=TwoWay, Converter={StaticResource IntToNullableConverter}}"
+                                Watermark="int">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Convexity of the polyhedron" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
                     </StackPanel>
 
                     <StackPanel
@@ -357,7 +370,7 @@
                                 Path="SelectedPolyhedronOperationType" />
                         </StackPanel.IsVisible>
                         <!--  Face Points (spans 7 columns)  -->
-                        <StackPanel Width="410" Classes="inputGroup">
+                        <StackPanel Width="332" Classes="inputGroup">
                             <TextBlock Classes="standardLabel" Text="Enter all Face Points" />
                             <TextBox
                                 Classes="standardInput"
@@ -378,6 +391,19 @@
                                 Watermark="int">
                                 <ToolTip.Tip>
                                     <TextBlock Text="ID of the polyhedron face" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <!--  Convexity  -->
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <TextBlock Classes="standardLabel" Text="Convexity" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding PolyhedronConvexity, Mode=TwoWay, Converter={StaticResource IntToNullableConverter}}"
+                                Watermark="int">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Convexity of the polyhedron" />
                                 </ToolTip.Tip>
                             </TextBox>
                         </StackPanel>
@@ -428,6 +454,7 @@
                                     <Binding Path="PointZMM" />
                                     <Binding Path="FacePoints" />
                                     <Binding Path="FaceId" />
+                                    <Binding Path="PolyhedronConvexity" />
                                 </MultiBinding>
                             </Button.IsEnabled>
                             <ToolTip.Tip>

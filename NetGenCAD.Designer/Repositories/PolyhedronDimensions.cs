@@ -28,6 +28,10 @@ namespace NetGenCAD.Designer.Repositories
         // Faces properties
         public string Face { get; set; } = string.Empty; // Points that make up the face
         public int FaceId { get; set; } = 0; // Identifying the face set
+        
+        // Polyhedron properties
+        public int Convexity { get; set; } = 1; // OpenSCAD convexity parameter for polyhedron rendering
+        
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public string OSCADMethod { get; set; } = string.Empty;
@@ -52,6 +56,7 @@ namespace NetGenCAD.Designer.Repositories
             { "PointsId", PointsId },
             { "Face", Face },
             { "FaceId", FaceId },
+            { "Convexity", Convexity },
             { "OSCADMethod", OSCADMethod },
             { "CreatedAt", CreatedAt },
         };
@@ -76,6 +81,7 @@ namespace NetGenCAD.Designer.Repositories
             (nameof(PolyhedronDimensions.PointsId), typeof(int), true),
             (nameof(PolyhedronDimensions.Face), typeof(string), true),
             (nameof(PolyhedronDimensions.FaceId), typeof(int), true),
+            (nameof(PolyhedronDimensions.Convexity), typeof(int), false),
             (nameof(PolyhedronDimensions.OSCADMethod), typeof(string), true),
             (nameof(PolyhedronDimensions.CreatedAt), typeof(DateTime), false),
         ];
@@ -179,6 +185,7 @@ namespace NetGenCAD.Designer.Repositories
                    PointsId,
                    Face,
                    FaceId,
+                   Convexity,
                    OSCADMethod,
                    CreatedAt
                    FROM PolyhedronDimensions

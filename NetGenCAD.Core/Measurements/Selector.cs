@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using NetGenCAD.Core.Models;
+using System.ComponentModel;
 
 namespace NetGenCAD.Core.Measurements
 {
@@ -22,6 +23,6 @@ namespace NetGenCAD.Core.Measurements
 
         public static List<string> ScrewProperties { get; } = new List<string> { "Screw Thread", "Screw Head", "Threaded Insert", "Clearance Hole" };
         public static List<string> ServerRackWidthTypes { get; } = new List<string> { "Inner Mount", "Outer Mount" };
-        public static List<string> SolidTypes { get; } = new List<string> { "Cube", "Round Cube", "Cylinder", "Round Cylinder", "Sphere", "Surface" };
+        public static List<string> SolidTypes { get; } = new List<string> { "Cube", "Round Cube", "Cylinder", "Round Cylinder", "Sphere", "Surface", "Polyhedron" };
     }
 }

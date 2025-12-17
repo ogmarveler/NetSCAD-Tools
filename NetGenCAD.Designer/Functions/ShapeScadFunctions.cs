@@ -58,6 +58,7 @@ namespace NetGenCAD.Designer.Functions
         /// <param name="pointsId">Identifier for the point set</param>
         /// <param name="face">Face definition (indices of points)</param>
         /// <param name="faceId">Identifier for the face set</param>
+        /// <param name="convexity">Convexity of the polyhedron</param>
         /// <param name="selectedUnit">Unit system (Metric or Imperial)</param>
         /// <param name="decimalPlaces">Number of decimal places for rounding</param>
         /// <param name="dbConnection">Database connection for persistence</param>
@@ -74,6 +75,7 @@ namespace NetGenCAD.Designer.Functions
             int pointsId,
             string face,
             int faceId,
+            int convexity,
             UnitSystem selectedUnit,
             int decimalPlaces,
             SqliteConnection dbConnection,
@@ -106,6 +108,7 @@ namespace NetGenCAD.Designer.Functions
                     PointsId = pointsId,
                     Face = face,
                     FaceId = faceId,
+                    Convexity = convexity,
                     CreatedAt = DateTime.UtcNow,
                 };
 
@@ -158,10 +161,11 @@ namespace NetGenCAD.Designer.Functions
         /// <summary>
         /// Generates OpenSCAD code for polyhedron points, faces, and module definition.
         /// Creates point and face arrays inside a module, sorted by PointsId and FaceId respectively.
+        /// Uses the maximum convexity value from all polyhedron dimensions.
         /// </summary>
         /// <param name="objectName">Name of the polyhedron object</param>
         /// <param name="polyhedronDimensions">Collection of polyhedron dimensions containing points and faces</param>
-        /// <param name="convexity">Convexity parameter for the polyhedron (default 1)</param>
+        /// <param name="convexity">Default convexity parameter for the polyhedron (overridden by max from collection)</param>
         /// <returns>OpenSCAD code string defining module with points, faces, and polyhedron call</returns>
         public static string GenerateOSCADShapeAsync(
             string objectName,
@@ -189,6 +193,11 @@ namespace NetGenCAD.Designer.Functions
                     .Where(p => p.PolyhedronOperationType == "Faces")
                     .OrderBy(p => p.FaceId)
                     .ToList();
+
+                // Get the maximum convexity from all polyhedron dimensions
+                int maxConvexity = polyhedronDimensions.Any() 
+                    ? polyhedronDimensions.Max(p => p.Convexity) 
+                    : convexity;
 
                 // Generate module definition
                 scadCode.AppendLine($"module {sanitizedName}_polyhedron()");
@@ -241,14 +250,14 @@ namespace NetGenCAD.Designer.Functions
                 // Generate polyhedron call inside module if both points and faces exist
                 if (pointsList.Count > 0 && facesList.Count > 0)
                 {
-                    scadCode.AppendLine($"    polyhedron(points = {sanitizedName}_points, faces = {sanitizedName}_faces, convexity = {convexity});");
+                    scadCode.AppendLine($"    polyhedron(points = {sanitizedName}_points, faces = {sanitizedName}_faces, convexity = {maxConvexity});");
                 }
 
                 scadCode.AppendLine("}");
                 scadCode.AppendLine();
 
                 System.Diagnostics.Debug.WriteLine(
-                    $"Generated OpenSCAD shape: {sanitizedName} with {pointsList.Count} points and {facesList.Count} faces");
+                    $"Generated OpenSCAD shape: {sanitizedName} with {pointsList.Count} points and {facesList.Count} faces (max convexity: {maxConvexity})");
 
                 return scadCode.ToString();
             }

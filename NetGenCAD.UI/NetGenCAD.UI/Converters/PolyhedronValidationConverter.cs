@@ -22,19 +22,22 @@ namespace NetGenCAD.UI.Converters
         private const int MaxNameLength = 255;
         private const int MinDescriptionLength = 1;
         private const int MaxDescriptionLength = 500;
+        private const int MinConvexity = 1; // OpenSCAD minimum convexity
+        private const int MaxConvexity = 100; // Reasonable upper limit for convexity
 
         public object Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
         {
-            // Required bindings: SelectedPolyhedronOperationType, Name, Description, PointsId, PointXMM, PointYMM, PointZMM, FacePoints, FaceId
-            if (values == null || values.Count < 9)
+            // Required bindings: SelectedPolyhedronOperationType, Name, Description, PointsId, PointXMM, PointYMM, PointZMM, FacePoints, FaceId, PolyhedronConvexity
+            if (values == null || values.Count < 10)
                 return false;
 
             // Extract and validate common properties
             PolyhedronOperationType? operationType = values[0] as PolyhedronOperationType?;
             bool nameValid = ValidateName(values[1]);
             bool descValid = ValidateDescription(values[2]);
+            bool convexityValid = ValidateConvexity(values[9]);
 
-            if (!nameValid || !descValid || operationType == null)
+            if (!nameValid || !descValid || operationType == null || !convexityValid)
                 return false;
 
             // Validate based on operation type
@@ -73,6 +76,19 @@ namespace NetGenCAD.UI.Converters
                 return false;
 
             return desc.Length >= MinDescriptionLength && desc.Length <= MaxDescriptionLength;
+        }
+
+        /// <summary>
+        /// Validates convexity requirements.
+        /// - Must be an integer between MinConvexity and MaxConvexity
+        /// - OpenSCAD uses convexity to improve rendering performance
+        /// </summary>
+        private static bool ValidateConvexity(object? convexityObj)
+        {
+            if (convexityObj is not int convexity)
+                return false;
+
+            return convexity >= MinConvexity && convexity <= MaxConvexity;
         }
 
         /// <summary>
@@ -149,7 +165,7 @@ namespace NetGenCAD.UI.Converters
             try
             {
                 var faceMatches = Regex.Matches(facePoints, @"\[(\d+(?:,\d+)*)\]");
-                foreach (Match match in faceMatches)
+                foreach (System.Text.RegularExpressions.Match match in faceMatches)
                 {
                     var pointIndices = match.Groups[1].Value.Split(',');
                     if (pointIndices.Length < MinPointsPerFace)

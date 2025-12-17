@@ -123,6 +123,7 @@ namespace NetGenCAD.UI.ViewModels
         private double _alphaIntValue = 1;
         private bool _isSphereSelected = false;
         private bool _isRoundCylinderSelected = false;
+        private bool _isPolyhedronSelected = false;
         private bool _copyObject = false;
         private ObservableCollection<ModuleDimensions>? _cachedAllModuleDimensions;
 
@@ -177,6 +178,7 @@ namespace NetGenCAD.UI.ViewModels
             IsRoundCylinderSelected = _isRoundCylinderSelected;
             IsSphereSelected = _isSphereSelected;
             IsSurfaceSelected = _isSurfaceSelected;
+            IsPolyhedronSelected = _isPolyhedronSelected;
         }
 
         // Clear all input fields
@@ -239,6 +241,7 @@ namespace NetGenCAD.UI.ViewModels
             IsRoundSurfaceSelected = false;
             IsSphereSelected = false;
             IsRoundCylinderSelected = false;
+            IsPolyhedronSelected = false;
             IsPreRendered = false;
             CopyObject = false;
             ScrewSizes = _screwSizes;
@@ -1023,6 +1026,31 @@ namespace NetGenCAD.UI.ViewModels
         public bool IsModalOpen { get => _isModalOpen; set => this.RaiseAndSetIfChanged(ref _isModalOpen, value); }
         public string ModalTitle { get => _modalTitle; set => this.RaiseAndSetIfChanged(ref _modalTitle, value); }
         public string ModalContent { get => _modalContent; set => this.RaiseAndSetIfChanged(ref _modalContent, value); }
+        public bool IsPolyhedronSelected
+        {
+            get => _isPolyhedronSelected;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isPolyhedronSelected, value);
+                if (_isPolyhedronSelected)
+                {
+                    _isCubeSelected = false;
+                    _isRoundCubeSelected = false;
+                    _isCylinderSelected = false;
+                    _isSurfaceSelected = false;
+                    _isRoundSurfaceSelected = false;
+                    _isSphereSelected = false;
+                    _isRoundCylinderSelected = false;
+                    this.RaisePropertyChanged(nameof(IsCubeSelected));
+                    this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
+                    this.RaisePropertyChanged(nameof(IsSphereSelected));
+                    this.RaisePropertyChanged(nameof(IsSurfaceSelected));
+                    this.RaisePropertyChanged(nameof(IsRoundSurfaceSelected));
+                    this.RaisePropertyChanged(nameof(IsRoundCubeSelected));
+                    this.RaisePropertyChanged(nameof(IsCylinderSelected));
+                }
+            }
+        }
         public bool IsCubeSelected
         {
             get => _isCubeSelected;
@@ -1037,6 +1065,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isRoundSurfaceSelected = false;
                     _isSphereSelected = false;
                     _isRoundCylinderSelected = false;
+                    _isPolyhedronSelected = false;
+                    this.RaisePropertyChanged(nameof(IsPolyhedronSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsSphereSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
@@ -1062,6 +1092,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isRoundSurfaceSelected = false;
                     _isSphereSelected = false;
                     _isRoundCylinderSelected = false;
+                    _isPolyhedronSelected = false;
+                    this.RaisePropertyChanged(nameof(IsPolyhedronSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsSphereSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
@@ -1086,6 +1118,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isRoundSurfaceSelected = false;
                     _isSphereSelected = false;
                     _isRoundCylinderSelected = false;
+                    _isPolyhedronSelected = false;
+                    this.RaisePropertyChanged(nameof(IsPolyhedronSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsSphereSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
@@ -1110,6 +1144,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isRoundSurfaceSelected = false;
                     _isSphereSelected = false;
                     _isRoundCylinderSelected = false;
+                    _isPolyhedronSelected = false;
+                    this.RaisePropertyChanged(nameof(IsPolyhedronSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsCubeSelected));
                     this.RaisePropertyChanged(nameof(IsRoundSurfaceSelected));
@@ -1134,6 +1170,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isSurfaceSelected = false;
                     _isSphereSelected = false;
                     _isRoundCylinderSelected = false;
+                    _isPolyhedronSelected = false;
+                    this.RaisePropertyChanged(nameof(IsPolyhedronSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsCubeSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
@@ -1159,6 +1197,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isSurfaceSelected = false;
                     _isRoundSurfaceSelected = false;
                     _isRoundCylinderSelected = false;
+                    _isPolyhedronSelected = false;
+                    this.RaisePropertyChanged(nameof(IsPolyhedronSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsCubeSelected));
                     this.RaisePropertyChanged(nameof(IsRoundCubeSelected));
@@ -1184,6 +1224,8 @@ namespace NetGenCAD.UI.ViewModels
                     _isSurfaceSelected = false;
                     _isRoundSurfaceSelected = false;
                     _isSphereSelected = false;
+                    _isPolyhedronSelected = false;
+                    this.RaisePropertyChanged(nameof(IsPolyhedronSelected));
                     this.RaisePropertyChanged(nameof(IsCylinderSelected));
                     this.RaisePropertyChanged(nameof(IsSphereSelected));
                     this.RaisePropertyChanged(nameof(IsSurfaceSelected));
@@ -1327,6 +1369,9 @@ namespace NetGenCAD.UI.ViewModels
                         break;
                     case "Surface":
                         IsSurfaceSelected = true;
+                        break;
+                    case "Polyhedron":
+                        IsPolyhedronSelected = true;
                         break;
                 }
             }

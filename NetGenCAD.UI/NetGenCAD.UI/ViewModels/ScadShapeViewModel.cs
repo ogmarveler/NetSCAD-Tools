@@ -227,6 +227,7 @@ namespace NetGenCAD.UI.ViewModels
                     pointsId: PointsId,
                     face: FacePoints,
                     faceId: FaceId,
+                    convexity: PolyhedronConvexity,
                     selectedUnit: SelectedUnitValue,
                     decimalPlaces: _decimalPlaces,
                     dbConnection: DbConnection,
@@ -244,10 +245,8 @@ namespace NetGenCAD.UI.ViewModels
                         var scadCode = ShapeScadFunctions.GenerateOSCADShapeAsync(Name, updatedPolyhedronDimensions, PolyhedronConvexity);
                         // Store the generated SCAD code in the property
                         ShapeScad = scadCode;
-
-                        ModalTitle = "Success";
-                        ModalContent = $"Polyhedron created successfully with ID: {polyhedronId}";
-                        IsModalOpen = true;
+                        
+                        // Modal popup disabled - user feedback via DataGrid update and preview opening
                         await Task.CompletedTask;
                     });
 
@@ -343,7 +342,7 @@ namespace NetGenCAD.UI.ViewModels
 
             try
             {
-                // Generate the preview file
+                // Generate the preview file with convexity parameter
                 var previewFilePath = await ShapeScadFunctions.ShapeToScadPreviewAsync(Name, ShapeScad, _objectFilePath);
                 
                 if (string.IsNullOrWhiteSpace(previewFilePath))
