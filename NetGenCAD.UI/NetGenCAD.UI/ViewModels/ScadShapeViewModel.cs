@@ -2,8 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using NetGenCAD.Core.Interfaces;
 using NetGenCAD.Core.Material;
-using NetGenCAD.Core.Models;
 using NetGenCAD.Core.Primitives;
+using NetGenCAD.Designer.Functions;
 using NetGenCAD.Designer.Repositories;
 using ReactiveUI;
 using System;
@@ -45,6 +45,7 @@ namespace NetGenCAD.UI.ViewModels
         private ObservableCollection<PolyhedronDimensions> _polyhedronDimensions = new();
         private ObservableCollection<PolyhedronDimensions> _polyhedronDimensionsPoints = new();
         private ObservableCollection<PolyhedronDimensions> _polyhedronDimensionsFaces = new();
+        private string _shapeScad = string.Empty;
 
 
         [UnconditionalSuppressMessage("Trimming", "IL2026")]
@@ -192,6 +193,12 @@ namespace NetGenCAD.UI.ViewModels
             }
         }
 
+        public string ShapeScad
+        {
+            get => _shapeScad;
+            set => this.RaiseAndSetIfChanged(ref _shapeScad, value);
+        }
+
         public async Task CreatePolyhedron()
         {
             if (DbConnection == null)
@@ -225,13 +232,19 @@ namespace NetGenCAD.UI.ViewModels
                     dbConnection: DbConnection,
                     generateOscadCallback: async (polyhedron) =>
                     {
-                        // Placeholder for OSCAD method generation
+                        // Placeholder - actual SCAD generation happens in onPolyhedronCreated
                         return await Task.FromResult("// OSCAD method placeholder");
                     },
                     onPolyhedronCreated: async (polyhedronId, updatedPolyhedronDimensions) =>
                     {
                         ClearInputs(); // Clear input fields after creation but before incrementing PointsId/FaceId
                         PolyhedronDimensions = updatedPolyhedronDimensions;
+                        
+                        // Generate OpenSCAD code for the entire shape with UPDATED dimensions and convexity
+                        var scadCode = ShapeScadFunctions.GenerateOSCADShapeAsync(Name, updatedPolyhedronDimensions, PolyhedronConvexity);
+                        // Store the generated SCAD code in the property
+                        ShapeScad = scadCode;
+
                         ModalTitle = "Success";
                         ModalContent = $"Polyhedron created successfully with ID: {polyhedronId}";
                         IsModalOpen = true;
@@ -299,6 +312,55 @@ namespace NetGenCAD.UI.ViewModels
             {
                 ModalTitle = "Error";
                 ModalContent = $"An error occurred while deleting the polyhedron: {ex.Message}";
+                IsModalOpen = true;
+            }
+        }
+
+        public void ShowShapeScadCode()
+        {
+            if (string.IsNullOrWhiteSpace(ShapeScad))
+            {
+                ModalTitle = "No Code Generated";
+                ModalContent = "No OpenSCAD code has been generated yet. Create points and faces first.";
+                IsModalOpen = true;
+                return;
+            }
+
+            ModalTitle = "Shape OpenSCAD Code";
+            ModalContent = ShapeScad;
+            IsModalOpen = true;
+        }
+
+        public async Task ShowShapePreviewAsync()
+        {
+            if (string.IsNullOrWhiteSpace(ShapeScad))
+            {
+                ModalTitle = "No Preview Available";
+                ModalContent = "No OpenSCAD code has been generated yet. Create points and faces first.";
+                IsModalOpen = true;
+                return;
+            }
+
+            try
+            {
+                // Generate the preview file
+                var previewFilePath = await ShapeScadFunctions.ShapeToScadPreviewAsync(Name, ShapeScad, _objectFilePath);
+                
+                if (string.IsNullOrWhiteSpace(previewFilePath))
+                {
+                    ModalTitle = "Error";
+                    ModalContent = "Failed to generate preview file.";
+                    IsModalOpen = true;
+                    return;
+                }
+
+                // Open the preview in OpenSCAD (allowDuplicates: false prevents opening if already open)
+                await ShapeScadFunctions.OpenShapePreviewAsync(previewFilePath, allowDuplicates: false);
+            }
+            catch (Exception ex)
+            {
+                ModalTitle = "Error";
+                ModalContent = $"Failed to open preview: {ex.Message}";
                 IsModalOpen = true;
             }
         }

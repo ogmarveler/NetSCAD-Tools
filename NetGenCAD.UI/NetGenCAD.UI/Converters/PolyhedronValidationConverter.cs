@@ -111,7 +111,7 @@ namespace NetGenCAD.UI.Converters
                 return false;
 
             // Check bounds
-            return coord >= 0 && coord <= MaxCoordinateValue;
+            return coord <= MaxCoordinateValue;
         }
 
         /// <summary>

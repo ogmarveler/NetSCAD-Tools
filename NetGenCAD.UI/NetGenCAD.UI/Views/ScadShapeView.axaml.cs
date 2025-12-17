@@ -56,10 +56,10 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
     }
 
     private void ClearButton_Click(object? sender, RoutedEventArgs e) => ViewModel.ClearInputs();
-
     private void ClearShapeButton_Click(object? sender, RoutedEventArgs e) => ViewModel.ClearShape();
-
     private void ImportShapeButton_Click(object? sender, RoutedEventArgs e) => ViewModel.GetDimensionPolyhedronParts();
+    private void ViewPointsFacesButton_Click(object? sender, RoutedEventArgs e) => ViewModel.ShowShapeScadCode();
+    private async void PreviewShapeButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ShowShapePreviewAsync();
 
     private void AdjustLayoutForNarrowScreen()
     {
@@ -370,6 +370,7 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
                 if (item is PolyhedronDimensions polyhedronItem)
                 {
                     await ViewModel.DeleteSelectedItemAsync(polyhedronItem);
+                    ViewModel.GetDimensionPolyhedronParts(); // Refresh datagrids
                 }
             };
 
@@ -467,6 +468,7 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
                 if (item is PolyhedronDimensions polyhedronItem)
                 {
                     await ViewModel.DeleteSelectedItemAsync(polyhedronItem);
+                    ViewModel.GetDimensionPolyhedronParts(); // Refresh datagrids
                 }
             };
 
@@ -565,6 +567,7 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
                 if (item is PolyhedronDimensions polyhedronItem)
                 {
                     await ViewModel.DeleteSelectedItemAsync(polyhedronItem);
+                    ViewModel.GetDimensionPolyhedronParts(); // Refresh datagrids
                 }
             };
 

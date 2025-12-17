@@ -174,6 +174,23 @@
                         </Button>
                     </StackPanel>
 
+                    <!--  Preview Shape Button  -->
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="6"
+                        Width="120"
+                        Classes="inputGroup">
+                        <Button
+                            BorderBrush="{DynamicResource CardForeground}"
+                            BorderThickness="1"
+                            Click="PreviewShapeButton_Click"
+                            Content="Preview Shape">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Open the shape in OpenSCAD for 3D preview" />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+
                     <!--  Unit Type ComboBox with Header  -->
                     <StackPanel
                         Grid.Row="1"
@@ -257,64 +274,11 @@
                         </ComboBox>
                     </StackPanel>
 
-                    <!--  Create Polyhedron Point or Face Button  -->
-                    <StackPanel
-                        Grid.Row="1"
-                        Grid.Column="5"
-                        Width="120"
-                        Margin="0"
-                        Classes="inputGroup">
-                        <TextBlock Classes="standardLabel" Text="" />
-                        <Button
-                            Name="CreatePolyhedronButton"
-                            HorizontalAlignment="Stretch"
-                            Click="CreatePolyhedronButton_Click"
-                            FontWeight="SemiBold">
-                            <Button.Background>
-                                <Binding
-                                    Converter="{StaticResource PolyhedronOperationTypeToColorConverter}"
-                                    ConverterParameter="Background"
-                                    Path="SelectedPolyhedronOperationType" />
-                            </Button.Background>
-                            <Button.Foreground>
-                                <Binding
-                                    Converter="{StaticResource PolyhedronOperationTypeToColorConverter}"
-                                    ConverterParameter="Foreground"
-                                    Path="SelectedPolyhedronOperationType" />
-                            </Button.Foreground>
-                            <Button.BorderBrush>
-                                <Binding
-                                    Converter="{StaticResource PolyhedronOperationTypeToColorConverter}"
-                                    ConverterParameter="BorderBrush"
-                                    Path="SelectedPolyhedronOperationType" />
-                            </Button.BorderBrush>
-                            <Button.Content>
-                                <Binding Converter="{StaticResource PolyhedronOperationTypeConverter}" Path="SelectedPolyhedronOperationType" />
-                            </Button.Content>
-                            <Button.IsEnabled>
-                                <MultiBinding Converter="{StaticResource PolyhedronValidationConverter}">
-                                    <Binding Path="SelectedPolyhedronOperationType" />
-                                    <Binding Path="Name" />
-                                    <Binding Path="Description" />
-                                    <Binding Path="PointsId" />
-                                    <Binding Path="PointXMM" />
-                                    <Binding Path="PointYMM" />
-                                    <Binding Path="PointZMM" />
-                                    <Binding Path="FacePoints" />
-                                    <Binding Path="FaceId" />
-                                </MultiBinding>
-                            </Button.IsEnabled>
-                            <ToolTip.Tip>
-                                <TextBlock Text="Creates a new polyhedron point or face and saves it to the database for use in OpenSCAD" />
-                            </ToolTip.Tip>
-                        </Button>
-                    </StackPanel>
-
                     <!--  Polyhedron Points and Face Inputs  -->
                     <StackPanel
                         Grid.Row="2"
                         Grid.Column="0"
-                        Grid.ColumnSpan="8"
+                        Grid.ColumnSpan="6"
                         Margin="10,0,0,0"
                         HorizontalAlignment="Left"
                         Orientation="Horizontal"
@@ -381,7 +345,7 @@
                     <StackPanel
                         Grid.Row="2"
                         Grid.Column="0"
-                        Grid.ColumnSpan="8"
+                        Grid.ColumnSpan="6"
                         Margin="10,0,0,0"
                         HorizontalAlignment="Left"
                         Orientation="Horizontal"
@@ -417,6 +381,77 @@
                                 </ToolTip.Tip>
                             </TextBox>
                         </StackPanel>
+                    </StackPanel>
+
+                    <!--  Create Polyhedron Point or Face Button  -->
+                    <StackPanel
+                        Grid.Row="2"
+                        Grid.Column="4"
+                        Width="120"
+                        Margin="0"
+                        Classes="inputGroup">
+                        <TextBlock Classes="standardLabel" Text="" />
+                        <Button
+                            Name="CreatePolyhedronButton"
+                            HorizontalAlignment="Stretch"
+                            Click="CreatePolyhedronButton_Click"
+                            FontWeight="SemiBold">
+                            <Button.Background>
+                                <Binding
+                                    Converter="{StaticResource PolyhedronOperationTypeToColorConverter}"
+                                    ConverterParameter="Background"
+                                    Path="SelectedPolyhedronOperationType" />
+                            </Button.Background>
+                            <Button.Foreground>
+                                <Binding
+                                    Converter="{StaticResource PolyhedronOperationTypeToColorConverter}"
+                                    ConverterParameter="Foreground"
+                                    Path="SelectedPolyhedronOperationType" />
+                            </Button.Foreground>
+                            <Button.BorderBrush>
+                                <Binding
+                                    Converter="{StaticResource PolyhedronOperationTypeToColorConverter}"
+                                    ConverterParameter="BorderBrush"
+                                    Path="SelectedPolyhedronOperationType" />
+                            </Button.BorderBrush>
+                            <Button.Content>
+                                <Binding Converter="{StaticResource PolyhedronOperationTypeConverter}" Path="SelectedPolyhedronOperationType" />
+                            </Button.Content>
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{StaticResource PolyhedronValidationConverter}">
+                                    <Binding Path="SelectedPolyhedronOperationType" />
+                                    <Binding Path="Name" />
+                                    <Binding Path="Description" />
+                                    <Binding Path="PointsId" />
+                                    <Binding Path="PointXMM" />
+                                    <Binding Path="PointYMM" />
+                                    <Binding Path="PointZMM" />
+                                    <Binding Path="FacePoints" />
+                                    <Binding Path="FaceId" />
+                                </MultiBinding>
+                            </Button.IsEnabled>
+                            <ToolTip.Tip>
+                                <TextBlock Text="Creates a new polyhedron point or face and saves it to the database for use in OpenSCAD" />
+                            </ToolTip.Tip>
+                        </Button>
+                    </StackPanel>
+
+                    <!--  View Points | Faces SCAD Button  -->
+                    <StackPanel
+                        Grid.Row="2"
+                        Grid.Column="5"
+                        Width="120"
+                        Classes="inputGroup">
+                        <TextBlock Classes="standardLabel" Text="Points | Faces" />
+                        <Button
+                            BorderBrush="{DynamicResource CardForeground}"
+                            BorderThickness="1"
+                            Click="ViewPointsFacesButton_Click"
+                            Content="View SCAD">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Generates the polyhedron points and opens OpenSCAD" />
+                            </ToolTip.Tip>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </StackPanel>
