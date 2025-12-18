@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
+using NetGenCAD.Axis.Scad.Models;
+using NetGenCAD.Axis.Scad.Utility;
 using NetGenCAD.Core.Interfaces;
 using NetGenCAD.Core.Material;
 using NetGenCAD.Core.Primitives;
@@ -10,10 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using static NetGenCAD.Core.Measurements.Selector;
+using static NetGenCAD.Designer.Functions.ObjectScadFunctions;
 using static NetGenCAD.Designer.Functions.ShapeScadFunctions;
 
 namespace NetGenCAD.UI.ViewModels
@@ -47,6 +51,29 @@ namespace NetGenCAD.UI.ViewModels
         private ObservableCollection<PolyhedronDimensions> _polyhedronDimensionsFaces = new();
         private string _shapeScad = string.Empty;
 
+        // Axis-related fields
+        public int? _axisId = null;
+        private AxisDimensions? _axisDimensions = new();
+        private List<string> _axesList = [];
+        private string? _selectedAxisValue = "Select Axis";
+        private bool _axisStored = false;
+        private double _axisXPositionMM = 0;
+        private double _axisYPositionMM = 0;
+        private double _axisZPositionMM = 0;
+        private UnitSystem _selectedAxisUnit = UnitSystem.Metric;
+        private bool _isAxisMetric = true;
+        private bool _isAxisImperial = false;
+        private bool _axesSelectEnabled = true;
+        private string _shapeAxisDisplay = string.Empty;
+        private string _shapeAxisUnitDisplay = string.Empty;
+        private ObservableCollection<GeneratedModule> _axesModulesList;
+        private GeneratedModule? _selectedAxis = new();
+        private double _AxisXPositionMM = 0;
+        private double _AxisYPositionMM = 0;
+        private double _AxisZPositionMM = 0;
+        private bool _originalRemoveAxis = false;
+        private string _originalAxisCall = string.Empty;
+        private bool _removeAxis = false;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026")]
         [UnconditionalSuppressMessage("AOT", "IL3050")]
@@ -58,12 +85,29 @@ namespace NetGenCAD.UI.ViewModels
             _polyhedronDimensionsPoints = [];
             PolyhedronDimensionsFaces = [];
             _polyhedronDimensionsFaces = [];
+            _axesModulesList = [];
             DbConnection = App.Services!.GetRequiredService<SqliteConnection>(); // Get the DbConnection from the DI container
             ClearShape();
+            GetAxesList();
+            AxisStored = false;
             _decimalPlaces = NetGenCAD.Designer.Repositories.PolyhedronDimensions.OpenSCAD_DecimalPlaces;
             UnitSystemValues = [.. Enum.GetValues(typeof(UnitSystem)).Cast<UnitSystem>()];
             SelectedUnitValue = UnitSystem.Metric;
+            SelectedAxisValue = AxesList?.FirstOrDefault() ?? string.Empty;
+            _selectedAxis = _axesModulesList.FirstOrDefault(x => x.CallingMethod == SelectedAxisValue);
+            SelectedUnitValue = UnitSystem.Metric;
             _objectFilePath = App.Services!.GetRequiredService<IScadPathProvider>().ScadPath;
+            
+        }
+
+        // Stores the current polyhedron shape (reference by PolyhedronDimensions Name into ShapeDimensions)
+        public async Task CreateNewShapeModuleAsync()
+        {
+        }
+
+        // Updates all rows in SolidDimensions where the Object's PolyhedronName = Name (PolyhedronDimensions or ShapeDimensions Name)
+        public async Task UpdateSolidDimensionsAsync()
+        {
         }
 
         // Clear all input fields
@@ -80,7 +124,7 @@ namespace NetGenCAD.UI.ViewModels
             UpdatePolyhedronIds(); // When interacting with datagrids, to default to the latest available ids for points and faces
         }
 
-        private void UpdatePolyhedronIds()
+        public void UpdatePolyhedronIds()
         {
             // Update IDs for new entries
             PointsId = PolyhedronDimensionsPoints.Any() ? PolyhedronDimensionsPoints.Max(p => p.PointsId) + 1 : 0;
@@ -199,6 +243,197 @@ namespace NetGenCAD.UI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _shapeScad, value);
         }
 
+        public bool IsAxisMetric
+        {
+            get => _isAxisMetric;
+            set => this.RaiseAndSetIfChanged(ref _isAxisMetric, value);
+        }
+
+        public bool IsAxisImperial
+        {
+            get => _isAxisImperial;
+            set => this.RaiseAndSetIfChanged(ref _isAxisImperial, value);
+        }
+
+        public bool AxesSelectEnabled
+        {
+            get => _axesSelectEnabled;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _axesSelectEnabled, value);
+                if (_axesSelectEnabled)
+                {
+                    SelectedAxisValue = "Select Axis"; // Reset selection when enabled
+                    _axisDimensions = null; // Clear selected axis
+                }
+            }
+        }
+        public bool RemoveAxis { get => _removeAxis; set => this.RaiseAndSetIfChanged(ref _removeAxis, value); }
+        public string ShapeAxisDisplay { get => _shapeAxisDisplay; set => this.RaiseAndSetIfChanged(ref _shapeAxisDisplay, value); }
+        public string ShapeAxisUnitDisplay { get => _shapeAxisUnitDisplay; set => this.RaiseAndSetIfChanged(ref _shapeAxisUnitDisplay, value); }
+        public List<string> AxesList { get => _axesList; set => this.RaiseAndSetIfChanged(ref _axesList, value); }
+        public UnitSystem SelectedAxisUnitValue
+        {
+            get => _selectedAxisUnit;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedAxisUnit, value);
+                IsAxisImperial = _selectedAxisUnit != UnitSystem.Metric;
+                IsAxisMetric = _selectedAxisUnit == UnitSystem.Metric;
+                GetAxesList(); // Refresh axes list when axis unit changes
+            }
+        }
+        public string? SelectedAxisValue
+        {
+            get => _selectedAxisValue;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedAxisValue, value);
+                _selectedAxis = _axesModulesList.FirstOrDefault(x => x.CallingMethod == value);
+                AxisXPositionMM = _selectedAxis != null ? _selectedAxis.MinX : 0;
+                AxisYPositionMM = _selectedAxis != null ? _selectedAxis.MinY : 0;
+                AxisZPositionMM = _selectedAxis != null ? _selectedAxis.MinZ : 0;
+                if (AxisStored)
+                    UpdateAxisTranslate();
+                else if (_selectedAxis != null)
+                    _ = CreateAxis();
+            }
+        }
+
+        public bool AxisStored
+        {
+            get => _axisStored;
+            set => this.RaiseAndSetIfChanged(ref _axisStored, value);
+        }
+        public double AxisXPositionMM { get => _axisXPositionMM; set { this.RaiseAndSetIfChanged(ref _axisXPositionMM, value); if (AxisStored && !string.IsNullOrEmpty(ShapeScad)) _ = ShowShapePreviewAsync(); } }
+        public double AxisYPositionMM { get => _axisYPositionMM; set { this.RaiseAndSetIfChanged(ref _axisYPositionMM, value); if (AxisStored && !string.IsNullOrEmpty(ShapeScad)) _ = ShowShapePreviewAsync(); } }
+        public double AxisZPositionMM { get => _axisZPositionMM; set { this.RaiseAndSetIfChanged(ref _axisZPositionMM, value); if (AxisStored && !string.IsNullOrEmpty(ShapeScad)) _ = ShowShapePreviewAsync(); } }
+        public UnitSystem SelectedAxisUnit
+        {
+            get => _selectedAxisUnit;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedAxisUnit, value);
+                IsAxisImperial = _selectedAxisUnit != UnitSystem.Metric;
+                IsAxisMetric = _selectedAxisUnit == UnitSystem.Metric;
+                GetAxesList(); // Refresh axes list when axis unit changes
+            }
+        }
+
+        // Method to load available axes
+        public void GetAxesList()
+        {
+            var parser = new ScadParser();
+            var filePath = Path.Combine("Scad", "Axes", "axes.scad");
+            _axesModulesList = parser.AxesModulesList(filePath);
+
+            // Call the static function to get filtered axes and updated values
+            var (filteredAxes, updatedAxisValue, updatedAxis) = ObjectScadFunctions.GetFilteredAxesList(
+                SelectedAxisUnitValue,
+                _axesModulesList,
+                AxisStored,
+                SelectedAxisValue);
+
+            // Update ViewModel properties from the results
+            AxesList = [.. filteredAxes];
+
+            if (updatedAxisValue != SelectedAxisValue)
+            {
+                SelectedAxisValue = updatedAxisValue;
+            }
+
+            _selectedAxis = updatedAxis;
+        }
+
+        // Method to create axis
+        public async Task CreateAxis()
+        {
+            // Define the callback that updates the ViewModel properties
+            CreateAxisCallbackAsync onAxisCreated = async (
+                axisId,
+                axisDimensions,
+                axisXPositionMM,
+                axisYPositionMM,
+                axisZPositionMM,
+                shapeAxisDisplay,
+                shapeAxisUnitDisplay,
+                selectedUnitValue) =>
+            {
+                // Update all ViewModel properties via the callback
+                _axisId = axisId;
+                _axisDimensions = axisDimensions;
+
+                AxisStored = true;
+                RemoveAxis = false;
+                AxesSelectEnabled = false;
+
+                ShapeAxisDisplay = shapeAxisDisplay;
+                ShapeAxisUnitDisplay = shapeAxisUnitDisplay;
+
+                AxisXPositionMM = axisXPositionMM;
+                AxisYPositionMM = axisYPositionMM;
+                AxisZPositionMM = axisZPositionMM;
+
+                SelectedUnitValue = selectedUnitValue;
+            };
+
+            // Call the static function with the callback
+            await CreateAxisWithCallbackAsync(
+                _selectedAxis,
+                _selectedAxisUnit,
+                _axisXPositionMM,
+                _axisYPositionMM,
+                _axisZPositionMM,
+                _decimalPlaces,
+                _objectFilePath,
+                DbConnection!,
+                onAxisCreated);
+        }
+
+        public async void UpdateAxisTranslate()
+        {
+            if (!AxisStored) return;
+
+            // Build the original axis call for replacement
+            var originalAxisCallLocal = _originalRemoveAxis
+                ? $"// translate ([{_AxisXPositionMM}, {_AxisYPositionMM}, {_AxisZPositionMM}]) {_axisDimensions?.OSCADMethod.Replace(_axisDimensions.IncludeMethod, "")}"
+                : $"translate ([{_AxisXPositionMM}, {_AxisYPositionMM}, {_AxisZPositionMM}]) {_axisDimensions?.OSCADMethod.Replace(_axisDimensions.IncludeMethod, "")}";
+
+            // Define the callback that updates the ViewModel properties
+            UpdateAxisTranslateCallbackAsync onAxisTranslateComplete = async (
+                axisDimensions,
+                newAxisXPositionMM,
+                newAxisYPositionMM,
+                newAxisZPositionMM,
+                newOriginalRemoveAxis) =>
+            {
+                // Update all ViewModel properties via the callback
+                _axisDimensions = axisDimensions;
+                _AxisXPositionMM = newAxisXPositionMM;
+                _AxisYPositionMM = newAxisYPositionMM;
+                _AxisZPositionMM = newAxisZPositionMM;
+                _originalRemoveAxis = newOriginalRemoveAxis;
+                _originalAxisCall = originalAxisCallLocal;
+            };
+
+            // Call the static function with the callback
+            await UpdateAxisTranslateWithCallbackAsync(
+                AxisStored,
+                _axisDimensions,
+                _selectedAxis,
+                _axisXPositionMM,
+                _axisYPositionMM,
+                _axisZPositionMM,
+                _selectedAxisUnit,
+                _decimalPlaces,
+                RemoveAxis,
+                _originalRemoveAxis,
+                originalAxisCallLocal,
+                _objectFilePath,
+                DbConnection!,
+                onAxisTranslateComplete);
+        }
+
         public async Task CreatePolyhedron()
         {
             if (DbConnection == null)
@@ -227,7 +462,6 @@ namespace NetGenCAD.UI.ViewModels
                     pointsId: PointsId,
                     face: FacePoints,
                     faceId: FaceId,
-                    convexity: PolyhedronConvexity,
                     selectedUnit: SelectedUnitValue,
                     decimalPlaces: _decimalPlaces,
                     dbConnection: DbConnection,
@@ -299,13 +533,10 @@ namespace NetGenCAD.UI.ViewModels
                 // Delete the polyhedron from the database
                 await polyhedron.DeleteAsync(DbConnection);
 
-                ModalTitle = "Success";
-                ModalContent = $"Polyhedron '{polyhedron.Description}' deleted successfully.";
-                    
                 // Refresh the collection
                 GetDimensionPolyhedronParts();
-
-                IsModalOpen = true;
+                var scadCode = ShapeScadFunctions.GenerateOSCADShapeAsync(Name, PolyhedronDimensions);
+                ShapeScad = scadCode;
             }
             catch (Exception ex)
             {
@@ -342,9 +573,16 @@ namespace NetGenCAD.UI.ViewModels
 
             try
             {
-                // Generate the preview file with convexity parameter
-                var previewFilePath = await ShapeScadFunctions.ShapeToScadPreviewAsync(Name, ShapeScad, _objectFilePath);
-                
+                var previewFilePath = await ShapeScadFunctions.ShapeToScadPreviewAsync(
+                    Name,
+                    ShapeScad,
+                    _objectFilePath,
+                    PolyhedronDimensions,
+                    AxisStored ? _axisDimensions : null,
+                    AxisStored ? AxisXPositionMM : null,
+                    AxisStored ? AxisYPositionMM : null,
+                    AxisStored ? AxisZPositionMM : null);
+
                 if (string.IsNullOrWhiteSpace(previewFilePath))
                 {
                     ModalTitle = "Error";
@@ -353,7 +591,6 @@ namespace NetGenCAD.UI.ViewModels
                     return;
                 }
 
-                // Open the preview in OpenSCAD (allowDuplicates: false prevents opening if already open)
                 await ShapeScadFunctions.OpenShapePreviewAsync(previewFilePath, allowDuplicates: false);
             }
             catch (Exception ex)

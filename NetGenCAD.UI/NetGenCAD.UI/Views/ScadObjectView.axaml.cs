@@ -808,7 +808,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
     }
 
-    private void ApplyAxisButton_Click(object? sender, RoutedEventArgs e) => ViewModel.CreateAxis();
+    private async void ApplyAxisButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateAxis();
 
     private void GetObjectButton_Click(object? sender, RoutedEventArgs e) => ViewModel.GetDimensionsParts();
 

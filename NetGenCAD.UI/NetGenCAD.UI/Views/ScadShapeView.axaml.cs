@@ -55,12 +55,17 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
         };
     }
 
+    // Calling functions from View to ViewModel
     private void ClearButton_Click(object? sender, RoutedEventArgs e) => ViewModel.ClearInputs();
     private void ClearShapeButton_Click(object? sender, RoutedEventArgs e) => ViewModel.ClearShape();
     private void ImportShapeButton_Click(object? sender, RoutedEventArgs e) => ViewModel.GetDimensionPolyhedronParts();
     private void ViewPointsFacesButton_Click(object? sender, RoutedEventArgs e) => ViewModel.ShowShapeScadCode();
     private async void PreviewShapeButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.ShowShapePreviewAsync();
-
+    private void UpdatePointsFaceIdsButton_Click(object? sender, RoutedEventArgs e) => ViewModel.UpdatePolyhedronIds();
+    private async void SaveShapeButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateNewShapeModuleAsync();
+    private async void UpdateSolidDimensionsButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.UpdateSolidDimensionsAsync();
+    
+    // UI Stuff
     private void AdjustLayoutForNarrowScreen()
     {
         // Find the ScrollViewers by name
@@ -115,6 +120,21 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
     }
 
     private async void CreatePolyhedronButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreatePolyhedron();
+    private async void ApplyAxisButton_Click(object? sender, RoutedEventArgs e)
+    {
+        if (ViewModel is ScadShapeViewModel viewModel)
+        {
+            await viewModel.CreateAxis();
+        }
+    }
+
+    private void UpdateAxisPositionButton_Click(object? sender, RoutedEventArgs e) => ViewModel.UpdateAxisTranslate();
+
+    private void ChangeAxisButton_Click(object? sender, RoutedEventArgs e)
+    {
+        ViewModel.AxisStored = false;
+        ViewModel.AxesSelectEnabled = true;
+    }
 
     // ====== POINTS DataGrid Methods ======
     private void DataGrid_AutoGeneratingColumnPoints(object? sender, DataGridAutoGeneratingColumnEventArgs e)
@@ -136,7 +156,7 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
             { "PointZ_MM", "Z (mm)" },
             { "PolyhedronOperationType", "Apply To" },
             { "Description", "Description" },
-            { "PointsId", "Points ID" },
+            { "PointsId", "Point ID" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -199,7 +219,7 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
             { "PointZ_IN", "Z (in)" },
             { "PolyhedronOperationType", "Apply To" },
             { "Description", "Description" },
-            { "PointsId", "Points ID" },
+            { "PointsId", "Point ID" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))

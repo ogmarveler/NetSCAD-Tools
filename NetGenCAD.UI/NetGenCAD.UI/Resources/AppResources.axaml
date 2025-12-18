@@ -28,6 +28,7 @@
     <conv:PolyhedronOperationTypeConverter x:Key="PolyhedronOperationTypeConverter" />
     <conv:PolyhedronOperationTypeToColorConverter x:Key="PolyhedronOperationTypeToColorConverter" />
     <conv:PolyhedronValidationConverter x:Key="PolyhedronValidationConverter" />
+    <conv:SaveShapeValidationConverter x:Key="SaveShapeValidationConverter" />
 
     <Design.PreviewWith>
         <Border Padding="20">

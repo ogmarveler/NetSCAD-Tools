@@ -797,6 +797,31 @@
                         </StackPanel>
                     </StackPanel>
 
+                    <!--  Polyhedron List  -->
+                    <StackPanel
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        Margin="10,10,0,0"
+                        HorizontalAlignment="Left"
+                        Classes="inputGroup">
+                        <StackPanel.IsVisible>
+                            <Binding Path="IsPolyhedronSelected" />
+                        </StackPanel.IsVisible>
+                        <TextBlock Classes="standardLabel" Text="Available Shapes" />
+                        <ComboBox
+                            Width="350"
+                            Padding="10,5,0,5"
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{Binding AvailablePolyhedrons}"
+                            PlaceholderText="Select"
+                            SelectedItem="{Binding SelectedPolyhedron, Mode=TwoWay}">
+                            <ToolTip.Tip>
+                                <TextBlock Text="Pick from a list of polyhedrons made from the Create Shape module" />
+                            </ToolTip.Tip>
+                        </ComboBox>
+                    </StackPanel>
+
                     <!--  Create/Update Button  -->
                     <StackPanel
                         Grid.Row="1"

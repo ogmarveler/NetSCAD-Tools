@@ -58,7 +58,6 @@ namespace NetGenCAD.Designer.Functions
         /// <param name="pointsId">Identifier for the point set</param>
         /// <param name="face">Face definition (indices of points)</param>
         /// <param name="faceId">Identifier for the face set</param>
-        /// <param name="convexity">Convexity of the polyhedron</param>
         /// <param name="selectedUnit">Unit system (Metric or Imperial)</param>
         /// <param name="decimalPlaces">Number of decimal places for rounding</param>
         /// <param name="dbConnection">Database connection for persistence</param>
@@ -75,7 +74,6 @@ namespace NetGenCAD.Designer.Functions
             int pointsId,
             string face,
             int faceId,
-            int convexity,
             UnitSystem selectedUnit,
             int decimalPlaces,
             SqliteConnection dbConnection,
@@ -108,7 +106,6 @@ namespace NetGenCAD.Designer.Functions
                     PointsId = pointsId,
                     Face = face,
                     FaceId = faceId,
-                    Convexity = convexity,
                     CreatedAt = DateTime.UtcNow,
                 };
 
@@ -177,12 +174,6 @@ namespace NetGenCAD.Designer.Functions
                 var scadCode = new System.Text.StringBuilder();
                 var sanitizedName = SanitizeNameForOpenSCAD(objectName);
 
-                // Calculate polyhedron dimensions
-                var (length, width, height) = CalculatePolyhedronDimensions(polyhedronDimensions);
-
-                // Add dimension variables at the top
-                scadCode.Append(GeneratePolyhedronDimensionVariables(objectName, length, width, height));
-
                 // Separate points and faces
                 var pointsList = polyhedronDimensions
                     .Where(p => p.PolyhedronOperationType == "Points")
@@ -193,11 +184,6 @@ namespace NetGenCAD.Designer.Functions
                     .Where(p => p.PolyhedronOperationType == "Faces")
                     .OrderBy(p => p.FaceId)
                     .ToList();
-
-                // Get the maximum convexity from all polyhedron dimensions
-                int maxConvexity = polyhedronDimensions.Any() 
-                    ? polyhedronDimensions.Max(p => p.Convexity) 
-                    : convexity;
 
                 // Generate module definition
                 scadCode.AppendLine($"module {sanitizedName}_polyhedron()");
@@ -250,14 +236,14 @@ namespace NetGenCAD.Designer.Functions
                 // Generate polyhedron call inside module if both points and faces exist
                 if (pointsList.Count > 0 && facesList.Count > 0)
                 {
-                    scadCode.AppendLine($"    polyhedron(points = {sanitizedName}_points, faces = {sanitizedName}_faces, convexity = {maxConvexity});");
+                    scadCode.AppendLine($"    polyhedron(points = {sanitizedName}_points, faces = {sanitizedName}_faces, convexity = {convexity});");
                 }
 
                 scadCode.AppendLine("}");
                 scadCode.AppendLine();
 
                 System.Diagnostics.Debug.WriteLine(
-                    $"Generated OpenSCAD shape: {sanitizedName} with {pointsList.Count} points and {facesList.Count} faces (max convexity: {maxConvexity})");
+                    $"Generated OpenSCAD shape: {sanitizedName} with {pointsList.Count} points and {facesList.Count} faces");
 
                 return scadCode.ToString();
             }
@@ -302,25 +288,18 @@ namespace NetGenCAD.Designer.Functions
         public static async Task<string> ShapeToScadPreviewAsync(
             string shapeName,
             string shapeScadCode,
-            string objectFilePath)
+            string objectFilePath,
+            ObservableCollection<PolyhedronDimensions> polyhedronDimensions,
+            AxisDimensions? axisDimensions = null,
+            double? axisXPositionMM = null,
+            double? axisYPositionMM = null,
+            double? axisZPositionMM = null)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(shapeName))
+                if (string.IsNullOrWhiteSpace(shapeName) || string.IsNullOrWhiteSpace(shapeScadCode) || string.IsNullOrWhiteSpace(objectFilePath))
                 {
-                    System.Diagnostics.Debug.WriteLine("Error: Shape name cannot be null or empty");
-                    return string.Empty;
-                }
-
-                if (string.IsNullOrWhiteSpace(shapeScadCode))
-                {
-                    System.Diagnostics.Debug.WriteLine("Error: SCAD code cannot be null or empty");
-                    return string.Empty;
-                }
-
-                if (string.IsNullOrWhiteSpace(objectFilePath))
-                {
-                    System.Diagnostics.Debug.WriteLine("Error: SCAD path cannot be null or empty");
+                    System.Diagnostics.Debug.WriteLine("Error: Invalid parameters");
                     return string.Empty;
                 }
 
@@ -336,8 +315,15 @@ namespace NetGenCAD.Designer.Functions
                 var previewFileName = $"{sanitizedName}_shape.scad";
                 var previewFilePath = Path.Combine(solidsPath, previewFileName);
 
-                // Generate preview code with module call appended
-                var previewCode = GenerateOSCADShapePreviewCode(shapeName, shapeScadCode);
+                // Generate preview code with module call and dimensions appended
+                var previewCode = GenerateOSCADShapePreviewCode(
+                    shapeName,
+                    shapeScadCode,
+                    polyhedronDimensions,
+                    axisDimensions,
+                    axisXPositionMM,
+                    axisYPositionMM,
+                    axisZPositionMM);
 
                 // Write the preview SCAD code to file
                 await File.WriteAllTextAsync(previewFilePath, previewCode);
@@ -390,19 +376,41 @@ namespace NetGenCAD.Designer.Functions
         }
 
         /// <summary>
-        /// Generates OpenSCAD preview code that includes the shape module definition
-        /// and appends a call to use it. This is for preview purposes only.
+        /// Generates OpenSCAD preview code that includes the shape module definition,
+        /// polyhedron dimensions, and appends a call to use it. This is for preview purposes only.
         /// </summary>
         /// <param name="objectName">Name of the polyhedron object</param>
         /// <param name="shapeScadCode">The generated SCAD code containing the module definition</param>
-        /// <returns>OpenSCAD code string with module definition and preview call</returns>
+        /// <param name="polyhedronDimensions">Collection of polyhedron dimensions for calculating bounding box</param>
+        /// <returns>OpenSCAD code string with dimensions, module definition, and preview call</returns>
         public static string GenerateOSCADShapePreviewCode(
             string objectName,
-            string shapeScadCode)
+            string shapeScadCode,
+            ObservableCollection<PolyhedronDimensions> polyhedronDimensions,
+            AxisDimensions? axisDimensions = null,
+            double? axisXPositionMM = null,
+            double? axisYPositionMM = null,
+            double? axisZPositionMM = null)
         {
             try
             {
                 var previewCode = new System.Text.StringBuilder();
+
+                // Calculate polyhedron dimensions for preview
+                var (length, width, height) = CalculatePolyhedronDimensions(polyhedronDimensions);
+
+                // Add dimension variables at the top
+                previewCode.Append(GeneratePolyhedronDimensionVariables(objectName, length, width, height));
+
+                // Add axis if provided
+                if (axisDimensions != null && axisXPositionMM.HasValue && axisYPositionMM.HasValue && axisZPositionMM.HasValue)
+                {
+                    previewCode.AppendLine("// Custom axis");
+                    previewCode.AppendLine(axisDimensions.IncludeMethod);
+                    var wrappedAxisCall = $"translate ([{axisXPositionMM}, {axisYPositionMM}, {axisZPositionMM}]) {axisDimensions.OSCADMethod.Replace(axisDimensions.IncludeMethod, "")}";
+                    previewCode.AppendLine(wrappedAxisCall);
+                    previewCode.AppendLine();
+                }
 
                 // Add the module definition
                 previewCode.Append(shapeScadCode);
@@ -421,7 +429,7 @@ namespace NetGenCAD.Designer.Functions
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error generating shape preview code: {ex.Message}");
-                return shapeScadCode; // Return original if error
+                return shapeScadCode;
             }
         }
 
@@ -432,8 +440,7 @@ namespace NetGenCAD.Designer.Functions
         /// </summary>
         /// <param name="polyhedronDimensions">Collection of polyhedron dimensions containing points and faces</param>
         /// <returns>Tuple containing (Length, Width, Height) in millimeters, or (0, 0, 0) if no valid points found</returns>
-        public static (double Length, double Width, double Height) CalculatePolyhedronDimensions(
-            ObservableCollection<PolyhedronDimensions> polyhedronDimensions)
+        public static (double Length, double Width, double Height) CalculatePolyhedronDimensions(ObservableCollection<PolyhedronDimensions> polyhedronDimensions)
         {
             try
             {
@@ -526,11 +533,7 @@ namespace NetGenCAD.Designer.Functions
         /// <param name="width">Width in millimeters (Y-axis)</param>
         /// <param name="height">Height in millimeters (Z-axis)</param>
         /// <returns>OpenSCAD variable definition string</returns>
-        public static string GeneratePolyhedronDimensionVariables(
-            string objectName,
-            double length,
-            double width,
-            double height)
+        public static string GeneratePolyhedronDimensionVariables(string objectName,double length,double width,double height)
         {
             try
             {

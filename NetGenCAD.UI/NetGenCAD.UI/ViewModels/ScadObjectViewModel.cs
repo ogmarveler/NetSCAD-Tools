@@ -126,6 +126,8 @@ namespace NetGenCAD.UI.ViewModels
         private bool _isPolyhedronSelected = false;
         private bool _copyObject = false;
         private ObservableCollection<ModuleDimensions>? _cachedAllModuleDimensions;
+        private ObservableCollection<string>? _availablePolyhedrons;
+        private string _selectedPolyhedron = string.Empty;
 
 
         [UnconditionalSuppressMessage("Trimming", "IL2026")]
@@ -157,6 +159,14 @@ namespace NetGenCAD.UI.ViewModels
             OperationTypes = [.. Enum.GetValues<OperationType>()];
             _objectFilePath = App.Services!.GetRequiredService<IScadPathProvider>().ScadPath;
             ServerRackSizes = [.. Enumerable.Range(1, 12).Select(ServerRackDimensions.GetByRackUnits).OfType<ServerRack>()]; // OfType automatically filters nulls AND casts
+        }
+
+        public async void GetPolyhedronsList()
+        {
+            // If first time loading ensure PolyhedronDimensions table exists
+            await ShapeScadFunctions.GetDimensionPolyhedronPartsAsync(DbConnection!, string.Empty);
+            // Get the current list of polyhedrons available to be used in solids
+            AvailablePolyhedrons = new ObservableCollection<string>(await PolyhedronDimensionsExtensions.GetPolyhedronNamesList(DbConnection!));
         }
 
         /**** Dimensions DataGrids ****/
@@ -985,12 +995,13 @@ namespace NetGenCAD.UI.ViewModels
         public List<string>? AxesList { get => _axesList; set => this.RaiseAndSetIfChanged(ref _axesList, value); }
         public List<OperationType> OperationTypes { get; }
         public OperationType SelectedOperationType { get => _selectedOperationType; set => this.RaiseAndSetIfChanged(ref _selectedOperationType, value); }
+        public string SelectedPolyhedron { get => _selectedPolyhedron; set => this.RaiseAndSetIfChanged(ref _selectedPolyhedron, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsUnions { get => _moduleDimensionsUnions; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsUnions, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsIntersections { get => _moduleDimensionsIntersections; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsIntersections, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsDifferences { get => _moduleDimensionsDifferences; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsDifferences, value); }
         public ObservableCollection<SolidDimensions> SolidDimensions { get => _solidDimensions; set => this.RaiseAndSetIfChanged(ref _solidDimensions, value); }
         public ObservableCollection<ModuleDimensions> LayeredModuleDimensions { get => _layeredModuleDimensions; set => this.RaiseAndSetIfChanged(ref _layeredModuleDimensions, value); }
-
+        public ObservableCollection<string>? AvailablePolyhedrons { get => _availablePolyhedrons; set => this.RaiseAndSetIfChanged(ref _availablePolyhedrons, value); }
         public SqliteConnection? DbConnection { get => _dbConnection; set => this.RaiseAndSetIfChanged(ref _dbConnection, value); }
 
         public string Name

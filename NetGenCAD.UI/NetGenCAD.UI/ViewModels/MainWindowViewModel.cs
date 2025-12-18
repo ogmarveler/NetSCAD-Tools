@@ -6,6 +6,7 @@ using ReactiveUI;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NetGenCAD.Designer.Functions;
 
 namespace NetGenCAD.UI.ViewModels
 {
@@ -53,12 +54,14 @@ namespace NetGenCAD.UI.ViewModels
 
         public void LoadScadShapeView()
         {
+            App.Services!.GetRequiredService<ScadShapeViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
             MainViewContent = App.Services!.GetRequiredService<ScadShapeView>();
         }
 
         public void LoadScadObjectView()
         {
             App.Services!.GetRequiredService<ScadObjectViewModel>().GetAxesList();  // Refresh Axes List if using singleton or scoped services
+            App.Services!.GetRequiredService<ScadObjectViewModel>().GetPolyhedronsList(); // Refresh AvailablePolyhedrons List if using singleton
             MainViewContent = App.Services!.GetRequiredService<ScadObjectView>();
         }
 
