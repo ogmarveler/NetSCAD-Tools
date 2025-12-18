@@ -16,6 +16,7 @@ namespace NetGenCAD.Designer.Repositories
         public int? ModuleDimensionsId { get; set; } // Foreign key to ModuleDimensions
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
+        public string? ShapeName { get; set; } = string.Empty;
         public string? Material { get; set; }
         public string OperationType { get; set; } = Core.Primitives.OperationType.Union.ToString(); // Add or Subtract
         public string SolidType { get; set; } = "Cube"; // "Cube", "RoundCube", or "Cylinder"
@@ -174,6 +175,7 @@ namespace NetGenCAD.Designer.Repositories
             { "ModuleDimensionsId", ModuleDimensionsId ?? (object)DBNull.Value },
             { "Name", Name },
             { "Description", Description ?? (object)DBNull.Value },
+            { "ShapeName", ShapeName ?? (object)DBNull.Value },
             { "Material", Material ?? (object)DBNull.Value },
             { "OperationType", OperationType },
             { "SolidType", SolidType },
@@ -231,6 +233,7 @@ namespace NetGenCAD.Designer.Repositories
             (nameof(SolidDimensions.ModuleDimensionsId), typeof(int), true),
             (nameof(SolidDimensions.Name), typeof(string), true),
             (nameof(SolidDimensions.Description), typeof(string), true),
+            (nameof(SolidDimensions.ShapeName), typeof(string), true),
             (nameof(SolidDimensions.Material), typeof(string), true),
             (nameof(SolidDimensions.OperationType), typeof(string), false),
             (nameof(SolidDimensions.SolidType), typeof(string), false),
@@ -613,6 +616,7 @@ namespace NetGenCAD.Designer.Repositories
                    ModuleDimensionsId,
                    Name || '_' || 'copy' AS Name,
                    Description,
+                   ShapeName,
                    Material,
                    OperationType,
                    SolidType,

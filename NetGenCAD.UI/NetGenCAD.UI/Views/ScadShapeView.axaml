@@ -34,6 +34,15 @@
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
 
+        <!--  DataGrid Column Header Styles  -->
+        <Style Selector="DataGrid#ShapeDimensionsDataGrid DataGridColumnHeader, DataGrid#ShapeDimensionsDataGridImperial DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource PurpleForeground}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource PurpleBackground}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
         <!--  Default Grid Cell Styling  -->
         <Style Selector="Grid#AxisControlsGrid > :is(Control)">
             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -48,7 +57,9 @@
             <RowDefinition Height="Auto" />
             <!--  Main Input StackPanel  -->
             <RowDefinition Height="Auto" />
-            <!--  Polyhedron DataGrids  -->
+            <!--  Shape DataGrids  -->
+            <RowDefinition Height="Auto" />
+            <!--  Polyhedron Faces DataGrids  -->
             <RowDefinition Height="Auto" />
             <!--  Overflow Row for Polyhedron when narrow  -->
         </Grid.RowDefinitions>
@@ -331,7 +342,8 @@
             VerticalAlignment="Top"
             BorderThickness="2"
             BoxShadow="1 1 2 0 Gray"
-            Classes="card_main">
+            Classes="card_main"
+            IsVisible="{Binding AxisStored}">
             <StackPanel Margin="10,20,10,20" Spacing="0">
                 <Grid
                     x:Name="MainInputGrid"
@@ -920,10 +932,91 @@
             </Border>
         </ScrollViewer>
 
+        <!--  Shape Dimensions DataGrid Section (Metric and Imperial)  -->
+        <ScrollViewer
+            x:Name="ShapeDimensionsSection"
+            Grid.Row="3"
+            Grid.Column="0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Top"
+            HorizontalScrollBarVisibility="Disabled"
+            IsVisible="{Binding ShapeDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
+            VerticalScrollBarVisibility="Auto">
+            <Border
+                Width="940"
+                Margin="10"
+                BorderBrush="{DynamicResource PurpleForeground}"
+                BorderThickness="1"
+                BoxShadow="1 1 2 0 Gray"
+                Classes="card_main"
+                ClipToBounds="True">
+                <StackPanel Margin="0" Spacing="0">
+                    <StackPanel Orientation="Vertical" Spacing="0">
+                        <DataGrid
+                            x:Name="ShapeDimensionsDataGrid"
+                            Width="940"
+                            VerticalAlignment="Top"
+                            AutoGenerateColumns="True"
+                            AutoGeneratingColumn="DataGrid_AutoGeneratingColumnShapeDimensions"
+                            BorderBrush="{DynamicResource PurpleForeground}"
+                            CanUserReorderColumns="True"
+                            CanUserResizeColumns="True"
+                            ClipToBounds="True"
+                            ColumnWidth="Auto"
+                            CornerRadius="6"
+                            FontSize="10"
+                            GridLinesVisibility="All"
+                            IsReadOnly="True"
+                            ItemsSource="{Binding ShapeDimensions}"
+                            SelectionMode="Single">
+                            <DataGrid.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding
+                                        Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                        ConverterParameter="1"
+                                        Path="ShapeDimensions" />
+                                    <Binding Path="IsMetric" />
+                                </MultiBinding>
+                            </DataGrid.IsVisible>
+                        </DataGrid>
+                        <DataGrid
+                            x:Name="ShapeDimensionsDataGridImperial"
+                            Width="940"
+                            VerticalAlignment="Top"
+                            AutoGenerateColumns="True"
+                            AutoGeneratingColumn="DataGrid_AutoGeneratingColumnShapeDimensionsImperial"
+                            BorderBrush="{DynamicResource PurpleForeground}"
+                            CanUserReorderColumns="True"
+                            CanUserResizeColumns="True"
+                            ClipToBounds="True"
+                            ColumnWidth="Auto"
+                            CornerRadius="6"
+                            FontSize="10"
+                            GridLinesVisibility="All"
+                            IsReadOnly="True"
+                            ItemsSource="{Binding ShapeDimensions}"
+                            SelectionMode="Single">
+                            <DataGrid.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding
+                                        Converter="{StaticResource CollectionCountToBooleanConverter}"
+                                        ConverterParameter="1"
+                                        Path="ShapeDimensions" />
+                                    <Binding Path="IsImperial" />
+                                </MultiBinding>
+                            </DataGrid.IsVisible>
+                        </DataGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+
         <!--  Faces DataGrid Section  -->
         <ScrollViewer
             x:Name="FacesSection"
-            Grid.Row="3"
+            Grid.Row="4"
             Grid.Column="0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"

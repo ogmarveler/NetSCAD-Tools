@@ -126,8 +126,8 @@ namespace NetGenCAD.UI.ViewModels
         private bool _isPolyhedronSelected = false;
         private bool _copyObject = false;
         private ObservableCollection<ModuleDimensions>? _cachedAllModuleDimensions;
-        private ObservableCollection<string>? _availablePolyhedrons;
-        private string _selectedPolyhedron = string.Empty;
+        private ObservableCollection<ShapeDimensions>? _availablePolyhedrons;
+        private ShapeDimensions? _selectedPolyhedron;
 
 
         [UnconditionalSuppressMessage("Trimming", "IL2026")]
@@ -163,10 +163,8 @@ namespace NetGenCAD.UI.ViewModels
 
         public async void GetPolyhedronsList()
         {
-            // If first time loading ensure PolyhedronDimensions table exists
-            await ShapeScadFunctions.GetDimensionPolyhedronPartsAsync(DbConnection!, string.Empty);
             // Get the current list of polyhedrons available to be used in solids
-            AvailablePolyhedrons = new ObservableCollection<string>(await PolyhedronDimensionsExtensions.GetPolyhedronNamesList(DbConnection!));
+            AvailablePolyhedrons = new ObservableCollection<ShapeDimensions>(await ShapeDimensionsExtensions.GetShapesList(DbConnection!));
         }
 
         /**** Dimensions DataGrids ****/
@@ -180,6 +178,7 @@ namespace NetGenCAD.UI.ViewModels
             // Update ObservableCollections
             ModuleDimensions = moduleDimensions;
             SolidDimensions = solidDimensions;
+            GetPolyhedronsList();
 
             // Update UI selection buttons to reflect current state
             IsCubeSelected = _isCubeSelected;
@@ -211,6 +210,7 @@ namespace NetGenCAD.UI.ViewModels
             SelectedScrewSize = null;
             SelectedFilament = FilamentType.Other;
             SelectedOperationType = OperationType.Union;
+            SelectedPolyhedron = null;
             SurfaceFilePath = string.Empty;
             AutoSmoothFile = false;
             SurfaceCenter = false;
@@ -227,6 +227,14 @@ namespace NetGenCAD.UI.ViewModels
             ZRotate = 0;
             LayerIntValue = 0;
             AlphaIntValue = 1;
+            IsCubeSelected = false;
+            IsRoundCubeSelected = false;
+            IsCylinderSelected = false;
+            IsSurfaceSelected = false;
+            IsRoundSurfaceSelected = false;
+            IsSphereSelected = false;
+            IsRoundCylinderSelected = false;
+            IsPolyhedronSelected = false;
             SelectedOpenSCADColor = OpenScadColor.Silver;
         }
 
@@ -244,14 +252,6 @@ namespace NetGenCAD.UI.ViewModels
             DifferenceButton = false;
             UnionButton = false;
             SaveFileButton = false;
-            IsCubeSelected = false;
-            IsRoundCubeSelected = false;
-            IsCylinderSelected = false;
-            IsSurfaceSelected = false;
-            IsRoundSurfaceSelected = false;
-            IsSphereSelected = false;
-            IsRoundCylinderSelected = false;
-            IsPolyhedronSelected = false;
             IsPreRendered = false;
             CopyObject = false;
             ScrewSizes = _screwSizes;
@@ -321,7 +321,7 @@ namespace NetGenCAD.UI.ViewModels
                 switch (SelectedOperationType)
                 {
                     case OperationType.Union:
-                        CreateDifferenceModule();
+                        CreateDifferenceModule(); // Union module created within DifferenceModule for proper layering
                         break;
                     case OperationType.Difference:
                         CreateDifferenceModule();
@@ -337,7 +337,7 @@ namespace NetGenCAD.UI.ViewModels
                 GetDimensionsParts();
             };
 
-            // Call the static function with all callbacks
+            // Call the static function with all callbacks and polyhedron parameters
             var result = await CreateObjectWithCallbackAsync(
                 SelectedSolidType,
                 Name,
@@ -371,6 +371,8 @@ namespace NetGenCAD.UI.ViewModels
                 IsCylinderSelected,
                 IsRoundCylinderSelected,
                 IsSphereSelected,
+                IsPolyhedronSelected,
+                SelectedPolyhedron,
                 SelectedUnitValue,
                 _decimalPlaces,
                 _axisId,
@@ -995,13 +997,13 @@ namespace NetGenCAD.UI.ViewModels
         public List<string>? AxesList { get => _axesList; set => this.RaiseAndSetIfChanged(ref _axesList, value); }
         public List<OperationType> OperationTypes { get; }
         public OperationType SelectedOperationType { get => _selectedOperationType; set => this.RaiseAndSetIfChanged(ref _selectedOperationType, value); }
-        public string SelectedPolyhedron { get => _selectedPolyhedron; set => this.RaiseAndSetIfChanged(ref _selectedPolyhedron, value); }
+        public ShapeDimensions? SelectedPolyhedron { get => _selectedPolyhedron; set => this.RaiseAndSetIfChanged(ref _selectedPolyhedron, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsUnions { get => _moduleDimensionsUnions; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsUnions, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsIntersections { get => _moduleDimensionsIntersections; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsIntersections, value); }
         public ObservableCollection<ModuleDimensions> ModuleDimensionsDifferences { get => _moduleDimensionsDifferences; set => this.RaiseAndSetIfChanged(ref _moduleDimensionsDifferences, value); }
         public ObservableCollection<SolidDimensions> SolidDimensions { get => _solidDimensions; set => this.RaiseAndSetIfChanged(ref _solidDimensions, value); }
         public ObservableCollection<ModuleDimensions> LayeredModuleDimensions { get => _layeredModuleDimensions; set => this.RaiseAndSetIfChanged(ref _layeredModuleDimensions, value); }
-        public ObservableCollection<string>? AvailablePolyhedrons { get => _availablePolyhedrons; set => this.RaiseAndSetIfChanged(ref _availablePolyhedrons, value); }
+        public ObservableCollection<ShapeDimensions>? AvailablePolyhedrons { get => _availablePolyhedrons; set => this.RaiseAndSetIfChanged(ref _availablePolyhedrons, value); }
         public SqliteConnection? DbConnection { get => _dbConnection; set => this.RaiseAndSetIfChanged(ref _dbConnection, value); }
 
         public string Name

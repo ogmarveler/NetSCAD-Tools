@@ -712,11 +712,10 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.SurfaceFilePath = selected.SurfaceFilePath ?? string.Empty;
             ViewModel.SurfaceInvert = selected.SurfaceInvert == 1;
             ViewModel.SurfaceCenter = selected.SurfaceCenter == 1;
-            ViewModel.SelectedOpenSCADColor = string.IsNullOrEmpty(selected.ModuleColor)
-                ? OpenScadColor.Silver
-                : Enum.Parse<OpenScadColor>(selected.ModuleColor, ignoreCase: true);
+            ViewModel.SelectedOpenSCADColor = string.IsNullOrEmpty(selected.ModuleColor) ? OpenScadColor.Silver : Enum.Parse<OpenScadColor>(selected.ModuleColor, ignoreCase: true);
             ViewModel.LayerIntValue = selected.Layer;
             ViewModel.AlphaIntValue = selected.Alpha;
+            ViewModel.SelectedPolyhedron = ViewModel.AvailablePolyhedrons?.FirstOrDefault(p=>p.Name == selected.ShapeName);
 
             // Highlight corresponding module row based on ModuleName
             if (!string.IsNullOrEmpty(selected.ModuleName))

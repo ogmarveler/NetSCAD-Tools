@@ -1,17 +1,19 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
-using NetGenCAD.UI.ViewModels;
+using Avalonia.Layout;
+using Avalonia.Markup.Xaml.MarkupExtensions;
+using Avalonia.Media;
 using Microsoft.Extensions.DependencyInjection;
+using NetGenCAD.Core.Primitives;
+using NetGenCAD.Designer.Repositories;
+using NetGenCAD.UI.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Collections.Generic;
-using Avalonia.Media;
-using Avalonia.Controls.Templates;
-using NetGenCAD.Designer.Repositories;
 using static NetGenCAD.Core.Measurements.Selector;
-using NetGenCAD.Core.Primitives;
 
 namespace NetGenCAD.UI.Views;
 
@@ -41,18 +43,32 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
             if (!_isDataGridPointsLoaded)
             {
                 AddActionButtonColumnToPointsDataGrid();
-                AddViewOscadButtonColumnToPointsDataGrid();
+                //AddViewOscadButtonColumnToPointsDataGrid();
                 AddActionButtonColumnToPointsDataGridImperial();
-                AddViewOscadButtonColumnToPointsDataGridImperial();
+                //AddViewOscadButtonColumnToPointsDataGridImperial();
                 _isDataGridPointsLoaded = true;
             }
             if (!_isDataGridFacesLoaded)
             {
                 AddActionButtonColumnToFacesDataGrid();
-                AddViewOscadButtonColumnToFacesDataGrid();
+                //AddViewOscadButtonColumnToFacesDataGrid();
                 _isDataGridFacesLoaded = true;
             }
         };
+    }
+
+    // Helper method to safely retrieve brush resources with fallback
+    private IBrush GetBrushResource(string resourceKey)
+    {
+        var resource = Application.Current?.FindResource(resourceKey);
+        
+        if (resource is IBrush brush)
+        {
+            return brush;
+        }
+        
+        // Fallback to default foreground colors based on theme
+        return new SolidColorBrush(Color.Parse("#FFFFFF")); // Default to white
     }
 
     // Calling functions from View to ViewModel
@@ -657,5 +673,251 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
         {
             facesDataGrid.Columns.Add(viewColumn);
         }
+    }
+
+    private void DataGrid_AutoGeneratingColumnShapeDimensions(object? sender, DataGridAutoGeneratingColumnEventArgs e)
+    {
+        // Set FontSize to 12 for all columns
+        if (e.Column is DataGridTextColumn textColumn)
+        {
+            textColumn.FontSize = 12;
+        }
+
+        // Hide internal ID columns
+        if (e.PropertyName == "Id")
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        // Hide imperial conversion columns in metric view
+        if (e.PropertyName == "BoxLength_IN" || e.PropertyName == "BoxWidth_IN" || e.PropertyName == "BoxHeight_IN" ||
+            e.PropertyName == "SurfaceArea_IN2" || e.PropertyName == "Volume_IN3" || e.PropertyName == "Description" || e.PropertyName == "CreatedAt" || e.PropertyName == "OSCADMethod")
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        // Format headers
+        if (e.Column.Header is string header)
+        {
+            e.Column.Header = header
+                .Replace("_MM", " (mm)")
+                .Replace("_CM2", " (cm²)")
+                .Replace("_CM3", " (cm³)")
+                .Replace("_IN", " (in)")
+                .Replace("_IN2", " (in²)")
+                .Replace("_IN3", " (in³)")
+                .Replace("NumberOfVertices", "Vertices")
+                .Replace("NumberOfFaces", "Faces")
+                .Replace("NumberOfEdges", "Edges")
+                .Replace("CreatedAt", "Created")
+                .Replace("Volume", "V")
+                .Replace("SurfaceArea", "A")
+                .Replace("Length", "L")
+                .Replace("Width", "W")
+                .Replace("Height", "H")
+                .Replace("Box", "b");
+        }
+
+        // Add action columns at the end
+        if (e.PropertyName == "OSCADMethod")
+        {
+            e.Cancel = true; // Don't show OSCADMethod as regular column
+            AddViewOscadButtonColumnToShapeDimensionsDataGrid();
+        }
+    }
+
+    private void DataGrid_AutoGeneratingColumnShapeDimensionsImperial(object? sender, DataGridAutoGeneratingColumnEventArgs e)
+    {
+        // Set FontSize to 12 for all columns
+        if (e.Column is DataGridTextColumn textColumn)
+        {
+            textColumn.FontSize = 12;
+        }
+
+        // Hide internal ID columns
+        if (e.PropertyName == "Id")
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        // Hide metric conversion columns in imperial view
+        if (e.PropertyName == "BoxLength_MM" || e.PropertyName == "BoxWidth_MM" || e.PropertyName == "BoxHeight_MM" ||
+            e.PropertyName == "SurfaceArea_CM2" || e.PropertyName == "Volume_CM3" || e.PropertyName == "Description" || e.PropertyName == "CreatedAt" || e.PropertyName == "OSCADMethod")
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        // Format headers
+        if (e.Column.Header is string header)
+        {
+            e.Column.Header = header
+                .Replace("_IN", " (in)")
+                .Replace("_IN2", " (in²)")
+                .Replace("_IN3", " (in³)")
+                .Replace("_MM", " (mm)")
+                .Replace("_CM2", " (cm²)")
+                .Replace("_CM3", " (cm³)")
+                .Replace("NumberOfVertices", "Vertices")
+                .Replace("NumberOfFaces", "Faces")
+                .Replace("NumberOfEdges", "Edges")
+                .Replace("CreatedAt", "Created")
+                .Replace("Volume","V")
+                .Replace("SurfaceArea", "A")
+                .Replace("Length", "L")
+                .Replace("Width", "W")
+                .Replace("Height","H")
+                .Replace("Box","b");
+        }
+
+        // Add action columns at the end
+        if (e.PropertyName == "OSCADMethod")
+        {
+            e.Cancel = true; // Don't show OSCADMethod as regular column
+            AddViewOscadButtonColumnToShapeDimensionsDataGridImperial();
+        }
+    }
+
+    private void AddViewOscadButtonColumnToShapeDimensionsDataGrid()
+    {
+        var cardForeground = GetBrushResource("CardForeground");
+
+        var actionColumn = new DataGridTemplateColumn
+        {
+            Header = "Actions",
+            CellTemplate = new FuncDataTemplate<ShapeDimensions>((value, _) =>
+            {
+                var stackPanel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 5 };
+
+                // View OSCAD button
+                var viewButton = new Button
+                {
+                    Width = 32,
+                    MinWidth = 32,
+                    MaxWidth = 32,
+                    MaxHeight = 32,
+                    BorderThickness = new Thickness(1),
+                    BorderBrush = cardForeground,
+                    Content = new PathIcon
+                    {
+                        Width = 16,
+                        Height = 16,
+                        Data = Geometry.Parse("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"),
+                        Foreground = cardForeground
+                    }
+                };
+                viewButton.Click += (s, e) =>
+                {
+                    if (ViewModel is ScadShapeViewModel viewModel)
+                    {
+                        viewModel.ShowShapeOSCADMethod(value);
+                    }
+                };
+
+                // Delete button
+                var deleteButton = new Button
+                {
+                    Width = 32,
+                    MinWidth = 32,
+                    MaxWidth = 32,
+                    MaxHeight = 32,
+                    BorderThickness = new Thickness(1),
+                    BorderBrush = cardForeground,
+                    Content = new PathIcon
+                    {
+                        Width = 16,
+                        Height = 16,
+                        Data = Geometry.Parse("M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z"),
+                        Foreground = cardForeground
+                    }
+                };
+                deleteButton.Click += async (s, e) =>
+                {
+                    if (ViewModel is ScadShapeViewModel viewModel)
+                    {
+                        await viewModel.DeleteShapeAsync(value);
+                    }
+                };
+
+                stackPanel.Children.Add(viewButton);
+                stackPanel.Children.Add(deleteButton);
+                return stackPanel;
+            })
+        };
+
+        ShapeDimensionsDataGrid.Columns.Add(actionColumn);
+    }
+
+    private void AddViewOscadButtonColumnToShapeDimensionsDataGridImperial()
+    {
+        var cardForeground = GetBrushResource("CardForeground");
+
+        var actionColumn = new DataGridTemplateColumn
+        {
+            Header = "Actions",
+            CellTemplate = new FuncDataTemplate<ShapeDimensions>((value, _) =>
+            {
+                var stackPanel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 5 };
+
+                // View OSCAD button
+                var viewButton = new Button
+                {
+                    Width = 32,
+                    MinWidth = 32,
+                    MaxWidth = 32,
+                    MaxHeight = 32,
+                    BorderThickness = new Thickness(1),
+                    BorderBrush = cardForeground,
+                    Content = new PathIcon
+                    {
+                        Width = 16,
+                        Height = 16,
+                        Data = Geometry.Parse("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"),
+                        Foreground = cardForeground
+                    }
+                };
+                viewButton.Click += (s, e) =>
+                {
+                    if (ViewModel is ScadShapeViewModel viewModel)
+                    {
+                        viewModel.ShowShapeOSCADMethod(value);
+                    }
+                };
+
+                // Delete button
+                var deleteButton = new Button
+                {
+                    Width = 32,
+                    MinWidth = 32,
+                    MaxWidth = 32,
+                    MaxHeight = 32,
+                    BorderThickness = new Thickness(1),
+                    BorderBrush = cardForeground,
+                    Content = new PathIcon
+                    {
+                        Width = 16,
+                        Height = 16,
+                        Data = Geometry.Parse("M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z"),
+                        Foreground = cardForeground
+                    }
+                };
+                deleteButton.Click += async (s, e) =>
+                {
+                    if (ViewModel is ScadShapeViewModel viewModel)
+                    {
+                        await viewModel.DeleteShapeAsync(value);
+                    }
+                };
+
+                stackPanel.Children.Add(viewButton);
+                stackPanel.Children.Add(deleteButton);
+                return stackPanel;
+            })
+        };
+
+        ShapeDimensionsDataGridImperial.Columns.Add(actionColumn);
     }
 }

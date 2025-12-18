@@ -1,4 +1,5 @@
 using Avalonia.Data.Converters;
+using NetGenCAD.Designer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,10 +10,10 @@ namespace NetGenCAD.UI.Converters
     {
         public object Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (values == null || values.Count < 20)
+            if (values == null || values.Count < 22)
                 return false;
 
-            // Order: IsCubeSelected, IsRoundCubeSelected, IsCylinderSelected, IsSphereSelected, LengthMM, WidthMM, HeightMM, RadiusMM, Radius1MM, Radius2MM, CylinderHeightMM, Name, Description, IsSurfaceSelected, IsRoundSurfaceSelected, SurfaceFilePath, SurfaceScaleX, SurfaceScaleY, SurfaceScaleZ
+            // Order: IsCubeSelected, IsRoundCubeSelected, IsRoundCylinderSelected, IsCylinderSelected, IsSphereSelected, LengthMM, WidthMM, HeightMM, RadiusMM, Radius1MM, Radius2MM, CylinderHeightMM, Name, Description, IsSurfaceSelected, IsRoundSurfaceSelected, SurfaceFilePath, SurfaceScaleX, SurfaceScaleY, SurfaceScaleZ, IsPolyhedronSelected, SelectedPolyhedron
             bool isCube = values[0] is bool cube && cube;
             bool isRoundCube = values[1] is bool roundCube && roundCube;
             bool isRoundCylinder = values[2] is bool roundCylinder && roundCylinder;
@@ -20,6 +21,7 @@ namespace NetGenCAD.UI.Converters
             bool isSphere = values[4] is bool sphere && sphere;
             bool isSurface = values[14] is bool surface && surface;
             bool isRoundSurface = values[15] is bool roundSurface && roundSurface;
+            bool isPolyhedron = values[20] is bool polyhedron && polyhedron;
 
             // Validate Name and Description (always required)
             bool nameValid = values[12] is string name && !string.IsNullOrWhiteSpace(name);
@@ -67,6 +69,12 @@ namespace NetGenCAD.UI.Converters
                 bool surfaceScaleZValid = values[19] is double surfaceScaleZ && surfaceScaleZ > 0;
 
                 return lengthValid && widthValid && heightValid && isSurfaceFilePath && surfaceScaleXValid && surfaceScaleYValid && surfaceScaleZValid;
+            }
+            else if (isPolyhedron)
+            {
+                // Validate SelectedPolyhedron for Polyhedron type
+                bool polyhedronValid = values[21] is ShapeDimensions polyhedronSelected && polyhedronSelected != null;
+                return polyhedronValid;
             }
             return false;
         }

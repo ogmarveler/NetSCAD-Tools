@@ -27,9 +27,11 @@ namespace NetGenCAD.Designer.Repositories
         public int NumberOfVertices { get; set; } = 0;
         public int NumberOfFaces { get; set; } = 0;
         public int NumberOfEdges { get; set; } = 0;
-        public int Convexity { get; set; } = 0;
+        public int Convexity { get; set; } = 1;
         public double Volume_CM3 { get; set; } = 0; // Volume in cubic centimeters
         public double Volume_IN3 { get; set; } = 0; // Volume in cubic inches
+        public double SurfaceArea_CM2 { get; set; } = 0; // Surface area in square centimeters
+        public double SurfaceArea_IN2 { get; set; } = 0; // Surface area in square inches
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Output OpenSCAD method for rendering this shape
@@ -57,6 +59,8 @@ namespace NetGenCAD.Designer.Repositories
             { "Convexity", Convexity },
             { "Volume_CM3", Volume_CM3 },
             { "Volume_IN3", Volume_IN3 },
+            { "SurfaceArea_CM2", SurfaceArea_CM2 },
+            { "SurfaceArea_IN2", SurfaceArea_IN2 },
             { "OSCADMethod", OSCADMethod },
             { "CreatedAt", CreatedAt },
         };
@@ -83,11 +87,13 @@ namespace NetGenCAD.Designer.Repositories
             (nameof(ShapeDimensions.Convexity), typeof(int), false),
             (nameof(ShapeDimensions.Volume_CM3), typeof(double), false),
             (nameof(ShapeDimensions.Volume_IN3), typeof(double), false),
+            (nameof(ShapeDimensions.SurfaceArea_CM2), typeof(double), false),
+            (nameof(ShapeDimensions.SurfaceArea_IN2), typeof(double), false),
             (nameof(ShapeDimensions.OSCADMethod), typeof(string), true),
             (nameof(ShapeDimensions.CreatedAt), typeof(DateTime), false),
         ];
 
-        // Create table
+        // Create table with unique constraint on Name
         public static async Task CreateTable(this SqliteConnection connection)
         {
             IEnumerable<string> columns = Properties.Select(p =>
@@ -95,7 +101,7 @@ namespace NetGenCAD.Designer.Repositories
                 (p.Name == "Id" ? "PRIMARY KEY AUTOINCREMENT" : p.IsNullable ? "" : "NOT NULL")
             );
 
-            string createTableSql = $"CREATE TABLE IF NOT EXISTS ShapeDimensions ({string.Join(", ", columns)})";
+            string createTableSql = $"CREATE TABLE IF NOT EXISTS ShapeDimensions ({string.Join(", ", columns)}, UNIQUE(Name))";
 
             await connection.ExecuteAsync(createTableSql);
         }
@@ -111,11 +117,11 @@ namespace NetGenCAD.Designer.Repositories
             return id;
         }
 
-        // Upsert (INSERT OR REPLACE) and return the Id
+        // Upsert (INSERT OR REPLACE) based on unique Name constraint and return the Id
         public static async Task<int> UpsertAsync(this ShapeDimensions entity, SqliteConnection connection)
         {
-            const string selectSql = "SELECT Id FROM ShapeDimensions WHERE Name = @Name AND Description = @Description LIMIT 1";
-            var existingId = await connection.QuerySingleOrDefaultAsync<int?>(selectSql, new { entity.Name, entity.Description });
+            const string selectSql = "SELECT Id FROM ShapeDimensions WHERE Name = @Name LIMIT 1";
+            var existingId = await connection.QuerySingleOrDefaultAsync<int?>(selectSql, new { entity.Name });
 
             if (existingId.HasValue)
             {
@@ -182,6 +188,8 @@ namespace NetGenCAD.Designer.Repositories
                    Convexity,
                    Volume_CM3,
                    Volume_IN3,
+                   SurfaceArea_CM2,
+                   SurfaceArea_IN2,
                    OSCADMethod,
                    CreatedAt
                    FROM ShapeDimensions
@@ -192,8 +200,7 @@ namespace NetGenCAD.Designer.Repositories
             await cmd.ExecuteNonQueryAsync();
         }
 
-        // Get shape names from Db
-        public static async Task<IEnumerable<string>> GetShapeNamesList(SqliteConnection connection) => 
-            await connection.QueryAsync<string>("SELECT DISTINCT Name FROM ShapeDimensions");
+        // Get shapes from Db for use in ScadObjectViewModel
+        public static async Task<IEnumerable<ShapeDimensions>> GetShapesList(SqliteConnection connection) => await connection.QueryAsync<ShapeDimensions>("SELECT * FROM ShapeDimensions");
     }
 }

@@ -49,6 +49,7 @@ namespace NetGenCAD.UI.ViewModels
         private ObservableCollection<PolyhedronDimensions> _polyhedronDimensions = new();
         private ObservableCollection<PolyhedronDimensions> _polyhedronDimensionsPoints = new();
         private ObservableCollection<PolyhedronDimensions> _polyhedronDimensionsFaces = new();
+        private ObservableCollection<ShapeDimensions> _shapeDimensions = new();
         private string _shapeScad = string.Empty;
 
         // Axis-related fields
@@ -74,6 +75,7 @@ namespace NetGenCAD.UI.ViewModels
         private bool _originalRemoveAxis = false;
         private string _originalAxisCall = string.Empty;
         private bool _removeAxis = false;
+        private bool _isOpenSCADOpened = false;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026")]
         [UnconditionalSuppressMessage("AOT", "IL3050")]
@@ -97,17 +99,118 @@ namespace NetGenCAD.UI.ViewModels
             _selectedAxis = _axesModulesList.FirstOrDefault(x => x.CallingMethod == SelectedAxisValue);
             SelectedUnitValue = UnitSystem.Metric;
             _objectFilePath = App.Services!.GetRequiredService<IScadPathProvider>().ScadPath;
-            
         }
 
         // Stores the current polyhedron shape (reference by PolyhedronDimensions Name into ShapeDimensions)
         public async Task CreateNewShapeModuleAsync()
         {
+            if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(ShapeScad) || 
+                PolyhedronDimensionsPoints.Count == 0 || PolyhedronDimensionsFaces.Count == 0)
+            {
+                ModalTitle = "Error";
+                ModalContent = "Please ensure the shape has a name, points, faces, and generated SCAD code.";
+                IsModalOpen = true;
+                return;
+            }
+
+            try
+            {
+                int shapeId = await ShapeScadFunctions.CreateNewShapeModuleAsync(
+                    shapeName: Name,
+                    shapeDescription: Description,
+                    shapeScadCode: ShapeScad,
+                    polyhedronDimensions: PolyhedronDimensions,
+                    dbConnection: DbConnection!);
+
+                if (shapeId > 0)
+                {
+                    ModalTitle = "Success";
+                    ModalContent = $"Shape '{Name}' saved successfully with ID: {shapeId}";
+                    IsModalOpen = false;
+                    GetDimensionPolyhedronParts(); // Refresh datagrids
+                }
+                else
+                {
+                    ModalTitle = "Error";
+                    ModalContent = "Failed to save shape. Please try again.";
+                    IsModalOpen = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                ModalTitle = "Error";
+                ModalContent = $"An error occurred while saving the shape: {ex.Message}";
+                IsModalOpen = true;
+            }
         }
 
         // Updates all rows in SolidDimensions where the Object's PolyhedronName = Name (PolyhedronDimensions or ShapeDimensions Name)
         public async Task UpdateSolidDimensionsAsync()
         {
+            try
+            {
+                if (DbConnection == null || string.IsNullOrWhiteSpace(Name) || ShapeDimensions.Count == 0)
+                {
+                    ModalTitle = "Error";
+                    ModalContent = "No shape found or database connection unavailable.";
+                    IsModalOpen = true;
+                    return;
+                }
+
+                // Get the first (and typically only) ShapeDimensions record for this shape
+                var shape = ShapeDimensions.FirstOrDefault();
+                if (shape == null)
+                {
+                    ModalTitle = "Error";
+                    ModalContent = "Shape record not found in database.";
+                    IsModalOpen = true;
+                    return;
+                }
+
+                // Update all SolidDimensions rows that reference this shape
+                int rowsUpdated = await ShapeScadFunctions.UpdateSolidDimensionsWithShapeAsync(
+                    shapeName: Name,
+                    newShapeScadCode: shape.OSCADMethod,
+                    boxLengthMM: shape.BoxLength_MM,
+                    boxWidthMM: shape.BoxWidth_MM,
+                    boxHeightMM: shape.BoxHeight_MM,
+                    volumeCM3: shape.Volume_CM3,
+                    boxLengthIN: shape.BoxLength_IN,
+                    boxWidthIN: shape.BoxWidth_IN,
+                    boxHeightIN: shape.BoxHeight_IN,
+                    volumeIN3: shape.Volume_IN3,
+                    dbConnection: DbConnection);
+
+                if (rowsUpdated > 0)
+                {
+                    ModalTitle = "Success";
+                    ModalContent = $"Updated {rowsUpdated} solid(s) that use the '{Name}' shape.";
+                    IsModalOpen = true;
+                }
+                else
+                {
+                    ModalTitle = "Info";
+                    ModalContent = $"No solids found using the '{Name}' shape, or update completed with no changes.";
+                    IsModalOpen = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                ModalTitle = "Error";
+                ModalContent = $"An error occurred while updating solids: {ex.Message}";
+                IsModalOpen = true;
+            }
+
+            // Update ScadObjectViewModel - regenerate scad code from updated polyhedrons
+            var scObjectVM = App.Services!.GetRequiredService<ScadObjectViewModel>();
+            scObjectVM.GetDimensionsParts(); // Refresh the datagrids first
+
+            if (scObjectVM.SolidDimensions.Any())
+            {
+                scObjectVM.CreateUnionModule();
+                scObjectVM.CreateDifferenceModule();
+                scObjectVM.CreateIntersectionModule();
+            }
         }
 
         // Clear all input fields
@@ -203,6 +306,7 @@ namespace NetGenCAD.UI.ViewModels
         }
         public ObservableCollection<PolyhedronDimensions> PolyhedronDimensionsPoints { get => _polyhedronDimensionsPoints; set => this.RaiseAndSetIfChanged(ref _polyhedronDimensionsPoints, value); }
         public ObservableCollection<PolyhedronDimensions> PolyhedronDimensionsFaces { get => _polyhedronDimensionsFaces; set => this.RaiseAndSetIfChanged(ref _polyhedronDimensionsFaces, value); }
+        public ObservableCollection<ShapeDimensions> ShapeDimensions { get => _shapeDimensions; set => this.RaiseAndSetIfChanged(ref _shapeDimensions, value); }
         public SqliteConnection? DbConnection { get => _dbConnection; set => this.RaiseAndSetIfChanged(ref _dbConnection, value); }
 
         public string Name
@@ -468,7 +572,7 @@ namespace NetGenCAD.UI.ViewModels
                     generateOscadCallback: async (polyhedron) =>
                     {
                         // Placeholder - actual SCAD generation happens in onPolyhedronCreated
-                        return await Task.FromResult("// OSCAD method placeholder");
+                        return await Task.FromResult("");
                     },
                     onPolyhedronCreated: async (polyhedronId, updatedPolyhedronDimensions) =>
                     {
@@ -503,12 +607,13 @@ namespace NetGenCAD.UI.ViewModels
         public async void GetDimensionPolyhedronParts()
         {
             // Call the static function to retrieve polyhedron dimensions
-            var polyhedronDimensions = await GetDimensionPolyhedronPartsAsync(
-                DbConnection!,
-                Name);
+            var polyhedronDimensions = await GetDimensionPolyhedronPartsAsync(DbConnection!,Name);
 
             // Update ObservableCollection
             PolyhedronDimensions = polyhedronDimensions;
+
+            // Retrieve the saved shape from ShapeDimensions if it exists
+            await GetShapeDimensionsAsync();
         }
 
         public void ShowOSCADMethod(PolyhedronDimensions polyhedron)
@@ -567,7 +672,7 @@ namespace NetGenCAD.UI.ViewModels
             {
                 ModalTitle = "No Preview Available";
                 ModalContent = "No OpenSCAD code has been generated yet. Create points and faces first.";
-                IsModalOpen = true;
+                IsModalOpen = false;
                 return;
             }
 
@@ -577,26 +682,95 @@ namespace NetGenCAD.UI.ViewModels
                     Name,
                     ShapeScad,
                     _objectFilePath,
+                    _selectedAxisUnit,
                     PolyhedronDimensions,
                     AxisStored ? _axisDimensions : null,
                     AxisStored ? AxisXPositionMM : null,
                     AxisStored ? AxisYPositionMM : null,
                     AxisStored ? AxisZPositionMM : null);
 
+
                 if (string.IsNullOrWhiteSpace(previewFilePath))
                 {
                     ModalTitle = "Error";
                     ModalContent = "Failed to generate preview file.";
-                    IsModalOpen = true;
+                    IsModalOpen = false;
                     return;
                 }
 
-                await ShapeScadFunctions.OpenShapePreviewAsync(previewFilePath, allowDuplicates: false);
+                if (!_isOpenSCADOpened)
+                {
+                    await ShapeScadFunctions.OpenShapePreviewAsync(previewFilePath, allowDuplicates: false);
+                    _isOpenSCADOpened = true;
+                }
             }
             catch (Exception ex)
             {
                 ModalTitle = "Error";
                 ModalContent = $"Failed to open preview: {ex.Message}";
+                IsModalOpen = false;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the ShapeDimensions record that matches the current shape name
+        /// </summary>
+        private async Task GetShapeDimensionsAsync()
+        {
+            try
+            {
+                if (DbConnection == null || string.IsNullOrWhiteSpace(Name))
+                {
+                    ShapeDimensions = [];
+                    return;
+                }
+
+                var shapeDimensions = await ShapeScadFunctions.GetShapeDimensionsByNameAsync(
+                    shapeName: Name,
+                    dbConnection: DbConnection);
+
+                ShapeDimensions = new ObservableCollection<ShapeDimensions>(shapeDimensions);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving shape dimensions: {ex.Message}");
+                ShapeDimensions = [];
+            }
+        }
+
+        public void ShowShapeOSCADMethod(ShapeDimensions shape)
+        {
+            ModalTitle = "Shape OpenSCAD Method";
+            ModalContent = shape.OSCADMethod ?? "No OSCAD method available";
+            IsModalOpen = true;
+        }
+
+        public async Task DeleteShapeAsync(ShapeDimensions shape)
+        {
+            try
+            {
+                if (DbConnection == null)
+                {
+                    ModalTitle = "Error";
+                    ModalContent = "Database connection is not available.";
+                    IsModalOpen = true;
+                    return;
+                }
+
+                // Delete the shape from the database
+                await shape.DeleteAsync(DbConnection);
+
+                ModalTitle = "Success";
+                ModalContent = $"Shape '{shape.Name}' deleted successfully.";
+                IsModalOpen = true;
+
+                // Refresh the shape dimensions collection
+                await GetShapeDimensionsAsync();
+            }
+            catch (Exception ex)
+            {
+                ModalTitle = "Error";
+                ModalContent = $"An error occurred while deleting the shape: {ex.Message}";
                 IsModalOpen = true;
             }
         }

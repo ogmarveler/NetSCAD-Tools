@@ -797,29 +797,53 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <!--  Polyhedron List  -->
+                    <!--  Polyhedron List and Convexity  -->
                     <StackPanel
                         Grid.Row="2"
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
                         Margin="10,10,0,0"
                         HorizontalAlignment="Left"
-                        Classes="inputGroup">
-                        <StackPanel.IsVisible>
-                            <Binding Path="IsPolyhedronSelected" />
-                        </StackPanel.IsVisible>
-                        <TextBlock Classes="standardLabel" Text="Available Shapes" />
-                        <ComboBox
-                            Width="350"
-                            Padding="10,5,0,5"
-                            HorizontalAlignment="Stretch"
-                            ItemsSource="{Binding AvailablePolyhedrons}"
-                            PlaceholderText="Select"
-                            SelectedItem="{Binding SelectedPolyhedron, Mode=TwoWay}">
-                            <ToolTip.Tip>
-                                <TextBlock Text="Pick from a list of polyhedrons made from the Create Shape module" />
-                            </ToolTip.Tip>
-                        </ComboBox>
+                        Orientation="Horizontal"
+                        Spacing="15">
+                        <StackPanel Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsPolyhedronSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Available Shapes" />
+                            <ComboBox
+                                Width="272"
+                                Padding="10,5,0,5"
+                                HorizontalAlignment="Stretch"
+                                ItemsSource="{Binding AvailablePolyhedrons}"
+                                PlaceholderText="Select"
+                                SelectedItem="{Binding SelectedPolyhedron, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Pick from a list of polyhedrons made from the Create Shape module" />
+                                </ToolTip.Tip>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsPolyhedronSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Convexity" />
+                            <TextBox
+                                Classes="standardInput"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedPolyhedron.Convexity, StringFormat={}{0:F0}}"
+                                Watermark="N/A">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Polyhedron Convexity (Read-only)" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
                     </StackPanel>
 
                     <!--  Create/Update Button  -->
@@ -864,6 +888,8 @@
                                     <Binding Path="SurfaceScaleX" />
                                     <Binding Path="SurfaceScaleY" />
                                     <Binding Path="SurfaceScaleZ" />
+                                    <Binding Path="IsPolyhedronSelected" />
+                                    <Binding Path="SelectedPolyhedron" />
                                 </MultiBinding>
                             </Button.IsEnabled>
                             <ToolTip.Tip>
@@ -957,6 +983,139 @@
                                 Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Thickness" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <!--  Polyhedron Dimensions Display: Length / Width / Height / Vertices / Faces / Edges  -->
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsPolyhedronSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Length" />
+                            <TextBox
+                                Classes="standardInput"
+                                IsReadOnly="True"
+                                Watermark="N/A">
+                                <TextBox.Text>
+                                    <MultiBinding Converter="{StaticResource UnitConversionConverter}">
+                                        <Binding Path="SelectedPolyhedron.BoxLength_MM" />
+                                        <Binding Path="IsMetric" />
+                                    </MultiBinding>
+                                </TextBox.Text>
+                                <ToolTip.Tip>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <Binding
+                                                Converter="{StaticResource BooleanToTextConverter}"
+                                                ConverterParameter="Polyhedron Length in Inches (Read-only)|Polyhedron Length in Millimeters (Read-only)"
+                                                Path="IsMetric" />
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsPolyhedronSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Width" />
+                            <TextBox
+                                Classes="standardInput"
+                                IsReadOnly="True"
+                                Watermark="N/A">
+                                <TextBox.Text>
+                                    <MultiBinding Converter="{StaticResource UnitConversionConverter}">
+                                        <Binding Path="SelectedPolyhedron.BoxWidth_MM" />
+                                        <Binding Path="IsMetric" />
+                                    </MultiBinding>
+                                </TextBox.Text>
+                                <ToolTip.Tip>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <Binding
+                                                Converter="{StaticResource BooleanToTextConverter}"
+                                                ConverterParameter="Polyhedron Width in Inches (Read-only)|Polyhedron Width in Millimeters (Read-only)"
+                                                Path="IsMetric" />
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsPolyhedronSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Height" />
+                            <TextBox
+                                Classes="standardInput"
+                                IsReadOnly="True"
+                                Watermark="N/A">
+                                <TextBox.Text>
+                                    <MultiBinding Converter="{StaticResource UnitConversionConverter}">
+                                        <Binding Path="SelectedPolyhedron.BoxHeight_MM" />
+                                        <Binding Path="IsMetric" />
+                                    </MultiBinding>
+                                </TextBox.Text>
+                                <ToolTip.Tip>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <Binding
+                                                Converter="{StaticResource BooleanToTextConverter}"
+                                                ConverterParameter="Polyhedron Height in Inches (Read-only)|Polyhedron Height in Millimeters (Read-only)"
+                                                Path="IsMetric" />
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsPolyhedronSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Vertices" />
+                            <TextBox
+                                Classes="standardInput"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedPolyhedron.NumberOfVertices, StringFormat={}{0:F0}}"
+                                Watermark="N/A">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Number of Polyhedron Vertices (Read-only)" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsPolyhedronSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Faces" />
+                            <TextBox
+                                Classes="standardInput"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedPolyhedron.NumberOfFaces, StringFormat={}{0:F0}}"
+                                Watermark="N/A">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Number of Polyhedron Faces (Read-only)" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsPolyhedronSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Edges" />
+                            <TextBox
+                                Classes="standardInput"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedPolyhedron.NumberOfEdges, StringFormat={}{0:F0}}"
+                                Watermark="N/A">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Number of Polyhedron Edges (Read-only)" />
                                 </ToolTip.Tip>
                             </TextBox>
                         </StackPanel>

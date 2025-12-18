@@ -189,7 +189,7 @@ namespace NetGenCAD.Designer.Repositories
             await cmd.ExecuteNonQueryAsync();
         }
 
-        // Get polyhedron names from Db for use in ScadObjectViewModel
+        // Get polyhedron names from Db
         public static async Task<IEnumerable<string>> GetPolyhedronNamesList(SqliteConnection connection) => await connection.QueryAsync<string>("SELECT DISTINCT Name FROM PolyhedronDimensions");
     }
 }

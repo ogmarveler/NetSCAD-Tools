@@ -1,5 +1,5 @@
-﻿using NetGenCAD.Designer.Repositories;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
+using NetGenCAD.Designer.Repositories;
 using System.Collections.ObjectModel;
 using static NetGenCAD.Core.Measurements.Conversion;
 using static NetGenCAD.Core.Measurements.Selector;
@@ -146,8 +146,9 @@ namespace NetGenCAD.Designer.Functions
             SqliteConnection dbConnection,
             string objectName)
         {
-            // Ensure the polyhedron table exists
+            // Ensure the polyhedron and shape dimension tables exists if not already created in the database
             await PolyhedronDimensionsExtensions.CreateTable(dbConnection);
+            await ShapeDimensionsExtensions.CreateTable(dbConnection);
 
             // Get records from database by object name
             var records = await new PolyhedronDimensions().GetByObjectNameAsync(dbConnection, objectName);
@@ -289,6 +290,7 @@ namespace NetGenCAD.Designer.Functions
             string shapeName,
             string shapeScadCode,
             string objectFilePath,
+            UnitSystem axisUnit,
             ObservableCollection<PolyhedronDimensions> polyhedronDimensions,
             AxisDimensions? axisDimensions = null,
             double? axisXPositionMM = null,
@@ -297,6 +299,13 @@ namespace NetGenCAD.Designer.Functions
         {
             try
             {
+                if(axisUnit == UnitSystem.Imperial)
+                {
+                    axisXPositionMM = Math.Round(InchesToMillimeter((double)axisXPositionMM!), ShapeDimensions.OpenSCAD_DecimalPlaces);
+                    axisYPositionMM = Math.Round(InchesToMillimeter((double)axisYPositionMM!), ShapeDimensions.OpenSCAD_DecimalPlaces);
+                    axisZPositionMM = Math.Round(InchesToMillimeter((double)axisZPositionMM!), ShapeDimensions.OpenSCAD_DecimalPlaces);
+                }
+
                 if (string.IsNullOrWhiteSpace(shapeName) || string.IsNullOrWhiteSpace(shapeScadCode) || string.IsNullOrWhiteSpace(objectFilePath))
                 {
                     System.Diagnostics.Debug.WriteLine("Error: Invalid parameters");
@@ -555,6 +564,435 @@ namespace NetGenCAD.Designer.Functions
             {
                 System.Diagnostics.Debug.WriteLine($"Error generating dimension variables: {ex.Message}");
                 return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Stores a polyhedron shape into the ShapeDimensions repository with calculated metadata.
+        /// Calculates bounding box dimensions, vertex/face/edge counts, convexity, and volume.
+        /// Minifies the OpenSCAD code by removing comments and unnecessary whitespace.
+        /// </summary>
+        /// <param name="shapeName">Name of the shape</param>
+        /// <param name="shapeDescription">Description of the shape</param>
+        /// <param name="shapeScadCode">The full OpenSCAD module code to store</param>
+        /// <param name="polyhedronDimensions">Collection of polyhedron dimensions (points and faces)</param>
+        /// <param name="dbConnection">Database connection for persistence</param>
+        /// <returns>The ID of the created ShapeDimensions record, or 0 if creation failed</returns>
+        public static async Task<int> CreateNewShapeModuleAsync(string shapeName,string shapeDescription,string shapeScadCode,ObservableCollection<PolyhedronDimensions> polyhedronDimensions,SqliteConnection dbConnection, int convexity = 1)
+        {
+            try
+            {
+                // Calculate bounding box dimensions from polyhedron points
+                var (length, width, height) = CalculatePolyhedronDimensions(polyhedronDimensions);
+
+                // Calculate surface area
+                var (surfaceAreaCM2, surfaceAreaIN2) = CalculatePolyhedronSurfaceArea(polyhedronDimensions);
+
+                // Count vertices (points) and faces
+                var pointsList = polyhedronDimensions
+                    .Where(p => p.PolyhedronOperationType == "Points")
+                    .ToList();
+
+                var facesList = polyhedronDimensions
+                    .Where(p => p.PolyhedronOperationType == "Faces")
+                    .ToList();
+
+                int numberOfVertices = pointsList.Count;
+                int numberOfFaces = facesList.Count;
+
+                // Calculate number of edges using Euler's formula: V - E + F = 2
+                // Therefore: E = V + F - 2
+                int numberOfEdges = numberOfVertices + numberOfFaces - 2;
+
+                // Calculate volume in cubic millimeters, then convert to cm³
+                // Volume ≈ (length × width × height) / 6 for a rough polyhedron estimate
+                double volumeMM3 = (length * width * height) / 6.0;
+                double volumeCM3 = volumeMM3 / 1000.0; // Convert mm³ to cm³
+                double volumeIN3 = volumeCM3 / 16.387064; // Convert cm³ to in³
+
+                // Minify the OpenSCAD code
+                string minifiedScadCode = MinifyOpenScadCode(shapeScadCode);
+
+                // Create ShapeDimensions entity
+                var shapeDimensions = new ShapeDimensions
+                {
+                    Name = shapeName,
+                    Description = shapeDescription,
+                    BoxLength_MM = length,
+                    BoxWidth_MM = width,
+                    BoxHeight_MM = height,
+                    NumberOfVertices = numberOfVertices,
+                    NumberOfFaces = numberOfFaces,
+                    NumberOfEdges = numberOfEdges,
+                    Convexity = convexity,
+                    Volume_CM3 = Math.Round(volumeCM3, ShapeDimensions.OpenSCAD_DecimalPlaces),
+                    Volume_IN3 = Math.Round(volumeIN3, ShapeDimensions.OpenSCAD_DecimalPlaces),
+                    SurfaceArea_CM2 = surfaceAreaCM2,
+                    SurfaceArea_IN2 = surfaceAreaIN2,
+                    OSCADMethod = minifiedScadCode,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                // Ensure the ShapeDimensions table exists
+                await ShapeDimensionsExtensions.CreateTable(dbConnection);
+
+                // Upsert into database (insert if new, update if Name already exists)
+                int shapeId = await shapeDimensions.UpsertAsync(dbConnection);
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"Shape created successfully: ID={shapeId}, Name={shapeName}, Vertices={numberOfVertices}, Faces={numberOfFaces}, Volume={volumeCM3:F2}cm³, SurfaceArea={surfaceAreaCM2:F2}cm²");
+
+                return shapeId;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error creating shape module: {ex.Message}");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Minifies OpenSCAD code by removing comments, extra whitespace, and unnecessary formatting.
+        /// Preserves functional code while reducing file size.
+        /// </summary>
+        /// <param name="scadCode">The OpenSCAD code to minify</param>
+        /// <returns>Minified OpenSCAD code</returns>
+        private static string MinifyOpenScadCode(string scadCode)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(scadCode))
+                    return scadCode;
+
+                var lines = scadCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                var minifiedLines = new List<string>();
+
+                foreach (var line in lines)
+                {
+                    // Remove comments (both // and /* */ style)
+                    string trimmedLine = line;
+
+                    // Remove // comments
+                    int commentIndex = trimmedLine.IndexOf("//");
+                    if (commentIndex >= 0)
+                    {
+                        trimmedLine = trimmedLine.Substring(0, commentIndex);
+                    }
+
+                    // Trim whitespace
+                    trimmedLine = trimmedLine.Trim();
+
+                    // Only add non-empty lines
+                    if (!string.IsNullOrWhiteSpace(trimmedLine))
+                    {
+                        minifiedLines.Add(trimmedLine);
+                    }
+                }
+
+                // Join lines with minimal spacing and remove unnecessary whitespace around operators
+                string minified = string.Join("", minifiedLines);
+
+                // Remove extra spaces around common operators and brackets
+                minified = System.Text.RegularExpressions.Regex.Replace(minified, @"\s+", " ");
+                minified = System.Text.RegularExpressions.Regex.Replace(minified, @"\s*([{};,\[\]=])\s*", "$1");
+                minified = minified.Replace("( ", "(").Replace(" )", ")").Replace("[ ", "[").Replace(" ]", "]");
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"OpenSCAD code minified: {scadCode.Length} bytes -> {minified.Length} bytes");
+
+                return minified;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error minifying OpenSCAD code: {ex.Message}");
+                return scadCode; // Return original if minification fails
+            }
+        }
+
+        /// <summary>
+        /// Calculates the surface area of a polyhedron based on its points and faces.
+        /// Uses the shoelace formula for each triangular or polygonal face.
+        /// </summary>
+        /// <param name="polyhedronDimensions">Collection of polyhedron dimensions containing points and faces</param>
+        /// <returns>Tuple containing (SurfaceArea_CM2, SurfaceArea_IN2)</returns>
+        public static (double SurfaceAreaCM2, double SurfaceAreaIN2) CalculatePolyhedronSurfaceArea(
+            ObservableCollection<PolyhedronDimensions> polyhedronDimensions)
+        {
+            try
+            {
+                // Get all points indexed by PointsId
+                var pointsDict = polyhedronDimensions
+                    .Where(p => p.PolyhedronOperationType == "Points")
+                    .OrderBy(p => p.PointsId)
+                    .ToDictionary(p => p.PointsId, p => (p.PointX_MM, p.PointY_MM, p.PointZ_MM));
+
+                // Get all faces
+                var facesList = polyhedronDimensions
+                    .Where(p => p.PolyhedronOperationType == "Faces")
+                    .OrderBy(p => p.FaceId)
+                    .ToList();
+
+                if (pointsDict.Count == 0 || facesList.Count == 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("Warning: No points or faces found for surface area calculation");
+                    return (0, 0);
+                }
+
+                double totalSurfaceAreaMM2 = 0;
+
+                // Calculate area for each face
+                foreach (var face in facesList)
+                {
+                    if (string.IsNullOrWhiteSpace(face.Face))
+                        continue;
+
+                    // Parse face indices from format like [0,1,2],[2,3,0]
+                    var faceIndices = ExtractFaceIndices(face.Face);
+
+                    if (faceIndices.Count < 3)
+                        continue;
+
+                    // Calculate area of the polygon using shoelace formula (for planar faces)
+                    double faceAreaMM2 = CalculateFaceArea(faceIndices, pointsDict);
+                    totalSurfaceAreaMM2 += faceAreaMM2;
+                }
+
+                // Convert from mm² to cm² (1 cm² = 100 mm²)
+                double surfaceAreaCM2 = totalSurfaceAreaMM2 / 100.0;
+
+                // Convert from cm² to in² (1 in² = 6.4516 cm²)
+                double surfaceAreaIN2 = surfaceAreaCM2 / 6.4516;
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"Polyhedron surface area calculated - {surfaceAreaCM2:F2}cm² ({surfaceAreaIN2:F2}in²)");
+
+                return (
+                    Math.Round(surfaceAreaCM2, ShapeDimensions.OpenSCAD_DecimalPlaces),
+                    Math.Round(surfaceAreaIN2, ShapeDimensions.OpenSCAD_DecimalPlaces)
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error calculating surface area: {ex.Message}");
+                return (0, 0);
+            }
+        }
+
+        /// <summary>
+        /// Extracts face indices from a face definition string like [0,1,2]
+        /// </summary>
+        private static List<int> ExtractFaceIndices(string faceDefinition)
+        {
+            var indices = new List<int>();
+            try
+            {
+                // Parse indices from format like [0,1,2]
+                var matches = System.Text.RegularExpressions.Regex.Matches(faceDefinition, @"\d+");
+                foreach (System.Text.RegularExpressions.Match match in matches)
+                {
+                    if (int.TryParse(match.Value, out var index))
+                    {
+                        indices.Add(index);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error extracting face indices: {ex.Message}");
+            }
+
+            return indices;
+        }
+
+        /// <summary>
+        /// Calculates the area of a single polygonal face using the shoelace formula.
+        /// Assumes the face is planar.
+        /// </summary>
+        private static double CalculateFaceArea(List<int> faceIndices, Dictionary<int, (double PointX_MM, double PointY_MM, double PointZ_MM)> pointsDict)
+        {
+            try
+            {
+                if (faceIndices.Count < 3)
+                    return 0;
+
+                // Get the points for this face
+                var facePoints = new List<(double x, double y, double z)>();
+                foreach (var index in faceIndices)
+                {
+                    if (pointsDict.TryGetValue(index, out var point))
+                    {
+                        facePoints.Add((point.PointX_MM, point.PointY_MM, point.PointZ_MM));
+                    }
+                }
+
+                if (facePoints.Count < 3)
+                    return 0;
+
+                // For a planar polygon, calculate area using cross product method
+                // Area = 0.5 * |sum of cross products|
+                double area = 0;
+
+                // Use the first point as reference
+                for (int i = 1; i < facePoints.Count - 1; i++)
+                {
+                    // Vector from point 0 to point i
+                    double v1x = facePoints[i].x - facePoints[0].x;
+                    double v1y = facePoints[i].y - facePoints[0].y;
+                    double v1z = facePoints[i].z - facePoints[0].z;
+
+                    // Vector from point 0 to point i+1
+                    double v2x = facePoints[i + 1].x - facePoints[0].x;
+                    double v2y = facePoints[i + 1].y - facePoints[0].y;
+                    double v2z = facePoints[i + 1].z - facePoints[0].z;
+
+                    // Cross product
+                    double crossX = v1y * v2z - v1z * v2y;
+                    double crossY = v1z * v2x - v1x * v2z;
+                    double crossZ = v1x * v2y - v1y * v2x;
+
+                    // Magnitude of cross product
+                    double magnitude = Math.Sqrt(crossX * crossX + crossY * crossY + crossZ * crossZ);
+                    area += magnitude * 0.5;
+                }
+
+                return area;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error calculating face area: {ex.Message}");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves ShapeDimensions records from the database matching the given shape name.
+        /// </summary>
+        /// <param name="shapeName">Name of the shape to retrieve</param>
+        /// <param name="dbConnection">Database connection</param>
+        /// <returns>Collection of ShapeDimensions matching the shape name</returns>
+        public static async Task<IEnumerable<ShapeDimensions>> GetShapeDimensionsByNameAsync(string shapeName,SqliteConnection dbConnection)
+        {
+            try
+            {
+                // Ensure the ShapeDimensions table exists
+                await ShapeDimensionsExtensions.CreateTable(dbConnection);
+
+                // Retrieve shapes matching the name
+                var shapes = await new ShapeDimensions().GetByNameAsync(dbConnection, shapeName);
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"Retrieved {shapes.Count()} shape dimensions for: {shapeName}");
+
+                return shapes;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving shape dimensions: {ex.Message}");
+                return new List<ShapeDimensions>();
+            }
+        }
+
+        /// <summary>
+        /// Updates all SolidDimensions rows that reference a shape (via ShapeName) with new polyhedron data and SCAD code.
+        /// Updates dimensions, volumes, and the OSCADMethod with the new shape body while preserving rotation/translation/color.
+        /// Retrieves imperial dimensions from ShapeDimensions and applies them to all matching SolidDimensions rows.
+        /// </summary>
+        /// <param name="shapeName">The name of the shape to update (matches ShapeDimensions.Name and SolidDimensions.ShapeName)</param>
+        /// <param name="newShapeScadCode">The new complete SCAD code from the updated ShapeDimensions</param>
+        /// <param name="boxLengthMM">New bounding box length in millimeters</param>
+        /// <param name="boxWidthMM">New bounding box width in millimeters</param>
+        /// <param name="boxHeightMM">New bounding box height in millimeters</param>
+        /// <param name="volumeCM3">New volume in cubic centimeters</param>
+        /// <param name="boxLengthIN">New bounding box length in inches</param>
+        /// <param name="boxWidthIN">New bounding box width in inches</param>
+        /// <param name="boxHeightIN">New bounding box height in inches</param>
+        /// <param name="volumeIN3">New volume in cubic inches</param>
+        /// <param name="dbConnection">Database connection</param>
+        /// <returns>Number of rows updated</returns>
+        public static async Task<int> UpdateSolidDimensionsWithShapeAsync(
+            string shapeName,
+            string newShapeScadCode,
+            double boxLengthMM,
+            double boxWidthMM,
+            double boxHeightMM,
+            double volumeCM3,
+            double boxLengthIN,
+            double boxWidthIN,
+            double boxHeightIN,
+            double volumeIN3,
+            SqliteConnection dbConnection)
+        {
+            try
+            {
+                // Extract the module body (content between braces)
+                string shapeBody = ObjectScadFunctions.ExtractModuleBody(newShapeScadCode);
+
+                // Get the ShapeDimensions record to retrieve imperial values
+                var shapeDimensions = await GetShapeDimensionsByNameAsync(shapeName, dbConnection);
+                var shape = shapeDimensions.FirstOrDefault();
+
+                if (shape == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Warning: ShapeDimensions not found for shape name: {shapeName}");
+                    return 0;
+                }
+
+                // SQL UPDATE statement that:
+                // 1. Updates metric and imperial dimension fields from ShapeDimensions
+                // 2. Replaces the shape body inside the rotation/translation/color wrappers
+                string updateSql = @"
+                    UPDATE SolidDimensions
+                    SET 
+                        Length_MM = @BoxLengthMM,
+                        Width_MM = @BoxWidthMM,
+                        Height_MM = @BoxHeightMM,
+                        Volume_CM3 = @VolumeCM3,
+                        Length_IN = @BoxLengthIN,
+                        Width_IN = @BoxWidthIN,
+                        Height_IN = @BoxHeightIN,
+                        Volume_IN3 = @VolumeIN3,
+                        OSCADMethod = 
+                            CONCAT(
+                                SUBSTR(
+                                    OSCADMethod,1,INSTR(SUBSTR(OSCADMethod, INSTR(SUBSTR(OSCADMethod, INSTR(OSCADMethod, '{') + 1), '{') + INSTR(OSCADMethod, '{') + 1),'{') + INSTR(SUBSTR(OSCADMethod, INSTR(OSCADMethod, '{') + 1), '{') + INSTR(OSCADMethod, '{')),
+                                @ShapeBody,
+                                '}} }')
+                        WHERE ShapeName = @ShapeName
+                        AND SolidType = 'Polyhedron'";
+
+                var parameters = new List<(string, object)>
+                {
+                    ("@BoxLengthMM", boxLengthMM),
+                    ("@BoxWidthMM", boxWidthMM),
+                    ("@BoxHeightMM", boxHeightMM),
+                    ("@VolumeCM3", volumeCM3),
+                    ("@BoxLengthIN", boxLengthIN),
+                    ("@BoxWidthIN", boxWidthIN),
+                    ("@BoxHeightIN", boxHeightIN),
+                    ("@VolumeIN3", volumeIN3),
+                    ("@ShapeBody", shapeBody),
+                    ("@ShapeName", shapeName)
+                };
+
+                var cmd = dbConnection.CreateCommand();
+                cmd.CommandText = updateSql;
+
+                foreach (var (paramName, paramValue) in parameters)
+                {
+                    cmd.Parameters.AddWithValue(paramName, paramValue ?? DBNull.Value);
+                }
+
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"Updated {rowsAffected} SolidDimensions rows for shape: {shapeName}");
+
+                return rowsAffected;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating solid dimensions with shape: {ex.Message}");
+                return 0;
             }
         }
     }

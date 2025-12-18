@@ -199,6 +199,35 @@ namespace NetGenCAD.Designer.Functions
             }
         }
 
+        /// <summary>
+        /// Extracts the inner content from an OpenSCAD module declaration.
+        /// Removes the module header and outer braces, returning only the module body.
+        /// </summary>
+        /// <param name="moduleContent">The full module declaration including header and braces</param>
+        /// <returns>The module body content without the module declaration or outer braces</returns>
+        public static string ExtractModuleBody(string moduleContent)
+        {
+            if (string.IsNullOrWhiteSpace(moduleContent))
+                return string.Empty;
+
+            var trimmed = moduleContent.Trim();
+
+            // Find the opening brace of the module body
+            int openingBraceIndex = trimmed.IndexOf('{');
+            if (openingBraceIndex == -1)
+                return trimmed; // No opening brace found, return as-is
+
+            // Find the matching closing brace
+            int closingBraceIndex = FindMatchingCloseBrace(trimmed, openingBraceIndex);
+            if (closingBraceIndex == -1)
+                return trimmed; // No matching closing brace found, return as-is
+
+            // Extract content between braces and trim
+            string moduleBody = trimmed.Substring(openingBraceIndex + 1, closingBraceIndex - openingBraceIndex - 1).Trim();
+
+            return moduleBody;
+        }
+
         // Add this delegate type for CreateObjectAsync callback
         public delegate Task CreateObjectAsyncCallbackAsync(
             int solidId,
@@ -240,6 +269,8 @@ namespace NetGenCAD.Designer.Functions
             bool isCylinderSelected,
             bool isRoundCylinderSelected,
             bool isSphereSelected,
+            bool isPolyhedronSelected,
+            ShapeDimensions? selectedPolyhedron,
             UnitSystem selectedUnit,
             int decimalPlaces,
             int? axisId,
@@ -251,25 +282,115 @@ namespace NetGenCAD.Designer.Functions
             string currentAxisDisplay,
             CreateObjectAsyncCallbackAsync onObjectCreated)
         {
-            // Validate solid type selection
-            var solidType = selectedSolidType switch
-            {
-                "Cube" => "Cube",
-                "Round Cube" => "Round Cube",
-                "Cylinder" => "Cylinder",
-                "Round Cylinder" => "Round Cylinder",
-                "Sphere" => "Sphere",
-                "Surface" => "Surface",
-                _ => null
-            };
-
-            if (solidType == null)
-                return 0;
-
             try
             {
-                // Create new SolidDimensions instance
-                var newObject = new SolidDimensions
+                // Handle Polyhedron case first - if selected, skip all other solid type processing
+                if (isPolyhedronSelected && selectedPolyhedron != null)
+                {
+                    // Create new SolidDimensions instance from polyhedron
+                    var newObject = new SolidDimensions
+                    {
+                        Name = name,
+                        Description = description,
+                        Material = selectedFilament.ToString(),
+                        OperationType = selectedOperationType.ToString(),
+                        SolidType = "Polyhedron",
+                        Length_MM = selectedPolyhedron.BoxLength_MM,
+                        Width_MM = selectedPolyhedron.BoxWidth_MM,
+                        Height_MM = selectedPolyhedron.BoxHeight_MM,
+                        Thickness_MM = 0, // Not applicable for polyhedrons
+                        Radius_MM = 0,
+                        Radius1_MM = 0,
+                        Radius2_MM = 0,
+                        CylinderHeight_MM = 0,
+                        XOffset_MM = xOffsetMM,
+                        YOffset_MM = yOffsetMM,
+                        ZOffset_MM = zOffsetMM,
+                        XRotate = xRotate,
+                        YRotate = yRotate,
+                        ZRotate = zRotate,
+                        CreatedAt = DateTime.UtcNow,
+                        AxisDimensionsId = axisId,
+                        SurfaceCenter = 0,
+                        SurfaceInvert = 0,
+                        SurfaceFilePath = string.Empty,
+                        ModuleColor = selectedOpenScadColor.ToString(),
+                        Layer = layerIntValue,
+                        Alpha = alphaIntValue,
+                        ShapeName = selectedPolyhedron.Name, // Map shape name
+                        OSCADMethod = selectedPolyhedron.OSCADMethod
+                    };
+
+                    // Build the OSCAD method with translate, rotate, and color
+                    // Apply rotation if needed
+                    string moduleBody = ExtractModuleBody(newObject.OSCADMethod);
+                    var rotatedMethod = $"rotate([{xRotate}, {yRotate}, {zRotate}]) {{{moduleBody}}}";
+
+                    // Apply translation if needed
+                    string translatedMethod = rotatedMethod;
+                    translatedMethod = $"translate([{xOffsetMM}, {yOffsetMM}, {zOffsetMM}]) {{{rotatedMethod}}}";
+
+                    // Wrap in module
+                    newObject.OSCADMethod = ToModule(
+                        translatedMethod,
+                        newObject.Name,
+                        newObject.Description!,
+                        newObject.OperationType,
+                        newObject.SolidType.ToLower(),
+                        newObject.ModuleColor.ToLower(),
+                        newObject.Alpha).Trim();
+
+                    // Save to database
+                    await newObject.UpsertAsync(dbConnection);
+
+                    // Refresh dimensions from database
+                    await refreshDimensionsCallback();
+
+                    // Get current solid dimensions for axis display
+                    var allSolids = await new SolidDimensions().GetByNameWithAxisAndModuleAsync(dbConnection, name);
+
+                    // Use the provided currentAxisDisplay if axis exists, otherwise query from database
+                    var objectAxisDisplay = string.Empty;
+                    if (axesSelectEnabled && allSolids.Count() > 0)
+                    {
+                        if (!string.IsNullOrEmpty(currentAxisDisplay))
+                        {
+                            objectAxisDisplay = currentAxisDisplay;
+                        }
+                        else
+                        {
+                            var axisUsed = allSolids.SingleOrDefault()?.AxisOSCADMethod;
+                            objectAxisDisplay = StringFunctions.FormatAxisDisplay(axisUsed);
+                        }
+                    }
+
+                    // Invoke callback with updated values
+                    await onObjectCreated(
+                        newObject.Id,
+                        true,
+                        new ObservableCollection<SolidDimensions>(allSolids),
+                        objectAxisDisplay);
+
+                    return newObject.Id;
+                }
+
+                // Validate solid type selection for standard solids
+                var solidType = selectedSolidType switch
+                {
+                    "Cube" => "Cube",
+                    "Round Cube" => "Round Cube",
+                    "Cylinder" => "Cylinder",
+                    "Round Cylinder" => "Round Cylinder",
+                    "Sphere" => "Sphere",
+                    "Surface" => "Surface",
+                    _ => null
+                };
+
+                if (solidType == null)
+                    return 0;
+
+                // Create new SolidDimensions instance for standard solids
+                var solidObject = new SolidDimensions
                 {
                     Name = name,
                     Description = description,
@@ -301,45 +422,40 @@ namespace NetGenCAD.Designer.Functions
                 };
 
                 // Generate OSCAD method via callback
-                newObject.OSCADMethod = await generateOscadCallback(newObject);
+                solidObject.OSCADMethod = await generateOscadCallback(solidObject);
 
                 // Save to database
-                await newObject.UpsertAsync(dbConnection);
+                await solidObject.UpsertAsync(dbConnection);
 
                 // Refresh dimensions from database
                 await refreshDimensionsCallback();
 
                 // Get current solid dimensions for axis display
-                var allSolids = await new SolidDimensions().GetByNameWithAxisAndModuleAsync(dbConnection, name);
+                var solidDimensions = await new SolidDimensions().GetByNameWithAxisAndModuleAsync(dbConnection, name);
 
                 // Use the provided currentAxisDisplay if axis exists, otherwise query from database
-                var objectAxisDisplay = string.Empty;
-                if (axesSelectEnabled && allSolids.Count() > 0)
+                var axisDisplay = string.Empty;
+                if (axesSelectEnabled && solidDimensions.Count() > 0)
                 {
                     if (!string.IsNullOrEmpty(currentAxisDisplay))
                     {
-                        // Use the axis display from the CreateAxis callback
-                        objectAxisDisplay = currentAxisDisplay;
+                        axisDisplay = currentAxisDisplay;
                     }
                     else
                     {
-                        // Fallback to database query
-                        var axisUsed = allSolids.SingleOrDefault()?.AxisOSCADMethod;
-                        objectAxisDisplay = StringFunctions.FormatAxisDisplay(axisUsed);
+                        var axisUsed = solidDimensions.SingleOrDefault()?.AxisOSCADMethod;
+                        axisDisplay = StringFunctions.FormatAxisDisplay(axisUsed);
                     }
                 }
 
-                // Set append to true for subsequent operations
-                var newAppendObject = true;
-
                 // Invoke callback with updated values
                 await onObjectCreated(
-                    newObject.Id,
-                    newAppendObject,
-                    new ObservableCollection<SolidDimensions>(allSolids),
-                    objectAxisDisplay);
+                    solidObject.Id,
+                    true,
+                    new ObservableCollection<SolidDimensions>(solidDimensions),
+                    axisDisplay);
 
-                return newObject.Id;
+                return solidObject.Id;
             }
             catch (Exception ex)
             {
@@ -1383,10 +1499,12 @@ namespace NetGenCAD.Designer.Functions
             SqliteConnection dbConnection,
             string objectName)
         {
-            // Ensure all necessary tables exist
+            // Ensure all necessary tables exist, for both solids, shapes, polyhedrons, and modules
             await AxisDimensionsExtensions.CreateTable(dbConnection);
             await SolidDimensionsExtensions.CreateTable(dbConnection);
             await ModuleDimensionsExtensions.CreateTable(dbConnection);
+            await PolyhedronDimensionsExtensions.CreateTable(dbConnection);
+            await ShapeDimensionsExtensions.CreateTable(dbConnection);
 
             // Get records from database with both Axis and Module joins
             var records = await new SolidDimensions().GetByNameWithAxisAndModuleAsync(dbConnection, objectName);
