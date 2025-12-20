@@ -583,7 +583,9 @@ namespace NetGenCAD.UI.ViewModels
                         var scadCode = ShapeScadFunctions.GenerateOSCADShapeAsync(Name, updatedPolyhedronDimensions, PolyhedronConvexity);
                         // Store the generated SCAD code in the property
                         ShapeScad = scadCode;
-                        
+                        if (_isOpenSCADOpened)
+                            await ShowShapePreviewAsync(); // Regenerate scad code
+
                         // Modal popup disabled - user feedback via DataGrid update and preview opening
                         await Task.CompletedTask;
                     });
