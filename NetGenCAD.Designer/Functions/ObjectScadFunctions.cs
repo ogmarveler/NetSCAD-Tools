@@ -287,6 +287,14 @@ namespace NetGenCAD.Designer.Functions
                 // Handle Polyhedron case first - if selected, skip all other solid type processing
                 if (isPolyhedronSelected && selectedPolyhedron != null)
                 {
+                    // For offsets. Box dimensions handled in Create Shape module
+                    if (selectedUnit == UnitSystem.Imperial)
+                    {
+                        xOffsetMM = Math.Round(InchesToMillimeter(xOffsetMM), decimalPlaces);
+                        yOffsetMM = Math.Round(InchesToMillimeter(yOffsetMM), decimalPlaces);
+                        zOffsetMM = Math.Round(InchesToMillimeter(zOffsetMM), decimalPlaces);
+                    }
+
                     // Create new SolidDimensions instance from polyhedron
                     var newObject = new SolidDimensions
                     {
