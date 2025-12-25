@@ -552,6 +552,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             "Round_r_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_r_IN) == 0.0),
             "Round_h_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_h_IN) == 0.0),
 
+            // Polyhedron Shape
+            "ShapeName" => ViewModel.SolidDimensions.All(s => string.IsNullOrEmpty(s.ShapeName)),
+
             // Default: don't exclude
             _ => false
         };
@@ -598,6 +601,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "ModuleColor", "Color" },
             { "Volume_IN3", "V (in³)" },
             { "Layer", "L" },
+            { "ShapeName", "Poly Shape" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -752,6 +756,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "ZOffset_IN", "Z (in)" },
             { "IncludeMethod", "Include Method" },
             { "Layer", "Layer" },
+            { "ShapeName", "Poly Shape" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
