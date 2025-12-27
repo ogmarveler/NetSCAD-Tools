@@ -62,10 +62,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="11.3.9" />
-		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.9" />
-		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
+		<PackageReference Include="Avalonia" Version="11.3.10" />
+		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.10" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.10" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.10" />
 		<PackageReference Include="Markdown.Avalonia.Tight" Version="11.0.2" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />

@@ -716,7 +716,21 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.SurfaceFilePath = selected.SurfaceFilePath ?? string.Empty;
             ViewModel.SurfaceInvert = selected.SurfaceInvert == 1;
             ViewModel.SurfaceCenter = selected.SurfaceCenter == 1;
-            ViewModel.SelectedOpenSCADColor = string.IsNullOrEmpty(selected.ModuleColor) ? OpenScadColor.Silver : Enum.Parse<OpenScadColor>(selected.ModuleColor, ignoreCase: true);
+            
+            // Check if the color is a hex code (contains '#') and set IsColorFromHex accordingly
+            bool isHexColor = !string.IsNullOrEmpty(selected.ModuleColor) && selected.ModuleColor.Contains('#');
+            if (isHexColor)
+            {
+                ViewModel.IsColorFromHex = true;
+                ViewModel.OpenSCADColorHex = selected.ModuleColor;
+            }
+            else
+            {
+                ViewModel.IsColorFromHex = false;
+                ViewModel.SelectedOpenSCADColor = string.IsNullOrEmpty(selected.ModuleColor) ? OpenScadColor.Silver : Enum.Parse<OpenScadColor>(selected.ModuleColor, ignoreCase: true);
+                ViewModel.OpenSCADColorHex = string.Empty;
+            }
+            
             ViewModel.LayerIntValue = selected.Layer;
             ViewModel.AlphaIntValue = selected.Alpha;
             ViewModel.SelectedPolyhedron = ViewModel.AvailablePolyhedrons?.FirstOrDefault(p=>p.Name == selected.ShapeName);

@@ -128,6 +128,8 @@ namespace NetGenCAD.UI.ViewModels
         private ObservableCollection<ModuleDimensions>? _cachedAllModuleDimensions;
         private ObservableCollection<ShapeDimensions>? _availablePolyhedrons;
         private ShapeDimensions? _selectedPolyhedron;
+        private bool _isColorFromHex = false;
+        private string _openScadColorHex = string.Empty;
 
 
         [UnconditionalSuppressMessage("Trimming", "IL2026")]
@@ -236,6 +238,7 @@ namespace NetGenCAD.UI.ViewModels
             IsRoundCylinderSelected = false;
             IsPolyhedronSelected = false;
             SelectedOpenSCADColor = OpenScadColor.Silver;
+            OpenSCADColorHex = string.Empty;
         }
 
         // Clear all object fields
@@ -382,7 +385,10 @@ namespace NetGenCAD.UI.ViewModels
                 generateOscadCallback,
                 refreshDimensionsCallback,
                 _axisDimensions?.OSCADMethod ?? string.Empty,
-                onObjectCreated);
+                onObjectCreated,
+                IsColorFromHex,
+                OpenSCADColorHex
+            );
 
             return result;
         }
@@ -809,8 +815,8 @@ namespace NetGenCAD.UI.ViewModels
 
             // Image width and height are equivalent to width and length axis by default, 
             // so we rotate for user to interpret width and height as the same context
-            XRotate = 90;
-            ZRotate = 90;
+            XRotate = XRotate != 0 ? 90 : XRotate;
+            ZRotate = ZRotate != 0 ? 90 : ZRotate;
 
             // Set textboxes for UI
             LengthMM = length;
@@ -837,8 +843,7 @@ namespace NetGenCAD.UI.ViewModels
 
         /// <summary>
         /// Updates the solid color in the database and regenerates with the new color.
-        /// </summary>
-        /// <param name="solidId">The ID of the solid to update</param>
+        /// /// <param name="solidId">The ID of the solid to update</param>
         /// <param name="color">The selected OpenScad color</param>
         public async Task UpdateSolidColorAsync(int solidId, OpenScadColor color)
         {
@@ -881,17 +886,19 @@ namespace NetGenCAD.UI.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _surfaceInvert, value);
 
-                if (_isSurfaceSelected)
-                {
-                    if (_surfaceInvert)
-                    {
-                        XOffsetMM = LengthMM;  // 100mm OpenSCAD default
-                    }
-                    else if (XOffsetMM == LengthMM)  // If user is toggling Invert Surface or not
-                    {
-                        XOffsetMM = 0.0;
-                    }
-                }
+                // Problem with toggling Invert Surface and XOffsetMM logic, commenting out for now
+                // This logic should be handled by the LoadPngDimensions method instead
+                //if (_isSurfaceSelected)
+                //{
+                //    if (_surfaceInvert && XOffsetMM == 0.0)
+                //    {
+                //        XOffsetMM = LengthMM;  // 100mm OpenSCAD default
+                //    }
+                //    else if (XOffsetMM == LengthMM)  // If user is toggling Invert Surface or not
+                //    {
+                //        XOffsetMM = 0.0;
+                //    }
+                //}
             }
         }
         public double SurfaceScaleX
@@ -986,12 +993,14 @@ namespace NetGenCAD.UI.ViewModels
         }
         public OpenScadColor[] OpenSCADColors { get => _openScadColors; set => this.RaiseAndSetIfChanged(ref _openScadColors, value); }
         public OpenScadColor SelectedOpenSCADColor { get => _selectedOpenScadColor; set => this.RaiseAndSetIfChanged(ref _selectedOpenScadColor, value); }
+        public string OpenSCADColorHex { get => _openScadColorHex; set => this.RaiseAndSetIfChanged(ref _openScadColorHex, value); }
         public bool AxisStored { get => _axisStored; set => this.RaiseAndSetIfChanged(ref _axisStored, value); }
         public bool AppendObject { get => _appendObject; set => this.RaiseAndSetIfChanged(ref _appendObject, value); }
         public bool UnionButton { get => _unionButton; set => this.RaiseAndSetIfChanged(ref _unionButton, value); }
         public bool IntersectionButton { get => _intersectionButton; set => this.RaiseAndSetIfChanged(ref _intersectionButton, value); }
         public bool DifferenceButton { get => _differenceButton; set => this.RaiseAndSetIfChanged(ref _differenceButton, value); }
         public bool SaveFileButton { get => _saveFileButton; set => this.RaiseAndSetIfChanged(ref _saveFileButton, value); }
+        public bool IsColorFromHex { get => _isColorFromHex; set => this.RaiseAndSetIfChanged(ref _isColorFromHex, value); }
         public List<FilamentType> FilamentTypes { get; }
         public List<UnitSystem> UnitSystemValues { get; }
         public List<string>? AxesList { get => _axesList; set => this.RaiseAndSetIfChanged(ref _axesList, value); }

@@ -852,7 +852,7 @@
         <ScrollViewer
             x:Name="PointsSection"
             Grid.Row="0"
-            Grid.RowSpan="4"
+            Grid.RowSpan="5"
             Grid.Column="1"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"

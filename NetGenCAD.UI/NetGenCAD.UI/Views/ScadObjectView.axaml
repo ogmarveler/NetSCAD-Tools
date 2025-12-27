@@ -1242,26 +1242,62 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <!--  Color Picker  -->
+                    <!--  Color Options  -->
                     <StackPanel
                         Grid.Row="3"
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
                         Margin="10,5,0,0"
                         HorizontalAlignment="Left"
-                        Classes="inputGroup">
-                        <TextBlock Classes="standardLabel" Text="Color" />
-                        <ComboBox
-                            Width="195"
-                            Padding="10,5,0,5"
-                            HorizontalAlignment="Stretch"
-                            ItemsSource="{Binding OpenSCADColors}"
-                            PlaceholderText="Select"
-                            SelectedItem="{Binding SelectedOpenSCADColor, Mode=TwoWay}">
-                            <ToolTip.Tip>
-                                <TextBlock Text="Color selection (hidden when Surface solid type is selected)" />
-                            </ToolTip.Tip>
-                        </ComboBox>
+                        Orientation="Horizontal"
+                        Spacing="15">
+
+                        <!--  Custom Color  -->
+                        <StackPanel Width="25" Classes="inputGroup">
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                Classes="standardLabel"
+                                Text="Hex" />
+                            <CheckBox HorizontalAlignment="Left" IsChecked="{Binding IsColorFromHex, Mode=TwoWay}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Enables HEX color input" />
+                                </ToolTip.Tip>
+                            </CheckBox>
+                        </StackPanel>
+
+                        <!--  Color Picker  -->
+                        <StackPanel Width="155" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="!IsColorFromHex" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Preset Color" />
+                            <ComboBox
+                                Padding="10,5,0,5"
+                                HorizontalAlignment="Stretch"
+                                ItemsSource="{Binding OpenSCADColors}"
+                                PlaceholderText="Select"
+                                SelectedItem="{Binding SelectedOpenSCADColor, Mode=TwoWay}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Color selection from default OpenSCAD colors" />
+                                </ToolTip.Tip>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!--  Color Text Box  -->
+                        <StackPanel Width="155" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsColorFromHex" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Color From Hex" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding OpenSCADColorHex, Mode=TwoWay}"
+                                Watermark="#RRGGBB">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Color selection (visible when Color checkbox is selected)" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
                     </StackPanel>
 
                     <!--  Alpha Integer Input  -->

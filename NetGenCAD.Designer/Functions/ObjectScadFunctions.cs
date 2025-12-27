@@ -280,10 +280,17 @@ namespace NetGenCAD.Designer.Functions
             Func<SolidDimensions, Task<string>> generateOscadCallback,
             Func<Task> refreshDimensionsCallback,
             string currentAxisDisplay,
-            CreateObjectAsyncCallbackAsync onObjectCreated)
+            CreateObjectAsyncCallbackAsync onObjectCreated,
+            bool isColorFromHex,
+            string openScadColorHex)
         {
             try
             {
+                // Determine the color to use: if hex is selected and not blank, use hex; otherwise use selected color
+                var colorToUse = isColorFromHex && !string.IsNullOrEmpty(openScadColorHex)
+                    ? openScadColorHex
+                    : selectedOpenScadColor.ToString();
+
                 // Handle Polyhedron case first - if selected, skip all other solid type processing
                 if (isPolyhedronSelected && selectedPolyhedron != null)
                 {
@@ -322,7 +329,7 @@ namespace NetGenCAD.Designer.Functions
                         SurfaceCenter = 0,
                         SurfaceInvert = 0,
                         SurfaceFilePath = string.Empty,
-                        ModuleColor = selectedOpenScadColor.ToString(),
+                        ModuleColor = colorToUse,
                         Layer = layerIntValue,
                         Alpha = alphaIntValue,
                         ShapeName = selectedPolyhedron.Name, // Map shape name
@@ -424,7 +431,7 @@ namespace NetGenCAD.Designer.Functions
                     SurfaceCenter = surfaceCenter,
                     SurfaceInvert = surfaceInvert,
                     SurfaceFilePath = surfaceFilePath,
-                    ModuleColor = selectedOpenScadColor.ToString(),
+                    ModuleColor = colorToUse,
                     Layer = layerIntValue,
                     Alpha = alphaIntValue,
                 };
