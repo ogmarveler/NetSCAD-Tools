@@ -282,7 +282,10 @@ namespace NetGenCAD.Designer.Functions
             string currentAxisDisplay,
             CreateObjectAsyncCallbackAsync onObjectCreated,
             bool isColorFromHex,
-            string openScadColorHex)
+            string openScadColorHex,
+            double surfaceScaleX,
+            double surfaceScaleY,
+            double surfaceScaleZ)
         {
             try
             {
@@ -324,6 +327,9 @@ namespace NetGenCAD.Designer.Functions
                         XRotate = xRotate,
                         YRotate = yRotate,
                         ZRotate = zRotate,
+                        ScaleX = surfaceScaleX,
+                        ScaleY = surfaceScaleY,
+                        ScaleZ = surfaceScaleZ,
                         CreatedAt = DateTime.UtcNow,
                         AxisDimensionsId = axisId,
                         SurfaceCenter = 0,
@@ -426,6 +432,9 @@ namespace NetGenCAD.Designer.Functions
                     XRotate = xRotate,
                     YRotate = yRotate,
                     ZRotate = zRotate,
+                    ScaleX = surfaceScaleX,
+                    ScaleY = surfaceScaleY,
+                    ScaleZ = surfaceScaleZ,
                     CreatedAt = DateTime.UtcNow,
                     AxisDimensionsId = axisId,
                     SurfaceCenter = surfaceCenter,

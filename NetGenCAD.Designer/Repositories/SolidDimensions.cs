@@ -1,8 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
 using NetGenCAD.Core.Interfaces;
-using NetGenCAD.Core.Models;
-using System.Collections.Generic;
 using static NetGenCAD.Core.Measurements.Conversion;
 using static NetGenCAD.Core.Measurements.VolumeConverter;
 
@@ -41,6 +39,11 @@ namespace NetGenCAD.Designer.Repositories
         public double XRotate { get; set; } = 0;
         public double YRotate { get; set; } = 0;
         public double ZRotate { get; set; } = 0;
+
+        // Scale properties (for transformation scaling)
+        public double ScaleX { get; set; } = 1.0;
+        public double ScaleY { get; set; } = 1.0;
+        public double ScaleZ { get; set; } = 1.0;
 
         // Rounding properties (for RoundCube)
         public double Round_r_MM { get; set; } = 0; // Rounding radius (default 0mm)
@@ -193,6 +196,9 @@ namespace NetGenCAD.Designer.Repositories
             { "XRotate", XRotate },
             { "YRotate", YRotate },
             { "ZRotate", ZRotate },
+            { "ScaleX", ScaleX },
+            { "ScaleY", ScaleY },
+            { "ScaleZ", ScaleZ },
             { "Length_IN", Length_IN },
             { "Width_IN", Width_IN },
             { "Height_IN", Height_IN },
@@ -251,6 +257,9 @@ namespace NetGenCAD.Designer.Repositories
             (nameof(SolidDimensions.XRotate), typeof(double), false),
             (nameof(SolidDimensions.YRotate), typeof(double), false),
             (nameof(SolidDimensions.ZRotate), typeof(double), false),
+            (nameof(SolidDimensions.ScaleX), typeof(double), false),
+            (nameof(SolidDimensions.ScaleY), typeof(double), false),
+            (nameof(SolidDimensions.ScaleZ), typeof(double), false),
             (nameof(SolidDimensions.Length_IN), typeof(double), false),
             (nameof(SolidDimensions.Width_IN), typeof(double), false),
             (nameof(SolidDimensions.Height_IN), typeof(double), false),
@@ -634,6 +643,9 @@ namespace NetGenCAD.Designer.Repositories
                    XRotate,
                    YRotate,
                    ZRotate,
+                   ScaleX,
+                   ScaleY,
+                   ScaleZ,
                    Length_IN,
                    Width_IN,
                    Height_IN,

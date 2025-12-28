@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using Microsoft.Extensions.DependencyInjection;
 using NetGenCAD.Core.Primitives;
 using NetGenCAD.Designer.Repositories;
@@ -43,18 +44,128 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
             if (!_isDataGridPointsLoaded)
             {
                 AddActionButtonColumnToPointsDataGrid();
-                //AddViewOscadButtonColumnToPointsDataGrid();
                 AddActionButtonColumnToPointsDataGridImperial();
-                //AddViewOscadButtonColumnToPointsDataGridImperial();
                 _isDataGridPointsLoaded = true;
             }
             if (!_isDataGridFacesLoaded)
             {
                 AddActionButtonColumnToFacesDataGrid();
-                //AddViewOscadButtonColumnToFacesDataGrid();
                 _isDataGridFacesLoaded = true;
             }
         };
+
+        // Wait for the control to be attached to the visual tree to access the parent window
+        this.AttachedToVisualTree += ScadShapeView_AttachedToVisualTree;
+    }
+
+    private void ScadShapeView_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        // Get the parent window
+        _parentWindow = this.FindAncestorOfType<Window>();
+
+        if (_parentWindow != null)
+        {
+            // Subscribe to ClientSize changes using Avalonia's property system
+            _clientSizeObserver = _parentWindow.GetObservable(Window.ClientSizeProperty)
+                .Subscribe(size =>
+                {
+                    Console.WriteLine($"Window Width: {size.Width}");
+                    Console.WriteLine($"Window Height: {size.Height}");
+                    AdjustLayoutBasedOnWindowWidth(size.Width);
+
+                    // Calculate DataGrid MaxHeight (use 95% of available height)
+                    double dataGridMaxHeight = size.Height * 0.93;
+                    SetDataGridMaxHeight(dataGridMaxHeight);
+                });
+
+            // Set initial layout based on current window width
+            AdjustLayoutBasedOnWindowWidth(_parentWindow.ClientSize.Width);
+        }
+    }
+
+    private void SetDataGridMaxHeight(double maxHeight)
+    {
+        // Find the DataGrids and set their MaxHeight
+        var pointsDataGrid = this.FindControl<DataGrid>("PointsDataGrid");
+        var pointsDataGridImperial = this.FindControl<DataGrid>("PointsDataGridImperial");
+        var facesDataGrid = this.FindControl<DataGrid>("FacesDataGrid");
+        var shapeDimensionsDataGrid = this.FindControl<DataGrid>("ShapeDimensionsDataGrid");
+        var shapeDimensionsDataGridImperial = this.FindControl<DataGrid>("ShapeDimensionsDataGridImperial");
+
+        if (pointsDataGrid != null)
+            pointsDataGrid.MaxHeight = maxHeight;
+
+        if (pointsDataGridImperial != null)
+            pointsDataGridImperial.MaxHeight = maxHeight;
+
+        if (facesDataGrid != null)
+            facesDataGrid.MaxHeight = maxHeight;
+
+        if (shapeDimensionsDataGrid != null)
+            shapeDimensionsDataGrid.MaxHeight = maxHeight * 0.5;
+
+        if (shapeDimensionsDataGridImperial != null)
+            shapeDimensionsDataGridImperial.MaxHeight = maxHeight * 0.5;
+    }
+
+    private void AdjustLayoutBasedOnWindowWidth(double windowWidth)
+    {
+        if (windowWidth < WRAP_THRESHOLD_WIDTH)
+        {
+            // Switch to vertical stacking when width is too small
+            AdjustLayoutForNarrowScreen();
+        }
+        else
+        {
+            // Use side-by-side layout for wider screens
+            AdjustLayoutForWideScreen();
+        }
+    }
+
+    private void AdjustLayoutForNarrowScreen()
+    {
+        // Find the ScrollViewers by name
+        var pointsSection = this.FindControl<ScrollViewer>("PointsSection");
+        var facesSection = this.FindControl<ScrollViewer>("FacesSection");
+        
+        if (pointsSection != null)
+        {
+            Grid.SetRow(pointsSection, 3);
+            Grid.SetColumn(pointsSection, 0);
+            Grid.SetColumnSpan(pointsSection, 2);
+            Grid.SetRowSpan(pointsSection, 1);
+        }
+        
+        if (facesSection != null)
+        {
+            Grid.SetRow(facesSection, 4);
+            Grid.SetColumn(facesSection, 0);
+            Grid.SetColumnSpan(facesSection, 2);
+            Grid.SetRowSpan(facesSection, 1);
+        }
+    }
+
+    private void AdjustLayoutForWideScreen()
+    {
+        // Find the ScrollViewers by name
+        var pointsSection = this.FindControl<ScrollViewer>("PointsSection");
+        var facesSection = this.FindControl<ScrollViewer>("FacesSection");
+        
+        if (pointsSection != null)
+        {
+            Grid.SetRow(pointsSection, 0);
+            Grid.SetColumn(pointsSection, 1);
+            Grid.SetColumnSpan(pointsSection, 1);
+            Grid.SetRowSpan(pointsSection, 5);
+        }
+        
+        if (facesSection != null)
+        {
+            Grid.SetRow(facesSection, 0);
+            Grid.SetColumn(facesSection, 1);
+            Grid.SetColumnSpan(facesSection, 1);
+            Grid.SetRowSpan(facesSection, 5);
+        }
     }
 
     // Helper method to safely retrieve brush resources with fallback
@@ -80,49 +191,6 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
     private void UpdatePointsFaceIdsButton_Click(object? sender, RoutedEventArgs e) => ViewModel.UpdatePolyhedronIds();
     private async void SaveShapeButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateNewShapeModuleAsync();
     private async void UpdateSolidDimensionsButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.UpdateSolidDimensionsAsync();
-    
-    // UI Stuff
-    private void AdjustLayoutForNarrowScreen()
-    {
-        // Find the ScrollViewers by name
-        var pointsSection = this.FindControl<ScrollViewer>("PointsSection");
-        var facesSection = this.FindControl<ScrollViewer>("FacesSection");
-        
-        if (pointsSection != null)
-        {
-            Grid.SetRow(pointsSection, 3);
-            Grid.SetColumn(pointsSection, 0);
-            Grid.SetColumnSpan(pointsSection, 2);
-        }
-        
-        if (facesSection != null)
-        {
-            Grid.SetRow(facesSection, 4);
-            Grid.SetColumn(facesSection, 0);
-            Grid.SetColumnSpan(facesSection, 2);
-        }
-    }
-
-    private void AdjustLayoutForWideScreen()
-    {
-        // Find the ScrollViewers by name
-        var pointsSection = this.FindControl<ScrollViewer>("PointsSection");
-        var facesSection = this.FindControl<ScrollViewer>("FacesSection");
-        
-        if (pointsSection != null)
-        {
-            Grid.SetRow(pointsSection, 2);
-            Grid.SetColumn(pointsSection, 0);
-            Grid.SetColumnSpan(pointsSection, 1);
-        }
-        
-        if (facesSection != null)
-        {
-            Grid.SetRow(facesSection, 2);
-            Grid.SetColumn(facesSection, 0);
-            Grid.SetColumnSpan(facesSection, 1);
-        }
-    }
 
     // Clean up event subscription when control is unloaded
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)

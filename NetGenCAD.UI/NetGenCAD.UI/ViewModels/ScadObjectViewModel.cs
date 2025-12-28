@@ -218,9 +218,9 @@ namespace NetGenCAD.UI.ViewModels
             SurfaceCenter = false;
             SurfaceConvexity = 1;
             SurfaceInvert = false;
-            SurfaceScaleX = 0;
-            SurfaceScaleY = 0;
-            SurfaceScaleZ = 0;
+            SurfaceScaleX = 1;
+            SurfaceScaleY = 1;
+            SurfaceScaleZ = 1;
             XOffsetMM = 0;
             YOffsetMM = 0;
             ZOffsetMM = 0;
@@ -387,7 +387,10 @@ namespace NetGenCAD.UI.ViewModels
                 _axisDimensions?.OSCADMethod ?? string.Empty,
                 onObjectCreated,
                 IsColorFromHex,
-                OpenSCADColorHex
+                OpenSCADColorHex,
+                SurfaceScaleX,
+                SurfaceScaleY,
+                SurfaceScaleZ
             );
 
             return result;
@@ -879,73 +882,10 @@ namespace NetGenCAD.UI.ViewModels
         public bool SurfaceCenter { get => _surfaceCenter; set => this.RaiseAndSetIfChanged(ref _surfaceCenter, value); }
         public bool AutoSmoothFile { get => _autoSmoothFile; set => this.RaiseAndSetIfChanged(ref _autoSmoothFile, value); }
         public int SurfaceConvexity { get => _surfaceConvexity; set => this.RaiseAndSetIfChanged(ref _surfaceConvexity, value); }
-        public bool SurfaceInvert
-        {
-            get => _surfaceInvert;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _surfaceInvert, value);
-
-                // Problem with toggling Invert Surface and XOffsetMM logic, commenting out for now
-                // This logic should be handled by the LoadPngDimensions method instead
-                //if (_isSurfaceSelected)
-                //{
-                //    if (_surfaceInvert && XOffsetMM == 0.0)
-                //    {
-                //        XOffsetMM = LengthMM;  // 100mm OpenSCAD default
-                //    }
-                //    else if (XOffsetMM == LengthMM)  // If user is toggling Invert Surface or not
-                //    {
-                //        XOffsetMM = 0.0;
-                //    }
-                //}
-            }
-        }
-        public double SurfaceScaleX
-        {
-            get => _surfaceScaleX;
-            set
-            {
-                if (value > 0.0)
-                {
-                    this.RaiseAndSetIfChanged(ref _surfaceScaleX, value);
-                    if (_isSurfaceSelected)
-                    {
-                        LengthMM = _lengthMM * _surfaceScaleX;
-                        if (_surfaceInvert)
-                        {
-                            XOffsetMM = LengthMM;  // 100mm OpenSCAD default
-                        }
-                    }
-                }
-            }
-        }
-        public double SurfaceScaleY
-        {
-            get => _surfaceScaleY;
-            set
-            {
-                if (value > 0.0)
-                {
-                    this.RaiseAndSetIfChanged(ref _surfaceScaleY, value);
-                    if (_isSurfaceSelected)
-                        WidthMM = _widthMM * _surfaceScaleY;
-                }
-            }
-        }
-        public double SurfaceScaleZ
-        {
-            get => _surfaceScaleZ;
-            set
-            {
-                if (value > 0.0)
-                {
-                    this.RaiseAndSetIfChanged(ref _surfaceScaleZ, value);
-                    if (_isSurfaceSelected)
-                        HeightMM = _heightMM * _surfaceScaleZ;
-                }
-            }
-        }
+        public bool SurfaceInvert { get => _surfaceInvert; set => this.RaiseAndSetIfChanged(ref _surfaceInvert, value); }
+        public double SurfaceScaleX { get => _surfaceScaleX; set { if (value > 0.0) this.RaiseAndSetIfChanged(ref _surfaceScaleX, value); } }
+        public double SurfaceScaleY { get => _surfaceScaleY; set { if (value > 0.0) this.RaiseAndSetIfChanged(ref _surfaceScaleY, value); } }
+        public double SurfaceScaleZ { get => _surfaceScaleZ; set { if (value > 0.0) this.RaiseAndSetIfChanged(ref _surfaceScaleZ, value); } }
         public int LayerIntValue { get => _layerIntValue; set => this.RaiseAndSetIfChanged(ref _layerIntValue, value); }
         public double AlphaIntValue { get => _alphaIntValue; set => this.RaiseAndSetIfChanged(ref _alphaIntValue, value); }
         public double AxisXPositionMM { get => _axisXPositionMM; set { this.RaiseAndSetIfChanged(ref _axisXPositionMM, value); if (AxisStored) UpdateAxisTranslate(); } }

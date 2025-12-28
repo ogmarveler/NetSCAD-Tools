@@ -425,6 +425,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "ModuleColor", "Color" },
             { "Volume_CM3", "V (cm³)" },
             { "Layer", "L" },
+            { "ScaleX", "Scale X" },
+            { "ScaleY", "Scale Y" },
+            { "ScaleZ", "Scale Z" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -602,6 +605,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "Volume_IN3", "V (in³)" },
             { "Layer", "L" },
             { "ShapeName", "Poly Shape" },
+            { "ScaleX", "Scale X" },
+            { "ScaleY", "Scale Y" },
+            { "ScaleZ", "Scale Z" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -716,6 +722,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.SurfaceFilePath = selected.SurfaceFilePath ?? string.Empty;
             ViewModel.SurfaceInvert = selected.SurfaceInvert == 1;
             ViewModel.SurfaceCenter = selected.SurfaceCenter == 1;
+            ViewModel.SurfaceScaleX = selected.ScaleX;
+            ViewModel.SurfaceScaleY = selected.ScaleY;
+            ViewModel.SurfaceScaleZ = selected.ScaleZ;
             
             // Check if the color is a hex code (contains '#') and set IsColorFromHex accordingly
             bool isHexColor = !string.IsNullOrEmpty(selected.ModuleColor) && selected.ModuleColor.Contains('#');
