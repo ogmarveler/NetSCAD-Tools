@@ -126,22 +126,13 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
     {
         // Find the ScrollViewers by name
         var pointsSection = this.FindControl<ScrollViewer>("PointsSection");
-        var facesSection = this.FindControl<ScrollViewer>("FacesSection");
         
         if (pointsSection != null)
         {
-            Grid.SetRow(pointsSection, 3);
+            Grid.SetRow(pointsSection, 5);
             Grid.SetColumn(pointsSection, 0);
             Grid.SetColumnSpan(pointsSection, 2);
             Grid.SetRowSpan(pointsSection, 1);
-        }
-        
-        if (facesSection != null)
-        {
-            Grid.SetRow(facesSection, 4);
-            Grid.SetColumn(facesSection, 0);
-            Grid.SetColumnSpan(facesSection, 2);
-            Grid.SetRowSpan(facesSection, 1);
         }
     }
 
@@ -149,22 +140,13 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
     {
         // Find the ScrollViewers by name
         var pointsSection = this.FindControl<ScrollViewer>("PointsSection");
-        var facesSection = this.FindControl<ScrollViewer>("FacesSection");
         
         if (pointsSection != null)
         {
             Grid.SetRow(pointsSection, 0);
             Grid.SetColumn(pointsSection, 1);
             Grid.SetColumnSpan(pointsSection, 1);
-            Grid.SetRowSpan(pointsSection, 5);
-        }
-        
-        if (facesSection != null)
-        {
-            Grid.SetRow(facesSection, 0);
-            Grid.SetColumn(facesSection, 1);
-            Grid.SetColumnSpan(facesSection, 1);
-            Grid.SetRowSpan(facesSection, 5);
+            Grid.SetRowSpan(pointsSection, 6);
         }
     }
 
@@ -254,29 +236,29 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
             textColumn.FontSize = 12;
         }
 
-        int displayIndex = 5; // Start after the fixed columns
+        int displayIndex = 1; // Start after the action button column (0)
 
         switch (e.PropertyName)
         {
             case "PolyhedronOperationType":
-                e.Column.DisplayIndex = 2;
+                e.Column.DisplayIndex = 1;
                 if (e.Column is DataGridTextColumn ptColumn)
                     ptColumn.FontWeight = FontWeight.SemiBold;
                 break;
             case "Description":
-                e.Column.DisplayIndex = 3;
+                e.Column.DisplayIndex = 2;
                 break;
             case "PointsId":
-                e.Column.DisplayIndex = 4;
+                e.Column.DisplayIndex = 3;
                 break;
             case "PointX_MM":
-                e.Column.DisplayIndex = 5;
+                e.Column.DisplayIndex = 4;
                 break;
             case "PointY_MM":
-                e.Column.DisplayIndex = 6;
+                e.Column.DisplayIndex = 5;
                 break;
             case "PointZ_MM":
-                e.Column.DisplayIndex = 7;
+                e.Column.DisplayIndex = 6;
                 break;
             default:
                 e.Column.DisplayIndex = displayIndex++;
@@ -317,29 +299,29 @@ public partial class ScadShapeView : UserControl, INotifyPropertyChanged
             textColumn.FontSize = 12;
         }
 
-        int displayIndex = 5; // Start after the fixed columns
+        int displayIndex = 1; // Start after the action button column (0)
 
         switch (e.PropertyName)
         {
             case "PolyhedronOperationType":
-                e.Column.DisplayIndex = 2;
+                e.Column.DisplayIndex = 1;
                 if (e.Column is DataGridTextColumn ptColumn)
                     ptColumn.FontWeight = FontWeight.SemiBold;
                 break;
             case "Description":
-                e.Column.DisplayIndex = 3;
+                e.Column.DisplayIndex = 2;
                 break;
             case "PointsId":
-                e.Column.DisplayIndex = 4;
+                e.Column.DisplayIndex = 3;
                 break;
             case "PointX_IN":
-                e.Column.DisplayIndex = 5;
+                e.Column.DisplayIndex = 4;
                 break;
             case "PointY_IN":
-                e.Column.DisplayIndex = 6;
+                e.Column.DisplayIndex = 5;
                 break;
             case "PointZ_IN":
-                e.Column.DisplayIndex = 7;
+                e.Column.DisplayIndex = 6;
                 break;
             default:
                 e.Column.DisplayIndex = displayIndex++;

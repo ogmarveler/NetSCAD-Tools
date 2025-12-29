@@ -62,6 +62,7 @@
             <!--  Polyhedron Faces DataGrids  -->
             <RowDefinition Height="Auto" />
             <!--  Overflow Row for Polyhedron when narrow  -->
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MaxWidth="960" />

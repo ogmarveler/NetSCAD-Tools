@@ -550,9 +550,17 @@ namespace NetGenCAD.UI.ViewModels
 
             // Ensure only relevant IDs are set based on operation type. -1 indicates not used or null.
             if (SelectedPolyhedronOperationType == PolyhedronOperationType.Points)
+            {
                 FaceId = -1;
+                FacePoints = string.Empty;
+            }
             else if (SelectedPolyhedronOperationType == PolyhedronOperationType.Faces)
+            {
                 PointsId = -1;
+                PointXMM = 0;
+                PointYMM = 0;
+                PointZMM = 0;
+            }
 
             try
             {
