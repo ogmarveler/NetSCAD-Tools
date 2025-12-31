@@ -71,10 +71,14 @@ namespace NetGenCAD
                 services.AddSingleton<AxisViewModel>();
                 services.AddSingleton<DesignerView>();
                 services.AddSingleton<DesignerViewModel>();
+                services.AddSingleton<ShapeView>();
+                services.AddSingleton<ShapeViewModel>();
                 services.AddSingleton<ScadObjectView>();
                 services.AddSingleton<ScadObjectViewModel>();
                 services.AddSingleton<ScadShapeView>();
                 services.AddSingleton<ScadShapeViewModel>();
+                services.AddSingleton<MainView>();
+                services.AddSingleton<MainViewModel>();
                 services.AddSingleton<IScrewSizeService, ScrewSizeService>();
                 services.AddSingleton<App>(); // Avalonia app
             },

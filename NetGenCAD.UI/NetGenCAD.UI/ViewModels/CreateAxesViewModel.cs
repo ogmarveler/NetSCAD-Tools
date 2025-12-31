@@ -1,8 +1,5 @@
 using Microsoft.Data.Sqlite;
 using NetGenCAD.Axis.Scad.Models;
-using NetGenCAD.Axis.Scad.Utility;
-using NetGenCAD.Axis.SCAD.Modules;
-using NetGenCAD.Core.Measurements;
 using NetGenCAD.Designer.Functions;
 using ReactiveUI;
 using System;
@@ -10,12 +7,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using static NetGenCAD.Axis.SCAD.Utility.AxisConfig;
-using static NetGenCAD.Core.Measurements.Conversion;
 using static NetGenCAD.Core.Measurements.Selector;
 
 namespace NetGenCAD.UI.ViewModels

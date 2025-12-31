@@ -32,6 +32,5 @@ namespace NetGenCAD.UI
 
             base.OnFrameworkInitializationCompleted();
         }
-        //public static IHost? Host { get; set; }
     }
 }

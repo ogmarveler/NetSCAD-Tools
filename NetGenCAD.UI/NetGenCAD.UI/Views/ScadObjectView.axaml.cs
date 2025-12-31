@@ -387,7 +387,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // List of columns to exclude from display - Hide Imperial columns for Metric view
         var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN", "ModuleName",
-            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Volume_IN3", "Name", "Volume_CM3", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Alpha"  };
+            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Volume_IN3", "Name", "Volume_CM3", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Alpha", "ScaleX", "ScaleY", "ScaleZ"  };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -425,9 +425,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "ModuleColor", "Color" },
             { "Volume_CM3", "V (cm³)" },
             { "Layer", "L" },
-            { "ScaleX", "Scale X" },
-            { "ScaleY", "Scale Y" },
-            { "ScaleZ", "Scale Z" },
+            { "ScaleX", "scX" },
+            { "ScaleY", "scY" },
+            { "ScaleZ", "scZ" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -566,7 +566,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private void DataGrid_AutoGeneratingColumnObjectImperial(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         // List of columns to exclude from display - Hide Metric columns for Imperial view
-        var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Volume_CM3", "ModuleName", "Name", "Volume_IN3", "Volume_CM3", "Alpha" };
+        var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Volume_CM3", "ModuleName", "Name", "Volume_IN3", "Volume_CM3", "Alpha", "ScaleX", "ScaleY", "ScaleZ" };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -605,9 +605,9 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "Volume_IN3", "V (in³)" },
             { "Layer", "L" },
             { "ShapeName", "Poly Shape" },
-            { "ScaleX", "Scale X" },
-            { "ScaleY", "Scale Y" },
-            { "ScaleZ", "Scale Z" },
+            { "ScaleX", "scX" },
+            { "ScaleY", "scY" },
+            { "ScaleZ", "scZ" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))

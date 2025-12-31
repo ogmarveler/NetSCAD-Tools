@@ -2,10 +2,7 @@
 # ![Logo](Assets/Images/logo.png) NetGenCAD Custom Axis Guide
 ###### 
 #### Description
-Welcome to the NetGenCAD Axis Guide! This tutorial covers the basics of defining and generating custom axes used in OpenSCAD, a solid 3D CAD modeler. This project aims to simplify the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes automating the creation of custom Imperial and Metric axes. This allows for more precise modeling used in 3D printing.
-###### 
-#### Prerequisites
-* **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
+Welcome to the NetGenCAD Axis Guide! This tutorial covers the basics of defining and generating custom axes used in OpenSCAD, a solid 3D CAD modeler.
 ###### 
 #### Types of Measurements
 Varying axes of different sizes, measurement types, colors, and combinations of both metric and imperial measurements can be applied within the same SCAD project. Axes are managed in an aggregate SCAD file and are called as modules within your SCAD project. The app manages updates to existing axes as well as provides the ability for multiple axis types to be used in your project. Axis increments are as follows:
@@ -52,7 +49,8 @@ Axes are stored in a **Scad/Axes** folder that is included with the application.
 * **Axes Module Name Format:** Get_ + { Theme } + { X Range } +  { Y Range } +  { Z Range } + { Unit Scale } + Origin + { Min X } + { Min Y } + { Min Z } (N = negative, i.e, N1 is -1)
 
 ###### 
-| Files                           | Usage In Your SCAD File | Optional parameters |
-| ------------------------------- |:-----------------------:|:-------------------:|
-| Scad/Axes/axes.scad             | use <Axes/axes.scad>;   |                     |
-| Scad/Axes/custom_axis_name.scad | Get_Custom_Axis_Name(); | colorVal, alpha     |
+#### Generated SCAD Files
+| Files                                   | Usage In Your SCAD File / Description                  | Optional parameters | Render |
+| --------------------------------------- |:------------------------------------------------------:|:-------------------:|:------:|
+| Scad/Axes/axes.scad                     | Description: holds all stored axes used in 3D models   |                     |	No    |
+| Scad/Axes/custom_axis_name.scad         | Syntax: use <Axes/axes.scad>; Get_Custom_Axis_Name();  | colorVal, alpha     |	No    |

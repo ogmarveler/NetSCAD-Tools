@@ -36,17 +36,17 @@
             </MenuItem>
             <!--  Create Axes, Object, or Shape  -->
             <MenuItem Header="_Create">
-                <MenuItem Command="{Binding NewAxesCommand}" Header="_New Axes">
+                <MenuItem Command="{Binding NewAxesCommand}" Header="_Axes">
                     <MenuItem.Icon>
                         <PathIcon Data="{StaticResource arrow_expand_regular}" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{Binding NewObjectCommand}" Header="_New Object">
+                <MenuItem Command="{Binding NewObjectCommand}" Header="_Object">
                     <MenuItem.Icon>
                         <PathIcon Data="{StaticResource cube_regular}" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{Binding NewShapeCommand}" Header="_New Shape">
+                <MenuItem Command="{Binding NewShapeCommand}" Header="_Shape">
                     <MenuItem.Icon>
                         <PathIcon Data="{StaticResource select_object_regular}" />
                     </MenuItem.Icon>
@@ -61,12 +61,22 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Guides">
+                <MenuItem Command="{Binding MainViewCommand}" Header="_Getting Started">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource book_question_mark_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Command="{Binding AxisViewCommand}" Header="_Custom Axis">
                     <MenuItem.Icon>
                         <PathIcon Data="{StaticResource book_question_mark_regular}" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Command="{Binding DesignerViewCommand}" Header="_Object Designer">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{StaticResource book_question_mark_regular}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding ShapeViewCommand}" Header="_Shape Designer">
                     <MenuItem.Icon>
                         <PathIcon Data="{StaticResource book_question_mark_regular}" />
                     </MenuItem.Icon>

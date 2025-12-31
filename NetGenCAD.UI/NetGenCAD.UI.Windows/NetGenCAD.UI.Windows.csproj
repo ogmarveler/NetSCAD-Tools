@@ -85,6 +85,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="NetGenCAD-0.2.0-winx64.7z" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Avalonia.Desktop" Version="11.3.10" />
 		<FrameworkReference Include="Microsoft.Windows.SDK.NET.Ref" />
 	</ItemGroup>

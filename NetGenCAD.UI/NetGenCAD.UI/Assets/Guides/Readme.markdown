@@ -1,36 +1,53 @@
-﻿ # <img src="NetGenCAD.UI/NetGenCAD.UI/Assets/Images/logo.png" height="30" width="30"> NetGenCAD
+﻿# ![Logo](Assets/Images/logo.png) NetGenCAD
 ###### 
 #### Description
-This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This simplifies the process of creating complex 3D models by providing reusable components and utilities. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
-######
-If you're looking for only the axis tool, check out the NetGenCAD-Axis repository.
-* **NetGenCAD Axis:** [Github](https://github.com/ogmarveler/NetSCAD-Axis)
-######
+This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
+###### 
 #### Prerequisites
-* **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
-######
-**Get the latest version of NetGenCAD**
-######
+* **You need a CAD renderer installed (OpenSCAD recommended):** [OpenSCAD](https://openscad.org/downloads.html)
 * [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.2.0-winx64.7z)
-* [NetGenCAD for Linux (x64 & arm64)](NetGenCAD.UI/NetGenCAD.UI.Linux/NetGenCAD-0.2.0-linux-x64-arm64.tar.gz)
-![Designer Complex Object](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coin.png)
-![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/designerObjectDark.png)
+* **NetGenCAD for Linux (x64 & arm64)** Coming Soon!
+* **NetGenCAD for MacOS (x64 & arm64)** Coming Soon!
 
-######
-![Coin](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/redAlertTeslaCoil.png)
-![Designer Object Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coilCreateDark.png)
-
-######
+###### 
 #### Types of Solids Available
-* **Cube** - default aligned on the 0,0,0 axes or can be offset with translate
-* **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
-* **Cylinder** - aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
-* **Rounded Cylinder** - using Minkowski with offsets to align with 0,0,0 axes, center at top of cylinder
-* **Surface** - import from png or dat file. Default aligned on the 0,0,0 axes or can be offset with translate.
-* **Sphere** - all spheres are aligned on the 0,0,0 axes, with the center point of the sphere at 0,0,0.
+* **Cube** - default aligned on 0,0,0 axes. Can be offset with Adjust X, Y, Z values.
+* **Cylinder** - all cylinders are aligned on 0,0,0 axes, with center point at center of circle.
+* **Polyhedron** - created in Shape Designer, and multiple polyhedrons can be used within Object Designer.
+* **Rounded Cube** - Minkowski rounding using offsets to align to 0,0,0 axes
+* **Rounded Cylinder** - Minkowski rounding using offsets to align to 0,0,0 axes. Center is center of circle.
+* **Sphere** - all spheres are aligned on the 0,0,0 axes, with center point of the sphere at 0,0,0.
+* **Surface** - import from png or dat file. Default aligned on 0,0,0 axes or can be offset with translate.
+
+###### 
+#### Solid Adjustments Available
+* **Rotate** - rotate along X, Y, and/or Z axis when creating/updating a solid
+* **Scale** - scale along X, Y, and/or Z axis when importing an image or dat file
+* **Translate** - place the solid at specified position, along X, Y, and/or Z axis
+* **Color** - apply color to the solid being created/updated
+* **Alpha** - apply transparency to the solid being created/updated
+* **Layer** - exclusive NetGenCAD feature for specifying solid difference or intersections
+
 ###### 
 #### Object Adjustments Available
 * **Mirror** - mirror along X, Y, and/or Z axis when exporting or viewing the object
+* **Copy** - create duplicates of the object being created/updated
+* **Render** - applies optimized rendering of solids before viewing or exporting the object
+* **Export** - export the object as an STL file for 3D printing or other uses
+
+###### 
+#### Examples of Objects Created
+###### 
+![Polyhedron Inputs Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/polyhedronInputsDark.png)
+![Coil Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/dataPyramid.png)
+
+![Coin](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coin.png)
+![Coin Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coinCreateDark.png)
+
+###### 
+![Coil](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/redAlertTeslaCoil.png)
+![Coil Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coilCreateDark.png)
+
 ###### 
 #### Layout of Custom Axes Builder
 The Custom Axes Builder has 2 main visual sections: Custom Axis and Generated Axes. The outputs of newly created axes will show up in the tables next to the Custom Axis section.
@@ -46,9 +63,12 @@ Varying axes of different sizes, measurement types, colors, and combinations of 
 * **Convert inches to mm** - Enter inputs in Imperial (in) first, then select Metric (mm)
 
 ###### 
-| Files                                   | Usage In Your SCAD File                                | Optional parameters | Render |
+#### Generated SCAD Files
+| Files                                   | Usage In Your SCAD File / Description                  | Optional parameters | Render |
 | --------------------------------------- |:------------------------------------------------------:|:-------------------:|:------:|
-| Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |	No    |
-| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |	Yes   |
-| Scad/Solids/object.scad                 |                                                        |                     |	No    |	
-| Scad/Solids/object.stl                  |                                                        |                     |  Yes   |
+| Scad/Axes/axes.scad                     | Description: holds all stored axes used in 3D models   |                     |	No    |
+| Scad/Axes/custom_axis_name.scad         | Syntax: use <Axes/axes.scad>; Get_Custom_Axis_Name();  | colorVal, alpha     |	No    |
+| Scad/Solids/moduleType_name_object.scad | Syntax: include <object_name_type.scad>;               |                     |	Yes   |
+| Scad/Solids/object.scad                 | Description: main object file for 3D model             |                     |	No    |	
+| Scad/Solids/object.stl                  | Description: exported STL file for 3D model            |                     |  Yes   |
+| Scad/Solids/polyhedronName_shape.scad   | Description: polyhedron shape preview file             |                     |	No    |

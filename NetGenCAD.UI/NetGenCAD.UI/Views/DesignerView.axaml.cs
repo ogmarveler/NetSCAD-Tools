@@ -38,7 +38,7 @@ public partial class DesignerView : UserControl
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                     {
                         FileName = url,
-                        UseShellExecute = true
+                        UseShellExecute = true,
                     });
                 });
             }

@@ -57,8 +57,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<AvaloniaResource Remove="Data\netscad.db" />
 		<AvaloniaResource Remove="Assets\Guides\Readme.markdown" />
+		<AvaloniaResource Remove="Data\netscad.db" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -78,6 +78,12 @@
 		<None Include="Assets\Images\logo-large.png" Pack="True" PackagePath="logo-large.png" />
 		<ProjectReference Include="..\..\NetGenCAD.Core\NetGenCAD.Core.csproj" />
 		<ProjectReference Include="..\..\NetGenCAD.Designer\NetGenCAD.Designer.csproj" />
+		<Compile Update="Views\MainView.axaml.cs">
+		  <DependentUpon>MainView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\ShapeView.axaml.cs">
+		  <DependentUpon>ShapeView.axaml</DependentUpon>
+		</Compile>
 		<None Update="Data\netscad.db">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

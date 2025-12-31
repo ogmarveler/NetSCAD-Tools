@@ -2,33 +2,18 @@
 # ![Logo](Assets/Images/logo.png) NetGenCAD Shape Creation Guide
 ###### 
 #### Description
-Welcome to the NetGenCAD Shape Creation Guide! This tutorial covers the basics of defining and generating custom objects used in OpenSCAD, a solid 3D CAD modeler. This project aims to simplify the process of creating complex 3D models by providing reusable components and utilities. Currently, it includes automating the creation of custom Imperial and Metric axes, as well as quick generation of objects to help speed up the modeling process. This allows for more precise modeling used in 3D printing.
+Welcome to the NetGenCAD Shape Creation Guide! This tutorial covers the basics of defining and generating custom shapes used in OpenSCAD, a solid 3D CAD modeler.
 ###### 
-#### Prerequisites
-* **You need to have the following installed:** [OpenSCAD](https://openscad.org/downloads.html)
-###### 
-#### Types of Solids Available
-* **Cube** - default aligned on the 0,0,0 axes or can be offset with translate
-* **Rounded Cube** - using Minkowski rounding with offsets to align with 0,0,0 axes
-* **Cylinder** - all cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
-* **Rounded Cylinder** - all rounded cylinders are aligned on the 0,0,0 axes, with the center point of the top of the cylinder (center circle)
-* **Surface** - import from png or dat file. Default aligned on the 0,0,0 axes or can be offset with translate.
-* **Sphere** - all spheres are aligned on the 0,0,0 axes, with the center point of the sphere at 0,0,0.
-###### 
-#### Object Adjustments Available
-* **Mirror** - mirror along X, Y, and/or Z axis when exporting or viewing the object
+#### Layout of Custom Shape Designer
+There are 5 main sections: applying a custom axis, creating a new shape or retrieving an existing one, setting inputs for a new polyhedron, the list of points in the shape, and faces that contain the points. Once a face is added to the shape, it will appear in the Faces table, along with its parameters. To view the shape in OpenSCAD, simply click the **Preview Shape** button, which will open the corresponding SCAD file.
 
 ###### 
-#### Layout of Custom Object Designer
-There are 5 main sections: applying a custom axis, creating a new object or retrieving an existing one, setting inputs for new solids, the list of Solids in the object, and Modules that contain the Solids. Once a solid is added to the object, it will appear in the Solids table, along with its parameters. Solids can be viewed within Modules, which define how they interact with each other. To view the object in OpenSCAD, simply click the **View Output** button, which will open the corresponding SCAD file. To export the object as an STL file, click the **STL** button. When making changes, be sure to click the **Update Modules** button to refresh the object.
-
-###### 
-![DesignerObject](Assets/Images/designerObjectDark.png)
+![DesignerObject](Assets/Images/polyhedronInputsDark.png)
 
 #### Apply a Custom Axis
 | Steps                                                                         | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 1. Open the **Create** menu and select **Create New Object**                  |                                         |               |
+| 1. Open the **Create** menu and select **Create New Shape**                   |                                         |               |
 | 2. Select an **Axis Type** to filter saved Imperial or Metric axes            |       Metric (mm) or Imperial (in)      |  Metric (mm)  |
 | 3. Choose from **Select Axis** to apply one of the saved axes                 |     Dark or Light X x Y x Z mm or in    |  <required>   |
 | 4. Optional: Enter numeric **Adjust X**, moving start point on **X Axis**     |     Units displayed in mm or inches     |       0       |
@@ -36,135 +21,57 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 | 6. Optional: Enter numeric **Adjust Z**, moving start point on **Z Axis**     |     Units displayed in mm or inches     |       0       |
 
 ###### 
-#### Creating A New Object
+#### Creating A New Shape
 | Steps                                                                         | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 7. Enter an **Object Name**, used as the main identifier for solids, etc.     |           <Set Object Name>             |  <required>   |
+| 7. Enter an **Shape Name**, used as main identifier for points, faces, etc.   |           <Set Shape Name>              |  <required>   |
 | 8. Select a **Unit Type** to enter dimensions by Imperial or Metric units     |       Metric (mm) or Imperial (in)      |  Metric (mm)  |
-| 9. Select a **Solid Type** to be added or subtracted from the object          |    Cube or Rounded Cube or Cylinder     |  <required>   |
-| 10. Enter a name for the solid in the **Solid Description** textbox           |        <Set Object Description>         |  <required>   |
-| 11. Select an **Apply To** type, which determines solid's relation to object  |    Union or Difference or Intersection  |     Union     |
+| 9. Enter a name for the point or face in the **Description** textbox          |        <Set Point or Face Description>  |  <required>   |
+| 10. Select an **Apply To** type, either creating a point or face              |    Points or Faces                      |     Points    |
 
 ###### 
-#### Setting Inputs for New Solid: Cube and Rounded Cube
+#### Setting Inputs for New Point
 | Steps                                                                         | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 12. Optional: Select from presets to apply width, height, or cylinder radius  |     Rack Width or Rack Height           |               |
-| 13. Enter numeric **Length** (based on 0 origin), which is on the **X Axis**  |     Units displayed in mm or inches     |  <required>   |
-| 14. Enter numeric **Width** (based on 0 origin), which is on the **Y Axis**   |     Units displayed in mm or inches     |  <required>   |
-| 15. Enter numeric **Height** (based on 0 origin), which is on the **Z Axis**  |     Units displayed in mm or inches     |  <required>   |
-| 16. Optional: Enter numeric **Thickness** if solid is hollow or has walls     |     Units displayed in mm or inches     |               |
-| 17. Optional: Enter numeric **X Offset**, setting start point on **X Axis**   |     Units displayed in mm or inches     |       0       |
-| 18. Optional: Enter numeric **Y Offset**, setting start point on **Y Axis**   |     Units displayed in mm or inches     |       0       |
-| 19. Optional: Enter numeric **Z Offset**, setting start point on **Z Axis**   |     Units displayed in mm or inches     |       0       |
-| 20. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 21. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 22. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 23. Optional: Select **Color**, set the color for the solid                   |       OpenSCAD Colors                   |     Silver    |
-| 24. Optional: Enter numeric **Alpha**, set the color opacity for the solid    |       0 - 1                             |       1       |
-| 25. Optional: Enter numeric **Layer**, set which module to apply the solid to |                                         |       0       |
+| 11. Enter numeric **X Coordinate**, defining a point's position on **X Axis** |     Units displayed in mm or inches     |       0       |
+| 12. Enter numeric **Y Coordinate**, defining a point's position on **Y Axis** |     Units displayed in mm or inches     |       0       |
+| 13. Enter numeric **Z Coordinate**, defining a point's position on **Z Axis** |     Units displayed in mm or inches     |       0       |
+| 14. Enter numeric **Point ID**, autoincrement or manually set face point      |       0 and above (integer only)        |       0       |
+
+###### 
+#### Setting Inputs for New Face
+| Steps                                                                         | Requirements / Options                  | Default Value |
+| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
+| 11. Enter numeric **Face Points**: comma-separated, defining face's vertices  | OpenSCAD syntax require open/close [..] |  <required>   |
+| 12. Enter numeric **Face ID**, autoincrement or manually set face ID          |       0 and above (integer only)        |       0       |
 	
 ###### 
-#### Setting Inputs for New Solid: Cylinder and Rounded Cylinder
+#### Shape Action Buttons
 | Steps                                                                         | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 12. Optional: Select from presets to apply cylinder radius or cylinder height |     Screw Size or Screw Type            |               |
-| 13. Enter numeric **Radius**, based on center to outer edge                   |     Units displayed in mm or inches     |  <required>   |
-| 14. Optional: Enter numeric **Radius1**, based on center to outer edge        |     Units displayed in mm or inches     |               |
-| 15. Optional: Enter numeric **Radius2**, based on center to inner edge        |     Units displayed in mm or inches     |               |
-| 16. Enter numeric **Height** (based on 0 origin), which is on the **Z Axis**  |     Units displayed in mm or inches     |  <required>   |
-| 17. Optional: Enter numeric **X Offset**, setting start point on **X Axis**   |     Units displayed in mm or inches     |       0       |
-| 18. Optional: Enter numeric **Y Offset**, setting start point on **Y Axis**   |     Units displayed in mm or inches     |       0       |
-| 19. Optional: Enter numeric **Z Offset**, setting start point on **Z Axis**   |     Units displayed in mm or inches     |       0       |
-| 20. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 21. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 22. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 23. Optional: Select **Color**, set the color for the solid                   |       OpenSCAD Colors                   |     Silver    |
-| 24. Optional: Enter numeric **Alpha**, set the color opacity for the solid    |       0 - 1                             |       1       |
-| 25. Optional: Enter numeric **Layer**, set which module to apply the solid to |                                         |       0       |
+| 1. **Create Point or Face** - create or updates a point or face in the shape  | Required inputs for point or face       |               |
+| 2. **Import Shape** - get all details and items by existing shape name        | Shape Name                              |               |
+| 3. **Clear Shape** - clears all inputs, polyhedron tables, and shape name     |                                         |               |
+| 4. **Clear Inputs** - clear out any entered point or face inputs              |                                         |               |
+| 5. **Preview Shape** - preview the shape in OpenSCAD                          | <Shape must contain at least one face>  |               |
+| 6. **Save Shape** - save the current shape for use in an object               |                                         |               |
+| 7. **View Code** - view the OpenSCAD code generated from points and faces     |                                         |               |
+| 8. **All Solids** - apply changes to all objects using the shape as a solid   | <Shape must be saved first>             |               |
 
 ###### 
-#### Setting Inputs for New Solid: Sphere
-| Steps                                                                         | Requirements / Options                  | Default Value |
-| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 12. Optional: Select from presets to apply sphere radius                      |     Screw Size or Screw Type            |               |
-| 13. Enter numeric **Radius**, based on center to outer edge                   |     Units displayed in mm or inches     |  <required>   |
-| 14. Optional: Enter numeric **X Offset**, setting start point on **X Axis**   |     Units displayed in mm or inches     |       0       |
-| 15. Optional: Enter numeric **Y Offset**, setting start point on **Y Axis**   |     Units displayed in mm or inches     |       0       |
-| 16. Optional: Enter numeric **Z Offset**, setting start point on **Z Axis**   |     Units displayed in mm or inches     |       0       |
-| 17. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 18. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 19. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**       |     Units displayed in degrees (°)      |       0°      |
-| 20. Optional: Select **Color**, set the color for the solid                   |       OpenSCAD Colors                   |     Silver    |
-| 21. Optional: Enter numeric **Alpha**, set the color opacity for the solid    |       0 - 1                             |       1       |
-| 22. Optional: Enter numeric **Layer**, set which module to apply the solid to |                                         |       0       |
-
-###### 
-#### Setting Inputs for New Solid: Surface
-| Steps                                                                          | Requirements / Options                  | Default Value |
-| ------------------------------------------------------------------------------ |:---------------------------------------:|:-------------:|
-| 12. Optional: **Invert**, when importing an image or dat file                  |     Yes | No                            |               |
-| 13. Optional: **Smooth**, will apply smoothing to an image and save as new one |     Yes | No                            |               |
-| 14. Optional: **Center**, centers image on 0,0,0 axes                          |     Yes | No                            |               |
-| 15. Button: **Import File**, browse locally for an image or dat file to import |                                         |               |
-| 16. Text Box: displays the path for the file that was imported                 |     .png, .data, etc.                   |  <required>   |
-| 17. **Scale X**, will scale the imported image along the X axis                |     From 0 - 1                          |       1       |
-| 18. **Scale Y**, will scale the imported image along the Y axis                |     From 0 - 1                          |       1       |
-| 19. **Scale Z**, will scale the imported image along the Z axis                |     From 0 - 1                          |       1       |
-| 20. Optional: Enter numeric **X Offset**, setting start point on **X Axis**    |     Units displayed in mm or inches     |       0       |
-| 21. Optional: Enter numeric **Y Offset**, setting start point on **Y Axis**    |     Units displayed in mm or inches     |       0       |
-| 22. Optional: Enter numeric **Z Offset**, setting start point on **Z Axis**    |     Units displayed in mm or inches     |       0       |
-| 23. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**        |     Units displayed in degrees (°)      |       0°      |
-| 24. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**        |     Units displayed in degrees (°)      |       0°      |
-| 25. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**        |     Units displayed in degrees (°)      |       0°      |
-| 26. Optional: Select **Color**, set the color for the solid                    |     OpenSCAD Colors                     |     Silver    |
-| 27. Optional: Enter numeric **Alpha**, set the color opacity for the solid     |       0 - 1                             |       1       |
-| 28. Optional: Enter numeric **Layer**, set which module to apply the solid to  |                                         |       0       |
-
-###### 
-#### Object Action Buttons
-| Steps                                                                         | Requirements / Options                  | Default Value |
-| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 1. **Create Solid** - save the inputs with select solid type to object        | Required settings inputs for solid      |               |
-| 2. **Import Object** - get all details and items by existing object name      | Object Name                             |               |
-| 3. **Clear Object** - clears all inputs, object tables, and object name       |                                         |               |
-| 4. **Clear Inputs** - clear out any entered solid inputs                      |                                         |               |
-| 5. **View Output** - preview the object in OpenSCAD                           |                                         |               |
-| 6. **Remove/Apply Axis** - remove the axis before exporting (or reapply it)   |                                         |               |
-| 7. **All Modules** - update/add saved solids to object's specific modules     |                                         |               |
-
-###### 
-#### Optional Object Actions
+#### Points and Faces Tables Actions
 | Actions                                                                       | Requirements / Options                  | Default Value |
 | ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 1. **Copy ?** - copy the current object's solids and import into view         | Yes (Copy Object) or No (Keep Current)  |       No      |
-| 2. **Render ?** - choose whether to pre-render the object before viewing      | Yes (Render) or No (Preview Only)       |       No      |
-| 3. **Export ?** - export a rendered version of the object to output file      | STL                                     |       No      |
+| 1. **Trash Bin Icon** - remove selected row from the points or faces table    |       Points or Faces Table             |               |
+| 2. **Sorting** - click on one or more column headers to sort (shift + click)  |       Points or Faces Table             |               |
 
 ###### 
-#### Optional Object Output
-| Actions                                                                       | Requirements / Options                  | Default Value |
-| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 17. **Mirror X**, will mirror the imported image along the X axis             |     Integers                            |       0       |
-| 18. **Mirror Y**, will mirror the imported image along the Y axis             |     Integers                            |       0       |
-| 19. **Mirror Z**, will mirror the imported image along the Z axis             |     Integers                            |       0       |
+#### Saved Shape Table (Read-Only)
+Once a shape is saved, it will appear in the Saved Shapes table. This table is read-only and cannot be edited directly. To make changes to a saved shape, you must first import it into the designer using the **Import Shape** button. After making the desired changes, you can save the updated shape with the same name.
 
 ###### 
-#### Solids and Modules Tables Actions
-| Actions                                                                       | Requirements / Options                  | Default Value |
-| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
-| 1. **Trash Bin Icon** - remove the selected row from the object               |       Solids or Modules Table           |               |
-| 2. **Clipboard Icon** - opens a modal showing the solids used in the module   | Modules Table                           |               |
-| 3. **Sorting** - click on one or more column headers to sort (shift + click)  |       Solids or Modules Table           |               |
-
-######
-#### Rendering/Previewing the Object in OpenSCAD
-The object, along with any solids, is stored in a **Scad/Solids** folder that is included with the application. The main solid modules are in **object.scad**. **Rendering the axis is optional, based on your use case.** However, this can SIGNIFICANTLY INCREASE render time as it is primarily used for preview and development. Click the **Remove Axis** within the object.scad file to comment out the axis. If exporting to STL, this will be done automatically. If building a ruler or some form of 1D or 2D measurement, then this is would be an example of why you would include the axis in rendering before final output.
-
-###### 
-| Files                                   | Usage In Your SCAD File                                | Optional parameters | Render |
+#### Generated SCAD Files
+| Files                                   | Usage In Your SCAD File / Description                  | Optional parameters | Render |
 | --------------------------------------- |:------------------------------------------------------:|:-------------------:|:------:|
-| Scad/Axes/custom_axis_name.scad         | use <Axes/axes.scad>; Get_Custom_Axis_Name();          | colorVal, alpha     |	No    |
-| Scad/Solids/moduleType_name_object.scad | include <object_name_type.scad>;                       |                     |	Yes   |
-| Scad/Solids/object.scad                 |                                                        |                     |	No    |	
-| Scad/Solids/object.stl                  |                                                        |                     |  Yes   |
+| Scad/Axes/custom_axis_name.scad         | Syntax: use <Axes/axes.scad>; Get_Custom_Axis_Name();  | colorVal, alpha     |	No    |
+| Scad/Solids/polyhedronName_shape.scad   | Description: polyhedron shape preview file             |                     |	No    |
