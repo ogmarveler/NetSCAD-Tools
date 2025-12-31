@@ -5,7 +5,7 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 ###### 
 #### Prerequisites
 * **You need a CAD renderer installed (OpenSCAD recommended):** [OpenSCAD](https://openscad.org/downloads.html)
-* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.2.0-winx64.7z)
+* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.2.1-winx64.7z)
 * **NetGenCAD for Linux (x64 & arm64)** Coming Soon!
 * **NetGenCAD for MacOS (x64 & arm64)** Coming Soon!
 
@@ -18,6 +18,20 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 * **Rounded Cylinder** - Minkowski rounding using offsets to align to 0,0,0 axes. Center is center of circle.
 * **Sphere** - all spheres are aligned on the 0,0,0 axes, with center point of the sphere at 0,0,0.
 * **Surface** - import from png or dat file. Default aligned on 0,0,0 axes or can be offset with translate.
+
+###### 
+#### Examples of Objects Created
+###### 
+![Coin](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coin.png)
+![Coin Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coinCreateDark.png)
+
+###### 
+![Coil Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/dataPyramid.png)
+![Polyhedron Inputs Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/polyhedronInputsDark.png)
+
+###### 
+![Coil](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/redAlertTeslaCoil.png)
+![Coil Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coilCreateDark.png)
 
 ###### 
 #### Solid Adjustments Available
@@ -34,19 +48,6 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 * **Copy** - create duplicates of the object being created/updated
 * **Render** - applies optimized rendering of solids before viewing or exporting the object
 * **Export** - export the object as an STL file for 3D printing or other uses
-
-###### 
-#### Examples of Objects Created
-###### 
-![Polyhedron Inputs Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/polyhedronInputsDark.png)
-![Coil Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/dataPyramid.png)
-
-![Coin](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coin.png)
-![Coin Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coinCreateDark.png)
-
-###### 
-![Coil](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/redAlertTeslaCoil.png)
-![Coil Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coilCreateDark.png)
 
 ###### 
 #### Layout of Custom Axes Builder
