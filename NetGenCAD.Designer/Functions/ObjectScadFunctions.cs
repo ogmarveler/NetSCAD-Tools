@@ -270,6 +270,7 @@ namespace NetGenCAD.Designer.Functions
             bool isRoundCylinderSelected,
             bool isSphereSelected,
             bool isPolyhedronSelected,
+            bool isTextSelected,
             ShapeDimensions? selectedPolyhedron,
             UnitSystem selectedUnit,
             int decimalPlaces,
@@ -285,7 +286,13 @@ namespace NetGenCAD.Designer.Functions
             string openScadColorHex,
             double surfaceScaleX,
             double surfaceScaleY,
-            double surfaceScaleZ)
+            double surfaceScaleZ,
+            string textInput,
+            double textSize,
+            string fontInput,
+            string textAlign,
+            string verticalAlign,
+            string textDirection)
         {
             try
             {
@@ -293,6 +300,85 @@ namespace NetGenCAD.Designer.Functions
                 var colorToUse = isColorFromHex && !string.IsNullOrEmpty(openScadColorHex)
                     ? openScadColorHex
                     : selectedOpenScadColor.ToString();
+
+                if (isTextSelected)
+                {
+                    var newObject = new SolidDimensions
+                    {
+                        Name = name,
+                        Description = description,
+                        Material = selectedFilament.ToString(),
+                        OperationType = selectedOperationType.ToString(),
+                        SolidType = "Text",
+                        Length_MM = 0,
+                        Width_MM = 0,
+                        Height_MM = 0,
+                        Thickness_MM = 0,
+                        Radius_MM = 0,
+                        Radius1_MM = 0,
+                        Radius2_MM = 0,
+                        CylinderHeight_MM = 0,
+                        XOffset_MM = xOffsetMM,
+                        YOffset_MM = yOffsetMM,
+                        ZOffset_MM = zOffsetMM,
+                        XRotate = xRotate,
+                        YRotate = yRotate,
+                        ZRotate = zRotate,
+                        ScaleX = surfaceScaleX,
+                        ScaleY = surfaceScaleY,
+                        ScaleZ = surfaceScaleZ,
+                        CreatedAt = DateTime.UtcNow,
+                        AxisDimensionsId = axisId,
+                        SurfaceCenter = 0,
+                        SurfaceInvert = 0,
+                        SurfaceFilePath = string.Empty,
+                        ModuleColor = colorToUse,
+                        Layer = layerIntValue,
+                        Alpha = alphaIntValue,
+                        TextContent = textInput,
+                        TextSize = textSize,
+                        FontStyle = fontInput,
+                        TextHAlign = textAlign,
+                        TextVAlign = verticalAlign,
+                        TextDirection = textDirection
+                    };
+
+                    // Generate OSCAD method via callback
+                    newObject.OSCADMethod = await generateOscadCallback(newObject);
+
+                    // Save to database
+                    await newObject.UpsertAsync(dbConnection);
+
+                    // Refresh dimensions from database
+                    await refreshDimensionsCallback();
+
+                    // Get current solid dimensions for axis display
+                    var textDimensions = await new SolidDimensions().GetByNameWithAxisAndModuleAsync(dbConnection, name);
+
+                    // Use the provided currentAxisDisplay if axis exists, otherwise query from database
+                    var axisDisplayText = string.Empty;
+                    if (axesSelectEnabled && textDimensions.Count() > 0)
+                    {
+                        if (!string.IsNullOrEmpty(currentAxisDisplay))
+                        {
+                            axisDisplayText = currentAxisDisplay;
+                        }
+                        else
+                        {
+                            var axisUsed = textDimensions.SingleOrDefault()?.AxisOSCADMethod;
+                            axisDisplayText = StringFunctions.FormatAxisDisplay(axisUsed);
+                        }
+                    }
+
+                    // Invoke callback with updated values
+                    await onObjectCreated(
+                        newObject.Id,
+                        true,
+                        new ObservableCollection<SolidDimensions>(textDimensions),
+                        axisDisplayText);
+
+                    return newObject.Id;
+                }
 
                 // Handle Polyhedron case first - if selected, skip all other solid type processing
                 if (isPolyhedronSelected && selectedPolyhedron != null)
@@ -404,6 +490,7 @@ namespace NetGenCAD.Designer.Functions
                     "Round Cylinder" => "Round Cylinder",
                     "Sphere" => "Sphere",
                     "Surface" => "Surface",
+                    "Text" => "Text",
                     _ => null
                 };
 
@@ -632,6 +719,7 @@ namespace NetGenCAD.Designer.Functions
             bool isCylinderSelected,
             bool isRoundCylinderSelected,
             bool isSphereSelected,
+            bool isTextSelected,
             UnitSystem selectedUnit,
             int decimalPlaces,
             double surfaceScaleX,
@@ -641,7 +729,14 @@ namespace NetGenCAD.Designer.Functions
             bool surfaceInvert,
             bool surfaceCenter,
             int surfaceConvexity,
-            bool isPreRendered)
+            bool isPreRendered,
+            string textInput,
+            double textSize,
+            string fontInput,
+            string textAlign,
+            string verticalAlign,
+            string textDirection
+            )
         {
             if (isCubeSelected || isRoundCubeSelected || isSurfaceSelected || isRoundSurfaceSelected)
             {
@@ -800,6 +895,29 @@ namespace NetGenCAD.Designer.Functions
                 var sphere = OScad3D.Sphere.ToScadObject(sphereParams);
                 var rotated = await GetRotate(sphere, oDim.XRotate, oDim.YRotate, oDim.ZRotate);
                 var translate = await GetTranslate(scadObject: rotated, xOffsetMM: oDim.XOffset_MM, yOffsetMM: oDim.YOffset_MM, zOffsetMM: oDim.ZOffset_MM, isCubeSelected: isCubeSelected, isRoundCubeSelected: isRoundCubeSelected, isSurfaceSelected: isSurfaceSelected, isRoundSurfaceSelected: isRoundSurfaceSelected, isCylinderSelected: isCylinderSelected, isSphereSelected: isSphereSelected, isRoundCylinderSelected: isRoundCylinderSelected, lengthMM: 0, widthMM: 0, heightMM: 0, thicknessMM: 0, radiusMM: oDim.Radius_MM, radius1MM: 0, radius2MM: 0, cylinderHeightMM: 0, selectedOperationType: (OperationType)Enum.Parse(typeof(OperationType), oDim.OperationType), selectedUnit: selectedUnit, decimalPlaces: decimalPlaces);
+                return ToModule(translate.OSCADMethod, oDim.Name, oDim.Description!, oDim.OperationType, oDim.SolidType.ToLower(), oDim.ModuleColor.ToLower(), oDim.Alpha).Trim();
+            }
+            else if (isTextSelected)
+            {
+                if (selectedUnit == UnitSystem.Imperial)
+                {
+                    oDim.XOffset_MM = Math.Round(InchesToMillimeter(oDim.XOffset_MM), decimalPlaces);
+                    oDim.YOffset_MM = Math.Round(InchesToMillimeter(oDim.YOffset_MM), decimalPlaces);
+                    oDim.ZOffset_MM = Math.Round(InchesToMillimeter(oDim.ZOffset_MM), decimalPlaces);
+                }
+                var textParams = new Dictionary<string, object>
+                {
+                    { "text", textInput },
+                    { "size", textSize },
+                    { "font", fontInput },
+                    { "halign", textAlign },
+                    { "valign", verticalAlign },
+                    { "direction", textDirection },
+                    { "convexity", 10 }
+                };
+                var textObj = OScadSpecial.Text.ToScadObject(textParams);
+                var rotated = await GetRotate(textObj, oDim.XRotate, oDim.YRotate, oDim.ZRotate);
+                var translate = await GetTranslate(scadObject: rotated, xOffsetMM: oDim.XOffset_MM, yOffsetMM: oDim.YOffset_MM, zOffsetMM: oDim.ZOffset_MM, isCubeSelected: isCubeSelected, isRoundCubeSelected: isRoundCubeSelected, isSurfaceSelected: isSurfaceSelected, isRoundSurfaceSelected: isRoundSurfaceSelected, isCylinderSelected: isCylinderSelected, isSphereSelected: isSphereSelected, isRoundCylinderSelected: isRoundCylinderSelected, lengthMM: 0, widthMM: 0, heightMM: 0, thicknessMM: 0, radiusMM: 0, radius1MM: 0, radius2MM: 0, cylinderHeightMM: 0, selectedOperationType: (OperationType)Enum.Parse(typeof(OperationType), oDim.OperationType), selectedUnit: selectedUnit, decimalPlaces: decimalPlaces);
                 return ToModule(translate.OSCADMethod, oDim.Name, oDim.Description!, oDim.OperationType, oDim.SolidType.ToLower(), oDim.ModuleColor.ToLower(), oDim.Alpha).Trim();
             }
 

@@ -725,6 +725,12 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.SurfaceScaleX = selected.ScaleX;
             ViewModel.SurfaceScaleY = selected.ScaleY;
             ViewModel.SurfaceScaleZ = selected.ScaleZ;
+            ViewModel.TextInput = selected.TextContent;
+            ViewModel.TextAlign = selected.TextHAlign;
+            ViewModel.VerticalAlign = selected.TextVAlign;
+            ViewModel.FontInput = selected.FontStyle;
+            ViewModel.TextSize = selected.TextSize;
+            ViewModel.TextDirection = selected.TextDirection;
             
             // Check if the color is a hex code (contains '#') and set IsColorFromHex accordingly
             bool isHexColor = !string.IsNullOrEmpty(selected.ModuleColor) && selected.ModuleColor.Contains('#');
@@ -799,11 +805,8 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     }
 
     private void ClearButton_Click(object? sender, RoutedEventArgs e) => ViewModel.ClearInputs();
-
     private async void CreateButton_Click(object? sender, RoutedEventArgs e) => await ViewModel.CreateObjectAsync();
-
     private void ClearObjectButton_Click(object? sender, RoutedEventArgs e) => ViewModel.ClearObject();
-
     private void CreateModulesButton_Click(object? sender, RoutedEventArgs e)
     {
         ViewModel.GetDimensionsParts(); // Refresh the datagrids first

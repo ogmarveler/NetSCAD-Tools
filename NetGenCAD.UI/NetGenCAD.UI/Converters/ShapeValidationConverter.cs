@@ -10,7 +10,7 @@ namespace NetGenCAD.UI.Converters
     {
         public object Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (values == null || values.Count < 22)
+            if (values == null || values.Count < 29)
                 return false;
 
             // Order: IsCubeSelected, IsRoundCubeSelected, IsRoundCylinderSelected, IsCylinderSelected, IsSphereSelected, LengthMM, WidthMM, HeightMM, RadiusMM, Radius1MM, Radius2MM, CylinderHeightMM, Name, Description, IsSurfaceSelected, IsRoundSurfaceSelected, SurfaceFilePath, SurfaceScaleX, SurfaceScaleY, SurfaceScaleZ, IsPolyhedronSelected, SelectedPolyhedron
@@ -22,6 +22,7 @@ namespace NetGenCAD.UI.Converters
             bool isSurface = values[14] is bool surface && surface;
             bool isRoundSurface = values[15] is bool roundSurface && roundSurface;
             bool isPolyhedron = values[20] is bool polyhedron && polyhedron;
+            bool isText = values[22] is bool text && text;
 
             // Validate Name and Description (always required)
             bool nameValid = values[12] is string name && !string.IsNullOrWhiteSpace(name);
@@ -76,6 +77,18 @@ namespace NetGenCAD.UI.Converters
                 bool polyhedronValid = values[21] is ShapeDimensions polyhedronSelected && polyhedronSelected != null;
                 return polyhedronValid;
             }
+            else if (isText)
+            {
+                bool textInputValid = values[23] is string textInput && !string.IsNullOrWhiteSpace(textInput);
+                bool textSizeValid = values[24] is double size && size > 0;
+                bool fontInputValid = values[25] is string fontInput && !string.IsNullOrWhiteSpace(fontInput);
+                bool textAlignValid = values[26] is string textAlign && !string.IsNullOrWhiteSpace(textAlign);
+                bool verticalAlignValid = values[27] is string verticalAlign && !string.IsNullOrWhiteSpace(verticalAlign);
+                bool textDirectionValid = values[28] is string textDirection && !string.IsNullOrWhiteSpace(textDirection);
+
+                return textInputValid && textSizeValid && fontInputValid && textAlignValid && verticalAlignValid && textDirectionValid;
+            }
+
             return false;
         }
 

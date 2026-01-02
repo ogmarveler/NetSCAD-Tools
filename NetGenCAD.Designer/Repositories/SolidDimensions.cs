@@ -80,6 +80,14 @@ namespace NetGenCAD.Designer.Repositories
         public int Layer { get; set; } = 0;
         public double Alpha { get; set; } = 1;
 
+        // Text properties
+        public double TextSize { get; set; } = 12; // Default text size
+        public string TextContent { get; set; } = string.Empty; // Text content to display
+        public string TextDirection { get; set; } = "ltr"; // Text direction: "ltr" or "rtl"
+        public string TextHAlign { get; set; } = "left"; // Horizontal alignment: "left", "center", "right"
+        public string TextVAlign { get; set; } = "baseline"; // Vertical alignment: "baseline", "center", "top", "bottom"
+        public string FontStyle { get; set; } = "Liberation Sans"; // Font style: "normal", "italic", "oblique"
+
         public string OSCADMethod { get; set; } = string.Empty;
 
         public async Task<string> RenderToStlAsync(string outputPath)
@@ -225,6 +233,11 @@ namespace NetGenCAD.Designer.Repositories
             { "SurfaceCenter", SurfaceCenter },
             { "Layer", Layer },
             { "Alpha", Alpha },
+            { "TextSize", TextSize },
+            { "TextContent", TextContent },
+            { "TextDirection", TextDirection },
+            { "TextHAlign", TextHAlign },
+            { "TextVAlign", TextVAlign }
         };
     }
 
@@ -285,7 +298,12 @@ namespace NetGenCAD.Designer.Repositories
             (nameof(SolidDimensions.SurfaceInvert), typeof(int), false),
             (nameof(SolidDimensions.SurfaceCenter), typeof(int), false),
             (nameof(SolidDimensions.Layer), typeof(int), false),
-            (nameof(SolidDimensions.Alpha), typeof(double), false)
+            (nameof(SolidDimensions.Alpha), typeof(double), false),
+            (nameof(SolidDimensions.TextSize), typeof(double), false),
+            (nameof(SolidDimensions.TextContent), typeof(string), false),
+            (nameof(SolidDimensions.TextDirection), typeof(string), false),
+            (nameof(SolidDimensions.TextHAlign), typeof(string), false),
+            (nameof(SolidDimensions.TextVAlign), typeof(string), false)
         ];
 
         // Create table
@@ -671,7 +689,12 @@ namespace NetGenCAD.Designer.Repositories
                    SurfaceInvert,
                    SurfaceCenter,
                    Layer,
-                   Alpha
+                   Alpha,
+                   TextSize,
+                   TextContent,
+                   TextDirection,
+                   TextHAlign,
+                   TextVAlign
                    FROM SolidDimensions
                    WHERE Name = @Name";
             using var cmd = connection.CreateCommand();

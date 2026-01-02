@@ -806,6 +806,25 @@
                         HorizontalAlignment="Left"
                         Orientation="Horizontal"
                         Spacing="15">
+
+                        <!--  Text Input  -->
+                        <StackPanel Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsTextSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Text to Display" />
+                            <TextBox
+                                Width="350"
+                                HorizontalAlignment="Stretch"
+                                Classes="standardInput"
+                                Text="{Binding TextInput, Mode=TwoWay}"
+                                Watermark="Enter text">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Text Input to convert to OpenSCAD" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
                         <StackPanel Classes="inputGroup">
                             <StackPanel.IsVisible>
                                 <Binding Path="IsPolyhedronSelected" />
@@ -890,6 +909,13 @@
                                     <Binding Path="SurfaceScaleZ" />
                                     <Binding Path="IsPolyhedronSelected" />
                                     <Binding Path="SelectedPolyhedron" />
+                                    <Binding Path="IsTextSelected" />
+                                    <Binding Path="TextInput" />
+                                    <Binding Path="TextSize" />
+                                    <Binding Path="FontInput" />
+                                    <Binding Path="TextAlign" />
+                                    <Binding Path="VerticalAlign" />
+                                    <Binding Path="TextDirection" />
                                 </MultiBinding>
                             </Button.IsEnabled>
                             <ToolTip.Tip>
@@ -907,6 +933,72 @@
                         HorizontalAlignment="Left"
                         Orientation="Horizontal"
                         Spacing="15">
+
+                        <!--  Column 1-4: Text Align / Text Direction / Text Size / Font Input  -->
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsTextSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Alignment" />
+                            <ComboBox
+                                Classes="standardInput"
+                                ItemsSource="{Binding Source={x:Static sel:Selector.TextAlignOptions}}"
+                                PlaceholderText="Select"
+                                SelectedItem="{Binding TextAlign, Mode=TwoWay}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Aligns the text either left or right" />
+                                </ToolTip.Tip>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsTextSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Direction" />
+                            <ComboBox
+                                Classes="standardInput"
+                                ItemsSource="{Binding Source={x:Static sel:Selector.TextDirectionOptions}}"
+                                PlaceholderText="Select"
+                                SelectedItem="{Binding TextDirection, Mode=TwoWay}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Whether the text is written left-to-right or right-to-left" />
+                                </ToolTip.Tip>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsTextSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Size" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding TextSize, Mode=TwoWay}"
+                                Watermark="px">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Size of Text Input" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <StackPanel Width="88" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsCubeSelected" />
+                                    <Binding Path="IsRoundCubeSelected" />
+                                </MultiBinding>
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Thickness" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding ThicknessMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Thickness" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
 
                         <!--  Column 1-4: Length / Width / Height / Thickness  -->
                         <StackPanel Width="88" Classes="inputGroup">
@@ -1238,6 +1330,25 @@
                                         <TextBlock Text="Surface scale factor" />
                                     </ToolTip.Tip>
                                 </TextBox>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsTextSelected" />
+                            </StackPanel.IsVisible>
+                            <StackPanel Width="219" Classes="inputGroup">
+                                <TextBlock Classes="standardLabel" Text="Font Style" />
+                                <ComboBox
+                                    HorizontalAlignment="Stretch"
+                                    Classes="standardInput"
+                                    ItemsSource="{Binding Source={x:Static sel:Selector.PortableFontsWithStyles}}"
+                                    PlaceholderText="Select"
+                                    SelectedItem="{Binding FontInput, Mode=TwoWay}">
+                                    <ToolTip.Tip>
+                                        <TextBlock Text="Select the font style for the OpenSCAD Text" />
+                                    </ToolTip.Tip>
+                                </ComboBox>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>

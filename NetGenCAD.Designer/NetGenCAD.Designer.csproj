@@ -59,6 +59,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="System.Drawing.Common" Version="10.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\NetGenCAD.Axis\NetGenCAD.Axis.csproj" />
 	  <ProjectReference Include="..\NetGenCAD.Core\NetGenCAD.Core.csproj" />
 	</ItemGroup>
