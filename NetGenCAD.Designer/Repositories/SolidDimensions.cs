@@ -81,12 +81,12 @@ namespace NetGenCAD.Designer.Repositories
         public double Alpha { get; set; } = 1;
 
         // Text properties
-        public double TextSize { get; set; } = 12; // Default text size
+        public double TextSize { get; set; } = 0; // Default text size
         public string TextContent { get; set; } = string.Empty; // Text content to display
-        public string TextDirection { get; set; } = "ltr"; // Text direction: "ltr" or "rtl"
-        public string TextHAlign { get; set; } = "left"; // Horizontal alignment: "left", "center", "right"
-        public string TextVAlign { get; set; } = "baseline"; // Vertical alignment: "baseline", "center", "top", "bottom"
-        public string FontStyle { get; set; } = "Liberation Sans"; // Font style: "normal", "italic", "oblique"
+        public string TextDirection { get; set; } = string.Empty; // Text direction: "ltr" or "rtl"
+        public string TextHAlign { get; set; } = string.Empty; // Horizontal alignment: "left", "center", "right"
+        public string TextVAlign { get; set; } = string.Empty; // Vertical alignment: "baseline", "center", "top", "bottom"
+        public string FontStyle { get; set; } = string.Empty; // Font style: "normal", "italic", "oblique"
 
         public string OSCADMethod { get; set; } = string.Empty;
 
@@ -237,7 +237,8 @@ namespace NetGenCAD.Designer.Repositories
             { "TextContent", TextContent },
             { "TextDirection", TextDirection },
             { "TextHAlign", TextHAlign },
-            { "TextVAlign", TextVAlign }
+            { "TextVAlign", TextVAlign },
+            { "FontStyle", FontStyle }
         };
     }
 
@@ -303,7 +304,8 @@ namespace NetGenCAD.Designer.Repositories
             (nameof(SolidDimensions.TextContent), typeof(string), false),
             (nameof(SolidDimensions.TextDirection), typeof(string), false),
             (nameof(SolidDimensions.TextHAlign), typeof(string), false),
-            (nameof(SolidDimensions.TextVAlign), typeof(string), false)
+            (nameof(SolidDimensions.TextVAlign), typeof(string), false),
+            (nameof(SolidDimensions.FontStyle), typeof(string), false),
         ];
 
         // Create table

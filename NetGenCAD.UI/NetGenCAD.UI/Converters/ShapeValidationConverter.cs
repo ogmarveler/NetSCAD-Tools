@@ -80,13 +80,13 @@ namespace NetGenCAD.UI.Converters
             else if (isText)
             {
                 bool textInputValid = values[23] is string textInput && !string.IsNullOrWhiteSpace(textInput);
-                bool textSizeValid = values[24] is double size && size > 0;
+                bool textMarginValid = values[24] is double margin && margin >= 0;
                 bool fontInputValid = values[25] is string fontInput && !string.IsNullOrWhiteSpace(fontInput);
                 bool textAlignValid = values[26] is string textAlign && !string.IsNullOrWhiteSpace(textAlign);
                 bool verticalAlignValid = values[27] is string verticalAlign && !string.IsNullOrWhiteSpace(verticalAlign);
                 bool textDirectionValid = values[28] is string textDirection && !string.IsNullOrWhiteSpace(textDirection);
 
-                return textInputValid && textSizeValid && fontInputValid && textAlignValid && verticalAlignValid && textDirectionValid;
+                return textInputValid && textMarginValid && fontInputValid && textAlignValid && verticalAlignValid && textDirectionValid;
             }
 
             return false;

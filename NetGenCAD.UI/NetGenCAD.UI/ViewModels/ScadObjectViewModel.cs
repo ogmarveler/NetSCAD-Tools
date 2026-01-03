@@ -131,7 +131,7 @@ namespace NetGenCAD.UI.ViewModels
         private bool _isColorFromHex = false;
         private string _openScadColorHex = string.Empty;
         private string _textInput = string.Empty;
-        private double _textSize = 12.0;
+        private double _textSize = 10.0;
         private string _fontInput = string.Empty;
         private string _textAlign = "left";
         private string _verticalAlign = "top";
@@ -247,12 +247,12 @@ namespace NetGenCAD.UI.ViewModels
             IsTextSelected = false;
             SelectedOpenSCADColor = OpenScadColor.Silver;
             OpenSCADColorHex = string.Empty;
-            TextInput = string.Empty;
-            TextSize = 12.0;
+            TextInput = "HereissomeText";
+            TextSize = 10.0;
             FontInput = string.Empty;
-            TextAlign = "left";
-            VerticalAlign = "top";
-            TextDirection = "ltr";
+            TextAlign = "Left";
+            VerticalAlign = "Baseline";
+            TextDirection = "L-to-R";
             LanguageInput = string.Empty;
         }
 
@@ -296,6 +296,17 @@ namespace NetGenCAD.UI.ViewModels
             // Define the callback for generating OSCAD (delegates to existing logic)
             Func<SolidDimensions, Task<string>> generateOscadCallback = async (solidDim) =>
             {
+
+                // Store as plain text in DB, convert to scad format after
+                var textDirection = TextDirection switch
+                {
+                    "L-to-R" => "ltr",
+                    "R-to-L" => "rtl",
+                    "T-to-B" => "ttb",
+                    "B-to-T" => "btt",
+                    _ => "ltr"
+                };
+
                 return await GenerateOSCADAsync(
                     solidDim,
                     IsCubeSelected,
@@ -317,11 +328,11 @@ namespace NetGenCAD.UI.ViewModels
                     SurfaceConvexity,
                     IsPreRendered,
                     TextInput,
-                TextSize,
-                FontInput,
-                TextAlign,
-                VerticalAlign,
-                TextDirection
+                    TextSize,
+                    FontInput,
+                    TextAlign.ToLower(),
+                    VerticalAlign.ToLower(),
+                    textDirection
                     );
             };
 

@@ -94,8 +94,14 @@ namespace NetGenCAD.Core.Utility
             //: $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}_{solidType}";
             : $"{sanitizedName}_{sanitizedDescription}_{sanitizedOperationType}";
 
+            // Preserve case for Text solids
+            var oscadMethod = $"module {moduleName}() {{ color(\"{color}\",{alpha})".ToLower();
+
+            if (solidType?.ToLower() == "text")
+                return $"{oscadMethod} {sanitizedMethod} }}";
+
             // Return the module definition
-            return $"module {moduleName}() {{ color(\"{color}\",{alpha}) {sanitizedMethod} }}".ToLower();
+            return $"{oscadMethod} }}";
         }
 
         /// <summary>

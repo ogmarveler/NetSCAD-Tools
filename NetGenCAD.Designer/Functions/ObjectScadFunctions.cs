@@ -303,6 +303,44 @@ namespace NetGenCAD.Designer.Functions
 
                 if (isTextSelected)
                 {
+                    if (textSize <= 0)
+                        return 0;
+
+                    // Calculate text metrics here if needed
+                    // Use internal heightmaps for portable fonts
+                    var (width, height) = CalculateTextBounds(textInput, fontInput, textSize);
+
+                    // Factors in tables based on 10 pt font. Adjust based on this.
+                    //Formulas for adjustments
+                    double factoredLength = 0.0;
+                    double factoredWidth = 0.0;
+                    double factoredHeight = 1.0;
+
+                    switch(textDirection)
+                    {
+                        // Without rotation, for ltr, width is along X axis, height along Y axis
+                        case "L-to-R":
+                            factoredLength = width;
+                            factoredWidth = height;
+                            factoredHeight = 1.0;
+                            break;
+                        case "R-to-L":
+                            factoredLength = width;
+                            factoredWidth = height;
+                            factoredHeight = 1.0;
+                            break;
+                        case "T-to-B":
+                            factoredWidth = width;
+                            factoredLength = height;
+                            factoredHeight = 1.0;
+                            break;
+                        case "B-to-T":
+                            factoredWidth = width;
+                            factoredLength = height;
+                            factoredHeight = 1.0;
+                            break;
+                    };
+
                     var newObject = new SolidDimensions
                     {
                         Name = name,
@@ -310,9 +348,9 @@ namespace NetGenCAD.Designer.Functions
                         Material = selectedFilament.ToString(),
                         OperationType = selectedOperationType.ToString(),
                         SolidType = "Text",
-                        Length_MM = 0,
-                        Width_MM = 0,
-                        Height_MM = 0,
+                        Length_MM = RoundFloatingPoints(factoredLength),
+                        Width_MM = RoundFloatingPoints(factoredWidth),
+                        Height_MM = factoredHeight,
                         Thickness_MM = 0,
                         Radius_MM = 0,
                         Radius1_MM = 0,

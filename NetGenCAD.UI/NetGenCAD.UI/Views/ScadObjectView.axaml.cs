@@ -428,6 +428,12 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "ScaleX", "scX" },
             { "ScaleY", "scY" },
             { "ScaleZ", "scZ" },
+            { "FontStyle", "Font Style"},
+            { "TextVAlign","V Align"},
+            { "TextHAlign","H Align"},
+            { "TextDirection","Dir"},
+            { "TextContent","Content"},
+            { "TextSize","Size"},
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -608,6 +614,12 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "ScaleX", "scX" },
             { "ScaleY", "scY" },
             { "ScaleZ", "scZ" },
+            { "FontStyle", "Font Style"},
+            { "TextVAlign","V Align"},
+            { "TextHAlign","H Align"},
+            { "TextDirection","Dir"},
+            { "TextContent","Content"},
+            { "TextSize","Size"},
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -731,7 +743,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             ViewModel.FontInput = selected.FontStyle;
             ViewModel.TextSize = selected.TextSize;
             ViewModel.TextDirection = selected.TextDirection;
-            
+
             // Check if the color is a hex code (contains '#') and set IsColorFromHex accordingly
             bool isHexColor = !string.IsNullOrEmpty(selected.ModuleColor) && selected.ModuleColor.Contains('#');
             if (isHexColor)
@@ -752,9 +764,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
 
             // Highlight corresponding module row based on ModuleName
             if (!string.IsNullOrEmpty(selected.ModuleName))
-            {
                 HighlightModuleRow(selected.ModuleName);
-            }
         }
     }
 
@@ -786,6 +796,12 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "IncludeMethod", "Include Method" },
             { "Layer", "Layer" },
             { "ShapeName", "Poly Shape" },
+            { "FontStyle", "Font Style"},
+            { "TextVAlign","V Align"},
+            { "TextHAlign","H Align"},
+            { "TextDirection","Dir"},
+            { "TextContent","Content"},
+            { "TextSize","Size"},
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))

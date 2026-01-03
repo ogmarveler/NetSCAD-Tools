@@ -802,19 +802,18 @@
                         Grid.Row="2"
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
-                        Margin="10,10,0,0"
-                        HorizontalAlignment="Left"
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Right"
                         Orientation="Horizontal"
                         Spacing="15">
 
                         <!--  Text Input  -->
-                        <StackPanel Classes="inputGroup">
+                        <StackPanel Width="272" Classes="inputGroup">
                             <StackPanel.IsVisible>
                                 <Binding Path="IsTextSelected" />
                             </StackPanel.IsVisible>
                             <TextBlock Classes="standardLabel" Text="Text to Display" />
                             <TextBox
-                                Width="350"
                                 HorizontalAlignment="Stretch"
                                 Classes="standardInput"
                                 Text="{Binding TextInput, Mode=TwoWay}"
@@ -825,6 +824,23 @@
                             </TextBox>
                         </StackPanel>
 
+                        <!--  Text Size  -->
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsTextSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Point" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding TextSize, Mode=TwoWay}"
+                                Watermark="px">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Size of Text Input" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <!--  Available Shapes  -->
                         <StackPanel Classes="inputGroup">
                             <StackPanel.IsVisible>
                                 <Binding Path="IsPolyhedronSelected" />
@@ -855,11 +871,10 @@
                             <TextBlock Classes="standardLabel" Text="Convexity" />
                             <TextBox
                                 Classes="standardInput"
-                                IsReadOnly="True"
                                 Text="{Binding SelectedPolyhedron.Convexity, StringFormat={}{0:F0}}"
                                 Watermark="N/A">
                                 <ToolTip.Tip>
-                                    <TextBlock Text="Polyhedron Convexity (Read-only)" />
+                                    <TextBlock Text="Polyhedron Convexity" />
                                 </ToolTip.Tip>
                             </TextBox>
                         </StackPanel>
@@ -934,24 +949,41 @@
                         Orientation="Horizontal"
                         Spacing="15">
 
-                        <!--  Column 1-4: Text Align / Text Direction / Text Size / Font Input  -->
+                        <!--  Column 1-4: Text HAlign / Text VAlign / Text Direction / Font Input  -->
                         <StackPanel Width="88" Classes="inputGroup">
                             <StackPanel.IsVisible>
                                 <Binding Path="IsTextSelected" />
                             </StackPanel.IsVisible>
-                            <TextBlock Classes="standardLabel" Text="Alignment" />
+                            <TextBlock Classes="standardLabel" Text="H Align" />
                             <ComboBox
                                 Classes="standardInput"
                                 ItemsSource="{Binding Source={x:Static sel:Selector.TextAlignOptions}}"
                                 PlaceholderText="Select"
                                 SelectedItem="{Binding TextAlign, Mode=TwoWay}">
                                 <ToolTip.Tip>
-                                    <TextBlock Text="Aligns the text either left or right" />
+                                    <TextBlock Text="Aligns the text either left, right, or center" />
                                 </ToolTip.Tip>
                             </ComboBox>
                         </StackPanel>
 
-                        <StackPanel Width="88" Classes="inputGroup">
+                        <StackPanel Width="90" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsTextSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="V Align" />
+                            <ComboBox
+                                Padding="2,0,0,0"
+                                Classes="standardInput"
+                                ItemsSource="{Binding Source={x:Static sel:Selector.VerticalAlignOptions}}"
+                                PlaceholderText="Select"
+                                SelectedItem="{Binding VerticalAlign, Mode=TwoWay}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Aligns the text either top, bottom, center, or baseline" />
+                                </ToolTip.Tip>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Width="86" Classes="inputGroup">
                             <StackPanel.IsVisible>
                                 <Binding Path="IsTextSelected" />
                             </StackPanel.IsVisible>
@@ -965,39 +997,6 @@
                                     <TextBlock Text="Whether the text is written left-to-right or right-to-left" />
                                 </ToolTip.Tip>
                             </ComboBox>
-                        </StackPanel>
-
-                        <StackPanel Width="88" Classes="inputGroup">
-                            <StackPanel.IsVisible>
-                                <Binding Path="IsTextSelected" />
-                            </StackPanel.IsVisible>
-                            <TextBlock Classes="standardLabel" Text="Size" />
-                            <TextBox
-                                Classes="standardInput"
-                                Text="{Binding TextSize, Mode=TwoWay}"
-                                Watermark="px">
-                                <ToolTip.Tip>
-                                    <TextBlock Text="Size of Text Input" />
-                                </ToolTip.Tip>
-                            </TextBox>
-                        </StackPanel>
-
-                        <StackPanel Width="88" Classes="inputGroup">
-                            <StackPanel.IsVisible>
-                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                    <Binding Path="IsCubeSelected" />
-                                    <Binding Path="IsRoundCubeSelected" />
-                                </MultiBinding>
-                            </StackPanel.IsVisible>
-                            <TextBlock Classes="standardLabel" Text="Thickness" />
-                            <TextBox
-                                Classes="standardInput"
-                                Text="{Binding ThicknessMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
-                                <ToolTip.Tip>
-                                    <TextBlock Text="Thickness" />
-                                </ToolTip.Tip>
-                            </TextBox>
                         </StackPanel>
 
                         <!--  Column 1-4: Length / Width / Height / Thickness  -->
