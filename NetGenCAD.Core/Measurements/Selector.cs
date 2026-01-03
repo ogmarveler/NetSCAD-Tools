@@ -52,25 +52,34 @@ namespace NetGenCAD.Core.Measurements
 
         // Height factors tuned to match OpenSCAD textmetrics() tight bounding height at size=10
         // (ascent + descent, including typical overhangs)
-        private const double WidthAdjustment = 1.373;  // Empirical – eliminates the 28-30mm shortfall
+        // Empirical – eliminates the 28-30mm shortfall
+        // Close enough...
+        private const double SansItalicWidthAdjustment = 1.40;
+        private const double SansWidthAdjustment = 1.385;
+        private const double MonoWidthAdjustment = 1.373;
+        private const double SerifWidthAdjustment = 1.339;
+        private const double SansBoldWidthAdjustment = 1.333;
+        private const double SerifItalicWidthAdjustment = 1.3;
+        private const double SerifBoldItalicWidthAdjustment = 1.19;
+        private const double SerifBoldWidthAdjustment = 1.165;
 
         public static readonly Dictionary<string, (double AvgWidthFactor, double HeightFactor, string Notes)> FontMetricsMap =
             new()
             {
-                ["Liberation Sans"] = (0.554 * WidthAdjustment, 1.0208, "Regular"),
-                ["Liberation Sans:style=Bold"] = (0.554 * WidthAdjustment, 1.0208, "Bold"),  // +3.9mm
-                ["Liberation Sans:style=Italic"] = (0.545 * WidthAdjustment, 1.0208, "Italic"),
-                ["Liberation Sans:style=Bold Italic"] = (0.554 * WidthAdjustment, 1.0208, "Bold Italic"),  // +3.9mm
+                ["Liberation Sans"] = (0.554 * SansWidthAdjustment, 1.0208, "Regular"),
+                ["Liberation Sans:style=Bold"] = (0.612 * SansBoldWidthAdjustment, 1.0208, "Bold"),
+                ["Liberation Sans:style=Italic"] = (0.545 * SansItalicWidthAdjustment, 1.0208, "Italic"),
+                ["Liberation Sans:style=Bold Italic"] = (0.625 * SansBoldWidthAdjustment, 1.0208, "Bold Italic"),
 
-                ["Liberation Serif"] = (0.552 * WidthAdjustment, 0.93376, "Regular"), // +3.5mm
-                ["Liberation Serif:style=Bold"] = (0.552 * WidthAdjustment, 0.97792, "Bold"), // +16mm
-                ["Liberation Serif:style=Italic"] = (0.543 * WidthAdjustment, 0.93376, "Italic"), // +5mm
-                ["Liberation Serif:style=Bold Italic"] = (0.552 * WidthAdjustment, 0.97792, "Bold Italic"), // +14mm
+                ["Liberation Serif"] = (0.552 * SerifWidthAdjustment, 0.93376, "Regular"),
+                ["Liberation Serif:style=Bold"] = (0.610 * SerifBoldWidthAdjustment, 0.97792, "Bold"),
+                ["Liberation Serif:style=Italic"] = (0.543 * SerifItalicWidthAdjustment, 0.93376, "Italic"),
+                ["Liberation Serif:style=Bold Italic"] = (0.618 * SerifBoldItalicWidthAdjustment, 0.97792, "Bold Italic"),
 
-                ["Liberation Mono"] = (0.6 * WidthAdjustment, 1.0208, "Regular – true monospaced"),
-                ["Liberation Mono:style=Bold"] = (0.6 * WidthAdjustment, 1.0208, "Bold"), // +38mm
-                ["Liberation Mono:style=Italic"] = (0.6 * WidthAdjustment, 1.0208, "Italic (oblique)"), // +38mm
-                ["Liberation Mono:style=Bold Italic"] = (0.6 * WidthAdjustment, 1.0208, "Bold Italic")
+                ["Liberation Mono"] = (0.6 * MonoWidthAdjustment, 1.0208, "Regular – true monospaced"),
+                ["Liberation Mono:style=Bold"] = (0.6 * MonoWidthAdjustment, 1.0208, "Bold"), 
+                ["Liberation Mono:style=Italic"] = (0.6 * MonoWidthAdjustment, 1.0208, "Italic (oblique)"), 
+                ["Liberation Mono:style=Bold Italic"] = (0.6 * MonoWidthAdjustment, 1.0208, "Bold Italic")
             };
 
         // Full per-character advance width tables for all 12 styles
@@ -1359,19 +1368,36 @@ namespace NetGenCAD.Core.Measurements
             double naturalSum = 0.0;
             double lastAdvance = fallbackFactor;
 
+            var widthAdjustment = fontString switch
+            {
+                "Liberation Sans" => SansWidthAdjustment,
+                "Liberation Sans:style=Bold" => SansBoldWidthAdjustment,
+                "Liberation Sans:style=Italic" => SansItalicWidthAdjustment,
+                "Liberation Sans:style=Bold Italic" => SansBoldWidthAdjustment,
+                "Liberation Serif" => SerifWidthAdjustment,
+                "Liberation Serif:style=Bold" => SerifBoldWidthAdjustment,
+                "Liberation Serif:style=Italic" => SerifItalicWidthAdjustment,
+                "Liberation Serif:style=Bold Italic" => SerifBoldItalicWidthAdjustment,
+                "Liberation Mono" => MonoWidthAdjustment,
+                "Liberation Mono:style=Bold" => MonoWidthAdjustment,
+                "Liberation Mono:style=Italic" => MonoWidthAdjustment,
+                "Liberation Mono:style=Bold Italic" => MonoWidthAdjustment
+            };
+
             if (PerCharWidthTables.TryGetValue(fontString, out var table))
             {
                 foreach (char c in text)
                 {
-                    double advance = table.TryGetValue(c, out double w) ? w * WidthAdjustment : fallbackFactor;
+
+                    double advance = table.TryGetValue(c, out double w) ? w * widthAdjustment : fallbackFactor;
                     naturalSum += advance;
                 }
                 if (text.Length > 0)
-                    lastAdvance = table.TryGetValue(text[^1], out double w) ? w * WidthAdjustment: fallbackFactor;
+                    lastAdvance = table.TryGetValue(text[^1], out double w) ? w * widthAdjustment: fallbackFactor;
             }
             else
             {
-                double avg = FontMetricsMap.TryGetValue(fontString, out var m) ? m.AvgWidthFactor * WidthAdjustment : fallbackFactor;
+                double avg = FontMetricsMap.TryGetValue(fontString, out var m) ? m.AvgWidthFactor * widthAdjustment : fallbackFactor;
                 naturalSum = text.Length * avg;
                 lastAdvance = avg;
             }
