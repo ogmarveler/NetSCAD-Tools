@@ -12,6 +12,7 @@ Welcome to the NetGenCAD Designer Guide! This tutorial covers the basics of defi
 * **Rounded Cylinder** - Minkowski rounding using offsets to align to 0,0,0 axes. Center is center of circle.
 * **Sphere** - all spheres are aligned on the 0,0,0 axes, with center point of the sphere at 0,0,0.
 * **Surface** - import from png or dat file. Default aligned on 0,0,0 axes or can be offset with translate.
+* **Text** - create 3D text using OpenSCAD text function with approximate bounding box dimensions.
 
 ###### 
 #### Solid Adjustments Available
@@ -34,7 +35,7 @@ Welcome to the NetGenCAD Designer Guide! This tutorial covers the basics of defi
 There are 5 main sections: applying a custom axis, creating a new object or retrieving an existing one, setting inputs for new solids, the list of Solids in the object, and Modules that contain the Solids. Once a solid is added to the object, it will appear in the Solids table, along with its parameters. Solids can be viewed within Modules, which define how they interact with each other. To view the object in OpenSCAD, simply click the **View Output** button, which will open the corresponding SCAD file. To export the object as an STL file, select the **Export?** option. When making changes, be sure to click the **Update All Modules** button and/or **View Output** to refresh the object.
 
 ###### 
-![DesignerObject](Assets/Images/coilCreateDark.png)
+![DesignerObject](Assets/Images/bullionBarsCreateDark.png)
 
 #### Apply a Custom Axis
 | Steps                                                                         | Requirements / Options                  | Default Value |
@@ -152,6 +153,27 @@ There are 5 main sections: applying a custom axis, creating a new object or retr
 | 27. Optional: Select **Color**, set the color for the solid                   |     OpenSCAD Colors                     |     Silver    |
 | 28. Optional: Enter numeric **Alpha**, set the color opacity for the solid    |       0 - 1                             |       1       |
 | 29. Optional: Enter numeric **Layer**, sets module to apply the solid to      |                                         |       0       |
+
+###### 
+#### Setting Inputs for New Solid: Text
+| Steps                                                                         | Requirements / Options                  | Default Value |
+| ----------------------------------------------------------------------------- |:---------------------------------------:|:-------------:|
+| 12. Text Box: enter the text to be displayed in OpenSCAD                      |                                         |  <required>   |
+| 13. Enter numeric **Font Point** to determine the size of the text to display |     Enter in points                     |       10      |
+| 14. Optional: Set the text **Horizontal Alignment**                           |     Left, Right, or Center              |      Left     |
+| 15. Optional: Set the text **Vertical Alignment**                             |     Top, Center, Baseline, or Bottom    |    Baseline   |
+| 16. Optional: Set the text's **Direction**                                    |     L-to-R, R-to-L, T-to-B, B-to-T      |    L-to-R     |
+| 17. Optional: Select the **Font Style** to use to display the text            |     Liberation Sans, Serif, or Mono     |Liberation Sans|
+| 18. Optional: Enter numeric **X Offset**, setting start point on **X Axis**   |     Units displayed in mm or inches     |       0       |
+| 19. Optional: Enter numeric **Y Offset**, setting start point on **Y Axis**   |     Units displayed in mm or inches     |       0       |
+| 20. Optional: Enter numeric **Z Offset**, setting start point on **Z Axis**   |     Units displayed in mm or inches     |       0       |
+| 21. Optional: Enter numeric **Rotate X**, rotating 0-360° on **X Axis**       |     Units displayed in degrees (°)      |       0°      |
+| 22. Optional: Enter numeric **Rotate Y**, rotating 0-360° on **Y Axis**       |     Units displayed in degrees (°)      |       0°      |
+| 23. Optional: Enter numeric **Rotate Z**, rotating 0-360° on **Z Axis**       |     Units displayed in degrees (°)      |       0°      |
+| 24. Optional: Select **Hex**, enable hex color input for the solid            |       6 digit hex code                  |               |
+| 25. Optional: Select **Color**, set the color for the solid                   |     OpenSCAD Colors                     |     Silver    |
+| 26. Optional: Enter numeric **Alpha**, set the color opacity for the solid    |       0 - 1                             |       1       |
+| 27. Optional: Enter numeric **Layer**, sets module to apply the solid to      |                                         |       0       |
 
 ###### 
 #### Object Action Buttons

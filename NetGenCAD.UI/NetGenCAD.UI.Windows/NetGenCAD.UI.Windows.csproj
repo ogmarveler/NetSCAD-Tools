@@ -86,6 +86,7 @@
 
 	<ItemGroup>
 	  <None Remove="NetGenCAD-0.2.0-winx64.7z" />
+	  <None Remove="NetGenCAD-0.2.1-winx64.7z" />
 	</ItemGroup>
 
 	<ItemGroup>
