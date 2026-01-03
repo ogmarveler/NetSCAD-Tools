@@ -300,12 +300,12 @@ namespace NetGenCAD.Designer.Repositories
             (nameof(SolidDimensions.SurfaceCenter), typeof(int), false),
             (nameof(SolidDimensions.Layer), typeof(int), false),
             (nameof(SolidDimensions.Alpha), typeof(double), false),
-            (nameof(SolidDimensions.TextSize), typeof(double), false),
-            (nameof(SolidDimensions.TextContent), typeof(string), false),
-            (nameof(SolidDimensions.TextDirection), typeof(string), false),
-            (nameof(SolidDimensions.TextHAlign), typeof(string), false),
-            (nameof(SolidDimensions.TextVAlign), typeof(string), false),
-            (nameof(SolidDimensions.FontStyle), typeof(string), false),
+            (nameof(SolidDimensions.TextSize), typeof(double), true),
+            (nameof(SolidDimensions.TextContent), typeof(string), true),
+            (nameof(SolidDimensions.TextDirection), typeof(string), true),
+            (nameof(SolidDimensions.TextHAlign), typeof(string), true),
+            (nameof(SolidDimensions.TextVAlign), typeof(string), true),
+            (nameof(SolidDimensions.FontStyle), typeof(string), true),
         ];
 
         // Create table

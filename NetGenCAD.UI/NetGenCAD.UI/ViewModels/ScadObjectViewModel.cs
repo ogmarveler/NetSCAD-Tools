@@ -247,7 +247,7 @@ namespace NetGenCAD.UI.ViewModels
             IsTextSelected = false;
             SelectedOpenSCADColor = OpenScadColor.Silver;
             OpenSCADColorHex = string.Empty;
-            TextInput = "HereissomeText";
+            TextInput = string.Empty;
             TextSize = 10.0;
             FontInput = string.Empty;
             TextAlign = "Left";
@@ -330,8 +330,8 @@ namespace NetGenCAD.UI.ViewModels
                     TextInput,
                     TextSize,
                     FontInput,
-                    TextAlign.ToLower(),
-                    VerticalAlign.ToLower(),
+                    TextAlign,
+                    VerticalAlign,
                     textDirection
                     );
             };

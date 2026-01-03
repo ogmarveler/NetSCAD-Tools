@@ -101,7 +101,7 @@ namespace NetGenCAD.Core.Utility
                 return $"{oscadMethod} {sanitizedMethod} }}";
 
             // Return the module definition
-            return $"{oscadMethod} }}";
+            return $"{oscadMethod} {sanitizedMethod} }}".ToLower();
         }
 
         /// <summary>

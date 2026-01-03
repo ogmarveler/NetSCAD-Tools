@@ -528,7 +528,6 @@ namespace NetGenCAD.Designer.Functions
                     "Round Cylinder" => "Round Cylinder",
                     "Sphere" => "Sphere",
                     "Surface" => "Surface",
-                    "Text" => "Text",
                     _ => null
                 };
 
