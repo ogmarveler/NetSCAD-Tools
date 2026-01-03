@@ -1,11 +1,10 @@
-# <img src="NetGenCAD.UI/NetGenCAD.UI/Assets/Images/logo.png" height="30" width="30"> NetGenCAD
 ###### 
 #### Description
-This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.**
+This application is a no-code tool for generating custom objects used in OpenSCAD, a solid 3D CAD modeler. **It is assumed that users have a basic understanding of OpenSCAD and its functionalities.** 
 ###### 
 #### Prerequisites
 * **You need a CAD renderer installed (OpenSCAD recommended):** [OpenSCAD](https://openscad.org/downloads.html)
-* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.2.1-winx64.7z)
+* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.2.2-winx64.7z)
 * **NetGenCAD for Linux (x64 & arm64)** Coming Soon!
 * **NetGenCAD for MacOS (x64 & arm64)** Coming Soon!
 
@@ -18,9 +17,14 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 * **Rounded Cylinder** - Minkowski rounding using offsets to align to 0,0,0 axes. Center is center of circle.
 * **Sphere** - all spheres are aligned on the 0,0,0 axes, with center point of the sphere at 0,0,0.
 * **Surface** - import from png or dat file. Default aligned on 0,0,0 axes or can be offset with translate.
+* **Text** - create 3D text using OpenSCAD text function with approximate bounding box dimensions.
 
 ###### 
 #### Examples of Objects Created
+###### 
+![Bullion](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/bullionBars.png)
+![Bullion Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/bullionBarsCreateDark.png)
+
 ###### 
 ![Coin](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coin.png)
 ![Coin Create Dark](NetGenCAD.UI/NetGenCAD.UI/Assets/Images/coinCreateDark.png)
