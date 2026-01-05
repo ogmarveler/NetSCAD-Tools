@@ -77,4 +77,4 @@ Varying axes of different sizes, measurement types, colors, and combinations of 
 | Scad/Solids/moduleType_name_object.scad | Syntax: include <object_name_type.scad>;               |                     |	Yes   |
 | Scad/Solids/object.scad                 | Description: main object file for 3D model             |                     |	No    |	
 | Scad/Solids/object.stl                  | Description: exported STL file for 3D model            |                     |  Yes   |
-| Scad/Solids/polyhedronName_shape.scad   | Description: polyhedron shape preview file             |                     |	No    |
+| Scad/Solids/polyhedronName_shape.scad   | Description: polyhedron shape preview file             |                     |	No    | 
