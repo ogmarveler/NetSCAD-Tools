@@ -5,7 +5,7 @@ This application is a no-code tool for generating custom objects used in OpenSCA
 ###### 
 #### Prerequisites
 * **You need a CAD renderer installed (OpenSCAD recommended):** [OpenSCAD](https://openscad.org/downloads.html)
-* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.1.0-win-x64.7z)
+* [NetGenCAD for Windows (x64)](NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD-0.0.5-win-x64.7z)
 * **NetGenCAD for Linux (x64 & arm64)** Coming Soon!
 * **NetGenCAD for MacOS (x64 & arm64)** Coming Soon!
 
