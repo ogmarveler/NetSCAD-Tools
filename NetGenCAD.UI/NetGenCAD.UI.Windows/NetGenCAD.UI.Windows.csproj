@@ -73,6 +73,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="NetGenCAD-0.1.0-win-x64.7z" />
 	  <None Remove="NetGenCAD-0.2.0-winx64.7z" />
 	  <None Remove="NetGenCAD-0.2.1-winx64.7z" />
 	  <None Remove="NetGenCAD-0.2.2-winx64.7z" />

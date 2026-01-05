@@ -696,7 +696,8 @@ namespace NetGenCAD.Designer.Repositories
                    TextContent,
                    TextDirection,
                    TextHAlign,
-                   TextVAlign
+                   TextVAlign,
+                   FontStyle
                    FROM SolidDimensions
                    WHERE Name = @Name";
             using var cmd = connection.CreateCommand();
