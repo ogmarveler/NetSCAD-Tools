@@ -292,7 +292,8 @@ namespace NetGenCAD.Designer.Functions
             string fontInput,
             string textAlign,
             string verticalAlign,
-            string textDirection)
+            string textDirection,
+            string languageInput)
         {
             try
             {
@@ -314,7 +315,7 @@ namespace NetGenCAD.Designer.Functions
                     //Formulas for adjustments
                     double factoredLength = 0.0;
                     double factoredWidth = 0.0;
-                    double factoredHeight = 1.0;
+                    double factoredHeight = heightMM;
 
                     switch(textDirection)
                     {
@@ -322,22 +323,18 @@ namespace NetGenCAD.Designer.Functions
                         case "L-to-R":
                             factoredLength = width;
                             factoredWidth = height;
-                            factoredHeight = 1.0;
                             break;
                         case "R-to-L":
                             factoredLength = width;
                             factoredWidth = height;
-                            factoredHeight = 1.0;
                             break;
                         case "T-to-B":
                             factoredWidth = width;
                             factoredLength = height;
-                            factoredHeight = 1.0;
                             break;
                         case "B-to-T":
                             factoredWidth = width;
                             factoredLength = height;
-                            factoredHeight = 1.0;
                             break;
                     };
 
@@ -772,7 +769,8 @@ namespace NetGenCAD.Designer.Functions
             string fontInput,
             string textAlign,
             string verticalAlign,
-            string textDirection
+            string textDirection,
+            string languageInput
             )
         {
             if (isCubeSelected || isRoundCubeSelected || isSurfaceSelected || isRoundSurfaceSelected)
@@ -941,6 +939,7 @@ namespace NetGenCAD.Designer.Functions
                     oDim.XOffset_MM = Math.Round(InchesToMillimeter(oDim.XOffset_MM), decimalPlaces);
                     oDim.YOffset_MM = Math.Round(InchesToMillimeter(oDim.YOffset_MM), decimalPlaces);
                     oDim.ZOffset_MM = Math.Round(InchesToMillimeter(oDim.ZOffset_MM), decimalPlaces);
+                    oDim.Height_MM = Math.Round(InchesToMillimeter(oDim.Height_MM), decimalPlaces);
                 }
                 var textParams = new Dictionary<string, object>
                 {
@@ -950,7 +949,9 @@ namespace NetGenCAD.Designer.Functions
                     { "halign", textAlign },
                     { "valign", verticalAlign },
                     { "direction", textDirection },
-                    { "convexity", 10 }
+                    { "convexity", 10 },
+                    { "language", languageInput },
+                    { "textDepth", oDim.Height_MM }
                 };
                 var textObj = OScadSpecial.Text.ToScadObject(textParams);
                 var rotated = await GetRotate(textObj, oDim.XRotate, oDim.YRotate, oDim.ZRotate);
@@ -1848,8 +1849,8 @@ namespace NetGenCAD.Designer.Functions
             sb.AppendLine();
             sb.AppendLine("Solids:");
             sb.AppendLine(new string('-', 50));
-            sb.Append(string.Join("\n\n", solids.Select(s => s.OSCADMethod)));
-
+            sb.AppendLine(string.Join("\n\n", solids.Select(s => s.OSCADMethod)));
+            sb.AppendLine();
             return (title, sb.ToString());
         }
 
@@ -1870,18 +1871,7 @@ namespace NetGenCAD.Designer.Functions
         /// <param name="decimalPlaces">Number of decimal places for rounding</param>
         /// <returns>Tuple containing converted imperial values in the same order</returns>
         public static (double Length, double Width, double Height, double Thickness, double Radius, double Radius1, double Radius2, double CylinderHeight, double XOffset, double YOffset, double ZOffset) ConvertInputsToImperial(
-            double lengthMM,
-            double widthMM,
-            double heightMM,
-            double thicknessMM,
-            double radiusMM,
-            double radius1MM,
-            double radius2MM,
-            double cylinderHeightMM,
-            double xOffsetMM,
-            double yOffsetMM,
-            double zOffsetMM,
-            int decimalPlaces)
+            double lengthMM, double widthMM, double heightMM, double thicknessMM, double radiusMM, double radius1MM, double radius2MM, double cylinderHeightMM, double xOffsetMM, double yOffsetMM, double zOffsetMM, int decimalPlaces)
         {
             // Convert from metric unit system to imperial (mm to inches)
             var convertedLength = Math.Round(MillimeterToInches(lengthMM), decimalPlaces);
@@ -1913,21 +1903,11 @@ namespace NetGenCAD.Designer.Functions
         /// <param name="xOffsetInches">X offset in inches</param>
         /// <param name="yOffsetInches">Y offset in inches</param>
         /// <param name="zOffsetInches">Z offset in inches</param>
+        /// <param name="textDepthInches">Text depth in inches</param>
         /// <param name="decimalPlaces">Number of decimal places for rounding</param>
         /// <returns>Tuple containing converted metric values in the same order</returns>
         public static (double Length, double Width, double Height, double Thickness, double Radius, double Radius1, double Radius2, double CylinderHeight, double XOffset, double YOffset, double ZOffset) ConvertInputsToMetric(
-            double lengthInches,
-            double widthInches,
-            double heightInches,
-            double thicknessInches,
-            double radiusInches,
-            double radius1Inches,
-            double radius2Inches,
-            double cylinderHeightInches,
-            double xOffsetInches,
-            double yOffsetInches,
-            double zOffsetInches,
-            int decimalPlaces)
+            double lengthInches, double widthInches, double heightInches, double thicknessInches, double radiusInches, double radius1Inches, double radius2Inches, double cylinderHeightInches, double xOffsetInches, double yOffsetInches, double zOffsetInches, int decimalPlaces)
         {
             // Convert from imperial unit system to metric (inches to mm)
             var convertedLength = Math.Round(InchesToMillimeter(lengthInches), decimalPlaces);

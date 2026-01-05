@@ -7,13 +7,7 @@
 		<PublishTrimmed>true</PublishTrimmed>
 		<TrimMode>link</TrimMode>
 		<SignAssembly>True</SignAssembly>
-		<Platforms>AnyCPU;x64;ARM64</Platforms>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DebugType>none</DebugType>
-		<IsAotCompatible>True</IsAotCompatible>
-		<IsTrimmable>True</IsTrimmable>
+		<Platforms>x64;ARM64</Platforms>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -28,18 +22,14 @@
 	  <IsAotCompatible>True</IsAotCompatible>
 	  <IsTrimmable>True</IsTrimmable>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DebugType>none</DebugType>
-		<DebugSymbols>false</DebugSymbols>
-		<IsAotCompatible>True</IsAotCompatible>
-		<IsTrimmable>True</IsTrimmable>
-	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
 	  <DebugType>none</DebugType>
 	  <DebugSymbols>false</DebugSymbols>
 	  <IsAotCompatible>True</IsAotCompatible>
 	  <IsTrimmable>True</IsTrimmable>
 	</PropertyGroup>
+	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
 	  <DebugType>none</DebugType>
 	  <DebugSymbols>false</DebugSymbols>

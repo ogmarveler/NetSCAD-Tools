@@ -253,7 +253,7 @@ namespace NetGenCAD.UI.ViewModels
             TextAlign = "Left";
             VerticalAlign = "Baseline";
             TextDirection = "L-to-R";
-            LanguageInput = string.Empty;
+            LanguageInput = "en";
         }
 
         // Clear all object fields
@@ -332,7 +332,8 @@ namespace NetGenCAD.UI.ViewModels
                     FontInput,
                     TextAlign,
                     VerticalAlign,
-                    textDirection
+                    textDirection,
+                    LanguageInput
                     );
             };
 
@@ -431,7 +432,8 @@ namespace NetGenCAD.UI.ViewModels
                 FontInput,
                 TextAlign,
                 VerticalAlign,
-                TextDirection
+                TextDirection,
+                LanguageInput
             );
 
             return result;
@@ -687,12 +689,7 @@ namespace NetGenCAD.UI.ViewModels
         {
             if (_selectedUnit == UnitSystem.Imperial && UnitHasChanged)
             {
-                var (length, width, height, thickness, radius, radius1, radius2, cylinderHeight, xOffset, yOffset, zOffset) =
-                    ConvertInputsToImperial(
-                        _lengthMM, _widthMM, _heightMM, _thicknessMM,
-                        _radiusMM, _radius1MM, _radius2MM, _cylinderHeightMM,
-                        _xOffsetMM, _yOffsetMM, _zOffsetMM,
-                        decimalPlaces);
+                var (length, width, height, thickness, radius, radius1, radius2, cylinderHeight, xOffset, yOffset, zOffset) = ConvertInputsToImperial(_lengthMM, _widthMM, _heightMM, _thicknessMM, _radiusMM, _radius1MM, _radius2MM, _cylinderHeightMM, _xOffsetMM, _yOffsetMM, _zOffsetMM, decimalPlaces);
 
                 LengthMM = length;
                 WidthMM = width;
@@ -708,12 +705,7 @@ namespace NetGenCAD.UI.ViewModels
             }
             else if (_selectedUnit == UnitSystem.Metric && UnitHasChanged)
             {
-                var (length, width, height, thickness, radius, radius1, radius2, cylinderHeight, xOffset, yOffset, zOffset) =
-                    ConvertInputsToMetric(
-                        _lengthMM, _widthMM, _heightMM, _thicknessMM,
-                        _radiusMM, _radius1MM, _radius2MM, _cylinderHeightMM,
-                        _xOffsetMM, _yOffsetMM, _zOffsetMM,
-                        decimalPlaces);
+                var (length, width, height, thickness, radius, radius1, radius2, cylinderHeight, xOffset, yOffset, zOffset) = ConvertInputsToMetric(_lengthMM, _widthMM, _heightMM, _thicknessMM, _radiusMM, _radius1MM, _radius2MM, _cylinderHeightMM, _xOffsetMM, _yOffsetMM, _zOffsetMM, decimalPlaces);
 
                 LengthMM = length;
                 WidthMM = width;
@@ -1043,6 +1035,14 @@ namespace NetGenCAD.UI.ViewModels
                 this.RaiseAndSetIfChanged(ref _isTextSelected, value);
                 if (_isTextSelected)
                 {
+                    if (_heightMM == 0)  // Default height for text if none set
+                    {
+                        if (SelectedUnitValue == UnitSystem.Metric)
+                            HeightMM = 1;
+                        else
+                            HeightMM = 0.03937;
+                    }
+
                     _isCubeSelected = false;
                     _isRoundCubeSelected = false;
                     _isCylinderSelected = false;

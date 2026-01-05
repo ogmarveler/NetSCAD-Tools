@@ -6,7 +6,7 @@ namespace NetGenCAD.Core.Models
     {
         private readonly Dictionary<string, object> _parameters;
 
-        public Text(string text, double size = 10, string? font = null, string halign = "left", string valign = "baseline", double spacing = 1, string direction = "ltr", string? language = null, string? script = null, double resolution = 200)
+        public Text(string text, double size = 10, string? font = null, string halign = "left", string valign = "baseline", double spacing = 1, string direction = "ltr", string? language = null, string? script = null, double resolution = 200, double textDepth = 1)
         {
             _parameters = new Dictionary<string, object>
             {
@@ -19,7 +19,8 @@ namespace NetGenCAD.Core.Models
                 { "direction", direction },
                 { "language", (object?)language ?? string.Empty },
                 { "script", (object?)script ?? string.Empty },
-                { "resolution", resolution }
+                { "resolution", resolution },
+                { "textDepth", textDepth }
             };
         }
 
@@ -33,8 +34,9 @@ namespace NetGenCAD.Core.Models
         public string? Language => (string?)_parameters["language"];
         public string? Script => (string?)_parameters["script"];
         public double Resolution => (double)_parameters["resolution"];
+        public double TextDepthMM => (double)_parameters["textDepth"];
 
-        public string OSCADMethod => $"text(text = \"{TextValue}\", size = {Size}{(Font != null ? $", font = \"{Font}\"" : "")}, halign = \"{HAlign}\", valign = \"{VAlign}\", spacing = {Spacing}, direction = \"{Direction}\"{(Language != null ? $", language = \"{Language}\"" : "")}{(Script != null ? $", script = \"{Script}\"" : "")}, $fn = {Resolution});";
+        public string OSCADMethod => $"linear_extrude(height={TextDepthMM}) text(text = \"{TextValue}\", size = {Size}{(Font != null ? $", font = \"{Font}\"" : "")}, halign = \"{HAlign}\", valign = \"{VAlign}\", spacing = {Spacing}, direction = \"{Direction}\"{(Language != null ? $", language = \"{Language}\"" : "")}{(Script != null ? $", script = \"{Script}\"" : "")}, $fn = {Resolution});";
 
         public Dictionary<string, object> ToDbDictionary() => new()
         {
@@ -48,7 +50,8 @@ namespace NetGenCAD.Core.Models
             { "direction", Direction },
             { "language", (object?)Language ?? string.Empty },
             { "script", (object?)Script ?? string.Empty },
-            { "resolution", Resolution }
+            { "resolution", Resolution },
+            { "textDepth", TextDepthMM }
         };
     }
 }

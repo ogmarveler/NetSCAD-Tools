@@ -20,7 +20,7 @@
 		<InvariantGlobalization>false</InvariantGlobalization>
 		<!-- If no localization needed, reduces size -->
 		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
-		<Platforms>AnyCPU;x64;ARM64</Platforms>
+		<Platforms>x64;ARM64</Platforms>
 		<!-- No hot reload in production -->
 	</PropertyGroup>
 
@@ -30,12 +30,6 @@
 		<SignAssembly>True</SignAssembly>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 		<StartupObject>NetGenCAD.Program</StartupObject>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<Optimize>True</Optimize>
-		<IsPublishable>True</IsPublishable>
-		<DebugType>none</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -48,11 +42,6 @@
 	  <Optimize>True</Optimize>
 	  <IsPublishable>True</IsPublishable>
 	  <DebugType>none</DebugType>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<IsPublishable>True</IsPublishable>
-		<DebugType>none</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">

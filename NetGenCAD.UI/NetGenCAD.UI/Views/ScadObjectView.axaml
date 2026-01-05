@@ -808,7 +808,7 @@
                         Spacing="15">
 
                         <!--  Text Input  -->
-                        <StackPanel Width="272" Classes="inputGroup">
+                        <StackPanel Width="194" Classes="inputGroup">
                             <StackPanel.IsVisible>
                                 <Binding Path="IsTextSelected" />
                             </StackPanel.IsVisible>
@@ -819,7 +819,7 @@
                                 Text="{Binding TextInput, Mode=TwoWay}"
                                 Watermark="Enter text">
                                 <ToolTip.Tip>
-                                    <TextBlock Text="Text Input to convert to OpenSCAD" />
+                                    <TextBlock Text="Text to Display Input to convert to OpenSCAD" />
                                 </ToolTip.Tip>
                             </TextBox>
                         </StackPanel>
@@ -832,10 +832,26 @@
                             <TextBlock Classes="standardLabel" Text="Point" />
                             <TextBox
                                 Classes="standardInput"
-                                Text="{Binding TextSize, Mode=TwoWay}"
+                                Text="{Binding TextSize, Mode=TwoWay, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
                                 Watermark="px">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Size of Text Input" />
+                                </ToolTip.Tip>
+                            </TextBox>
+                        </StackPanel>
+
+                        <!--  Text Depth  -->
+                        <StackPanel Width="63" Classes="inputGroup">
+                            <StackPanel.IsVisible>
+                                <Binding Path="IsTextSelected" />
+                            </StackPanel.IsVisible>
+                            <TextBlock Classes="standardLabel" Text="Depth" />
+                            <TextBox
+                                Classes="standardInput"
+                                Text="{Binding HeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
+                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="Depth of each letter in Text to Display" />
                                 </ToolTip.Tip>
                             </TextBox>
                         </StackPanel>

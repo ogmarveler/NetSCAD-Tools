@@ -14,7 +14,7 @@
                 return value;
 
             // For very small numbers, round to zero
-            if (Math.Abs(value) < 1e-15)
+            if (Math.Abs(value) < 1e-16)
                 return 0;
 
             // Round to maximum decimal places first

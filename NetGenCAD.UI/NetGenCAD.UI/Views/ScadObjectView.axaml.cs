@@ -387,7 +387,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     {
         // List of columns to exclude from display - Hide Imperial columns for Metric view
         var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN", "ModuleName",
-            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Volume_IN3", "Name", "Volume_CM3", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Alpha", "ScaleX", "ScaleY", "ScaleZ"  };
+            "Length_IN", "Width_IN", "Height_IN", "Thickness_IN", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "Material", "Radius_IN", "Radius1_IN", "Radius2_IN", "CylinderHeight_IN", "Name", "Volume_IN3", "Name", "Volume_CM3", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Alpha", "ScaleX", "ScaleY", "ScaleZ", "FontStyle"  };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -431,7 +431,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "FontStyle", "Font Style"},
             { "TextVAlign","V Align"},
             { "TextHAlign","H Align"},
-            { "TextDirection","Dir"},
+            { "TextDirection","Direction"},
             { "TextContent","Content"},
             { "TextSize","Size"},
         };
@@ -451,7 +451,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Then dimensions: Length, Width, Height, Thickness, Radius, Radius1, Radius2, CylinderHeight
         // Then rotations: XRotate, YRotate, ZRotate
         // Then Color, and everything else
-        int displayIndex = 4; // Start after the fixed columns
+        int displayIndex = 20; // Start after the fixed columns
 
         switch (e.PropertyName)
         {
@@ -462,54 +462,59 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
                 break;
             case "Layer":
                 e.Column.DisplayIndex = 2;
+                e.Column.Sort();
                 break;
             case "OperationType":
                 e.Column.DisplayIndex = 3;
-                break;
-            case "Length_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Width_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Height_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Thickness_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Radius_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Radius1_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Radius2_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "CylinderHeight_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "XRotate":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "YRotate":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "ZRotate":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "XOffset_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "YOffset_MM":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "ZOffset_MM":
-                e.Column.DisplayIndex = displayIndex++;
+                e.Column.Sort();
                 break;
             case "ModuleColor":
-                e.Column.DisplayIndex = displayIndex++;
+                e.Column.DisplayIndex = 4;
+                break;
+            case "Description":
+                e.Column.DisplayIndex = 5;
+                break;
+            case "XOffset_MM":
+                e.Column.DisplayIndex = 6;
+                break;
+            case "YOffset_MM":
+                e.Column.DisplayIndex = 7;
+                break;
+            case "ZOffset_MM":
+                e.Column.DisplayIndex = 8;
+                break;
+            case "Length_MM":
+                e.Column.DisplayIndex = 9;
+                break;
+            case "Width_MM":
+                e.Column.DisplayIndex = 10;
+                break;
+            case "Height_MM":
+                e.Column.DisplayIndex = 11;
+                break;
+            case "Thickness_MM":
+                e.Column.DisplayIndex = 12;
+                break;
+            case "Radius_MM":
+                e.Column.DisplayIndex = 13;
+                break;
+            case "Radius1_MM":
+                e.Column.DisplayIndex = 14;
+                break;
+            case "Radius2_MM":
+                e.Column.DisplayIndex = 15;
+                break;
+            case "CylinderHeight_MM":
+                e.Column.DisplayIndex = 16;
+                break;
+            case "XRotate":
+                e.Column.DisplayIndex = 17;
+                break;
+            case "YRotate":
+                e.Column.DisplayIndex = 18;
+                break;
+            case "ZRotate":
+                e.Column.DisplayIndex = 19;
                 break;
             default:
                 // All other columns get auto-incremented display index
@@ -550,16 +555,30 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             "Thickness_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Thickness_IN) == 0.0),
 
             // Optional radius properties
+            "Radius_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius_MM) == 0.0),
+            "Radius_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius_IN) == 0.0),
             "Radius1_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius1_MM) == 0.0),
             "Radius1_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius1_IN) == 0.0),
             "Radius2_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius2_MM) == 0.0),
             "Radius2_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Radius2_IN) == 0.0),
+
+            // Cylinder Height
+            "CylinderHeight_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.CylinderHeight_MM) == 0.0),
+            "CylinderHeight_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.CylinderHeight_IN) == 0.0),
 
             // Rounding properties
             "Round_r_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_r_MM) == 0.0),
             "Round_h_MM" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_h_MM) == 0.0),
             "Round_r_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_r_IN) == 0.0),
             "Round_h_IN" => ViewModel.SolidDimensions.All(s => Math.Abs(s.Round_h_IN) == 0.0),
+
+            // Text properties
+            "FontStyle" => ViewModel.SolidDimensions.All(s => string.IsNullOrEmpty(s.FontStyle)),
+            "TextVAlign" => ViewModel.SolidDimensions.All(s => string.IsNullOrEmpty(s.TextVAlign)),
+            "TextHAlign" => ViewModel.SolidDimensions.All(s => string.IsNullOrEmpty(s.TextHAlign)),
+            "TextDirection" => ViewModel.SolidDimensions.All(s => string.IsNullOrEmpty(s.TextDirection)),
+            "TextContent" => ViewModel.SolidDimensions.All(s => string.IsNullOrEmpty(s.TextContent)),
+            "TextSize" => ViewModel.SolidDimensions.All(s => Math.Abs(s.TextSize) == 0.0),
 
             // Polyhedron Shape
             "ShapeName" => ViewModel.SolidDimensions.All(s => string.IsNullOrEmpty(s.ShapeName)),
@@ -572,7 +591,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private void DataGrid_AutoGeneratingColumnObjectImperial(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         // List of columns to exclude from display - Hide Metric columns for Imperial view
-        var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Volume_CM3", "ModuleName", "Name", "Volume_IN3", "Volume_CM3", "Alpha", "ScaleX", "ScaleY", "ScaleZ" };
+        var excludedColumns = new[] { "Id", "ModuleDimensionsId", "OpenSCAD_DecimalPlaces", "CreatedAt", "Resolution", "OSCADMethod", "AxisDimensionsId", "AxisOSCADMethod", "Round_r_MM", "Round_r_IN", "Round_h_MM", "Round_h_IN", "SurfaceInvert", "SurfaceCenter", "SurfaceFilePath", "Length_MM", "Width_MM", "Height_MM", "Thickness_MM", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "Material", "Radius_MM", "Radius1_MM", "Radius2_MM", "CylinderHeight_MM", "Name", "Volume_CM3", "ModuleName", "Name", "Volume_IN3", "Volume_CM3", "Alpha", "ScaleX", "ScaleY", "ScaleZ", "FontStyle" };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
@@ -617,7 +636,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "FontStyle", "Font Style"},
             { "TextVAlign","V Align"},
             { "TextHAlign","H Align"},
-            { "TextDirection","Dir"},
+            { "TextDirection","Direction"},
             { "TextContent","Content"},
             { "TextSize","Size"},
         };
@@ -638,7 +657,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
         // Then rotations: XRotate, YRotate, ZRotate
         // Then offsets: XOffset, YOffset, ZOffset
         // Then Color, and everything else
-        int displayIndex = 4; // Start after the fixed columns
+        int displayIndex = 20; // Start after the fixed columns
 
         switch (e.PropertyName)
         {
@@ -649,54 +668,59 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
                 break;
             case "Layer":
                 e.Column.DisplayIndex = 2;
+                e.Column.Sort();
                 break;
             case "OperationType":
                 e.Column.DisplayIndex = 3;
-                break;
-            case "Length_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Width_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Height_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Thickness_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Radius_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Radius1_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "Radius2_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "CylinderHeight_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "XRotate":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "YRotate":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "ZRotate":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "XOffset_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "YOffset_IN":
-                e.Column.DisplayIndex = displayIndex++;
-                break;
-            case "ZOffset_IN":
-                e.Column.DisplayIndex = displayIndex++;
+                e.Column.Sort();
                 break;
             case "ModuleColor":
-                e.Column.DisplayIndex = displayIndex++;
+                e.Column.DisplayIndex = 4;
+                break;
+            case "Description":
+                e.Column.DisplayIndex = 5;
+                break;
+            case "XOffset_IN":
+                e.Column.DisplayIndex = 6;
+                break;
+            case "YOffset_IN":
+                e.Column.DisplayIndex = 7;
+                break;
+            case "ZOffset_IN":
+                e.Column.DisplayIndex = 8;
+                break;
+            case "Length_IN":
+                e.Column.DisplayIndex = 9;
+                break;
+            case "Width_IN":
+                e.Column.DisplayIndex = 10;
+                break;
+            case "Height_IN":
+                e.Column.DisplayIndex = 11;
+                break;
+            case "Thickness_IN":
+                e.Column.DisplayIndex = 12;
+                break;
+            case "Radius_IN":
+                e.Column.DisplayIndex = 13;
+                break;
+            case "Radius1_IN":
+                e.Column.DisplayIndex = 14;
+                break;
+            case "Radius2_IN":
+                e.Column.DisplayIndex = 15;
+                break;
+            case "CylinderHeight_IN":
+                e.Column.DisplayIndex = 16;
+                break;
+            case "XRotate":
+                e.Column.DisplayIndex = 17;
+                break;
+            case "YRotate":
+                e.Column.DisplayIndex = 18;
+                break;
+            case "ZRotate":
+                e.Column.DisplayIndex = 19;
                 break;
             default:
                 // All other columns get auto-incremented display index
@@ -809,14 +833,30 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             e.Column.Header = header;
         }
 
-        // Make ModuleType column appear after the button columns
-        if (e.PropertyName == "ModuleType")
+         int displayIndex = 7; // Start after the fixed columns
+
+        switch (e.PropertyName)
         {
-            e.Column.DisplayIndex = 3; // After trash bin (0), clipboard (1), and solids count (2)
-            if (e.Column is DataGridTextColumn textColumn)
-            {
-                textColumn.FontWeight = FontWeight.SemiBold;
-            }
+            case "Layer":
+                e.Column.DisplayIndex = 3;
+                e.Column.Sort();
+                break;
+            case "ModuleType":
+                e.Column.DisplayIndex = 4;
+                e.Column.Sort();
+                if (e.Column is DataGridTextColumn stColumn)
+                    stColumn.FontWeight = FontWeight.SemiBold;
+                break;
+            case "SolidType":
+                e.Column.DisplayIndex = 5;
+                break;
+            case "Name":
+                e.Column.DisplayIndex = 6;
+                break;
+            default:
+                // All other columns get auto-incremented display index
+                e.Column.DisplayIndex = displayIndex++;
+                break;
         }
     }
 

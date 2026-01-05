@@ -152,15 +152,16 @@ namespace NetGenCAD.Core.Primitives
                         parameters.TryGetValue("valign", out object? value3) ? (string)value3 : "baseline",
                         parameters.TryGetValue("spacing", out object? value4) ? (double)value4 : 1,
                         parameters.TryGetValue("direction", out object? value5) ? (string)value5 : "ltr",
-                        parameters.TryGetValue("language", out object? value6) ? (string?)value6 : null,
+                        parameters.TryGetValue("language", out object? value6) ? (string?)value6 : "en",
                         parameters.TryGetValue("script", out object? value7) ? (string?)value7 : null,
-                        parameters.TryGetValue("resolution", out object? value8) ? (double)value8 : 200);
+                        parameters.TryGetValue("resolution", out object? value8) ? (double)value8 : 200,
+                        parameters.TryGetValue("textDepth", out object? value9) ? (double)value9 : 1.0);
 
                 case OScadSpecial.Import:
                     ValidateKeys(parameters, ["file"], "Import");
                     return new Import(
                         (string)parameters["file"],
-                        parameters.TryGetValue("convexity", out object? value9) ? (int)value9 : 1);
+                        parameters.TryGetValue("convexity", out object? value10) ? (int)value10 : 1);
 
                 default:
                     throw new ArgumentException("Unknown OScadSpecial type");

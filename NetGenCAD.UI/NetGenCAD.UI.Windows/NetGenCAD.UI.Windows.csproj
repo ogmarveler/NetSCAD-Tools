@@ -29,23 +29,11 @@
 		<RootNamespace>NetGenCAD</RootNamespace>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<Optimize>True</Optimize>
-		<IsPublishable>True</IsPublishable>
-		<DebugType>none</DebugType>
-		<DebugSymbols>false</DebugSymbols>
-	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 	  <Optimize>True</Optimize>
 	  <IsPublishable>True</IsPublishable>
 	  <DebugType>full</DebugType>
 	  <DebugSymbols>True</DebugSymbols>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<IsPublishable>True</IsPublishable>
-		<DebugType>none</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -87,6 +75,7 @@
 	<ItemGroup>
 	  <None Remove="NetGenCAD-0.2.0-winx64.7z" />
 	  <None Remove="NetGenCAD-0.2.1-winx64.7z" />
+	  <None Remove="NetGenCAD-0.2.2-winx64.7z" />
 	</ItemGroup>
 
 	<ItemGroup>

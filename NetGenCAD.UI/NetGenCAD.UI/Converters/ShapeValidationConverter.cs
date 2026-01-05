@@ -85,8 +85,9 @@ namespace NetGenCAD.UI.Converters
                 bool textAlignValid = values[26] is string textAlign && !string.IsNullOrWhiteSpace(textAlign);
                 bool verticalAlignValid = values[27] is string verticalAlign && !string.IsNullOrWhiteSpace(verticalAlign);
                 bool textDirectionValid = values[28] is string textDirection && !string.IsNullOrWhiteSpace(textDirection);
+                bool textDepthValid = values[7] is double textDepth && textDepth > 0;
 
-                return textInputValid && textMarginValid && fontInputValid && textAlignValid && verticalAlignValid && textDirectionValid;
+                return textInputValid && textMarginValid && fontInputValid && textAlignValid && verticalAlignValid && textDirectionValid && textDepthValid;
             }
 
             return false;
