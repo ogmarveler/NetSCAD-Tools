@@ -302,6 +302,21 @@ namespace NetGenCAD.Designer.Functions
                     ? openScadColorHex
                     : selectedOpenScadColor.ToString();
 
+                // Clear out variables that are not applicable based on the selected solid type
+                if (isCubeSelected || isRoundCubeSelected || isSurfaceSelected || isRoundSurfaceSelected || isTextSelected || isPolyhedronSelected)
+                {
+                    radiusMM = 0;
+                    radius1MM = 0;
+                    radius2MM = 0;
+                    cylinderHeightMM = 0;
+                }
+                else if (isCylinderSelected || isRoundCylinderSelected || isSphereSelected)
+                {
+                    lengthMM = 0;
+                    widthMM = 0;
+                    thicknessMM = 0;
+                }
+
                 if (isTextSelected)
                 {
                     if (textSize <= 0)

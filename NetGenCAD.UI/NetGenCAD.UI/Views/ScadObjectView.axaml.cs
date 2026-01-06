@@ -795,7 +795,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
     private void DataGrid_AutoGeneratingColumnModule(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         // List of columns to exclude from display for ModuleDimensions - ModuleColor removed from display
-        var excludedColumns = new[] { "Id", "CreatedAt", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "OSCADMethod", "ObjectDescription", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XRotate", "YRotate", "ZRotate", "IncludeMethod", "ModuleColor" };
+        var excludedColumns = new[] { "Id", "CreatedAt", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XOffset_IN", "YOffset_IN", "ZOffset_IN", "OSCADMethod", "ObjectDescription", "XOffset_MM", "YOffset_MM", "ZOffset_MM", "XRotate", "YRotate", "ZRotate", "IncludeMethod", "ModuleColor", "SolidType", "ObjectName" };
 
         if (excludedColumns.Contains(e.PropertyName))
         {
