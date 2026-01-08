@@ -1,5 +1,7 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Avalonia;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NetGenCAD.Axis.Scad.Models;
 using NetGenCAD.Axis.Scad.Utility;
 using NetGenCAD.Core.Interfaces;
@@ -292,6 +294,57 @@ namespace NetGenCAD.UI.ViewModels
             // Ensure axis is created if needed
             if (_axisId is null)
                 await CreateAxis();
+
+
+            // Clear out variables that are not applicable based on the selected solid type
+            if (IsCubeSelected || IsRoundCubeSelected || IsSurfaceSelected || IsRoundSurfaceSelected || IsTextSelected || IsPolyhedronSelected)
+            {
+                RadiusMM = 0;
+                Radius1MM = 0;
+                Radius2MM = 0;
+                CylinderHeightMM = 0;
+
+                if (!IsSurfaceSelected)
+                {
+                    SurfaceFilePath = string.Empty;
+                    SurfaceScaleX = 1;
+                    SurfaceScaleY = 1;
+                    SurfaceScaleZ = 1;
+                    SurfaceCenter = false;
+                    SurfaceInvert = false;
+                }
+                
+                if (!IsTextSelected)
+                {
+                    TextInput = string.Empty;
+                    TextSize = 0.0;
+                    FontInput = string.Empty;
+                    TextAlign = string.Empty;
+                    VerticalAlign = string.Empty;
+                    TextDirection = string.Empty;
+                    LanguageInput = string.Empty;
+                }
+            }
+            else if (IsCylinderSelected || IsRoundCylinderSelected || IsSphereSelected)
+            {
+                LengthMM = 0;
+                WidthMM = 0;
+                HeightMM = 0;
+                ThicknessMM = 0;
+                SurfaceFilePath = string.Empty;
+                SurfaceScaleX = 1;
+                SurfaceScaleY = 1;
+                SurfaceScaleZ = 1;
+                SurfaceCenter = false;
+                SurfaceInvert = false;
+                TextInput = string.Empty;
+                TextSize = 0.0;
+                FontInput = string.Empty;
+                TextAlign = string.Empty;
+                VerticalAlign = string.Empty;
+                TextDirection = string.Empty;
+                LanguageInput = string.Empty;
+            }
 
             // Define the callback for generating OSCAD (delegates to existing logic)
             Func<SolidDimensions, Task<string>> generateOscadCallback = async (solidDim) =>

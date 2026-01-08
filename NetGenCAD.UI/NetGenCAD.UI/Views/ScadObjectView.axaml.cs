@@ -434,6 +434,7 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "TextDirection","Direction"},
             { "TextContent","Content"},
             { "TextSize","Size"},
+            { "ShapeName", "Poly Shape" },
         };
 
         if (columnHeaders.TryGetValue(e.PropertyName, out var header))
@@ -819,7 +820,6 @@ public partial class ScadObjectView : UserControl, INotifyPropertyChanged
             { "ZOffset_IN", "Z (in)" },
             { "IncludeMethod", "Include Method" },
             { "Layer", "Layer" },
-            { "ShapeName", "Poly Shape" },
             { "FontStyle", "Font Style"},
             { "TextVAlign","V Align"},
             { "TextHAlign","H Align"},
