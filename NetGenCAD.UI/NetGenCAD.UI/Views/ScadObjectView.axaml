@@ -287,7 +287,7 @@
                         <TextBox
                             Classes="standardInput"
                             Text="{Binding AxisXPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="Adjust X">
+                            PlaceholderText="Adjust X">
                             <ToolTip.Tip>
                                 <TextBlock Text="Move the X-axis starting point" />
                             </ToolTip.Tip>
@@ -304,7 +304,7 @@
                         <TextBox
                             Classes="standardInput"
                             Text="{Binding AxisYPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="Adjust Y">
+                            PlaceholderText="Adjust Y">
                             <ToolTip.Tip>
                                 <TextBlock Text="Move the Y-axis starting point" />
                             </ToolTip.Tip>
@@ -321,7 +321,7 @@
                         <TextBox
                             Classes="standardInput"
                             Text="{Binding AxisZPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="Adjust Z">
+                            PlaceholderText="Adjust Z">
                             <ToolTip.Tip>
                                 <TextBlock Text="Move the Z-axis starting point" />
                             </ToolTip.Tip>
@@ -399,7 +399,7 @@
                             FontWeight="SemiBold"
                             IsEnabled="{Binding !SolidDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
                             Text="{Binding Name, Mode=TwoWay}"
-                            Watermark="Set Object Name">
+                            PlaceholderText="Set Object Name">
                             <ToolTip.Tip>
                                 <TextBlock Text="Object Name" />
                             </ToolTip.Tip>
@@ -574,7 +574,7 @@
                             Classes="standardInput"
                             FontWeight="SemiBold"
                             Text="{Binding Description, Mode=TwoWay}"
-                            Watermark="Set Solid Name">
+                            PlaceholderText="Set Solid Name">
                             <ToolTip.Tip>
                                 <TextBlock Text="Name of solid being added or subtracted" />
                             </ToolTip.Tip>
@@ -787,7 +787,7 @@
                                         HorizontalAlignment="Stretch"
                                         Classes="standardInput"
                                         Text="{Binding SurfaceFilePath, Mode=TwoWay}"
-                                        Watermark="png, bmp, dat, etc.">
+                                        PlaceholderText="png, bmp, dat, etc.">
                                         <ToolTip.Tip>
                                             <TextBlock Text="Path to the surface data file" />
                                         </ToolTip.Tip>
@@ -817,7 +817,7 @@
                                 HorizontalAlignment="Stretch"
                                 Classes="standardInput"
                                 Text="{Binding TextInput, Mode=TwoWay}"
-                                Watermark="Enter text">
+                                PlaceholderText="Enter text">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Text to Display Input to convert to OpenSCAD" />
                                 </ToolTip.Tip>
@@ -833,7 +833,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding TextSize, Mode=TwoWay, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="px">
+                                PlaceholderText="px">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Size of Text Input" />
                                 </ToolTip.Tip>
@@ -849,7 +849,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding HeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Depth of each letter in Text to Display" />
                                 </ToolTip.Tip>
@@ -888,7 +888,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding SelectedPolyhedron.Convexity, StringFormat={}{0:F0}}"
-                                Watermark="N/A">
+                                PlaceholderText="N/A">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Polyhedron Convexity" />
                                 </ToolTip.Tip>
@@ -1029,7 +1029,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding LengthMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Length" />
                                 </ToolTip.Tip>
@@ -1049,7 +1049,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding WidthMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Width" />
                                 </ToolTip.Tip>
@@ -1069,7 +1069,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding HeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Height" />
                                 </ToolTip.Tip>
@@ -1087,7 +1087,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding ThicknessMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Thickness" />
                                 </ToolTip.Tip>
@@ -1103,7 +1103,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 IsReadOnly="True"
-                                Watermark="N/A">
+                                PlaceholderText="N/A">
                                 <TextBox.Text>
                                     <MultiBinding Converter="{StaticResource UnitConversionConverter}">
                                         <Binding Path="SelectedPolyhedron.BoxLength_MM" />
@@ -1131,7 +1131,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 IsReadOnly="True"
-                                Watermark="N/A">
+                                PlaceholderText="N/A">
                                 <TextBox.Text>
                                     <MultiBinding Converter="{StaticResource UnitConversionConverter}">
                                         <Binding Path="SelectedPolyhedron.BoxWidth_MM" />
@@ -1159,7 +1159,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 IsReadOnly="True"
-                                Watermark="N/A">
+                                PlaceholderText="N/A">
                                 <TextBox.Text>
                                     <MultiBinding Converter="{StaticResource UnitConversionConverter}">
                                         <Binding Path="SelectedPolyhedron.BoxHeight_MM" />
@@ -1188,7 +1188,7 @@
                                 Classes="standardInput"
                                 IsReadOnly="True"
                                 Text="{Binding SelectedPolyhedron.NumberOfVertices, StringFormat={}{0:F0}}"
-                                Watermark="N/A">
+                                PlaceholderText="N/A">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Number of Polyhedron Vertices (Read-only)" />
                                 </ToolTip.Tip>
@@ -1204,7 +1204,7 @@
                                 Classes="standardInput"
                                 IsReadOnly="True"
                                 Text="{Binding SelectedPolyhedron.NumberOfFaces, StringFormat={}{0:F0}}"
-                                Watermark="N/A">
+                                PlaceholderText="N/A">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Number of Polyhedron Faces (Read-only)" />
                                 </ToolTip.Tip>
@@ -1220,7 +1220,7 @@
                                 Classes="standardInput"
                                 IsReadOnly="True"
                                 Text="{Binding SelectedPolyhedron.NumberOfEdges, StringFormat={}{0:F0}}"
-                                Watermark="N/A">
+                                PlaceholderText="N/A">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Number of Polyhedron Edges (Read-only)" />
                                 </ToolTip.Tip>
@@ -1240,7 +1240,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding RadiusMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock>
                                         <TextBlock.Text>
@@ -1263,7 +1263,7 @@
                                 Classes="standardInput"
                                 IsVisible="{Binding IsCylinderSelected}"
                                 Text="{Binding Radius1MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="Optional">
+                                PlaceholderText="Optional">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Optional first radius for cone" />
                                 </ToolTip.Tip>
@@ -1279,7 +1279,7 @@
                                 Classes="standardInput"
                                 IsVisible="{Binding IsCylinderSelected}"
                                 Text="{Binding Radius2MM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="Optional">
+                                PlaceholderText="Optional">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Optional second radius for cone" />
                                 </ToolTip.Tip>
@@ -1298,7 +1298,7 @@
                                 Classes="standardInput"
                                 IsEnabled="{Binding !IsSphereSelected}"
                                 Text="{Binding CylinderHeightMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Cylinder height" />
                                 </ToolTip.Tip>
@@ -1318,7 +1318,7 @@
                                 <TextBox
                                     Classes="standardInput"
                                     Text="{Binding SurfaceScaleX, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                    Watermark="0 - 1">
+                                    PlaceholderText="0 - 1">
                                     <ToolTip.Tip>
                                         <TextBlock Text="Surface scale factor for image height" />
                                     </ToolTip.Tip>
@@ -1329,7 +1329,7 @@
                                 <TextBox
                                     Classes="standardInput"
                                     Text="{Binding SurfaceScaleY, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                    Watermark="0 - 1">
+                                    PlaceholderText="0 - 1">
                                     <ToolTip.Tip>
                                         <TextBlock Text="Surface scale factor" />
                                     </ToolTip.Tip>
@@ -1340,7 +1340,7 @@
                                 <TextBox
                                     Classes="standardInput"
                                     Text="{Binding SurfaceScaleZ, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                    Watermark="0 - 1">
+                                    PlaceholderText="0 - 1">
                                     <ToolTip.Tip>
                                         <TextBlock Text="Surface scale factor" />
                                     </ToolTip.Tip>
@@ -1418,7 +1418,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding OpenSCADColorHex, Mode=TwoWay}"
-                                Watermark="#RRGGBB">
+                                PlaceholderText="#RRGGBB">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Color selection (visible when Color checkbox is selected)" />
                                 </ToolTip.Tip>
@@ -1440,7 +1440,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding AlphaIntValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="int">
+                                PlaceholderText="int">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Integer value for color alpha specification" />
                                 </ToolTip.Tip>
@@ -1453,7 +1453,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding LayerIntValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="int">
+                                PlaceholderText="int">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Integer value for layer specification" />
                                 </ToolTip.Tip>
@@ -1475,7 +1475,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding XOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="X-axis translation offset" />
                                 </ToolTip.Tip>
@@ -1486,7 +1486,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding YOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Y-axis translation offset" />
                                 </ToolTip.Tip>
@@ -1497,7 +1497,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding ZOffsetMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Z-axis translation offset" />
                                 </ToolTip.Tip>
@@ -1508,7 +1508,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding XRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="deg°">
+                                PlaceholderText="deg°">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Set the 360 degree X-axis rotation" />
                                 </ToolTip.Tip>
@@ -1519,7 +1519,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding YRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="deg°">
+                                PlaceholderText="deg°">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Set the 360 degree Y-axis rotation" />
                                 </ToolTip.Tip>
@@ -1530,7 +1530,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding ZRotate, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="deg°">
+                                PlaceholderText="deg°">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Set the 360 degree Z-axis rotation" />
                                 </ToolTip.Tip>
@@ -1707,7 +1707,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding XMirror, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="int">
+                                PlaceholderText="int">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Set the 360 degree X-axis mirror" />
                                 </ToolTip.Tip>
@@ -1718,7 +1718,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding YMirror, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="int">
+                                PlaceholderText="int">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Set the 360 degree Y-axis mirror" />
                                 </ToolTip.Tip>
@@ -1729,7 +1729,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding ZMirror, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="int">
+                                PlaceholderText="int">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Set the 360 degree Z-axis mirror" />
                                 </ToolTip.Tip>

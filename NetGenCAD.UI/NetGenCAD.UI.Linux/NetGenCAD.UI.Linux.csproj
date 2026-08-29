@@ -72,9 +72,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia.Desktop" Version="11.3.10" />
-		<PackageReference Include="Avalonia.LinuxFramebuffer" Version="11.3.10" />
-		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.1" />
+		<PackageReference Include="Avalonia" Version="12.1.1" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.1.1" />
+		<PackageReference Include="Avalonia.LinuxFramebuffer" Version="12.1.1" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.152.0-rc.1.26426.14" />
+		<PackageReference Include="Tmds.DBus.Protocol" Version="0.95.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -82,7 +84,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<TrimmerRootAssembly Include="NetGenCAD.UI" />
 		<TrimmerRootAssembly Include="ReactiveUI" />
 		<TrimmerRootAssembly Include="Avalonia.LinuxFramebuffer" />
 	</ItemGroup>

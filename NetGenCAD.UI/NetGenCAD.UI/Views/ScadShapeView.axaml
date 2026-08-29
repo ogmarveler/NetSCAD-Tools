@@ -291,7 +291,7 @@
                         <TextBox
                             Classes="standardInput"
                             Text="{Binding AxisXPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="Adjust X">
+                            PlaceholderText="Adjust X">
                             <ToolTip.Tip>
                                 <TextBlock Text="Move the X-axis starting point" />
                             </ToolTip.Tip>
@@ -308,7 +308,7 @@
                         <TextBox
                             Classes="standardInput"
                             Text="{Binding AxisYPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="Adjust Y">
+                            PlaceholderText="Adjust Y">
                             <ToolTip.Tip>
                                 <TextBlock Text="Move the Y-axis starting point" />
                             </ToolTip.Tip>
@@ -325,7 +325,7 @@
                         <TextBox
                             Classes="standardInput"
                             Text="{Binding AxisZPositionMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="Adjust Z">
+                            PlaceholderText="Adjust Z">
                             <ToolTip.Tip>
                                 <TextBlock Text="Move the Z-axis starting point" />
                             </ToolTip.Tip>
@@ -401,7 +401,7 @@
                             FontWeight="SemiBold"
                             IsEnabled="{Binding !PolyhedronDimensions, Converter={StaticResource CollectionCountToBooleanConverter}, ConverterParameter=1}"
                             Text="{Binding Name, Mode=TwoWay}"
-                            Watermark="Set Polyhedron Name">
+                            PlaceholderText="Set Polyhedron Name">
                             <ToolTip.Tip>
                                 <TextBlock Text="Custom Shape Name" />
                             </ToolTip.Tip>
@@ -549,7 +549,7 @@
                             Classes="standardInput"
                             FontWeight="SemiBold"
                             Text="{Binding Description, Mode=TwoWay}"
-                            Watermark="Set Points or Face Name">
+                            PlaceholderText="Set Points or Face Name">
                             <ToolTip.Tip>
                                 <TextBlock Text="Name of the point set or face within the polyhedron" />
                             </ToolTip.Tip>
@@ -614,7 +614,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding PointXMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="X coordinate of polyhedron point" />
                                 </ToolTip.Tip>
@@ -627,7 +627,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding PointYMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Y coordinate of polyhedron point" />
                                 </ToolTip.Tip>
@@ -640,7 +640,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding PointZMM, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                                Watermark="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
+                                PlaceholderText="{Binding SelectedUnitValue, Mode=TwoWay, Converter={StaticResource UnitTextConverter}}">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Z coordinate of polyhedron point" />
                                 </ToolTip.Tip>
@@ -676,7 +676,7 @@
                                     Classes="standardInput"
                                     CornerRadius="0,3,3,0"
                                     Text="{Binding PointsId, Mode=TwoWay, Converter={StaticResource IntToNullableConverter}}"
-                                    Watermark="int">
+                                    PlaceholderText="int">
                                     <ToolTip.Tip>
                                         <TextBlock Text="ID of the polyhedron points" />
                                     </ToolTip.Tip>
@@ -705,7 +705,7 @@
                             <TextBox
                                 Classes="standardInput"
                                 Text="{Binding FacePoints, Mode=TwoWay}"
-                                Watermark="[0,1,2],[1,2,3],[4,5,6],[7,8,4]...">
+                                PlaceholderText="[0,1,2],[1,2,3],[4,5,6],[7,8,4]...">
                                 <ToolTip.Tip>
                                     <TextBlock Text="Face definition: indices of points that form each face" />
                                 </ToolTip.Tip>
@@ -741,7 +741,7 @@
                                     Classes="standardInput"
                                     CornerRadius="0,3,3,0"
                                     Text="{Binding FaceId, Mode=TwoWay, Converter={StaticResource IntToNullableConverter}}"
-                                    Watermark="int">
+                                    PlaceholderText="int">
                                     <ToolTip.Tip>
                                         <TextBlock Text="ID of the polyhedron face" />
                                     </ToolTip.Tip>

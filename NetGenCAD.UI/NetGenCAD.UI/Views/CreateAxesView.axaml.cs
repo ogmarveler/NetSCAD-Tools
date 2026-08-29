@@ -211,6 +211,7 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
     /// Avoids stateful column tracking and duplication issues
     /// </summary>
     [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
+    [RequiresDynamicCode("Calls Avalonia.Data.Binding.Binding(String)")]
     private void DataGrid_AutoGeneratingColumnImperial(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         // Customize CallingMethod column to show formatted axis display
@@ -225,7 +226,8 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
                 IsReadOnly = true,
                 Binding = new Binding(nameof(Axis.Scad.Models.GeneratedModule.CallingMethod))
                 {
-                    Converter = new AxisDisplayConverter()
+                    Converter = new AxisDisplayConverter(),
+                    Mode=BindingMode.OneWay
                 }
             };
 
@@ -257,6 +259,7 @@ public partial class CreateAxesView : UserControl, INotifyPropertyChanged
         e.Column.CanUserResize = false;
     }
 
+    [RequiresDynamicCode("Calls NetGenCAD.UI.Views.CreateAxesView.DataGrid_AutoGeneratingColumnImperial(Object, DataGridAutoGeneratingColumnEventArgs)")]
     private void DataGrid_AutoGeneratingColumnMetric(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         // Same logic for both grids

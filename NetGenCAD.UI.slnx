@@ -1,0 +1,29 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="NetGenCAD.Axis/NetGenCAD.Axis.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="NetGenCAD.Core/NetGenCAD.Core.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="NetGenCAD.Designer/NetGenCAD.Designer.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="NetGenCAD.UI/NetGenCAD.UI.Linux/NetGenCAD.UI.Linux.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="NetGenCAD.UI/NetGenCAD.UI.Windows/NetGenCAD.UI.Windows.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="NetGenCAD.UI/NetGenCAD.UI/NetGenCAD.UI.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+</Solution>

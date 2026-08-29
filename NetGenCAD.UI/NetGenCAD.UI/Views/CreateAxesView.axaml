@@ -115,77 +115,77 @@
                         <TextBox
                             Classes="standardInput"
                             Text="{Binding MinXValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="{Binding MinXWatermark}" />
-                    </StackPanel>
+                            PlaceholderText="{Binding MinXWatermark}" />
+					</StackPanel>
 
-                    <!--  Max X  -->
-                    <StackPanel
+					<!--  Max X  -->
+					<StackPanel
                         Grid.Row="0"
                         Grid.Column="2"
                         Width="110"
                         HorizontalAlignment="Left"
                         Classes="inputGroup">
-                        <TextBlock Classes="standardLabel" Text="Max X" />
-                        <TextBox
+						<TextBlock Classes="standardLabel" Text="Max X" />
+						<TextBox
                             Classes="standardInput"
                             Text="{Binding MaxXValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="{Binding MaxXWatermark}" />
-                    </StackPanel>
+                            PlaceholderText="{Binding MaxXWatermark}" />
+					</StackPanel>
 
-                    <!--  Min Y  -->
-                    <StackPanel
+					<!--  Min Y  -->
+					<StackPanel
                         Grid.Row="0"
                         Grid.Column="3"
                         Width="110"
                         HorizontalAlignment="Left"
                         Classes="inputGroup">
-                        <TextBlock Classes="standardLabel" Text="Min Y" />
-                        <TextBox
+						<TextBlock Classes="standardLabel" Text="Min Y" />
+						<TextBox
                             Classes="standardInput"
                             Text="{Binding MinYValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="{Binding MinYWatermark}" />
-                    </StackPanel>
+                            PlaceholderText="{Binding MinYWatermark}" />
+					</StackPanel>
 
-                    <!--  Max Y  -->
-                    <StackPanel
+					<!--  Max Y  -->
+					<StackPanel
                         Grid.Row="0"
                         Grid.Column="4"
                         Width="110"
                         HorizontalAlignment="Left"
                         Classes="inputGroup">
-                        <TextBlock Classes="standardLabel" Text="Max Y" />
-                        <TextBox
+						<TextBlock Classes="standardLabel" Text="Max Y" />
+						<TextBox
                             Classes="standardInput"
                             Text="{Binding MaxYValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="{Binding MaxYWatermark}" />
-                    </StackPanel>
+                            PlaceholderText="{Binding MaxYWatermark}" />
+					</StackPanel>
 
-                    <!--  Min Z  -->
-                    <StackPanel
+					<!--  Min Z  -->
+					<StackPanel
                         Grid.Row="0"
                         Grid.Column="5"
                         Width="110"
                         HorizontalAlignment="Left"
                         Classes="inputGroup">
-                        <TextBlock Classes="standardLabel" Text="Min Z" />
-                        <TextBox
+						<TextBlock Classes="standardLabel" Text="Min Z" />
+						<TextBox
                             Classes="standardInput"
                             Text="{Binding MinZValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="{Binding MinZWatermark}" />
-                    </StackPanel>
+                            PlaceholderText="{Binding MinZWatermark}" />
+					</StackPanel>
 
-                    <!--  Max Z  -->
-                    <StackPanel
+					<!--  Max Z  -->
+					<StackPanel
                         Grid.Row="0"
                         Grid.Column="6"
                         Width="110"
                         HorizontalAlignment="Left"
                         Classes="inputGroup">
-                        <TextBlock Classes="standardLabel" Text="Max Z" />
-                        <TextBox
+						<TextBlock Classes="standardLabel" Text="Max Z" />
+						<TextBox
                             Classes="standardInput"
                             Text="{Binding MaxZValue, Mode=TwoWay, Converter={StaticResource DoubleToNullableConverter}}"
-                            Watermark="{Binding MaxZWatermark}" />
+                            PlaceholderText="{Binding MaxZWatermark}" />
                     </StackPanel>
 
                     <!--  Unit Type ComboBox  -->
